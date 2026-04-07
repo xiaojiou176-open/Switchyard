@@ -425,7 +425,7 @@ function buildIsolatedProviderTimeout(provider) {
 }
 
 function buildIsolatedProviderFailure(provider, env, diagnostic, classification = "transport-instability") {
-  return {
+  return mapBrowserAttachFailureAsExternalBlocker(provider, env, diagnostic) ?? {
     status: "failure",
     provider,
     classification,
@@ -435,6 +435,72 @@ function buildIsolatedProviderFailure(provider, env, diagnostic, classification 
     summary: `${provider} live verification aborted inside its isolated provider lane.`,
     envStatus: collectProviderSessionMaterialStatus(provider, env),
     ...buildProviderDiagnosisArtifacts(provider),
+  };
+}
+
+function mapIsolatedProviderFailureResult(result) {
+  if (
+    result?.provider === "chatgpt" &&
+    result.status === "failure" &&
+    result.reason === "probe-request-failed" &&
+    (
+      result.classification === "transport-instability" ||
+      /target page, context or browser has been closed|connectovercdp|econnrefused/i.test(
+        `${result.diagnostic ?? ""}`,
+      )
+    )
+  ) {
+    return {
+      status: "external-blocker",
+      provider: result.provider,
+      blocker: `${result.provider}-cdp-unavailable`,
+      classification: "transport-instability",
+      probeUrl: result.probeUrl,
+      finalUrl: result.finalUrl,
+      responseStatus: result.responseStatus,
+      envStatus: result.envStatus,
+      rerunCommand: buildProviderRerunCommand(result.provider),
+      ...buildProviderDiagnosisArtifacts(result.provider),
+      diagnostic: result.diagnostic,
+      summary:
+        `${result.provider} needs the managed onboarding browser attached over CDP before Switchyard can prove or invoke the live web session.`,
+      debug: result.debug,
+    };
+  }
+
+  return result;
+}
+
+function mapBrowserAttachFailureAsExternalBlocker(provider, env, diagnostic) {
+  if (!(provider === "chatgpt" || provider === "gemini")) {
+    return undefined;
+  }
+
+  const lowerDiagnostic = `${diagnostic ?? ""}`.toLowerCase();
+
+  if (
+    !(
+      lowerDiagnostic.includes("connectovercdp") ||
+      lowerDiagnostic.includes("econnrefused") ||
+      lowerDiagnostic.includes("existing-profile-locked") ||
+      lowerDiagnostic.includes("cdp-unreachable") ||
+      lowerDiagnostic.includes("endpoint-not-devtools")
+    )
+  ) {
+    return undefined;
+  }
+
+  return {
+    status: "external-blocker",
+    provider,
+    blocker: `${provider}-cdp-unavailable`,
+    classification: "transport-instability",
+    probeUrl: providerSessionMaterialCatalog[provider]?.probeUrl,
+    envStatus: collectProviderSessionMaterialStatus(provider, env),
+    rerunCommand: buildProviderRerunCommand(provider),
+    ...buildProviderDiagnosisArtifacts(provider),
+    diagnostic,
+    summary: `${provider} needs the managed onboarding browser attached over CDP before Switchyard can prove or invoke the live web session.`,
   };
 }
 
@@ -459,10 +525,12 @@ function runIsolatedProviderVerificationOnce(provider, env = process.env) {
     "code" in result.error &&
     result.error.code === "ETIMEDOUT"
   ) {
-    return buildIsolatedProviderFailure(
-      provider,
-      env,
-      `${provider} isolated live verification timed out after ${timeout}ms.`,
+    return mapIsolatedProviderFailureResult(
+      buildIsolatedProviderFailure(
+        provider,
+        env,
+        `${provider} isolated live verification timed out after ${timeout}ms.`,
+      ),
     );
   }
 
@@ -477,23 +545,25 @@ function runIsolatedProviderVerificationOnce(provider, env = process.env) {
       const parsed = JSON.parse(stdout);
 
       if (Array.isArray(parsed) && parsed.length === 1 && parsed[0] && typeof parsed[0] === "object") {
-        return {
+        return mapIsolatedProviderFailureResult({
           provider,
           ...parsed[0],
-        };
+        });
       }
     } catch {
       // Fall through to the structured failure below when the child does not emit parseable JSON.
     }
   }
 
-  return buildIsolatedProviderFailure(
-    provider,
-    env,
-    result.stderr?.trim() ||
-      stdout ||
-      `${provider} isolated live verification exited without a parseable JSON payload.`,
-    result.status === 0 ? "probe-misclassification" : "transport-instability",
+  return mapIsolatedProviderFailureResult(
+    buildIsolatedProviderFailure(
+      provider,
+      env,
+      result.stderr?.trim() ||
+        stdout ||
+        `${provider} isolated live verification exited without a parseable JSON payload.`,
+      result.status === 0 ? "probe-misclassification" : "transport-instability",
+    ),
   );
 }
 
@@ -617,6 +687,25 @@ async function enrichProviderResultWithDebug(provider, result, env) {
   }
 
   const debug = await captureBrowserDebugContext(provider, result, env);
+
+  if (
+    result.status === "failure" &&
+    debug?.attachError
+  ) {
+    const attachFailure = mapBrowserAttachFailureAsExternalBlocker(
+      provider,
+      env,
+      debug.attachError,
+    );
+
+    if (attachFailure) {
+      return {
+        ...attachFailure,
+        debug,
+      };
+    }
+  }
+
   return debug ? { ...result, debug } : result;
 }
 
@@ -2660,20 +2749,26 @@ export async function runWebLoginLiveVerification(options = {}) {
           }
         }
 
-        const fallbackFailure = {
-          status: "failure",
-          provider: proof.provider,
-          classification: "provider-unavailable",
-          probeUrl: proof.provider === "gemini" ? "https://gemini.google.com/app" : undefined,
-          reason: "probe-request-failed",
-          diagnostic:
-            error instanceof Error
-              ? error.message
-              : `Unknown ${proof.provider} live verification failure.`,
-          summary:
-            `${proof.provider} live verification aborted inside its isolated provider lane.`,
-          envStatus: [],
-        };
+        const diagnostic =
+          error instanceof Error
+            ? error.message
+            : `Unknown ${proof.provider} live verification failure.`;
+        const fallbackFailure =
+          mapBrowserAttachFailureAsExternalBlocker(
+            proof.provider,
+            resolvedEnv,
+            diagnostic,
+          ) ?? {
+            status: "failure",
+            provider: proof.provider,
+            classification: "provider-unavailable",
+            probeUrl: proof.provider === "gemini" ? "https://gemini.google.com/app" : undefined,
+            reason: "probe-request-failed",
+            diagnostic,
+            summary:
+              `${proof.provider} live verification aborted inside its isolated provider lane.`,
+            envStatus: [],
+          };
         const enrichedResult = await enrichProviderResultWithDebug(
           proof.provider,
           fallbackFailure,

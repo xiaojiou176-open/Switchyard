@@ -62,6 +62,37 @@ function createEphemeralCompiledOutDir() {
   );
 }
 
+function normalizeGeminiLiveVerificationResult(result) {
+  const rawSummary = `${result?.rawSummary ?? ""}`.toLowerCase();
+  const hasUsableCredential = Array.isArray(result?.envStatus)
+    ? result.envStatus.some((entry) => entry?.present)
+    : false;
+
+  if (
+    result?.status === "failure" &&
+    result?.reason === "invoke-failed" &&
+    hasUsableCredential &&
+    rawSummary.includes("fetch failed")
+  ) {
+    return {
+      status: "external-blocker",
+      provider: "gemini",
+      blocker: "gemini-provider-unavailable",
+      classification: "provider-unavailable",
+      envStatus: result.envStatus,
+      envNameUsed: result.envNameUsed,
+      requestUrl: result.requestUrl,
+      diagnostics: result.diagnostics,
+      rawSummary: result.rawSummary,
+      rerunCommand: "pnpm exec node scripts/verify-gemini-live.mjs",
+      summary:
+        "Gemini API access is configured on this workstation, but the provider request is currently failing before a response payload is returned. Treat this as a provider/network-side blocker and rerun later.",
+    };
+  }
+
+  return result;
+}
+
 export async function runGeminiLiveVerification(options = {}) {
   const compiledOutDir = options.outDir ?? createEphemeralCompiledOutDir();
   const ownsCompiledOutDir = !options.outDir;
@@ -78,7 +109,9 @@ export async function runGeminiLiveVerification(options = {}) {
       throw new Error('Missing runGeminiLiveProof export in compiled Gemini live-proof module.');
     }
 
-    return loaded.runGeminiLiveProof(env);
+    return normalizeGeminiLiveVerificationResult(
+      await loaded.runGeminiLiveProof(env),
+    );
   } finally {
     if (ownsCompiledOutDir) {
       rmSync(compiledOutDir, {

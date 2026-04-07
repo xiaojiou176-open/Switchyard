@@ -269,6 +269,93 @@ describe("verify-service-live script", () => {
     );
   });
 
+  it("fails closed when managed-browser bootstrap cannot attach to the isolated chrome root", async () => {
+    const outDir = mkdtempSync(join(tmpdir(), "switchyard-service-live-"));
+    const spawnSync = vi.fn((command: string, args: string[]) => {
+      if (
+        command === "pnpm" &&
+        args.includes("apps/service/tsconfig.json")
+      ) {
+        const outDirIndex = args.indexOf("--outDir");
+        createCompiledServiceModule(args[outDirIndex + 1]);
+      }
+
+      if (
+        command === process.execPath &&
+        args.some(
+          (arg) =>
+            typeof arg === "string" &&
+            arg.includes("bootstrap-web-auth-browser.mjs"),
+        )
+      ) {
+        return {
+          status: 1,
+          stdout: JSON.stringify({
+            ok: false,
+            error: {
+              code: "existing-profile-locked",
+              message:
+                "Switchyard found the isolated repo Chrome root locked by another Chrome instance, but CDP is not reachable. Reuse the existing instance via attach, or close it before retrying.",
+            },
+          }),
+        };
+      }
+
+      return {
+        status: 0,
+      };
+    });
+
+    vi.doMock("node:child_process", () => ({ spawnSync }));
+    vi.doMock("../../../scripts/verify-web-login-live.mjs", () => ({
+      runWebLoginLiveVerification: vi.fn(async () => []),
+    }));
+    vi.doMock("../../../scripts/browser-debug-support.mjs", () => ({
+      captureBrowserDebugContext: vi.fn(async () => ({
+        attachStatus: "unreachable",
+        currentPage: undefined,
+        currentConsole: [],
+        currentNetwork: [],
+        supportBundle: {
+          command:
+            "pnpm exec node scripts/capture-web-debug-bundle.mjs --provider chatgpt",
+        },
+      })),
+    }));
+    vi.stubGlobal(
+      "fetch",
+      vi.fn(async () => {
+        throw new Error("fetch should not run when managed-browser bootstrap fails first");
+      }),
+    );
+
+    try {
+      const { runServiceLiveVerification } = await import(
+        "../../../scripts/verify-service-live.mjs"
+      );
+      const result = await runServiceLiveVerification({
+        outDir,
+      });
+
+      expect(result).toEqual(
+        expect.objectContaining({
+          status: "external-blocker",
+          provider: "chatgpt",
+          blocker: "chatgpt-cdp-unavailable",
+          classification: "transport-instability",
+          errorCode: "existing-profile-locked",
+          rerunCommand:
+            "pnpm run bootstrap:web-login-browser -- --provider chatgpt && pnpm exec node scripts/verify-web-login-live.mjs --provider chatgpt",
+        }),
+      );
+    } finally {
+      rmSync(outDir, {
+        recursive: true,
+        force: true,
+      });
+    }
+  });
+
   it("attaches browser debug context to direct service-side external blockers", async () => {
     const outDir = mkdtempSync(join(tmpdir(), "switchyard-service-live-"));
     const spawnSync = vi.fn((command: string, args: string[]) => {
