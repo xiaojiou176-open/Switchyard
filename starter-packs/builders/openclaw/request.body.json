@@ -1,0 +1,6 @@
+{
+  "provider": "chatgpt",
+  "model": "chatgpt/gpt-4o",
+  "lane": "web",
+  "input": "Give me the current provider remediation summary."
+}

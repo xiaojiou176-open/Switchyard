@@ -1,0 +1,29 @@
+{
+  "$schema": "../../../docs/starter-manifest-templates.schema.json",
+  "manifestVersion": 1,
+  "builderTemplates": [
+    {
+      "target": "openclaw",
+      "status": "partial",
+      "templateShape": "delegated-runtime-helper",
+      "manifest": {
+        "starterTarget": "openclaw",
+        "runtimeBaseUrlEnv": "SWITCHYARD_RUNTIME_BASE_URL",
+        "catalogCommand": "pnpm run switchyard:cli -- builder-kit --target openclaw --json",
+        "invokeRoute": "/v1/runtime/invoke",
+        "mode": "delegation-first runtime bridge",
+        "safeClaims": [
+          "partial OpenClaw compatibility",
+          "delegation-first bridge",
+          "fail-closed helper starter"
+        ],
+        "notYetSupported": [
+          "operator control-plane parity",
+          "product-shell parity",
+          "channel shell parity"
+        ]
+      }
+    }
+  ],
+  "skillTemplates": []
+}

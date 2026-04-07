@@ -1,0 +1,29 @@
+{
+  "$schema": "../../../docs/starter-manifest-templates.schema.json",
+  "manifestVersion": 1,
+  "builderTemplates": [
+    {
+      "target": "codex",
+      "status": "partial",
+      "templateShape": "responses-runtime-helper",
+      "manifest": {
+        "starterTarget": "codex",
+        "runtimeBaseUrlEnv": "SWITCHYARD_RUNTIME_BASE_URL",
+        "catalogCommand": "pnpm run switchyard:cli -- builder-kit --target codex --json",
+        "invokeRoute": "/v1/runtime/invoke",
+        "mode": "text-only runtime delegation",
+        "safeClaims": [
+          "partial Codex compatibility",
+          "thin runtime bridge",
+          "fail-closed helper starter"
+        ],
+        "notYetSupported": [
+          "tool execution parity",
+          "mcp parity",
+          "worktree parity"
+        ]
+      }
+    }
+  ],
+  "skillTemplates": []
+}

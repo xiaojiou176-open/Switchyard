@@ -1,0 +1,12 @@
+{
+  "name": "@switchyard/provider-web-gemini",
+  "private": true,
+  "type": "module",
+  "dependencies": {
+    "playwright-core": "1.58.2"
+  },
+  "scripts": {
+    "build": "pnpm exec node ../../../../scripts/build-package.mjs",
+    "typecheck": "pnpm exec tsc -p tsconfig.json --pretty false"
+  }
+}

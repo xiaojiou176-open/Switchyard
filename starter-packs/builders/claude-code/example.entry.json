@@ -1,0 +1,25 @@
+{
+  "target": "claude-code",
+  "status": "partial",
+  "exampleShape": "message-runtime-helper",
+  "example": {
+    "name": "claude-code-runtime-helper-example",
+    "runtimeBaseUrlEnv": "SWITCHYARD_RUNTIME_BASE_URL",
+    "catalogCommand": "pnpm run switchyard:cli -- builder-kit --target claude-code --json",
+    "request": {
+      "model": "anthropic/claude-sonnet-4",
+      "lane": "byok",
+      "messages": [
+        {
+          "role": "user",
+          "content": "Summarize the current auth status."
+        }
+      ]
+    }
+  },
+  "safeClaims": [
+    "partial Claude Code compatibility",
+    "thin message/runtime bridge",
+    "example helper config"
+  ]
+}

@@ -1,0 +1,124 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/xiaojiou176-open/Switchyard/examples/hosts/index.schema.json",
+  "title": "Switchyard Host Integration Examples",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "$schema",
+    "indexVersion",
+    "hostExamples"
+  ],
+  "properties": {
+    "$schema": {
+      "type": "string"
+    },
+    "indexVersion": {
+      "type": "integer",
+      "minimum": 1
+    },
+    "hostExamples": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/hostExample"
+      }
+    }
+  },
+  "$defs": {
+    "status": {
+      "type": "string",
+      "enum": [
+        "supported now",
+        "partial",
+        "planned",
+        "research only",
+        "not now"
+      ]
+    },
+    "stringArray": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
+    },
+    "hostExample": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "target",
+        "status",
+        "hostShape",
+        "examplePath",
+        "readmePath",
+        "configPath",
+        "smokeScriptPath",
+        "smokeCommand",
+        "bestEntry",
+        "firstSuccessCheck",
+        "relatedStarterPackPath",
+        "relatedDocs",
+        "safeClaims",
+        "notYetSupported"
+      ],
+      "properties": {
+        "target": {
+          "type": "string",
+          "minLength": 1
+        },
+        "status": {
+          "$ref": "#/$defs/status"
+        },
+        "hostShape": {
+          "type": "string",
+          "minLength": 1
+        },
+        "examplePath": {
+          "type": "string",
+          "minLength": 1
+        },
+        "readmePath": {
+          "type": "string",
+          "minLength": 1
+        },
+        "configPath": {
+          "type": "string",
+          "minLength": 1
+        },
+        "smokeScriptPath": {
+          "type": "string",
+          "minLength": 1
+        },
+        "smokeCommand": {
+          "type": "string",
+          "minLength": 1
+        },
+        "bestEntry": {
+          "type": "string",
+          "minLength": 1
+        },
+        "firstSuccessCheck": {
+          "type": "string",
+          "minLength": 1
+        },
+        "relatedCompatTarget": {
+          "type": "string",
+          "minLength": 1
+        },
+        "relatedStarterPackPath": {
+          "type": "string",
+          "minLength": 1
+        },
+        "relatedDocs": {
+          "$ref": "#/$defs/stringArray"
+        },
+        "safeClaims": {
+          "$ref": "#/$defs/stringArray"
+        },
+        "notYetSupported": {
+          "$ref": "#/$defs/stringArray"
+        }
+      }
+    }
+  }
+}

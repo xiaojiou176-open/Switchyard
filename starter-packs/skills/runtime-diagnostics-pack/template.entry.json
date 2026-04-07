@@ -1,0 +1,20 @@
+{
+  "id": "runtime-diagnostics-pack",
+  "status": "partial",
+  "templateShape": "read-only-runtime-diagnostics",
+  "manifest": {
+    "starterTarget": "runtime-diagnostics-pack",
+    "catalogCommand": "pnpm run switchyard:cli -- skill-pack --target runtime-diagnostics-pack --json",
+    "safeClaims": [
+      "read-only runtime diagnostics starter",
+      "provider triage helper",
+      "no execution-brain parity"
+    ],
+    "notYetSupported": [
+      "invoke",
+      "acquisition write",
+      "browser automation",
+      "execution-brain parity"
+    ]
+  }
+}

@@ -1,0 +1,20 @@
+{
+  "name": "switchyard-claude-code-host-example",
+  "runtimeBaseUrlEnv": "SWITCHYARD_RUNTIME_BASE_URL",
+  "catalogCommand": "pnpm run switchyard:cli -- host-example --target claude-code --json",
+  "request": {
+    "provider": "claude",
+    "lane": "web",
+    "model": "claude-sonnet-4-6",
+    "messages": [
+      {
+        "role": "user",
+        "content": "Summarize the latest auth status."
+      }
+    ]
+  },
+  "safeClaims": [
+    "partial Claude Code host example",
+    "message/runtime bridge config"
+  ]
+}

@@ -1,0 +1,19 @@
+{
+  "id": "docs-seo-sync-pack",
+  "status": "partial",
+  "exampleShape": "truth-sync-and-discoverability",
+  "example": {
+    "name": "docs-seo-sync-pack-example",
+    "catalogCommand": "pnpm run switchyard:cli -- skill-pack --target docs-seo-sync-pack --json",
+    "steps": [
+      "pnpm run switchyard:cli -- surface-catalog --json",
+      "cat docs/discoverability-keyword-truth.md",
+      "cat docs/public-surface-support-matrix.md"
+    ]
+  },
+  "safeClaims": [
+    "truth-sync helper",
+    "discoverability helper",
+    "no marketing autopilot"
+  ]
+}

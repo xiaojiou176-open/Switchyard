@@ -1,0 +1,9 @@
+{
+  "name": "@switchyard/provider-web-claude",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "pnpm exec node ../../../../scripts/build-package.mjs",
+    "typecheck": "pnpm exec tsc -p tsconfig.json --pretty false"
+  }
+}

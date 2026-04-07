@@ -1,0 +1,22 @@
+import {
+  printJson,
+  readPackJson,
+  readRepoJson,
+  readRepoText,
+} from "../../_shared/pack-helpers.mjs";
+
+const exampleDocument = readPackJson(import.meta.url, "./example.json");
+const starter = exampleDocument.skillExamples[0];
+const catalog = readRepoJson("docs/public-surface-catalog.json");
+const keywordTruth = readRepoText("docs/discoverability-keyword-truth.md");
+const supportMatrix = readRepoText("docs/public-surface-support-matrix.md");
+
+printJson({
+  starterPackId: "docs-seo-sync-pack",
+  safeClaims: starter.safeClaims,
+  catalogVersion: catalog.catalogVersion,
+  publicSurfaceCount: catalog.publicSurfaces.length,
+  compatTargetCount: catalog.compatTargets.length,
+  keywordTruthHasSwitchyard: keywordTruth.includes("Switchyard"),
+  supportMatrixHasPartial: supportMatrix.includes("`partial`"),
+});

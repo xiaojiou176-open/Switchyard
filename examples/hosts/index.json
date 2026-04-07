@@ -1,0 +1,122 @@
+{
+  "$schema": "./index.schema.json",
+  "indexVersion": 1,
+  "hostExamples": [
+    {
+      "target": "codex",
+      "status": "partial",
+      "hostShape": "responses-client-config",
+      "examplePath": "examples/hosts/codex",
+      "readmePath": "examples/hosts/codex/README.md",
+      "configPath": "examples/hosts/codex/config.example.json",
+      "smokeScriptPath": "examples/hosts/codex/smoke.mjs",
+      "smokeCommand": "pnpm run example:host-codex",
+      "bestEntry": "pnpm run switchyard:cli -- host-example --target codex",
+      "firstSuccessCheck": "Runs one text-only runtime invoke request through the host example config.",
+      "relatedCompatTarget": "codex",
+      "relatedStarterPackPath": "starter-packs/builders/codex",
+      "relatedDocs": [
+        "docs/host-integration-examples.md",
+        "docs/compat/codex.md",
+        "docs/starter-pack-chooser.md"
+      ],
+      "safeClaims": [
+        "partial Codex host example",
+        "Responses-style runtime bridge example",
+        "copy-paste config only"
+      ],
+      "notYetSupported": [
+        "tool execution parity",
+        "worktree parity",
+        "MCP parity"
+      ]
+    },
+    {
+      "target": "claude-code",
+      "status": "partial",
+      "hostShape": "message-gateway-config",
+      "examplePath": "examples/hosts/claude-code",
+      "readmePath": "examples/hosts/claude-code/README.md",
+      "configPath": "examples/hosts/claude-code/config.example.json",
+      "smokeScriptPath": "examples/hosts/claude-code/smoke.mjs",
+      "smokeCommand": "pnpm run example:host-claude-code",
+      "bestEntry": "pnpm run switchyard:cli -- host-example --target claude-code",
+      "firstSuccessCheck": "Runs one message-shaped runtime invoke request through the host example config.",
+      "relatedCompatTarget": "claude-code",
+      "relatedStarterPackPath": "starter-packs/builders/claude-code",
+      "relatedDocs": [
+        "docs/host-integration-examples.md",
+        "docs/compat/claude-code.md",
+        "docs/starter-pack-chooser.md"
+      ],
+      "safeClaims": [
+        "partial Claude Code host example",
+        "message/runtime bridge example",
+        "gateway-side config only"
+      ],
+      "notYetSupported": [
+        "terminal shell parity",
+        "approval parity",
+        "tool parity"
+      ]
+    },
+    {
+      "target": "openclaw",
+      "status": "partial",
+      "hostShape": "delegation-runtime-config",
+      "examplePath": "examples/hosts/openclaw",
+      "readmePath": "examples/hosts/openclaw/README.md",
+      "configPath": "examples/hosts/openclaw/config.example.json",
+      "smokeScriptPath": "examples/hosts/openclaw/smoke.mjs",
+      "smokeCommand": "pnpm run example:host-openclaw",
+      "bestEntry": "pnpm run switchyard:cli -- host-example --target openclaw",
+      "firstSuccessCheck": "Runs one delegation-first runtime invoke request through the host example config.",
+      "relatedCompatTarget": "openclaw",
+      "relatedStarterPackPath": "starter-packs/builders/openclaw",
+      "relatedDocs": [
+        "docs/host-integration-examples.md",
+        "docs/compat/openclaw.md",
+        "docs/starter-pack-chooser.md"
+      ],
+      "safeClaims": [
+        "partial OpenClaw host example",
+        "delegation-first config example",
+        "no product-shell parity"
+      ],
+      "notYetSupported": [
+        "operator parity",
+        "product-shell parity",
+        "channel shell parity"
+      ]
+    },
+    {
+      "target": "mcp",
+      "status": "partial",
+      "hostShape": "stdio-client-config",
+      "examplePath": "examples/hosts/mcp",
+      "readmePath": "examples/hosts/mcp/README.md",
+      "configPath": "examples/hosts/mcp/config.example.json",
+      "smokeScriptPath": "examples/hosts/mcp/smoke.mjs",
+      "smokeCommand": "pnpm run example:host-mcp",
+      "bestEntry": "pnpm run switchyard:cli -- host-example --target mcp",
+      "firstSuccessCheck": "Starts the read-only MCP server, lists tools, and reads runtime health through the host example config.",
+      "relatedCompatTarget": "mcp",
+      "relatedStarterPackPath": "starter-packs/builders/mcp",
+      "relatedDocs": [
+        "docs/host-integration-examples.md",
+        "docs/mcp.md",
+        "docs/starter-pack-chooser.md"
+      ],
+      "safeClaims": [
+        "partial MCP host example",
+        "read-only stdio client wiring",
+        "runtime inspection only"
+      ],
+      "notYetSupported": [
+        "execution brain",
+        "runtime invoke through MCP",
+        "acquisition write through MCP"
+      ]
+    }
+  ]
+}

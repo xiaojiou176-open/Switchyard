@@ -1,0 +1,28 @@
+{
+  "$schema": "../../../docs/starter-manifest-examples.schema.json",
+  "exampleVersion": 1,
+  "builderExamples": [
+    {
+      "target": "openclaw",
+      "status": "partial",
+      "exampleShape": "delegated-runtime-helper",
+      "example": {
+        "name": "openclaw-runtime-helper-example",
+        "runtimeBaseUrlEnv": "SWITCHYARD_RUNTIME_BASE_URL",
+        "catalogCommand": "pnpm run switchyard:cli -- builder-kit --target openclaw --json",
+        "request": {
+          "provider": "chatgpt",
+          "model": "gpt-4o",
+          "lane": "web",
+          "input": "Give me the current provider remediation summary."
+        }
+      },
+      "safeClaims": [
+        "partial OpenClaw compatibility",
+        "delegation-first bridge",
+        "example helper config"
+      ]
+    }
+  ],
+  "skillExamples": []
+}

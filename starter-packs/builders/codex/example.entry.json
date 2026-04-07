@@ -1,0 +1,20 @@
+{
+  "target": "codex",
+  "status": "partial",
+  "exampleShape": "responses-runtime-helper",
+  "example": {
+    "name": "codex-runtime-helper-example",
+    "runtimeBaseUrlEnv": "SWITCHYARD_RUNTIME_BASE_URL",
+    "catalogCommand": "pnpm run switchyard:cli -- builder-kit --target codex --json",
+    "request": {
+      "model": "openai/gpt-4.1",
+      "lane": "byok",
+      "input": "Summarize the latest provider health snapshot."
+    }
+  },
+  "safeClaims": [
+    "partial Codex compatibility",
+    "thin runtime bridge",
+    "example helper config"
+  ]
+}
