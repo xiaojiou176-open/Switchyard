@@ -124,10 +124,93 @@ function ensureManagedBrowserWithOptions(
 
   if (result.status !== 0) {
     const details = result.stdout?.trim() || result.stderr?.trim();
-    throw new Error(
+    let parsedDetails;
+
+    if (details) {
+      try {
+        parsedDetails = JSON.parse(details);
+      } catch {
+        parsedDetails = undefined;
+      }
+    }
+
+    const error = new Error(
       `Managed browser bootstrap for ${provider} failed${details ? `: ${details}` : "."}`,
     );
+    error.code = parsedDetails?.error?.code;
+    error.bootstrapDetails = parsedDetails?.error;
+    throw error;
   }
+}
+
+function parseBootstrapFailureDetails(error) {
+  const message = error instanceof Error ? error.message : String(error);
+  const rawDetails = message.includes(": ") ? message.slice(message.indexOf(": ") + 2) : "";
+
+  if (!rawDetails) {
+    return {
+      message,
+    };
+  }
+
+  try {
+    const parsed = JSON.parse(rawDetails);
+
+    return {
+      message,
+      code:
+        parsed && typeof parsed === "object" && typeof parsed.error?.code === "string"
+          ? parsed.error.code
+          : undefined,
+      detailMessage:
+        parsed && typeof parsed === "object" && typeof parsed.error?.message === "string"
+          ? parsed.error.message
+          : undefined,
+      parsed,
+    };
+  } catch {
+    return {
+      message,
+      detailMessage: rawDetails,
+    };
+  }
+}
+
+function mapManagedBrowserBootstrapFailure(testCase, error) {
+  const details = parseBootstrapFailureDetails(error);
+  const explicitErrorCode =
+    error && typeof error === "object" && "code" in error ? error.code : undefined;
+  const explicitDetailMessage =
+    error &&
+    typeof error === "object" &&
+    "bootstrapDetails" in error &&
+    error.bootstrapDetails &&
+    typeof error.bootstrapDetails === "object" &&
+    "message" in error.bootstrapDetails &&
+    typeof error.bootstrapDetails.message === "string"
+      ? error.bootstrapDetails.message
+      : undefined;
+  const errorCode = explicitErrorCode ?? details.code;
+  const errorMessage = explicitDetailMessage ?? details.detailMessage ?? details.message;
+
+  if (
+    errorCode === "existing-profile-locked" ||
+    errorCode === "cdp-unreachable" ||
+    errorCode === "endpoint-not-devtools"
+  ) {
+    return {
+      status: "external-blocker",
+      provider: testCase.provider,
+      blocker: `${testCase.provider}-cdp-unavailable`,
+      classification: "transport-instability",
+      errorCode,
+      diagnostic: errorMessage,
+      rerunCommand: buildProviderLiveRerunCommand(testCase.provider),
+      ...buildProviderDiagnosisArtifacts(testCase.provider),
+    };
+  }
+
+  return undefined;
 }
 
 function wait(ms) {
@@ -348,7 +431,17 @@ export async function runServiceLiveVerification(options = {}) {
         continue;
       }
 
-      ensureManagedBrowser(testCase.provider, env);
+      try {
+        ensureManagedBrowser(testCase.provider, env);
+      } catch (error) {
+        const refinedFailure = mapManagedBrowserBootstrapFailure(testCase, error);
+
+        if (refinedFailure) {
+          return enrichServiceResultWithDebug(refinedFailure, env);
+        }
+
+        throw error;
+      }
     }
 
     compileServiceLiveProof(compiledOutDir);

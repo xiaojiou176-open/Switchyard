@@ -152,6 +152,89 @@ describe("verify-gemini-live script helpers", () => {
     }
   });
 
+  it("normalizes upstream reachability failures into external blockers", async () => {
+    const outDir = join(tmpdir(), `switchyard-gemini-proof-network-${Date.now()}`);
+    const moduleDir = join(outDir, "packages/providers/byok/gemini/src");
+    mkdirSync(moduleDir, { recursive: true });
+    writeFileSync(
+      join(moduleDir, "live-proof.js"),
+      "export async function runGeminiLiveProof(){ return { status: 'failure', reason: 'invoke-failed', model: 'gemini/gemini-2.5-flash', envStatus: [{ name: 'SWITCHYARD_GEMINI_API_KEY', present: true }], envNameUsed: 'SWITCHYARD_GEMINI_API_KEY', requestUrl: 'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=%3Credacted%3E', diagnostics: [], rawSummary: 'fetch failed' }; }",
+      "utf8",
+    );
+
+    vi.doMock("node:fs", async () => {
+      const actual = await vi.importActual<typeof import("node:fs")>("node:fs");
+      return {
+        ...actual,
+        rmSync: vi.fn(),
+      };
+    });
+    vi.doMock("node:child_process", () => ({
+      spawnSync: vi.fn(() => ({ status: 0 })),
+    }));
+
+    try {
+      const { runGeminiLiveVerification } = await import(
+        "../../../scripts/verify-gemini-live.mjs"
+      );
+      const result = await runGeminiLiveVerification({
+        outDir,
+      });
+
+      expect(result).toEqual(
+        expect.objectContaining({
+          status: "external-blocker",
+          blocker: "gemini-provider-unavailable",
+          classification: "provider-unavailable",
+          rawSummary: "fetch failed",
+          rerunCommand: "pnpm exec node scripts/verify-gemini-live.mjs",
+        }),
+      );
+    } finally {
+      scheduleDeferredCleanup(outDir);
+    }
+  });
+
+  it("maps stable fetch failures with a configured Gemini key into external blockers", async () => {
+    const outDir = join(tmpdir(), `switchyard-gemini-proof-fetch-blocker-${Date.now()}`);
+    const moduleDir = join(outDir, "packages/providers/byok/gemini/src");
+    mkdirSync(moduleDir, { recursive: true });
+    writeFileSync(
+      join(moduleDir, "live-proof.js"),
+      "export async function runGeminiLiveProof(){ return { status: 'failure', reason: 'invoke-failed', envStatus: [{ name: 'SWITCHYARD_GEMINI_API_KEY', present: true }], envNameUsed: 'SWITCHYARD_GEMINI_API_KEY', requestUrl: 'https://example.test', diagnostics: [], rawSummary: 'fetch failed' }; }",
+      "utf8",
+    );
+
+    vi.doMock("node:fs", async () => {
+      const actual = await vi.importActual<typeof import("node:fs")>("node:fs");
+      return {
+        ...actual,
+        rmSync: vi.fn(),
+      };
+    });
+    vi.doMock("node:child_process", () => ({
+      spawnSync: vi.fn(() => ({ status: 0 })),
+    }));
+
+    try {
+      const { runGeminiLiveVerification } = await import("../../../scripts/verify-gemini-live.mjs");
+      const result = await runGeminiLiveVerification({
+        outDir,
+      });
+
+      expect(result).toEqual(
+        expect.objectContaining({
+          status: "external-blocker",
+          provider: "gemini",
+          blocker: "gemini-provider-unavailable",
+          classification: "provider-unavailable",
+        }),
+      );
+    } finally {
+      scheduleDeferredCleanup(outDir);
+    }
+  });
+
 
 
   it("throws when the compile step itself reports a spawn error", async () => {
