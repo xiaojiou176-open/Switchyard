@@ -1,0 +1,11 @@
+{
+  "name": "@switchyard/surface-http",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "pnpm exec node ../../../scripts/build-package.mjs",
+    "typecheck": "pnpm exec tsc -p tsconfig.json --pretty false",
+    "test": "pnpm run test:integration",
+    "test:integration": "pnpm exec vitest run --config ../../../vitest.config.ts --project surface-http-integration"
+  }
+}

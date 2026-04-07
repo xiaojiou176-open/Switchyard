@@ -1,0 +1,305 @@
+import { createServer, type Server } from "node:http";
+
+import {
+  buildStoredWebProviderSessions,
+  buildStoredWebRuntimeEnv,
+} from "../../../packages/credentials/src/index.js";
+import type { WebProviderId, WebSessionSnapshot } from "../../../packages/lanes/web/src/index.js";
+import { createSwitchyardSdkClient } from "../../../packages/surfaces/sdk-client/src/index.js";
+import {
+  SwitchyardHttpSurface,
+  createNodeHttpHandler,
+  buildServiceRouteCatalog,
+  type ServiceRuntimeRouteCatalog,
+} from "../../../packages/surfaces/http/src/index.js";
+
+import { createDefaultWebLane } from "./default-web-lane.js";
+import {
+  createDefaultWebAcquisitionRunners,
+  type WebAcquisitionRunnerMap,
+} from "./web-auth-acquisition.js";
+import {
+  createDefaultWebDebugSupportRunners,
+  type WebDebugSupportRunner,
+} from "./browser-debug-support.js";
+import {
+  createDefaultWebLiveProofRunners,
+  type WebLiveProofRunner,
+} from "./default-web-live-proofs.js";
+import {
+  loadLocalEnvFiles,
+  loadProviderSessionsFromEnv,
+  loadServicePort,
+} from "./env.js";
+
+loadLocalEnvFiles();
+
+export interface SwitchyardServiceOptions {
+  providerSessions?: Partial<Record<WebProviderId, Partial<WebSessionSnapshot>>>;
+  runtimeEnv?: Record<string, string | undefined>;
+  liveProofRunners?: Partial<Record<WebProviderId, WebLiveProofRunner>>;
+  debugSupportRunners?: Partial<Record<WebProviderId, WebDebugSupportRunner>>;
+  liveProofEnv?: Record<string, string | undefined>;
+  acquisitionRunners?: WebAcquisitionRunnerMap;
+  liveProofFetch?: typeof fetch;
+  port?: number;
+  serviceName?: string;
+  ownerUserId?: string;
+  useLocalWebAuthStore?: boolean;
+}
+
+export interface StartedSwitchyardService {
+  server: Server;
+  port: number;
+  baseUrl: string;
+  bootstrapUrl: string;
+  routes: ServiceRuntimeRouteCatalog;
+  close(): Promise<void>;
+}
+
+function mergeProviderSessions(
+  ...sources: Array<Partial<Record<WebProviderId, Partial<WebSessionSnapshot>>> | undefined>
+): Partial<Record<WebProviderId, Partial<WebSessionSnapshot>>> {
+  const merged: Partial<Record<WebProviderId, Partial<WebSessionSnapshot>>> = {};
+
+  for (const source of sources) {
+    if (!source) {
+      continue;
+    }
+
+    for (const [provider, session] of Object.entries(source) as Array<
+      [WebProviderId, Partial<WebSessionSnapshot> | undefined]
+    >) {
+      if (!session) {
+        continue;
+      }
+
+      merged[provider] = {
+        ...(merged[provider] ?? {}),
+        ...session,
+      };
+    }
+  }
+
+  return merged;
+}
+
+function mergeRuntimeEnv(
+  ...sources: Array<Record<string, string | undefined> | undefined>
+): Record<string, string | undefined> {
+  return Object.assign({}, ...sources.filter(Boolean));
+}
+
+function deriveRuntimeRoutingEnvFromProviderSessions(
+  providerSessions: Partial<Record<WebProviderId, Partial<WebSessionSnapshot>>>,
+  runtimeEnv: Record<string, string | undefined>,
+): Record<string, string | undefined> {
+  const nextEnv = { ...runtimeEnv };
+  const sessions = Object.values(providerSessions).filter(Boolean) as Array<
+    Partial<WebSessionSnapshot>
+  >;
+  const isolatedCapture = sessions.find((session) => {
+    const browserMode =
+      session.captureProvenance?.browserMode ?? session.acquisitionMode;
+
+    return (
+      browserMode === "isolated-chrome-root" ||
+      browserMode === "existing-chrome-profile"
+    );
+  });
+
+  if (!isolatedCapture?.captureProvenance) {
+    return nextEnv;
+  }
+
+  const provenance = isolatedCapture.captureProvenance;
+  const derivedCdpUrl = provenance.cdpUrl?.trim();
+  const derivedUserDataDir = provenance.userDataDir?.trim();
+  const derivedProfileName = provenance.profileName?.trim();
+
+  nextEnv.SWITCHYARD_BROWSER_MODE ??= "isolated-chrome-root";
+  nextEnv.SWITCHYARD_WEB_AUTH_ACTIVE_MODE ??= "isolated-chrome-root";
+
+  if (derivedCdpUrl) {
+    nextEnv.SWITCHYARD_WEB_AUTH_EXISTING_PROFILE_CDP_URL ??= derivedCdpUrl;
+    nextEnv.SWITCHYARD_WEB_AUTH_CDP_URL ??= derivedCdpUrl;
+    nextEnv.SWITCHYARD_WEB_GEMINI_CDP_URL ??= derivedCdpUrl;
+  }
+
+  if (derivedUserDataDir) {
+    nextEnv.SWITCHYARD_CHROME_USER_DATA_DIR ??= derivedUserDataDir;
+    nextEnv.SWITCHYARD_WEB_AUTH_EXISTING_PROFILE_DIR ??= derivedUserDataDir;
+  }
+
+  if (derivedProfileName) {
+    nextEnv.SWITCHYARD_CHROME_PROFILE_NAME ??= derivedProfileName;
+  }
+
+  return nextEnv;
+}
+
+function applyRuntimeBrowserModeToProviderSessions(
+  providerSessions: Partial<Record<WebProviderId, Partial<WebSessionSnapshot>>>,
+  runtimeEnv: Record<string, string | undefined>,
+): Partial<Record<WebProviderId, Partial<WebSessionSnapshot>>> {
+  const activeMode =
+    runtimeEnv.SWITCHYARD_BROWSER_MODE ?? runtimeEnv.SWITCHYARD_WEB_AUTH_ACTIVE_MODE;
+
+  if (activeMode !== "isolated-chrome-root") {
+    return providerSessions;
+  }
+
+  const nextSessions: Partial<Record<WebProviderId, Partial<WebSessionSnapshot>>> = {};
+
+  for (const [provider, session] of Object.entries(providerSessions) as Array<
+    [WebProviderId, Partial<WebSessionSnapshot> | undefined]
+  >) {
+    if (!session) {
+      continue;
+    }
+
+    const currentMode = session.acquisitionMode;
+    const shouldNormalizeToIsolatedRoot =
+      currentMode === undefined ||
+      currentMode === "managed-browser" ||
+      currentMode === "existing-chrome-profile" ||
+      currentMode === "isolated-chrome-root";
+
+    nextSessions[provider] = {
+      ...session,
+      acquisitionMode: shouldNormalizeToIsolatedRoot
+        ? "isolated-chrome-root"
+        : currentMode,
+    };
+  }
+
+  return nextSessions;
+}
+
+export function createSwitchyardService(options: SwitchyardServiceOptions = {}) {
+  const shouldUseLocalWebAuthStore = options.useLocalWebAuthStore !== false;
+  const storedProviderSessions = shouldUseLocalWebAuthStore
+    ? (buildStoredWebProviderSessions(process.env) as Partial<
+        Record<WebProviderId, Partial<WebSessionSnapshot>>
+      >)
+    : {};
+  const storedRuntimeEnv = shouldUseLocalWebAuthStore
+    ? buildStoredWebRuntimeEnv(process.env)
+    : {};
+  const providerSessions = mergeProviderSessions(
+    loadProviderSessionsFromEnv(process.env),
+    storedProviderSessions,
+    options.providerSessions,
+  );
+  const baseRuntimeEnv = mergeRuntimeEnv(
+    process.env,
+    storedRuntimeEnv,
+    options.runtimeEnv,
+    options.liveProofEnv,
+  );
+  const baseLiveProofEnv = mergeRuntimeEnv(
+    process.env,
+    storedRuntimeEnv,
+    options.runtimeEnv,
+    options.liveProofEnv,
+  );
+  const runtimeEnv = deriveRuntimeRoutingEnvFromProviderSessions(
+    providerSessions,
+    baseRuntimeEnv,
+  );
+  const liveProofEnv = deriveRuntimeRoutingEnvFromProviderSessions(
+    providerSessions,
+    baseLiveProofEnv,
+  );
+  const effectiveProviderSessions = applyRuntimeBrowserModeToProviderSessions(
+    providerSessions,
+    runtimeEnv,
+  );
+  const byokClient = createSwitchyardSdkClient({
+    env: runtimeEnv,
+    fetch: options.liveProofFetch,
+  });
+  const { lane, context } = createDefaultWebLane({
+    providerSessions: effectiveProviderSessions,
+    runtimeEnv,
+  });
+  const surface = new SwitchyardHttpSurface({
+    webLane: lane,
+    context,
+    byokClient,
+    serviceName: options.serviceName,
+    ownerUserId: options.ownerUserId,
+    liveProofRunners: {
+      ...createDefaultWebLiveProofRunners({
+        env: liveProofEnv,
+        fetchFn: options.liveProofFetch,
+      }),
+      ...options.liveProofRunners,
+    },
+    debugSupportRunners: {
+      ...createDefaultWebDebugSupportRunners(runtimeEnv),
+      ...options.debugSupportRunners,
+    },
+    acquisitionRunners: {
+      ...createDefaultWebAcquisitionRunners(runtimeEnv),
+      ...options.acquisitionRunners,
+    },
+  });
+
+  return {
+    lane,
+    context,
+    surface,
+    handler: createNodeHttpHandler(surface),
+    bootstrapPath: buildServiceRouteCatalog().bootstrap,
+    routes: buildServiceRouteCatalog(),
+  };
+}
+
+export async function startSwitchyardService(
+  options: SwitchyardServiceOptions = {},
+): Promise<StartedSwitchyardService> {
+  const app = createSwitchyardService(options);
+  const server = createServer(app.handler);
+  const requestedPort = options.port ?? 0;
+
+  await new Promise<void>((resolve, reject) => {
+    server.once("error", reject);
+    server.listen(requestedPort, "127.0.0.1", () => {
+      server.off("error", reject);
+      resolve();
+    });
+  });
+
+  const address = server.address();
+  const port = typeof address === "object" && address ? address.port : requestedPort;
+  const baseUrl = `http://127.0.0.1:${port}`;
+  const routes = buildServiceRouteCatalog(baseUrl);
+
+  return {
+    server,
+    port,
+    baseUrl,
+    bootstrapUrl: routes.bootstrap,
+    routes,
+    async close() {
+      await new Promise<void>((resolve, reject) => {
+        server.close((error) => {
+          if (error) {
+            reject(error);
+            return;
+          }
+
+          resolve();
+        });
+      });
+    },
+  };
+}
+
+export function startFromProcessEnv() {
+  return startSwitchyardService({
+    port: loadServicePort(process.env),
+    serviceName: "switchyard-local-service",
+  });
+}

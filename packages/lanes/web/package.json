@@ -1,0 +1,10 @@
+{
+  "name": "@switchyard/lanes-web",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "pnpm exec node ../../../scripts/build-package.mjs",
+    "typecheck": "pnpm exec tsc -p tsconfig.json --pretty false",
+    "test:unit": "pnpm exec vitest run --config ../../../vitest.config.ts --project lanes-web"
+  }
+}
