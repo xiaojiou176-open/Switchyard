@@ -7,16 +7,46 @@
 
 > **把终端用户已有的 AI 访问资格，统一收编成一个可被 AI 产品消费的共享运行时。**
 
+## 30 秒版本
+
+如果你现在只想先用一句人话记住它：
+
+> **`Switchyard` 不是另一个 AI App。**
+>
+> **它是一层 shared provider runtime。**
+>
+> **它把 `BYOK + Web/Login` 这两类真实 AI 访问资格，统一变成别的 AI 产品可直接接入的 service-first substrate。**
+
+如果你只想先读一页最短说明：
+
+- [docs/media/30-second-overview.md](./docs/media/30-second-overview.md)
+
+## 当前证据条
+
+如果你现在最关心的不是愿景，而是“这仓到底是不是 PPT”，先看这 3 条：
+
+- `repo-side gate = green`
+  - `pnpm typecheck`、frontdoor/docs/distribution/MCP/CLI slice、`pnpm build` 当前都过
+- `verify:service-live = green`
+  - trio 统一 service-first invoke 当前是通的
+- `latest aggregate = external-blocker on this workspace`
+  - 当前这台 workspace 上仍停在 `Claude / Grok / Qwen = missing-web-session-material`
+
 ## 快速入口
 
 如果你现在只想知道“第一步该去哪”，先走这三条最短路径之一：
 
-- 我想本地试跑 `Switchyard`
-  - 先看 [docs/runbooks/dev-bootstrap.md](./docs/runbooks/dev-bootstrap.md)
-- 我想接入宿主 / package / starter pack
-  - 先看 [docs/plugin-skill-starter-kits.md](./docs/plugin-skill-starter-kits.md)
-- 我想看 public distribution / listing 到哪一步
-  - 先看 [docs/public-distribution-ledger.md](./docs/public-distribution-ledger.md)
+- 我想先用 30 秒看懂它
+  - 先看 [docs/media/30-second-overview.md](./docs/media/30-second-overview.md)
+- 我想跑通默认第一把成功
+  - 先看 [docs/first-success.md](./docs/first-success.md)
+- 我想先看它现在到底能证明什么
+  - 先看 [docs/public-proof-pack.md](./docs/public-proof-pack.md)
+
+如果你已经明确自己在走 builder / distribution 路线，再看：
+
+- [docs/plugin-skill-starter-kits.md](./docs/plugin-skill-starter-kits.md)
+- [docs/public-distribution-ledger.md](./docs/public-distribution-ledger.md)
 
 这里的“访问资格”包括：
 
@@ -294,11 +324,17 @@ flowchart LR
 ## 仓库现状
 
 当前仓库已经不再是“只有文档、还没开工”的状态。  
-而且在当前这台 credentialed workstation 上，它也**已经可以**被诚实地描述成 “repo-side gate 已经站稳，top-level program 只剩两个 external blockers”。
+而且在当前这台 workspace 上，它也已经可以被更诚实地描述成：
+
+> **repo-side gate 已经站稳。**
+>
+> **但 latest live truth 仍然是 workstation-bound，而且这次 fresh rerun 仍然停在 3 个 external blockers。**
 
 当前更准确的阶段是：
 
-> **`Switchyard` 的 fresh internal gate 已经站稳，`verify:service-live` 也已经成功，但 latest aggregate closeout 仍停在两个外部尾巴。**
+> **`Switchyard` 的 fresh internal gate 已经站稳，`verify:service-live` 也已经成功。**
+>
+> **但 latest aggregate closeout 仍是 `external-blocker`，而且当前这轮 fresh rerun 在这台 workspace 上停在 `Claude / Grok / Qwen = missing-web-session-material`。**
 >
 > **但这仍然是 environment-bound truth：换机器、换浏览器会话、换凭证材料以后，依然要重新跑 live gate。**
 
@@ -335,43 +371,39 @@ flowchart LR
 
 - `apps/service/src/web-auth-acquisition.ts` 已经把 5 家 `Web/Login` provider 接进 local-first acquisition 主线
 - `verify:web-login-live`、`verify:gemini-live`、`reality:gate` 都已存在且能 fresh 复验
-- 当前这轮 **latest authoritative closeout** 不再说明“内部有没有做完”，而是在说明“顶层还剩哪两个外部尾巴”
-- 最新 fresh rerun 已经把这条顶层账继续收窄成：
-  - `Qwen` false negative 已清掉
-  - `Grok` 不再只是 generic provider timeout，而是更窄的 `anti-bot / human-verification-required` blocker
+- 当前这轮 **latest fresh rerun in this workspace** 说明的，不是“内部有没有做完”，而是“当前这台机器上还缺哪些 live/browser 材料”
 - 当前 Program L1 的 fresh repo-side rerun 已确认：
   - `pnpm typecheck` = 0
-  - `pnpm test` = 0
+  - `pnpm exec vitest run tests/integration/docs/frontdoor-docs.test.ts tests/integration/docs/package-ready-distribution.test.ts tests/unit/mcp/switchyard-mcp.test.ts tests/unit/web/switchyard-cli.test.ts --config vitest.config.ts` = 0
+    - `5 files / 43 tests passed`
   - `pnpm build` = 0
-  - `pnpm run test:coverage` = 0
-  - overall coverage
-    - `Statements` = `80.52%`
-    - `Lines` = `80.52%`
-  - `pnpm run verify:gemini-live` = 0
-  - 当前 authoritative aggregate closeout：
+  - `pnpm run reality:gate` = `2`
+  - 当前 latest fresh aggregate closeout：
     - `pnpm run verify:service-live` = `0`
-    - `pnpm run reality:gate` = `2`
     - `overallStatus = external-blocker`
     - `internalGate.passed = true`
-    - `successCount = 5`
-    - `externalBlockerCount = 1`
+    - `successCount = 3`
+    - `externalBlockerCount = 3`
     - `failureCount = 0`
     - current external blockers:
-      - `Grok` = `human-verification-required / anti-bot-check-required`
+      - `Claude` = `missing-web-session-material`
+      - `Grok` = `missing-web-session-material`
+      - `Qwen` = `missing-web-session-material`
 - 当前 fresh 已确认：
   - `Gemini BYOK` 已经成功
-  - `Gemini` provider-scoped verifier 当前 success
+  - `ChatGPT` provider-scoped live proof 当前 success
+  - `Gemini` provider-scoped live proof 当前 success
   - `verify:service-live` 当前也已成功
-  - 当前这台 credentialed workstation 上，top-level program 不是 internal blocker，但 aggregate closeout 仍停在两个外部网页登录尾巴
-  - `auth-status ready` 仍然只说明本地材料在，不自动替代 future live rerun；但 latest rerun 已证明 attached browser workspace 也已可用
+  - 当前这台 workspace 上，top-level program 不是 internal blocker，但 aggregate closeout 仍停在 3 个外部网页登录材料缺口
+  - `auth-status ready` 仍然只说明本地材料在，不自动替代 future live rerun
 
 更重要的一点：
 
 > **当前 live repo 已经不是“文档好了但代码没站起来”。**
 >
-> **今天更稳、更诚实的说法是：internal gate 已经通过，coverage 已稳定在 `80.52% / 80.52%`，`verify:service-live` 也已经成功，但 latest authoritative aggregate closeout 仍停在两个外部网页登录尾巴。**
+> **今天更稳、更诚实的说法是：repo-side gate 已经通过，`verify:service-live` 也已经成功，但 latest aggregate closeout 在这台 workspace 上仍停在 `Claude / Grok / Qwen = missing-web-session-material`。**
 >
-> **也就是说，当前 program 不是卡在内部工程债，而是 paused 在 `Grok = human-verification-required / anti-bot-check-required` 这一条更窄的外部网页登录尾巴。**
+> **也就是说，当前 program 不是卡在内部工程债，而是 paused 在一组 workstation-bound external blockers。**
 >
 > **但环境边界仍然成立：未来接手者如果换了机器、换了浏览器会话、换了凭证材料，仍然必须重新跑 live gate，而不是把这次 green 当成永久常量。**
 
@@ -387,7 +419,7 @@ flowchart LR
 >
 > **它也不覆盖更高优先级的 ADR / blueprint / task board。**
 >
-> 当前这些更高优先级工件需要同步到同一个更诚实的结论：当前顶层 program 状态是 `PROGRAM PAUSED - ONLY TRUE EXTERNAL BLOCKERS REMAIN`，原因不是内部工程漂移，而是 latest aggregate closeout 当前仍停在 `Grok = human-verification-required / anti-bot-check-required` 这一条 workstation-bound external blocker。
+> 当前这些更高优先级工件需要同步到同一个更诚实的结论：当前顶层 program 状态仍然是 `PROGRAM PAUSED - ONLY TRUE EXTERNAL BLOCKERS REMAIN`，原因不是内部工程漂移，而是 latest aggregate closeout 在当前这台 workspace 上仍停在 `Claude / Grok / Qwen = missing-web-session-material` 这一组 workstation-bound external blockers。
 
 同时补一个当前工程现实：
 
@@ -396,8 +428,8 @@ flowchart LR
 > - BYOK lane 通过统一 service runtime 入口暴露
 > - SDK 也可以围绕同一 service entrypoint 提供 client
 >
-> 更诚实的当前写法应该是：**repo-side substrate 已经站住，但 latest aggregate closeout 仍 paused 在一个外部网页登录 blocker。**
-> 说得更直白一点：地基已经打牢，真正没过线的不是 repo 自己，而是当前这台机器上 `Grok` 命中的 anti-bot / human verification 门槛；`Qwen` 这一条 false negative 已经被 fresh rerun 清掉。
+> 更诚实的当前写法应该是：**repo-side substrate 已经站住，但 latest aggregate closeout 仍 paused 在一组外部网页登录材料缺口。**
+> 说得更直白一点：地基已经打牢，真正没过线的不是 repo 自己，而是当前这台机器上 `Claude / Grok / Qwen` 还缺 provider-specific cookie bundle 和 browser user agent 这两类 live proof 材料。
 
 如果你需要把 `store-ready != live-ready` 看得更具体一点，现在有一条专门的 browser diagnose 工具：
 
@@ -625,10 +657,29 @@ pnpm run reseed:isolated-chrome-root -- --json
 
 ## Developer Frontdoor
 
-如果你是第一次来看这个仓，下面这些文档最值得直接打开：
+如果你是第一次来看这个仓，先别一下打开下面整排目录柜。
+
+先按这个顺序走，会更接近“先点火，再开地图”：
+
+1. [docs/media/30-second-overview.md](docs/media/30-second-overview.md)
+   - 30 秒先搞懂 `Switchyard` 是什么，不是什么
+2. [docs/first-success.md](docs/first-success.md)
+   - 当前最短默认成功路径：先把 service/runtime 跑起来，再做第一把 bounded invoke / inspect
+3. [docs/public-proof-pack.md](docs/public-proof-pack.md)
+   - 当前这仓到底已经能证明什么、哪些只是 partial、哪些还受 workstation 边界约束
+4. [docs/README.md](docs/README.md)
+   - 再回完整 docs frontdoor，按目标深入
+
+如果你已经知道自己要做什么，再打开下面这批文档：
 
 - [docs/README.md](docs/README.md)
   - 文档总入口 / docs frontdoor
+- [docs/media/30-second-overview.md](docs/media/30-second-overview.md)
+  - 30 秒版本的产品身份、可证明事实和非目标
+- [docs/first-success.md](docs/first-success.md)
+  - 默认 first-success 路径 / 先点火再扩展
+- [docs/public-proof-pack.md](docs/public-proof-pack.md)
+  - 当前 proof、最小 smoke、allowed claims / forbidden overclaim
 - [docs/api/service-http-reference.md](docs/api/service-http-reference.md)
   - 当前 committed 的 HTTP runtime routes、`/v1/runtime/auth-portal`、以及 service-first 调试入口
 - [docs/api/openapi.yaml](docs/api/openapi.yaml)

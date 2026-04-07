@@ -20,22 +20,21 @@
 这轮 fresh truth 下，`Switchyard` 主仓内最重要的事实是：
 
 - `pnpm typecheck` = `0`
-- `pnpm test` = `0`
+- `pnpm exec vitest run tests/integration/docs/frontdoor-docs.test.ts tests/integration/docs/package-ready-distribution.test.ts tests/unit/mcp/switchyard-mcp.test.ts tests/unit/web/switchyard-cli.test.ts --config vitest.config.ts` = `0`
+  - `5 files / 43 tests passed`
 - `pnpm build` = `0`
-- `pnpm run test:coverage` = `0`
-- overall coverage
-  - `Statements = 80.55%`
-  - `Lines = 80.59%`
-- `pnpm run verify:gemini-live` = `0`
-- current authoritative aggregate closeout:
+- current fresh aggregate closeout in this workspace:
   - `pnpm run verify:service-live` = `0`
   - `pnpm run reality:gate` = `2`
   - `overallStatus = external-blocker`
   - `internalGate.passed = true`
-  - `successCount = 5`
-  - `externalBlockerCount = 1`
+  - `successCount = 3`
+  - `externalBlockerCount = 3`
   - `failureCount = 0`
-  - remaining blocker = `Grok` anti-bot / human-verification-required gate after workspace proof
+  - current external blockers:
+    - `Claude` = `missing-web-session-material`
+    - `Grok` = `missing-web-session-material`
+    - `Qwen` = `missing-web-session-material`
 
 所以当前最诚实的阶段分层是：
 
@@ -54,8 +53,8 @@
 2. `HTTP` discovery / auth-status / probe / remediation / acquisition / invoke 路由都已 committed。
 3. `SDK/client` 作为同一 substrate 上的正式消费面已经存在，但仍是 `partial`。
 4. `Gemini BYOK` live gate 当前成功。
-5. standalone `verify:web-login-live` 当前已经把 `ChatGPT / Gemini / Claude / Qwen` 锁到 success，并把 `Grok` fail-closed 成单一外部 blocker。
-6. `reality:gate` 当前已经不是 internal failure，而是稳定收敛到一个 aggregate external blocker。
+5. 当前这台 workspace 上的 latest rerun 已把 `ChatGPT / Gemini` 锁到 success，并把 `Claude / Grok / Qwen` fail-closed 成 session-material external blockers。
+6. `reality:gate` 当前已经不是 internal failure，而是稳定收敛到一组 aggregate external blockers。
 
 换句话说：
 

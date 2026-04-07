@@ -35,13 +35,16 @@ Truthfully claimable now:
 - `API substrate first`
 - `service-first runtime frontdoor`
 - `AI app backend` in the narrow runtime sense
+- `partial Codex / Claude Code / OpenClaw thin compat`
+- `partial read-only MCP surface`
 
 Not truthfully claimable now:
 
-- `Codex support`
-- `Claude Code support`
-- `OpenClaw support`
-- `MCP server support`
+- `full Codex support`
+- `full Claude Code support`
+- `full OpenClaw parity`
+- `MCP execution brain`
+- `runtime invoke through MCP`
 
 ## Why This Page Exists
 

@@ -59,14 +59,15 @@
 - `Gemini BYOK` 的 live verifier 路径已经存在，而且这轮 fresh rerun 已经成功
 - `typecheck / test / build` 已经可以稳定通过
 - `test:coverage` 也已经重新回到稳定通过，并回到 80% 线以上
-- `reality:gate` 当前已经不再报 internal failure，但 latest authoritative rerun 仍停在两个外部 blocker
+- `reality:gate` 当前已经不再报 internal failure，但 latest authoritative rerun 仍停在 3 个 workstation-bound external blockers
 - 当前这轮 fresh rerun 里：
+  - `ChatGPT` provider-scoped live proof 当前 success
   - `Gemini` provider-scoped verifier 当前 success
   - `reality:gate`
     - `overallStatus = external-blocker`
     - `internalGate.passed = true`
-    - webLogin summary = `success 4 / external-blocker 2 / failure 0`
-    - remaining blockers = `Grok + Qwen` session recovery
+    - webLogin summary = `success 3 / external-blocker 3 / failure 0`
+    - remaining blockers = `Claude + Grok + Qwen` missing-web-session-material
 - `verify:service-live` 这轮 fresh rerun 当前仍然成功
 - 所以 runbook 现在服务的现实阶段不是“继续压内部工程债”，而是“在一个 repo-side 已过闸、aggregate 只剩外部尾巴的 credentialed workstation 上继续维护 repo-local runtime hygiene，并在未来换环境时重新做 truth reset”
 
@@ -88,7 +89,7 @@
 
 而更接近：
 
-> **“在 repo-side gate 已过、`verify:service-live` 已成功、但 aggregate 仍只剩一个外部 provider blocker 的 credentialed workstation 上，继续维护 repo-local runtime hygiene，并在未来环境变化时重新做 truth reset”**
+> **“在 repo-side gate 已过、`verify:service-live` 已成功、但 aggregate 仍停在一组 workstation-bound external blockers 的 credentialed workstation 上，继续维护 repo-local runtime hygiene，并在未来环境变化时重新做 truth reset”**
 
 同时保留一个很重要的护栏：
 

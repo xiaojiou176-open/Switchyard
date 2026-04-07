@@ -69,29 +69,26 @@ V1 的外部复用方式固定为：
 按当前 fresh reality，这个 workspace checkpoint 现在更诚实的描述是：
 
 - `pnpm typecheck` = `0`
-- `pnpm test` = `0`
+- `pnpm exec vitest run tests/integration/docs/frontdoor-docs.test.ts tests/integration/docs/package-ready-distribution.test.ts tests/unit/mcp/switchyard-mcp.test.ts tests/unit/web/switchyard-cli.test.ts --config vitest.config.ts` = `0`
+  - `5 files / 43 tests passed`
 - `pnpm build` = `0`
-- `pnpm run test:coverage` = `0`
-- coverage checkpoint
-  - `Statements` = `80.55%`
-  - `Lines` = `80.59%`
-- `pnpm run verify:gemini-live` = `0`
-- authoritative aggregate closeout:
+- authoritative aggregate closeout in this workspace:
   - `pnpm run verify:service-live` = `0`
   - `pnpm run reality:gate` = `2`
   - `overallStatus = external-blocker`
   - `internalGate.passed = true`
-  - `successCount = 5`
-  - `externalBlockerCount = 1`
+  - `successCount = 3`
+  - `externalBlockerCount = 3`
   - `failureCount = 0`
   - remaining blockers:
-    - `Grok` anti-bot / human-verification-required gate after workspace proof
-- `internalGate.passed = true`
+    - `Claude` missing-web-session-material
+    - `Grok` missing-web-session-material
+    - `Qwen` missing-web-session-material
 - 当前 fresh 已确认：
-  - `Gemini BYOK` live gate 已成功
-  - `Gemini` provider-scoped verifier 当前 success
+  - `ChatGPT` provider-scoped live proof 当前 success
+  - `Gemini` provider-scoped live proof 当前 success
   - `verify:service-live` 当前 success
-  - `reality:gate` 当前仍停在两个 external blocker
+  - `reality:gate` 当前仍停在 3 个 external blockers
   - 这仍然是 credentialed workstation 的时间片真相，不是 repo 常量
 
 因此，当前最诚实的阶段语义是：
@@ -116,8 +113,8 @@ V1 的外部复用方式固定为：
 - `pnpm run verify:web-login-live` = `0`
 - `pnpm run reality:gate` = `2`
 - `overallStatus = external-blocker`
-- remaining blocker = `Grok` anti-bot / human-verification-required gate after workspace proof
-- `ChatGPT` 与 `Gemini` 的 managed-browser 会话已重新回到 authenticated workspace，并可被 fresh rerun 复验
+- remaining blockers = `Claude / Grok / Qwen` session-material gaps on this workspace
+- `ChatGPT` 与 `Gemini` 的 live proof 当前 success，并可被 fresh rerun 复验
 - 进入 M3 之前，先读 `docs/blueprints/m3-first-party-integration-readiness.md`
 
 ---

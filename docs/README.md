@@ -6,17 +6,38 @@ This page is the developer frontdoor for `Switchyard`.
 
 ## Quick Routes / 最短路线
 
-如果你现在只想知道“我第一站该去哪”，先从这里三选一：
+如果你现在只想知道“我第一站该去哪”，先从这里四选一：
 
-- 我想本地试跑 `Switchyard`
-  - [docs/runbooks/dev-bootstrap.md](./runbooks/dev-bootstrap.md)
+- 我想先用 30 秒看懂它
+  - [docs/media/30-second-overview.md](./media/30-second-overview.md)
+- 我想先跑通默认第一把成功
+  - [docs/first-success.md](./first-success.md)
+- 我想先看它当前到底能证明什么
+  - [docs/public-proof-pack.md](./public-proof-pack.md)
 - 我想接 package / plugin / starter pack
   - [docs/plugin-skill-starter-kits.md](./plugin-skill-starter-kits.md)
 - 我想看 public distribution / listing / registry 状态
   - [docs/public-distribution-ledger.md](./public-distribution-ledger.md)
 
+## Default First Success / 默认第一把成功
+
+如果你不想一上来就翻完整 docs 树，先走这条默认路线：
+
+1. 先看 [docs/media/30-second-overview.md](./media/30-second-overview.md)
+   - 先用一句话记住它的第一身份
+2. 再看 [docs/first-success.md](./first-success.md)
+   - 先跑 service，再做第一把 bounded invoke / inspect
+3. 最后看 [docs/public-proof-pack.md](./public-proof-pack.md)
+   - 把当前能证明什么、不能 overclaim 什么一并看清楚
+
 ## Start Here / 从这里开始
 
+- [docs/media/30-second-overview.md](./media/30-second-overview.md)
+  - 30 秒版本的产品身份、当前可证明事实和非目标
+- [docs/first-success.md](./first-success.md)
+  - 当前默认 first-success 路径 / 先点火再扩展
+- [docs/public-proof-pack.md](./public-proof-pack.md)
+  - 当前可证明能力、最小 smoke、allowed claims / forbidden overclaim
 - [README.md](../README.md)
   - 项目总览、阶段状态、当前 truth-first 入口
 - [docs/product/v1-brief.md](./product/v1-brief.md)
@@ -69,6 +90,8 @@ This page is the developer frontdoor for `Switchyard`.
 
 - [docs/shared-provider-runtime.md](./shared-provider-runtime.md)
   - What a shared provider runtime means
+- [docs/public-proof-pack.md](./public-proof-pack.md)
+  - 当前最短 proof pack / 最小 smoke / 对外 claim 边界
 - [docs/public-surface-support-matrix.md](./public-surface-support-matrix.md)
   - 当前公开 surface / support matrix
 - [docs/public-surface-catalog.md](./public-surface-catalog.md)
