@@ -19,6 +19,15 @@
 
 它们不是 shipped plugin packages，也不是 full parity 承诺。
 
+如果你现在最关心的是：
+
+> **“我先跑哪一条最短路径，才能确认 `Switchyard` 真的活着？”**
+
+先看：
+
+- [docs/first-success.md](../docs/first-success.md)
+- [docs/public-proof-pack.md](../docs/public-proof-pack.md)
+
 ## Machine-readable Index
 
 如果你不想自己扫目录，还可以直接读：

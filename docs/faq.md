@@ -70,6 +70,36 @@ Partially yes, but only in a thin read-only sense.
 - 但它还不是 execution brain
 - 也不是 Codex / Claude Code / OpenClaw 的 full MCP parity
 
+## What is the fastest truthful first success?
+
+如果你现在只想先跑通一把最小成功，不要先把整个 docs 树全翻一遍。
+
+先走这一条：
+
+1. [docs/first-success.md](./first-success.md)
+2. `pnpm run start:service-local`
+3. `pnpm run example:mcp-inspector`
+4. `pnpm run example:runtime-bridge`
+
+先把它理解成：
+
+- 先证明 runtime 活着
+- 再证明最小 invoke 能打通
+- 跑成之后再去看 starter packs / host playbooks / compat docs
+
+## Where do I see a short public proof pack instead of the full docs tree?
+
+先看：
+
+- [docs/public-proof-pack.md](./public-proof-pack.md)
+
+这页不是完整手册，而是最短 proof 包：
+
+- 今天能证明什么
+- 最小 smoke 怎么跑
+- 哪些话现在可以诚实说
+- 哪些话现在还不能 overclaim
+
 ## Where should plugin or skills builders read the current truth?
 
 优先读 machine-readable catalog，而不是手抄页面。

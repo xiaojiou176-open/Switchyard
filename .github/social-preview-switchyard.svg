@@ -1,6 +1,6 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="1280" height="640" viewBox="0 0 1280 640" role="img" aria-labelledby="title desc">
   <title id="title">Switchyard social preview</title>
-  <desc id="desc">Shared provider runtime for AI apps. BYOK plus Web/Login. Qwen green, Grok single external blocker.</desc>
+  <desc id="desc">Shared provider runtime for AI apps. BYOK plus Web/Login. Repo-side gate green, latest live truth still workstation-bound.</desc>
   <defs>
     <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
       <stop offset="0%" stop-color="#0c1f1a"/>
@@ -23,15 +23,15 @@
   <text x="104" y="356" fill="#d7e3d8" font-family="Helvetica, Arial, sans-serif" font-size="28" font-weight="500">BYOK + Web/Login. Service-first substrate. Truth-first closeout.</text>
   <rect x="104" y="414" width="480" height="108" rx="24" fill="url(#panel)"/>
   <text x="136" y="458" fill="#173128" font-family="Helvetica, Arial, sans-serif" font-size="26" font-weight="700">Latest honest ceiling</text>
-  <text x="136" y="494" fill="#173128" font-family="Helvetica, Arial, sans-serif" font-size="24" font-weight="500">Qwen verifier false negative cleared</text>
-  <text x="136" y="526" fill="#173128" font-family="Helvetica, Arial, sans-serif" font-size="24" font-weight="500">Grok narrowed to one provider-side blocker</text>
+  <text x="136" y="494" fill="#173128" font-family="Helvetica, Arial, sans-serif" font-size="24" font-weight="500">Repo-side gate green</text>
+  <text x="136" y="526" fill="#173128" font-family="Helvetica, Arial, sans-serif" font-size="24" font-weight="500">Latest live truth still workstation-bound</text>
   <rect x="706" y="154" width="430" height="94" rx="22" fill="#e4cfa8"/>
   <text x="738" y="202" fill="#182c25" font-family="Helvetica, Arial, sans-serif" font-size="30" font-weight="800">Current gate</text>
-  <text x="738" y="234" fill="#182c25" font-family="Helvetica, Arial, sans-serif" font-size="28" font-weight="600">5 success / 1 external blocker</text>
+  <text x="738" y="234" fill="#182c25" font-family="Helvetica, Arial, sans-serif" font-size="28" font-weight="600">3 workstation-bound blockers</text>
   <rect x="706" y="282" width="430" height="178" rx="22" fill="#dbe7d6"/>
   <text x="738" y="328" fill="#183127" font-family="Helvetica, Arial, sans-serif" font-size="28" font-weight="800">Public-ready surfaces</text>
   <text x="738" y="366" fill="#183127" font-family="Helvetica, Arial, sans-serif" font-size="24" font-weight="500">Codex thin compat package</text>
-  <text x="738" y="400" fill="#183127" font-family="Helvetica, Arial, sans-serif" font-size="24" font-weight="500">Claude Code marketplace-compatible bundle</text>
+  <text x="738" y="400" fill="#183127" font-family="Helvetica, Arial, sans-serif" font-size="24" font-weight="500">Claude Code thin compat package</text>
   <text x="738" y="434" fill="#183127" font-family="Helvetica, Arial, sans-serif" font-size="24" font-weight="500">OpenClaw package-ready bridge</text>
   <text x="738" y="468" fill="#183127" font-family="Helvetica, Arial, sans-serif" font-size="24" font-weight="500">Read-only MCP package and CLI bin</text>
 </svg>

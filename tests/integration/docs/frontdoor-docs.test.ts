@@ -24,6 +24,9 @@ describe("Switchyard docs frontdoor contracts", () => {
     expect(docsReadme).toContain("docs/public-surface-catalog.md");
     expect(docsReadme).toContain("docs/public-surface-catalog.schema.json");
     expect(docsReadme).toContain("docs/plugin-skill-starter-kits.md");
+    expect(docsReadme).toContain("docs/media/30-second-overview.md");
+    expect(docsReadme).toContain("docs/first-success.md");
+    expect(docsReadme).toContain("docs/public-proof-pack.md");
     expect(docsReadme).toContain("docs/provider-runtime-catalog.md");
     expect(docsReadme).toContain("docs/provider-runtime-catalog.json");
     expect(docsReadme).toContain("docs/provider-runtime-catalog.schema.json");
@@ -142,6 +145,9 @@ describe("Switchyard docs frontdoor contracts", () => {
     const llms = read("llms.txt");
 
     expect(llms).toContain("docs/README.md");
+    expect(llms).toContain("docs/media/30-second-overview.md");
+    expect(llms).toContain("docs/first-success.md");
+    expect(llms).toContain("docs/public-proof-pack.md");
     expect(llms).toContain("docs/api/service-http-reference.md");
     expect(llms).toContain("docs/api/openapi.yaml");
     expect(llms).toContain("docs/api/sdk-quickstart.md");
@@ -211,6 +217,9 @@ describe("Switchyard docs frontdoor contracts", () => {
       readme.includes("planned / not supported yet on committed main") ||
         readme.includes("partial / thin compat landed / not full parity"),
     ).toBe(true);
+    expect(readme).toContain("docs/media/30-second-overview.md");
+    expect(readme).toContain("docs/first-success.md");
+    expect(readme).toContain("docs/public-proof-pack.md");
     expect(readme).toContain("docs/api/service-http-reference.md");
     expect(readme).toContain("docs/api/openapi.yaml");
     expect(readme).toContain("docs/api/mcp-readonly-server.md");
@@ -220,13 +229,14 @@ describe("Switchyard docs frontdoor contracts", () => {
     expect(readme).toContain("docs/glossary.md");
     expect(readme).toContain("docs/testing-pyramid.md");
     expect(readme).toContain("pnpm run test:coverage");
-    expect(readme).toContain("latest authoritative closeout");
+    expect(readme).toContain("latest fresh rerun in this workspace");
     expect(readme).toContain("`pnpm run verify:service-live` = `0`");
     expect(readme).toContain("`pnpm run reality:gate` = `2`");
     expect(readme).toContain("`overallStatus = external-blocker`");
-    expect(readme).toContain("`externalBlockerCount = 1`");
-    expect(readme).toContain("`Grok` = `human-verification-required / anti-bot-check-required`");
-    expect(readme).toContain("`Qwen` false negative 已清掉");
+    expect(readme).toContain("`externalBlockerCount = 3`");
+    expect(readme).toContain("`Claude` = `missing-web-session-material`");
+    expect(readme).toContain("`Grok` = `missing-web-session-material`");
+    expect(readme).toContain("`Qwen` = `missing-web-session-material`");
     expect(readme).toContain("未来接手者如果换了机器");
     expect(readme).toContain("必须重新跑 live gate");
     expect(readme).toContain("docs/public-surface-support-matrix.md");
@@ -262,8 +272,8 @@ describe("Switchyard docs frontdoor contracts", () => {
     expect(readme).toContain("docs/blueprints/openclaw-zero-token-adoption-ledger.md");
     expect(readme).toContain("docs/discoverability-keyword-truth.json");
     expect(readme).toContain("docs/discoverability-keyword-truth.schema.json");
-    expect(readme).toContain("anti-bot / human-verification-required");
-    expect(readme).toContain("一个外部网页登录 blocker");
+    expect(readme).toContain("当前这台机器上 `Claude / Grok / Qwen`");
+    expect(readme).toContain("一组外部网页登录材料缺口");
   });
 
   it("keeps blocker count and default service port aligned across frontdoor docs", () => {
@@ -275,13 +285,13 @@ describe("Switchyard docs frontdoor contracts", () => {
     const sdkQuickstart = read("docs/api/sdk-quickstart.md");
     const webLoginAcquisition = read("docs/api/web-login-acquisition.md");
 
-    expect(readme).toContain("`externalBlockerCount = 1`");
-    expect(m2Verdict).toContain("`externalBlockerCount = 1`");
+    expect(readme).toContain("`externalBlockerCount = 3`");
+    expect(m2Verdict).toContain("`externalBlockerCount = 3`");
     expect(m2Verdict).toContain("only by external blockers");
     expect(m3Readiness).toContain("Wave 5 / Wave 6 partial landed");
-    expect(m3Readiness).toContain("一个 aggregate external blocker");
-    expect(m3Readiness).toContain("`ChatGPT / Gemini / Claude / Qwen`");
-    expect(m3Readiness).toContain("`Grok`");
+    expect(m3Readiness).toContain("`ChatGPT / Gemini`");
+    expect(m3Readiness).toContain("`Claude / Grok / Qwen`");
+    expect(m3Readiness).toContain("`missing-web-session-material`");
     expect(openapi).toContain("http://127.0.0.1:4010");
     expect(openapi).not.toContain("http://127.0.0.1:4317");
     expect(serviceReference).toContain("http://127.0.0.1:4010");

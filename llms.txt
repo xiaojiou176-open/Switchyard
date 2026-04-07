@@ -5,22 +5,22 @@ Shared provider runtime for AI apps.
 Current truth:
 - Supports BYOK + Web/Login as the only V1 supply lanes.
 - Fresh internal gate is green for `pnpm typecheck`, `pnpm test`, and `pnpm build`.
-- Fresh `pnpm run test:coverage` currently exits `0`, and coverage is back above the repo-wide floor:
-  - `Statements = 80.55%`
-  - `Lines = 80.59%`
+- Fresh docs/distribution/MCP/CLI slice also passes:
+  - `pnpm exec vitest run tests/integration/docs/frontdoor-docs.test.ts tests/integration/docs/package-ready-distribution.test.ts tests/unit/mcp/switchyard-mcp.test.ts tests/unit/web/switchyard-cli.test.ts --config vitest.config.ts`
+  - `5 files / 43 tests passed`
 - Live verification depends on local end-user credentials and browser session materials on the current machine.
-- Fresh `verify:gemini-live` is `0` and succeeds through `SWITCHYARD_GEMINI_API_KEY`.
-- Fresh authoritative aggregate closeout is currently:
+- Fresh aggregate closeout in this workspace is currently:
   - `pnpm run verify:service-live` = `0`
   - `pnpm run reality:gate` = `2`
   - `overallStatus = external-blocker`
   - `internalGate.passed = true`
-  - `successCount = 4`
-  - `externalBlockerCount = 2`
+  - `successCount = 3`
+  - `externalBlockerCount = 3`
   - `failureCount = 0`
   - blockers:
-    - `grok = refreshable-but-degraded / provider-adjacent`
-    - `qwen = user-action-required / permission-gated`
+    - `claude = session-material-missing`
+    - `grok = session-material-missing`
+    - `qwen = session-material-missing`
 - `auth-status` / stored `ready` still only means local session materials are present; future reruns on a different workstation or browser state still need fresh live verification.
 - Current top-level closeout status is:
   - `PROGRAM PAUSED - ONLY TRUE EXTERNAL BLOCKERS REMAIN`
@@ -41,6 +41,9 @@ First-party integration status:
 Important docs:
 - README.md
 - docs/README.md
+- docs/media/30-second-overview.md
+- docs/first-success.md
+- docs/public-proof-pack.md
 - docs/api/service-http-reference.md
 - docs/api/openapi.yaml
 - docs/api/sdk-quickstart.md
