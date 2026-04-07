@@ -27,6 +27,11 @@ import {
   type WebLiveProofRunner,
 } from "./default-web-live-proofs.js";
 import {
+  createServiceRuntimeKernel,
+  createServiceRuntimeInvoker,
+  suggestServicePreferredLane,
+} from "./runtime-kernel.js";
+import {
   loadLocalEnvFiles,
   loadProviderSessionsFromEnv,
   loadServicePort,
@@ -223,9 +228,45 @@ export function createSwitchyardService(options: SwitchyardServiceOptions = {}) 
     providerSessions: effectiveProviderSessions,
     runtimeEnv,
   });
+  const runtime =
+    "registry" in byokClient &&
+    byokClient.registry &&
+    "registry" in lane &&
+    lane.registry
+      ? createServiceRuntimeKernel({
+          byokRegistry: byokClient.registry,
+          webRegistry: lane.registry,
+        })
+      : undefined;
   const surface = new SwitchyardHttpSurface({
     webLane: lane,
     context,
+    runtime,
+    invokeRuntime:
+      runtime &&
+      "registry" in byokClient &&
+      byokClient.registry
+        ? createServiceRuntimeInvoker({
+            runtime,
+            byokClient,
+            webLane: lane,
+            context,
+            ownerUserId: options.ownerUserId ?? "local-user",
+          })
+        : undefined,
+    resolvePreferredLane:
+      "registry" in byokClient &&
+      byokClient.registry &&
+      "registry" in lane &&
+      lane.registry
+        ? async (providerId) =>
+            suggestServicePreferredLane({
+              providerId,
+              byokRegistry: byokClient.registry,
+              webProviderStatuses: await lane.authStatus(context),
+              env: runtimeEnv,
+            })
+        : undefined,
     byokClient,
     serviceName: options.serviceName,
     ownerUserId: options.ownerUserId,
@@ -249,6 +290,7 @@ export function createSwitchyardService(options: SwitchyardServiceOptions = {}) 
   return {
     lane,
     context,
+    runtime,
     surface,
     handler: createNodeHttpHandler(surface),
     bootstrapPath: buildServiceRouteCatalog().bootstrap,

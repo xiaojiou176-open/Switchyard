@@ -161,6 +161,145 @@ describe("service index wiring", () => {
     });
   });
 
+  it("wires the runtime kernel helpers into the service surface when both registries are available", async () => {
+    const createServiceRuntimeKernel = vi.fn(() => ({
+      kind: "runtime-kernel",
+    }));
+    const invokeRuntime = vi.fn(async () => ({
+      status: 200,
+      body: {
+        ok: true,
+      },
+    }));
+    const createServiceRuntimeInvoker = vi.fn(() => invokeRuntime);
+    const suggestServicePreferredLane = vi.fn(() => "web-login");
+    const byokRegistry = {
+      id: "byok-registry",
+    };
+    const webRegistry = {
+      id: "web-registry",
+    };
+    const authStatus = vi.fn(async () => [
+      {
+        provider: "gemini",
+        credentialState: "ready",
+      },
+    ]);
+    let capturedSurfaceOptions: Record<string, unknown> | undefined;
+
+    vi.doMock("../../../packages/credentials/src/index.js", () => ({
+      buildStoredWebProviderSessions: () => ({}),
+      buildStoredWebRuntimeEnv: () => ({}),
+    }));
+    vi.doMock("../../../packages/surfaces/sdk-client/src/index.js", () => ({
+      createSwitchyardSdkClient: () => ({
+        kind: "sdk-client",
+        registry: byokRegistry,
+      }),
+    }));
+    vi.doMock("../../../packages/surfaces/http/src/index.js", () => ({
+      SwitchyardHttpSurface: vi.fn(function SwitchyardHttpSurface(this: { options?: unknown }, options: unknown) {
+        this.options = options;
+        capturedSurfaceOptions = options as Record<string, unknown>;
+      }),
+      createNodeHttpHandler: vi.fn(() => "handler"),
+      buildServiceRouteCatalog: vi.fn(() => ({
+        bootstrap: "/v1/runtime/bootstrap",
+      })),
+    }));
+    vi.doMock("../../../apps/service/src/default-web-lane.js", () => ({
+      createDefaultWebLane: () => ({
+        lane: {
+          registry: webRegistry,
+          authStatus,
+        },
+        context: {
+          source: "mocked-context",
+        },
+      }),
+    }));
+    vi.doMock("../../../apps/service/src/web-auth-acquisition.js", () => ({
+      createDefaultWebAcquisitionRunners: () => ({}),
+    }));
+    vi.doMock("../../../apps/service/src/browser-debug-support.js", () => ({
+      createDefaultWebDebugSupportRunners: () => ({}),
+    }));
+    vi.doMock("../../../apps/service/src/default-web-live-proofs.js", () => ({
+      createDefaultWebLiveProofRunners: () => ({}),
+    }));
+    vi.doMock("../../../apps/service/src/env.js", () => ({
+      loadLocalEnvFiles: vi.fn(),
+      loadProviderSessionsFromEnv: () => ({}),
+      loadServicePort: () => 4242,
+    }));
+    vi.doMock("../../../apps/service/src/runtime-kernel.js", () => ({
+      createServiceRuntimeKernel,
+      createServiceRuntimeInvoker,
+      suggestServicePreferredLane,
+    }));
+
+    const { createSwitchyardService } = await import(
+      "../../../apps/service/src/index.js"
+    );
+
+    const service = createSwitchyardService({
+      runtimeEnv: {
+        SWITCHYARD_GEMINI_API_KEY: "gemini-test-key",
+      },
+      ownerUserId: "local-user",
+    });
+
+    expect(createServiceRuntimeKernel).toHaveBeenCalledWith({
+      byokRegistry,
+      webRegistry,
+    });
+    expect(createServiceRuntimeInvoker).toHaveBeenCalledWith(
+      expect.objectContaining({
+        runtime: {
+          kind: "runtime-kernel",
+        },
+        byokClient: expect.objectContaining({
+          registry: byokRegistry,
+        }),
+        ownerUserId: "local-user",
+      }),
+    );
+    expect(service.runtime).toEqual({
+      kind: "runtime-kernel",
+    });
+    expect(capturedSurfaceOptions?.runtime).toEqual({
+      kind: "runtime-kernel",
+    });
+    expect(capturedSurfaceOptions?.invokeRuntime).toBe(invokeRuntime);
+    expect(typeof capturedSurfaceOptions?.resolvePreferredLane).toBe("function");
+
+    const preferredLane = await (
+      capturedSurfaceOptions?.resolvePreferredLane as
+        | ((providerId: string) => Promise<string | undefined>)
+        | undefined
+    )?.("gemini");
+
+    expect(preferredLane).toBe("web-login");
+    expect(authStatus).toHaveBeenCalledWith({
+      source: "mocked-context",
+    });
+    expect(suggestServicePreferredLane).toHaveBeenCalledWith(
+      expect.objectContaining({
+        providerId: "gemini",
+        byokRegistry,
+        webProviderStatuses: [
+          {
+            provider: "gemini",
+            credentialState: "ready",
+          },
+        ],
+        env: expect.objectContaining({
+          SWITCHYARD_GEMINI_API_KEY: "gemini-test-key",
+        }),
+      }),
+    );
+  });
+
   it("starts and closes the service using the requested port and route catalog", async () => {
     vi.doMock("../../../packages/credentials/src/index.js", () => ({
       buildStoredWebProviderSessions: () => ({}),

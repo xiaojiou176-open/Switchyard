@@ -1,6 +1,13 @@
 import type { IncomingMessage, ServerResponse } from "node:http";
 
 import type { GenerateTextRequest } from "../../sdk-client/src/index.js";
+import type { RuntimeRequest, SwitchyardContractError } from "../../../contracts/src/index.js";
+import type {
+  ServiceInvokeFailure,
+  ServiceInvokeResult,
+  ServiceInvokeSuccess,
+  ServiceSurfaceResponse,
+} from "./service-invoke-contract.js";
 import {
   buildAuthPortalShellModel,
   renderAuthPortalShell,
@@ -15,6 +22,8 @@ import type {
 } from "../../../lanes/web/src/index.js";
 import type { WebLaneContext } from "../../../lanes/web/src/index.js";
 import { WebLoginLane } from "../../../lanes/web/src/index.js";
+import type { ProviderId } from "../../../contracts/src/index.js";
+import type { SwitchyardRuntime } from "../../../kernel/src/index.js";
 import {
   SERVICE_AUTH_PORTAL_METADATA,
   SERVICE_SURFACE_METADATA,
@@ -28,18 +37,21 @@ import {
   buildServiceRouteCatalog
 } from "./service-language.js";
 
-export interface SurfaceResponse {
-  status: number;
-  body: unknown;
-  headers?: Record<string, string>;
-}
-
 export interface SwitchyardHttpSurfaceOptions {
   webLane: WebLoginLane;
   context?: WebLaneContext;
+  runtime?: SwitchyardRuntime;
+  invokeRuntime?: (args: {
+    request: RuntimeRequest;
+    body: Record<string, unknown>;
+  }) => Promise<ServiceInvokeResult | ServiceSurfaceResponse>;
+  resolvePreferredLane?: (
+    providerId: ProviderId,
+  ) => Promise<"byok" | "web-login" | undefined>;
   serviceName?: string;
   ownerUserId?: string;
   byokClient?: {
+    registry?: unknown;
     generateText(request: GenerateTextRequest): Promise<{
       ok: boolean;
       text?: string;
@@ -64,6 +76,8 @@ export interface SwitchyardHttpSurfaceOptions {
     >
   >;
 }
+
+export type SurfaceResponse = ServiceSurfaceResponse;
 
 type AcquisitionRequestBody = {
   mode?:
@@ -99,6 +113,73 @@ function htmlResponse(status: number, html: string): SurfaceResponse {
       "content-type": "text/html; charset=utf-8",
     },
   };
+}
+
+function isServiceSurfaceResponse(
+  value: ServiceInvokeResult | ServiceSurfaceResponse,
+): value is ServiceSurfaceResponse {
+  return "status" in value;
+}
+
+function renderInvokeSuccess(result: ServiceInvokeSuccess): SurfaceResponse {
+  if (result.laneId === "byok") {
+    return jsonResponse(200, {
+      surface: SERVICE_SURFACE_METADATA,
+      lane: "byok",
+      provider: result.providerId,
+      model: result.modelId,
+      text: result.outputText,
+      diagnostics: result.diagnostics,
+      prepared: result.details?.prepared,
+    });
+  }
+
+  const webResult =
+    (result.details?.result as Record<string, unknown> | undefined) ?? {};
+
+  return jsonResponse(200, {
+    surface: SERVICE_SURFACE_METADATA,
+    ...webResult,
+  });
+}
+
+function renderInvokeFailure(result: ServiceInvokeFailure): SurfaceResponse {
+  if (result.laneId === "byok") {
+    return jsonResponse(result.httpStatus, {
+      surface: SERVICE_SURFACE_METADATA,
+      routes: result.details?.routes ?? buildServiceRouteCatalog(),
+      lane: "byok",
+      error: {
+        message: result.message,
+        type: result.errorType,
+        diagnostics: result.diagnostics,
+      },
+    });
+  }
+
+  return jsonResponse(result.httpStatus, {
+    surface: SERVICE_SURFACE_METADATA,
+    authPortal: result.details?.authPortal ?? SERVICE_AUTH_PORTAL_METADATA,
+    routes: result.details?.routes ?? buildServiceRouteCatalog(),
+    error: {
+      message: result.message,
+      type: result.errorType,
+      suggestedAction: result.suggestedAction,
+      diagnostics: result.diagnostics,
+    },
+    auth: result.details?.auth,
+    remediation: result.details?.remediation,
+  });
+}
+
+function renderInvokeResult(
+  result: ServiceInvokeResult | ServiceSurfaceResponse,
+): SurfaceResponse {
+  if (isServiceSurfaceResponse(result)) {
+    return result;
+  }
+
+  return result.ok ? renderInvokeSuccess(result) : renderInvokeFailure(result);
 }
 
 function isObject(value: unknown): value is Record<string, unknown> {
@@ -240,6 +321,9 @@ function normalizeAcquisitionRequestBody(body: unknown): AcquisitionRequestBody 
 export class SwitchyardHttpSurface {
   private readonly webLane: WebLoginLane;
   private readonly context: WebLaneContext;
+  private readonly runtime?: SwitchyardRuntime;
+  private readonly invokeRuntime?: SwitchyardHttpSurfaceOptions["invokeRuntime"];
+  private readonly resolvePreferredLane?: SwitchyardHttpSurfaceOptions["resolvePreferredLane"];
   private readonly serviceName: string;
   private readonly ownerUserId: string;
   private readonly byokClient?: SwitchyardHttpSurfaceOptions["byokClient"];
@@ -265,6 +349,9 @@ export class SwitchyardHttpSurface {
   constructor(options: SwitchyardHttpSurfaceOptions) {
     this.webLane = options.webLane;
     this.context = options.context ?? {};
+    this.runtime = options.runtime;
+    this.invokeRuntime = options.invokeRuntime;
+    this.resolvePreferredLane = options.resolvePreferredLane;
     this.serviceName = options.serviceName ?? "switchyard-service";
     this.ownerUserId = options.ownerUserId ?? "local-user";
     this.byokClient = options.byokClient;
@@ -273,7 +360,64 @@ export class SwitchyardHttpSurface {
     this.acquisitionRunners = options.acquisitionRunners ?? {};
   }
 
-  private async handleByokInvoke(body: Record<string, unknown>) {
+  private mapContractErrorStatus(error: SwitchyardContractError): number {
+    switch (error.diagnostic.code) {
+      case "missing-credential":
+      case "credential-invalid":
+      case "session-expired":
+      case "user-action-required":
+        return 409;
+      case "provider-unavailable":
+        return 503;
+      default:
+        return 400;
+    }
+  }
+
+  private async buildRuntimeRequest(
+    body: Record<string, unknown>,
+    preferredLaneOverride?: "byok" | "web-login",
+  ): Promise<RuntimeRequest | undefined> {
+    if (!this.runtime) {
+      return undefined;
+    }
+
+    const provider = body.provider;
+    const model = body.model;
+    const lane = body.lane;
+
+    if (typeof provider !== "string" || typeof model !== "string") {
+      return undefined;
+    }
+
+    const preferredLane =
+      preferredLaneOverride ??
+      (lane === "byok"
+        ? "byok"
+        : lane === "web"
+          ? "web-login"
+          : undefined);
+
+    return {
+      surface: "service",
+      providerId: provider as ProviderId,
+      modelReference: `${provider}/${model}`,
+      preferredLane:
+        preferredLane ??
+        (this.resolvePreferredLane
+          ? await this.resolvePreferredLane(provider as ProviderId)
+          : undefined),
+      requiredCapabilities: ["text-generation"],
+    };
+  }
+
+  private async handleByokInvoke(
+    body: Record<string, unknown>,
+    selectionOverride?: {
+      readonly providerId: string;
+      readonly modelId: string;
+    },
+  ) {
     if (!this.byokClient) {
       return jsonResponse(503, {
         surface: SERVICE_SURFACE_METADATA,
@@ -286,8 +430,9 @@ export class SwitchyardHttpSurface {
       });
     }
 
-    const provider = body.provider;
-    const model = body.model;
+    const provider =
+      selectionOverride?.providerId ?? body.provider;
+    const model = selectionOverride?.modelId ?? body.model;
     const input = body.input;
     const system = body.system;
     const maxOutputTokens = body.maxOutputTokens;
@@ -351,6 +496,75 @@ export class SwitchyardHttpSurface {
       text: result.text,
       diagnostics: result.diagnostics,
       prepared: result.prepared,
+    });
+  }
+
+  private async handleWebInvoke(
+    body: Record<string, unknown>,
+    selectionOverride?: {
+      readonly providerId: string;
+      readonly modelId: string;
+      readonly laneId: "web-login";
+    },
+  ) {
+    const provider = selectionOverride?.providerId ?? body.provider;
+    const model = selectionOverride?.modelId ?? body.model;
+    const input = body.input;
+
+    if (
+      typeof provider !== "string" ||
+      typeof model !== "string" ||
+      typeof input !== "string"
+    ) {
+      return jsonResponse(400, {
+        error: {
+          message: "provider, model, and input are required string fields.",
+          type: "invalid_request_error",
+        },
+      });
+    }
+
+    const request: RuntimeInvocationRequest = {
+      provider: provider as WebProviderId,
+      model,
+      input,
+      lane:
+        selectionOverride?.laneId === "web-login" || body.lane === "web"
+          ? "web"
+          : undefined,
+      intent: "text-generation",
+      stream: body.stream === true,
+    };
+
+    const result = await this.webLane.invoke(request, this.context);
+
+    if (!result.ok) {
+      const providers = await this.webLane.authStatus(this.context);
+      const runtimeProvider = providers.find((entry) => entry.provider === result.provider);
+      const auth = runtimeProvider
+        ? buildServiceAuthStatusView([runtimeProvider], this.ownerUserId).providers[0]
+        : undefined;
+
+      return jsonResponse(mapFailureStatus(result), {
+        surface: SERVICE_SURFACE_METADATA,
+        authPortal: SERVICE_AUTH_PORTAL_METADATA,
+        routes: buildServiceRouteCatalog(),
+        error: {
+          message: result.message,
+          type: result.errorCategory,
+          suggestedAction: result.suggestedAction,
+          diagnostics: result.diagnostics,
+        },
+        auth,
+        remediation: runtimeProvider
+          ? buildServiceProviderRemediationView(runtimeProvider, this.ownerUserId)
+          : undefined,
+      });
+    }
+
+    return jsonResponse(200, {
+      surface: SERVICE_SURFACE_METADATA,
+      ...result,
     });
   }
 
@@ -441,6 +655,28 @@ export class SwitchyardHttpSurface {
     };
   }
 
+  private buildByokDiscoveryPayload() {
+    const providers = this.runtime?.listProviders({ laneId: "byok" }) ?? [];
+
+    return {
+      surface: SERVICE_SURFACE_METADATA,
+      routes: buildServiceRouteCatalog(),
+      discovery: {
+        lane: "byok",
+        providers: providers.map((provider) => ({
+          providerId: provider.providerId,
+          lane: provider.laneId,
+          displayName: provider.displayName,
+          authModes: provider.authModes,
+          defaultModel: provider.defaultModel?.canonical,
+          recommendedModel: provider.recommendedModel?.canonical,
+          capabilities: provider.capabilities,
+          diagnosticsStatus: provider.diagnosticsStatus,
+        })),
+      },
+    };
+  }
+
   async handle(method: string, pathname: string, body?: unknown): Promise<SurfaceResponse> {
     if (method === "GET" && pathname === "/v1/runtime/auth-portal") {
       return htmlResponse(200, await this.buildAuthPortalHtml());
@@ -456,6 +692,10 @@ export class SwitchyardHttpSurface {
           providers: buildServiceDiscoveryViews(providers),
         },
       });
+    }
+
+    if (method === "GET" && pathname === "/v1/runtime/byok/providers") {
+      return jsonResponse(200, this.buildByokDiscoveryPayload());
     }
 
     if (method === "GET" && pathname === "/v1/runtime/auth-status") {
@@ -621,6 +861,60 @@ export class SwitchyardHttpSurface {
       return jsonResponse(200, payload);
     }
 
+    if (method === "POST" && pathname === "/v1/runtime/byok/invoke") {
+      if (!isObject(body)) {
+        return jsonResponse(400, {
+          error: {
+            message: "Expected a JSON object request body.",
+            type: "invalid_request_error",
+          },
+        });
+      }
+
+      const runtimeRequest = await this.buildRuntimeRequest(body, "byok");
+
+      if (!this.runtime || !runtimeRequest || !this.invokeRuntime) {
+        return this.handleByokInvoke({
+          ...body,
+          lane: "byok",
+        });
+      }
+
+      try {
+        return renderInvokeResult(
+          await this.invokeRuntime({
+            request: runtimeRequest,
+            body: {
+              ...body,
+              lane: "byok",
+            },
+          }),
+        );
+      } catch (error) {
+        if (
+          error &&
+          typeof error === "object" &&
+          "diagnostic" in error &&
+          typeof (error as { diagnostic?: { code?: string } }).diagnostic?.code ===
+            "string"
+        ) {
+          const contractError = error as SwitchyardContractError;
+
+          return jsonResponse(this.mapContractErrorStatus(contractError), {
+            surface: SERVICE_SURFACE_METADATA,
+            routes: buildServiceRouteCatalog(),
+            error: {
+              message: contractError.message,
+              type: contractError.diagnostic.code,
+              diagnostics: [contractError.diagnostic],
+            },
+          });
+        }
+
+        throw error;
+      }
+    }
+
     if (method === "POST" && pathname === "/v1/runtime/invoke") {
       if (!isObject(body)) {
         return jsonResponse(400, {
@@ -631,66 +925,42 @@ export class SwitchyardHttpSurface {
         });
       }
 
-      if (body.lane === "byok") {
-        return this.handleByokInvoke(body);
+      const runtimeRequest = await this.buildRuntimeRequest(body);
+
+      try {
+        if (this.runtime && runtimeRequest && this.invokeRuntime) {
+          return renderInvokeResult(
+            await this.invokeRuntime({
+              request: runtimeRequest,
+              body,
+            }),
+          );
+        }
+      } catch (error) {
+        if (
+          error &&
+          typeof error === "object" &&
+          "diagnostic" in error &&
+          typeof (error as { diagnostic?: { code?: string } }).diagnostic?.code ===
+            "string"
+        ) {
+          const contractError = error as SwitchyardContractError;
+
+          return jsonResponse(this.mapContractErrorStatus(contractError), {
+            surface: SERVICE_SURFACE_METADATA,
+            routes: buildServiceRouteCatalog(),
+            error: {
+              message: contractError.message,
+              type: contractError.diagnostic.code,
+              diagnostics: [contractError.diagnostic],
+            },
+          });
+        }
+
+        throw error;
       }
 
-      const provider = body.provider;
-      const model = body.model;
-      const input = body.input;
-
-      if (
-        typeof provider !== "string" ||
-        typeof model !== "string" ||
-        typeof input !== "string"
-      ) {
-        return jsonResponse(400, {
-          error: {
-            message: "provider, model, and input are required string fields.",
-            type: "invalid_request_error",
-          },
-        });
-      }
-
-      const request: RuntimeInvocationRequest = {
-        provider: provider as WebProviderId,
-        model,
-        input,
-        lane: body.lane === "web" ? "web" : undefined,
-        intent: "text-generation",
-        stream: body.stream === true,
-      };
-
-      const result = await this.webLane.invoke(request, this.context);
-
-      if (!result.ok) {
-        const providers = await this.webLane.authStatus(this.context);
-        const provider = providers.find((entry) => entry.provider === result.provider);
-        const auth = provider
-          ? buildServiceAuthStatusView([provider], this.ownerUserId).providers[0]
-          : undefined;
-
-        return jsonResponse(mapFailureStatus(result), {
-          surface: SERVICE_SURFACE_METADATA,
-          authPortal: SERVICE_AUTH_PORTAL_METADATA,
-          routes: buildServiceRouteCatalog(),
-          error: {
-            message: result.message,
-            type: result.errorCategory,
-            suggestedAction: result.suggestedAction,
-            diagnostics: result.diagnostics,
-          },
-          auth,
-          remediation: provider
-            ? buildServiceProviderRemediationView(provider, this.ownerUserId)
-            : undefined,
-        });
-      }
-
-      return jsonResponse(200, {
-        surface: SERVICE_SURFACE_METADATA,
-        ...result,
-      });
+      return this.handleWebInvoke(body);
     }
 
     return jsonResponse(404, {
