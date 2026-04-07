@@ -370,9 +370,9 @@ describe("verify-web-login orchestration", () => {
 
     expect(results).toEqual([
       expect.objectContaining({
-        status: "failure",
+        status: "external-blocker",
         provider: "chatgpt",
-        reason: "probe-request-failed",
+        blocker: "chatgpt-cdp-unavailable",
         classification: "transport-instability",
       }),
       expect.objectContaining({
@@ -446,6 +446,80 @@ describe("verify-web-login orchestration", () => {
       expect.objectContaining({
         status: "success",
         provider: "qwen",
+      }),
+    );
+  });
+
+  it("maps browser attach failures to explicit cdp-unavailable external blockers", async () => {
+    const spawnSync = vi.fn((command: string, args: string[]) => {
+      if (
+        command === process.execPath &&
+        Array.isArray(args) &&
+        args.some((value) => `${value}`.includes("bootstrap-web-auth-browser.mjs"))
+      ) {
+        return {
+          status: 0,
+          stdout: JSON.stringify({
+            status: "started",
+            provider: args[args.indexOf("--provider") + 1],
+            cdpUrl: "http://127.0.0.1:9338",
+          }),
+        };
+      }
+
+      if (
+        command === process.execPath &&
+        Array.isArray(args) &&
+        `${args[0] ?? ""}`.endsWith("scripts/verify-web-login-live.mjs")
+      ) {
+        const providerIndex = args.indexOf("--provider");
+        const provider = providerIndex >= 0 ? args[providerIndex + 1] : undefined;
+
+        if (provider === "chatgpt") {
+          return {
+            status: 1,
+            stdout: "",
+            stderr:
+              "browserType.connectOverCDP: connect ECONNREFUSED 127.0.0.1:9338",
+          };
+        }
+
+        return {
+          status: 0,
+          stdout: JSON.stringify([
+            {
+              status: "success",
+              provider,
+            },
+          ]),
+        };
+      }
+
+      throw new Error(`Unexpected command: ${command} ${args.join(" ")}`);
+    });
+
+    vi.doMock("node:child_process", () => ({ spawnSync }));
+    vi.stubGlobal("fetch", vi.fn<typeof fetch>());
+
+    const { runWebLoginLiveVerification } = await import(
+      "../../../scripts/verify-web-login-live.mjs"
+    );
+    const results = await runWebLoginLiveVerification({
+      providers: ["chatgpt", "gemini"],
+    });
+
+    expect(results[0]).toEqual(
+      expect.objectContaining({
+        status: "external-blocker",
+        provider: "chatgpt",
+        blocker: "chatgpt-cdp-unavailable",
+        classification: "transport-instability",
+      }),
+    );
+    expect(results[1]).toEqual(
+      expect.objectContaining({
+        status: "success",
+        provider: "gemini",
       }),
     );
   });
@@ -528,10 +602,10 @@ describe("verify-web-login orchestration", () => {
 
     expect(results[0]).toEqual(
       expect.objectContaining({
-        status: "failure",
+        status: "external-blocker",
         provider: "chatgpt",
+        blocker: "chatgpt-cdp-unavailable",
         classification: "transport-instability",
-        reason: "probe-request-failed",
         diagnostic: "child emitted garbage",
       }),
     );
@@ -638,8 +712,8 @@ describe("verify-web-login orchestration", () => {
       expect.objectContaining({
         status: "external-blocker",
         provider: "chatgpt",
-        blocker: "chatgpt-browser-session-incomplete",
-        classification: "session-incomplete",
+        blocker: "chatgpt-cdp-unavailable",
+        classification: "transport-instability",
       }),
       expect.objectContaining({
         status: "success",
@@ -647,7 +721,7 @@ describe("verify-web-login orchestration", () => {
       }),
     ]);
     expect(providerAttempts).toEqual({
-      chatgpt: 2,
+      chatgpt: 1,
       qwen: 2,
     });
     expect(
@@ -658,7 +732,7 @@ describe("verify-web-login orchestration", () => {
           args.some((value) => `${value}`.includes("bootstrap-web-auth-browser.mjs")) &&
           !args.includes("--ensure-only"),
       ),
-    ).toHaveLength(2);
+    ).toHaveLength(1);
   });
 
   it("retries isolated providers when the child only emitted progress noise before exiting", async () => {
@@ -740,14 +814,15 @@ describe("verify-web-login orchestration", () => {
       expect.objectContaining({
         status: "external-blocker",
         provider: "chatgpt",
-        classification: "session-incomplete",
+        blocker: "chatgpt-cdp-unavailable",
+        classification: "transport-instability",
       }),
       expect.objectContaining({
         status: "success",
         provider: "gemini",
       }),
     ]);
-    expect(attempts.chatgpt).toBe(2);
+    expect(attempts.chatgpt).toBe(1);
   });
 
   it("attaches browser debug context to browser-backed external blockers", async () => {
