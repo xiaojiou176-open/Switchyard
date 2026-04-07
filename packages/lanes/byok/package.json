@@ -1,0 +1,15 @@
+{
+  "name": "@switchyard/lane-byok",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "scripts": {
+    "build": "pnpm exec node ../../../scripts/build-package.mjs",
+    "typecheck": "pnpm exec tsc -p tsconfig.json --pretty false",
+    "test": "pnpm run test:unit",
+    "test:unit": "pnpm exec vitest run --config ../../../vitest.config.ts --project lane-byok"
+  }
+}

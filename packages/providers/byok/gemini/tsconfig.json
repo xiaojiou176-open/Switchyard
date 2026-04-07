@@ -1,0 +1,14 @@
+{
+  "$schema": "https://json.schemastore.org/tsconfig",
+  "extends": "../../../../tsconfig.base.json",
+  "compilerOptions": {
+    "noEmit": true,
+    "rootDir": "../../../../",
+    "types": ["node"]
+  },
+  "include": [
+    "src/**/*.ts",
+    "../shared/**/*.ts",
+    "../../../lanes/byok/src/**/*.ts"
+  ]
+}
