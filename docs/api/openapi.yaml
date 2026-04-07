@@ -1,0 +1,332 @@
+openapi: 3.1.0
+info:
+  title: Switchyard Service HTTP Surface
+  version: 0.1.0
+  summary: Machine-readable contract for the current service-first runtime surface.
+  description: >
+    This OpenAPI file documents the currently committed Switchyard HTTP runtime surface.
+    It is truthful to the current mainline service-first surface and does not claim any
+    Codex, Claude Code, OpenClaw, or MCP adapter compatibility.
+servers:
+  - url: http://127.0.0.1:4010
+    description: Default local-first service surface
+tags:
+  - name: discovery
+  - name: auth
+  - name: providers
+  - name: acquisition
+  - name: invocation
+paths:
+  /v1/runtime/bootstrap:
+    get:
+      tags: [discovery]
+      summary: Read the runtime bootstrap view
+      operationId: getRuntimeBootstrap
+      responses:
+        '200':
+          description: Bootstrap metadata for the current service runtime
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericObject'
+  /v1/runtime/entrypoint:
+    get:
+      tags: [discovery]
+      summary: Read the runtime entrypoint view
+      operationId: getRuntimeEntrypoint
+      responses:
+        '200':
+          description: Entrypoint metadata for the current service runtime
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericObject'
+  /v1/runtime/providers:
+    get:
+      tags: [providers]
+      summary: List current Web/Login providers
+      operationId: listWebProviders
+      responses:
+        '200':
+          description: Provider discovery payload for the Web/Login lane
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericObject'
+  /v1/runtime/byok/providers:
+    get:
+      tags: [providers]
+      summary: List current BYOK providers
+      operationId: listByokProviders
+      responses:
+        '200':
+          description: Provider discovery payload for the BYOK lane
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericObject'
+  /v1/runtime/auth-portal:
+    get:
+      tags: [auth]
+      summary: Render the auth portal shell
+      operationId: getAuthPortal
+      responses:
+        '200':
+          description: HTML shell for the local-first auth portal
+          content:
+            text/html:
+              schema:
+                type: string
+  /v1/runtime/auth-status:
+    get:
+      tags: [auth]
+      summary: Read the current auth status snapshot
+      operationId: getAuthStatus
+      responses:
+        '200':
+          description: Auth status for the current runtime user and provider slots
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericObject'
+  /v1/runtime/health:
+    get:
+      tags: [discovery]
+      summary: Read service health for the current runtime
+      operationId: getRuntimeHealth
+      responses:
+        '200':
+          description: Health payload
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericObject'
+  /v1/runtime/providers/{providerId}/status:
+    get:
+      tags: [providers]
+      summary: Read provider status
+      operationId: getProviderStatus
+      parameters:
+        - $ref: '#/components/parameters/ProviderId'
+      responses:
+        '200':
+          description: Provider status payload
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericObject'
+  /v1/runtime/providers/{providerId}/probe:
+    get:
+      tags: [providers]
+      summary: Probe provider runtime readiness
+      operationId: probeProvider
+      parameters:
+        - $ref: '#/components/parameters/ProviderId'
+      responses:
+        '200':
+          description: Provider probe payload
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericObject'
+  /v1/runtime/providers/{providerId}/remediation:
+    get:
+      tags: [providers]
+      summary: Read provider remediation guidance
+      operationId: getProviderRemediation
+      parameters:
+        - $ref: '#/components/parameters/ProviderId'
+      responses:
+        '200':
+          description: Provider remediation payload
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericObject'
+  /v1/runtime/providers/{providerId}/acquisition/start:
+    post:
+      tags: [acquisition]
+      summary: Start local-first acquisition for a provider slot
+      operationId: startProviderAcquisition
+      parameters:
+        - $ref: '#/components/parameters/ProviderId'
+      requestBody:
+        required: false
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AcquisitionRequest'
+      responses:
+        '200':
+          description: Acquisition start payload
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericObject'
+  /v1/runtime/providers/{providerId}/acquisition/capture:
+    post:
+      tags: [acquisition]
+      summary: Capture local-first acquisition materials for a provider slot
+      operationId: captureProviderAcquisition
+      parameters:
+        - $ref: '#/components/parameters/ProviderId'
+      requestBody:
+        required: false
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AcquisitionRequest'
+      responses:
+        '200':
+          description: Acquisition capture payload
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericObject'
+  /v1/runtime/invoke:
+    post:
+      tags: [invocation]
+      summary: Invoke the Web/Login lane
+      operationId: invokeWebLane
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/WebInvokeRequest'
+      responses:
+        '200':
+          description: Successful runtime invocation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericObject'
+        '409':
+          description: Missing credential or session-incomplete runtime state
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericObject'
+        '503':
+          description: Provider unavailable
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericObject'
+  /v1/runtime/byok/invoke:
+    post:
+      tags: [invocation]
+      summary: Invoke the BYOK lane
+      operationId: invokeByokLane
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ByokInvokeRequest'
+      responses:
+        '200':
+          description: Successful BYOK runtime invocation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericObject'
+        '400':
+          description: Invalid request or model-resolution error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericObject'
+        '409':
+          description: Missing credential
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericObject'
+        '503':
+          description: Provider unavailable
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericObject'
+components:
+  parameters:
+    ProviderId:
+      name: providerId
+      in: path
+      required: true
+      description: Current committed Web/Login provider identifier
+      schema:
+        type: string
+        enum: [chatgpt, gemini, claude, grok, qwen]
+  schemas:
+    GenericObject:
+      type: object
+      additionalProperties: true
+      description: >
+        Switchyard currently returns rich runtime payloads. This schema stays broad on purpose so
+        the machine-readable contract can remain truthful without inventing fields that main has not
+        yet committed as a frozen consumer-facing wire contract.
+    AcquisitionRequest:
+      type: object
+      additionalProperties: false
+      properties:
+        mode:
+          type: string
+          enum: [managed-browser, isolated-chrome-root, existing-chrome-profile, existing-browser-session]
+        existingChromeProfile:
+          type: object
+          additionalProperties: false
+          properties:
+            userDataDir:
+              type: string
+            browserPath:
+              type: string
+            cdpUrl:
+              type: string
+        existingBrowserSession:
+          type: object
+          additionalProperties: false
+          properties:
+            sessionUrl:
+              type: string
+    WebInvokeRequest:
+      type: object
+      additionalProperties: true
+      required: [provider, model, input]
+      properties:
+        provider:
+          type: string
+          enum: [chatgpt, gemini, claude, grok, qwen]
+        model:
+          type: string
+        input:
+          type: string
+        lane:
+          type: string
+          description: Optional explicit lane hint. Current examples use `web`.
+        system:
+          type: string
+        maxOutputTokens:
+          type: number
+        temperature:
+          type: number
+    ByokInvokeRequest:
+      type: object
+      additionalProperties: true
+      required: [provider, model, input]
+      properties:
+        provider:
+          type: string
+        model:
+          type: string
+        input:
+          type: string
+        system:
+          type: string
+        maxOutputTokens:
+          type: number
+        temperature:
+          type: number
+        stream:
+          type: boolean

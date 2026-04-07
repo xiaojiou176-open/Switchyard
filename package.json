@@ -1,0 +1,98 @@
+{
+  "name": "switchyard",
+  "version": "0.1.0",
+  "private": true,
+  "license": "MIT",
+  "description": "Shared provider runtime for AI apps.",
+  "homepage": "https://github.com/xiaojiou176-open/Switchyard#readme",
+  "bugs": {
+    "url": "https://github.com/xiaojiou176-open/Switchyard/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/xiaojiou176-open/Switchyard.git"
+  },
+  "type": "module",
+  "packageManager": "pnpm@10.22.0",
+  "engines": {
+    "node": ">=22.0.0",
+    "pnpm": ">=10.0.0"
+  },
+  "scripts": {
+    "install": "node -e \"console.log('Switchyard workspace dependencies installed.')\"",
+    "prepare": "simple-git-hooks",
+    "build:root": "pnpm exec tsc -p tsconfig.json --pretty false",
+    "build": "pnpm run build:root && pnpm -r build",
+    "typecheck:root": "pnpm exec tsc -p tsconfig.json --pretty false",
+    "typecheck": "pnpm run typecheck:root && pnpm -r typecheck",
+    "test:unit": "pnpm exec vitest run --config vitest.config.ts --project contracts --project kernel --project credentials --project diagnostics --project lane-byok --project lanes-web --project sdk --project surface-sdk-client --project surface-mcp --project consumer-compat --project builder-starters --project starter-packs",
+    "test:mcp:smoke": "pnpm exec vitest run --config vitest.config.ts --project surface-mcp",
+    "test:examples": "pnpm exec vitest run --config vitest.config.ts --project builder-starters",
+    "test:starter-packs": "pnpm exec vitest run --config vitest.config.ts --project starter-packs",
+    "test:integration": "pnpm --filter @switchyard/auth-portal --filter @switchyard/surface-http -r test:integration",
+    "test:e2e": "pnpm --filter @switchyard/app-service test:e2e",
+    "test:docs-frontdoor": "pnpm exec vitest run --config vitest.config.ts --project docs-frontdoor",
+    "test": "pnpm run test:unit && pnpm run test:integration && pnpm run test:e2e && pnpm run test:docs-frontdoor",
+    "test:coverage:raw": "pnpm exec vitest --clearCache && rm -rf coverage && mkdir -p coverage/.tmp && pnpm exec vitest run tests/unit tests/integration tests/e2e --cache=false --no-file-parallelism --maxWorkers=1 --config vitest.config.ts --coverage.enabled true --coverage.clean=false --coverage.processingConcurrency=1 --coverage.reporter=text-summary --coverage.reporter=json-summary --coverage.reportsDirectory=coverage",
+    "test:coverage": "pnpm exec node scripts/run-test-coverage.mjs",
+    "test:coverage:html": "pnpm exec vitest --clearCache && rm -rf coverage && mkdir -p coverage/.tmp && pnpm exec vitest run tests/unit tests/integration tests/e2e --cache=false --no-file-parallelism --maxWorkers=1 --config vitest.config.ts --coverage.enabled true --coverage.clean=false --coverage.processingConcurrency=1 --coverage.reporter=html --coverage.reportsDirectory=coverage",
+    "hook:pre-commit": "node scripts/check-sensitive-material.mjs && pnpm exec vitest run tests/unit/web/runtime-request-url.test.ts tests/unit/web/url-hosts.test.ts tests/unit/web/browser-session-coherence.test.ts tests/integration/docs/sensitive-surface-hygiene.test.ts --config vitest.config.ts",
+    "hook:pre-push": "pnpm exec node scripts/run-pre-push-gate.mjs",
+    "seed:isolated-chrome-root": "pnpm exec node scripts/seed-isolated-chrome-root.mjs",
+    "reseed:isolated-chrome-root": "pnpm exec node scripts/seed-isolated-chrome-root.mjs --reseed",
+    "bootstrap:web-login-browser": "pnpm exec node scripts/bootstrap-web-auth-browser.mjs",
+    "switchyard:cli": "pnpm exec node scripts/switchyard-cli.mjs",
+    "switchyard:mcp": "pnpm exec tsx scripts/switchyard-mcp.mjs",
+    "example:runtime-bridge": "pnpm exec node examples/runtime-bridge/invoke.mjs",
+    "example:mcp-inspector": "pnpm exec node examples/mcp-inspector/smoke.mjs",
+    "example:runtime-diagnostics": "pnpm exec node examples/runtime-diagnostics/check.mjs",
+    "example:host-codex": "pnpm exec node examples/hosts/codex/smoke.mjs",
+    "example:host-claude-code": "pnpm exec node examples/hosts/claude-code/smoke.mjs",
+    "example:host-openclaw": "pnpm exec node examples/hosts/openclaw/smoke.mjs",
+    "example:host-mcp": "pnpm exec node examples/hosts/mcp/smoke.mjs",
+    "starter-pack:codex": "pnpm exec node starter-packs/builders/codex/smoke.mjs",
+    "starter-pack:claude-code": "pnpm exec node starter-packs/builders/claude-code/smoke.mjs",
+    "starter-pack:openclaw": "pnpm exec node starter-packs/builders/openclaw/smoke.mjs",
+    "starter-pack:mcp": "pnpm exec node starter-packs/builders/mcp/smoke.mjs",
+    "starter-pack:runtime-diagnostics-pack": "pnpm exec node starter-packs/skills/runtime-diagnostics-pack/smoke.mjs",
+    "starter-pack:docs-seo-sync-pack": "pnpm exec node starter-packs/skills/docs-seo-sync-pack/smoke.mjs",
+    "start:service-local": "pnpm --filter @switchyard/app-service start",
+    "audit:runtime-footprint": "pnpm exec node scripts/runtime-cache-maintenance.mjs audit",
+    "cleanup:runtime": "pnpm exec node scripts/runtime-cache-maintenance.mjs cleanup",
+    "diagnose:web-login-browser": "pnpm exec node scripts/diagnose-web-login-browser.mjs",
+    "verify:gemini-live": "pnpm exec node scripts/verify-gemini-live.mjs",
+    "verify:service-live": "pnpm exec node scripts/verify-service-live.mjs",
+    "verify:web-login-live": "pnpm exec node scripts/verify-web-login-live.mjs",
+    "capture:web-debug-bundle": "pnpm exec node scripts/capture-web-debug-bundle.mjs",
+    "verify-web-login-live": "pnpm run verify:web-login-live",
+    "reality:gate": "pnpm exec node scripts/run-reality-gate.mjs"
+  },
+  "devDependencies": {
+    "@switchyard/consumer-claude-code": "workspace:*",
+    "@switchyard/consumer-codex": "workspace:*",
+    "@switchyard/consumer-compat-shared": "workspace:*",
+    "@switchyard/consumer-openclaw": "workspace:*",
+    "@types/node": "25.5.0",
+    "@vitest/coverage-v8": "^4.1.2",
+    "ajv": "^8.18.0",
+    "playwright-core": "1.58.2",
+    "simple-git-hooks": "2.13.1",
+    "tsx": "^4.21.0",
+    "typescript": "6.0.2",
+    "vite": "8.0.5",
+    "vitest": "4.1.2"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.29.0",
+    "zod": "^4.3.6"
+  },
+  "simple-git-hooks": {
+    "pre-commit": "pnpm run hook:pre-commit",
+    "pre-push": "pnpm run hook:pre-push"
+  },
+  "pnpm": {
+    "overrides": {
+      "vite": "8.0.5"
+    }
+  }
+}

@@ -1,0 +1,8 @@
+packages:
+  - 'apps/*'
+  - 'packages/*'
+  - 'packages/lanes/*'
+  - 'packages/providers/byok/*'
+  - 'packages/providers/web/*'
+  - 'packages/consumers/*'
+  - 'packages/surfaces/*'

@@ -1,0 +1,63 @@
+# macOS / editor noise
+.DS_Store
+.AppleDouble
+.LSOverride
+.Spotlight-V100
+.Trashes
+.vscode/
+.idea/
+
+# Node / pnpm / TypeScript
+node_modules/
+.pnpm-store/
+.npm/
+.yarn/
+.turbo/
+.parcel-cache/
+*.tsbuildinfo
+
+# Build outputs
+dist/
+build/
+coverage/
+.next/
+out/
+
+# Runtime / logs / caches
+logs/
+*.log
+cache/
+.cache/
+.runtime-cache/
+tmp/
+temp/
+
+# Local environment and secrets
+.env
+.env.local
+.env.*.local
+.envrc
+
+# Local state for experiments and sidecars
+.openclaw/
+.openclaw-*/
+.litellm/
+.playwright/
+playwright-report/
+test-results/
+
+# AI / agent local state
+.agents/
+.agent/
+.codex/
+.claude/
+.serena/
+
+# Python / sidecar local noise
+__pycache__/
+.pytest_cache/
+.venv/
+venv/
+
+# Keep documented template files tracked
+!.env.example
