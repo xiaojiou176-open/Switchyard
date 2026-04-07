@@ -1,0 +1,28 @@
+{
+  "$schema": "../../../docs/starter-manifest-examples.schema.json",
+  "exampleVersion": 1,
+  "builderExamples": [
+    {
+      "target": "codex",
+      "status": "partial",
+      "exampleShape": "responses-runtime-helper",
+      "example": {
+        "name": "codex-runtime-helper-example",
+        "runtimeBaseUrlEnv": "SWITCHYARD_RUNTIME_BASE_URL",
+        "catalogCommand": "pnpm run switchyard:cli -- builder-kit --target codex --json",
+        "request": {
+          "provider": "chatgpt",
+          "model": "gpt-4o",
+          "lane": "web",
+          "input": "Summarize the latest provider health snapshot."
+        }
+      },
+      "safeClaims": [
+        "partial Codex compatibility",
+        "thin runtime bridge",
+        "example helper config"
+      ]
+    }
+  ],
+  "skillExamples": []
+}

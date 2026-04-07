@@ -1,0 +1,47 @@
+{
+  "name": "@switchyard/consumer-openclaw",
+  "version": "0.1.0",
+  "description": "Thin fail-closed OpenClaw delegation bridge for Switchyard.",
+  "license": "MIT",
+  "homepage": "https://github.com/xiaojiou176-open/Switchyard/tree/main/packages/consumers/openclaw#readme",
+  "bugs": {
+    "url": "https://github.com/xiaojiou176-open/Switchyard/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/xiaojiou176-open/Switchyard.git",
+    "directory": "packages/consumers/openclaw"
+  },
+  "type": "module",
+  "sideEffects": false,
+  "files": [
+    "dist",
+    "src",
+    "README.md"
+  ],
+  "main": "./dist/packages/consumers/openclaw/src/index.js",
+  "types": "./src/index.ts",
+  "exports": {
+    ".": {
+      "types": "./src/index.ts",
+      "import": "./dist/packages/consumers/openclaw/src/index.js",
+      "default": "./dist/packages/consumers/openclaw/src/index.js"
+    }
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "keywords": [
+    "switchyard",
+    "openclaw",
+    "compat",
+    "delegation",
+    "shared-provider-runtime"
+  ],
+  "scripts": {
+    "build": "pnpm exec node ../../../scripts/build-package.mjs",
+    "typecheck": "pnpm exec tsc -p tsconfig.json --pretty false",
+    "test": "pnpm run test:unit",
+    "test:unit": "pnpm exec vitest run --config ../../../vitest.config.ts --project consumer-compat"
+  }
+}

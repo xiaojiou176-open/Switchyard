@@ -1,0 +1,231 @@
+{
+  "$schema": "./index.schema.json",
+  "indexVersion": 1,
+  "builderPacks": [
+    {
+      "kind": "builder",
+      "target": "codex",
+      "status": "partial",
+      "packPath": "starter-packs/builders/codex",
+      "readmePath": "starter-packs/builders/codex/README.md",
+      "templatePath": "starter-packs/builders/codex/template.json",
+      "templateEntryPath": "starter-packs/builders/codex/template.entry.json",
+      "examplePath": "starter-packs/builders/codex/example.json",
+      "exampleEntryPath": "starter-packs/builders/codex/example.entry.json",
+      "smokeScriptPath": "starter-packs/builders/codex/smoke.mjs",
+      "smokeCommand": "pnpm run starter-pack:codex",
+      "envExamplePath": "starter-packs/builders/codex/.env.example",
+      "extraAssetPaths": [
+        "starter-packs/builders/codex/request.body.json"
+      ],
+      "packFiles": [
+        "starter-packs/builders/codex/.env.example",
+        "starter-packs/builders/codex/README.md",
+        "starter-packs/builders/codex/template.json",
+        "starter-packs/builders/codex/template.entry.json",
+        "starter-packs/builders/codex/example.json",
+        "starter-packs/builders/codex/example.entry.json",
+        "starter-packs/builders/codex/request.body.json",
+        "starter-packs/builders/codex/smoke.mjs"
+      ],
+      "safeClaims": [
+        "partial Codex compatibility",
+        "thin runtime bridge",
+        "fail-closed helper starter"
+      ],
+      "notYetSupported": [
+        "tool execution parity",
+        "mcp parity",
+        "worktree parity"
+      ]
+    },
+    {
+      "kind": "builder",
+      "target": "claude-code",
+      "status": "partial",
+      "packPath": "starter-packs/builders/claude-code",
+      "readmePath": "starter-packs/builders/claude-code/README.md",
+      "templatePath": "starter-packs/builders/claude-code/template.json",
+      "templateEntryPath": "starter-packs/builders/claude-code/template.entry.json",
+      "examplePath": "starter-packs/builders/claude-code/example.json",
+      "exampleEntryPath": "starter-packs/builders/claude-code/example.entry.json",
+      "smokeScriptPath": "starter-packs/builders/claude-code/smoke.mjs",
+      "smokeCommand": "pnpm run starter-pack:claude-code",
+      "envExamplePath": "starter-packs/builders/claude-code/.env.example",
+      "extraAssetPaths": [
+        "starter-packs/builders/claude-code/request.body.json"
+      ],
+      "packFiles": [
+        "starter-packs/builders/claude-code/.env.example",
+        "starter-packs/builders/claude-code/README.md",
+        "starter-packs/builders/claude-code/template.json",
+        "starter-packs/builders/claude-code/template.entry.json",
+        "starter-packs/builders/claude-code/example.json",
+        "starter-packs/builders/claude-code/example.entry.json",
+        "starter-packs/builders/claude-code/request.body.json",
+        "starter-packs/builders/claude-code/smoke.mjs"
+      ],
+      "safeClaims": [
+        "partial Claude Code compatibility",
+        "thin message/runtime bridge",
+        "fail-closed compatibility helper"
+      ],
+      "notYetSupported": [
+        "terminal shell parity",
+        "approval parity",
+        "tool parity",
+        "mcp parity"
+      ]
+    },
+    {
+      "kind": "builder",
+      "target": "openclaw",
+      "status": "partial",
+      "packPath": "starter-packs/builders/openclaw",
+      "readmePath": "starter-packs/builders/openclaw/README.md",
+      "templatePath": "starter-packs/builders/openclaw/template.json",
+      "templateEntryPath": "starter-packs/builders/openclaw/template.entry.json",
+      "examplePath": "starter-packs/builders/openclaw/example.json",
+      "exampleEntryPath": "starter-packs/builders/openclaw/example.entry.json",
+      "smokeScriptPath": "starter-packs/builders/openclaw/smoke.mjs",
+      "smokeCommand": "pnpm run starter-pack:openclaw",
+      "envExamplePath": "starter-packs/builders/openclaw/.env.example",
+      "extraAssetPaths": [
+        "starter-packs/builders/openclaw/request.body.json"
+      ],
+      "packFiles": [
+        "starter-packs/builders/openclaw/.env.example",
+        "starter-packs/builders/openclaw/README.md",
+        "starter-packs/builders/openclaw/template.json",
+        "starter-packs/builders/openclaw/template.entry.json",
+        "starter-packs/builders/openclaw/example.json",
+        "starter-packs/builders/openclaw/example.entry.json",
+        "starter-packs/builders/openclaw/request.body.json",
+        "starter-packs/builders/openclaw/smoke.mjs"
+      ],
+      "safeClaims": [
+        "partial OpenClaw compatibility",
+        "delegation-first bridge",
+        "fail-closed adapter starter"
+      ],
+      "notYetSupported": [
+        "operator control-plane parity",
+        "product-shell parity",
+        "channel shell parity"
+      ]
+    },
+    {
+      "kind": "builder",
+      "target": "mcp",
+      "status": "partial",
+      "packPath": "starter-packs/builders/mcp",
+      "readmePath": "starter-packs/builders/mcp/README.md",
+      "templatePath": "starter-packs/builders/mcp/template.json",
+      "templateEntryPath": "starter-packs/builders/mcp/template.entry.json",
+      "examplePath": "starter-packs/builders/mcp/example.json",
+      "exampleEntryPath": "starter-packs/builders/mcp/example.entry.json",
+      "smokeScriptPath": "starter-packs/builders/mcp/smoke.mjs",
+      "smokeCommand": "pnpm run starter-pack:mcp",
+      "envExamplePath": "starter-packs/builders/mcp/.env.example",
+      "extraAssetPaths": [
+        "starter-packs/builders/mcp/client-config.json",
+        "starter-packs/builders/mcp/tool-call.json"
+      ],
+      "packFiles": [
+        "starter-packs/builders/mcp/.env.example",
+        "starter-packs/builders/mcp/README.md",
+        "starter-packs/builders/mcp/template.json",
+        "starter-packs/builders/mcp/template.entry.json",
+        "starter-packs/builders/mcp/example.json",
+        "starter-packs/builders/mcp/example.entry.json",
+        "starter-packs/builders/mcp/client-config.json",
+        "starter-packs/builders/mcp/tool-call.json",
+        "starter-packs/builders/mcp/smoke.mjs"
+      ],
+      "safeClaims": [
+        "partial read-only MCP surface",
+        "runtime inspection only",
+        "bounded MCP starter"
+      ],
+      "notYetSupported": [
+        "execution brain",
+        "runtime invoke through MCP",
+        "acquisition write through MCP",
+        "embedded consumer parity"
+      ]
+    }
+  ],
+  "skillPacks": [
+    {
+      "kind": "skill",
+      "id": "runtime-diagnostics-pack",
+      "status": "partial",
+      "packPath": "starter-packs/skills/runtime-diagnostics-pack",
+      "readmePath": "starter-packs/skills/runtime-diagnostics-pack/README.md",
+      "templatePath": "starter-packs/skills/runtime-diagnostics-pack/template.json",
+      "templateEntryPath": "starter-packs/skills/runtime-diagnostics-pack/template.entry.json",
+      "examplePath": "starter-packs/skills/runtime-diagnostics-pack/example.json",
+      "exampleEntryPath": "starter-packs/skills/runtime-diagnostics-pack/example.entry.json",
+      "smokeScriptPath": "starter-packs/skills/runtime-diagnostics-pack/smoke.mjs",
+      "smokeCommand": "pnpm run starter-pack:runtime-diagnostics-pack",
+      "extraAssetPaths": [
+        "starter-packs/skills/runtime-diagnostics-pack/steps.json"
+      ],
+      "packFiles": [
+        "starter-packs/skills/runtime-diagnostics-pack/README.md",
+        "starter-packs/skills/runtime-diagnostics-pack/template.json",
+        "starter-packs/skills/runtime-diagnostics-pack/template.entry.json",
+        "starter-packs/skills/runtime-diagnostics-pack/example.json",
+        "starter-packs/skills/runtime-diagnostics-pack/example.entry.json",
+        "starter-packs/skills/runtime-diagnostics-pack/steps.json",
+        "starter-packs/skills/runtime-diagnostics-pack/smoke.mjs"
+      ],
+      "safeClaims": [
+        "read-only diagnostics pack",
+        "provider triage helper",
+        "no invoke/write actions"
+      ],
+      "notYetSupported": [
+        "invoke",
+        "acquisition write",
+        "browser automation",
+        "execution-brain parity"
+      ]
+    },
+    {
+      "kind": "skill",
+      "id": "docs-seo-sync-pack",
+      "status": "partial",
+      "packPath": "starter-packs/skills/docs-seo-sync-pack",
+      "readmePath": "starter-packs/skills/docs-seo-sync-pack/README.md",
+      "templatePath": "starter-packs/skills/docs-seo-sync-pack/template.json",
+      "templateEntryPath": "starter-packs/skills/docs-seo-sync-pack/template.entry.json",
+      "examplePath": "starter-packs/skills/docs-seo-sync-pack/example.json",
+      "exampleEntryPath": "starter-packs/skills/docs-seo-sync-pack/example.entry.json",
+      "smokeScriptPath": "starter-packs/skills/docs-seo-sync-pack/smoke.mjs",
+      "smokeCommand": "pnpm run starter-pack:docs-seo-sync-pack",
+      "extraAssetPaths": [
+        "starter-packs/skills/docs-seo-sync-pack/steps.json"
+      ],
+      "packFiles": [
+        "starter-packs/skills/docs-seo-sync-pack/README.md",
+        "starter-packs/skills/docs-seo-sync-pack/template.json",
+        "starter-packs/skills/docs-seo-sync-pack/template.entry.json",
+        "starter-packs/skills/docs-seo-sync-pack/example.json",
+        "starter-packs/skills/docs-seo-sync-pack/example.entry.json",
+        "starter-packs/skills/docs-seo-sync-pack/steps.json",
+        "starter-packs/skills/docs-seo-sync-pack/smoke.mjs"
+      ],
+      "safeClaims": [
+        "truth-sync starter",
+        "discoverability helper",
+        "not a marketing autopilot"
+      ],
+      "notYetSupported": [
+        "marketing autopilot",
+        "claim escalation without review",
+        "launch automation"
+      ]
+    }
+  ]
+}

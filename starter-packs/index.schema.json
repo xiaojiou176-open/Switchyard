@@ -1,0 +1,171 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/xiaojiou176-open/Switchyard/starter-packs/index.schema.json",
+  "title": "Switchyard Starter Pack Index",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "$schema",
+    "indexVersion",
+    "builderPacks",
+    "skillPacks"
+  ],
+  "properties": {
+    "$schema": {
+      "type": "string"
+    },
+    "indexVersion": {
+      "type": "integer",
+      "minimum": 1
+    },
+    "builderPacks": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/builderPack"
+      }
+    },
+    "skillPacks": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/skillPack"
+      }
+    }
+  },
+  "$defs": {
+    "status": {
+      "type": "string",
+      "enum": [
+        "supported now",
+        "partial",
+        "planned",
+        "research only",
+        "not now"
+      ]
+    },
+    "stringArray": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
+    },
+    "basePack": {
+      "type": "object",
+      "required": [
+        "kind",
+        "status",
+        "packPath",
+        "readmePath",
+        "templatePath",
+        "templateEntryPath",
+        "examplePath",
+        "exampleEntryPath",
+        "smokeScriptPath",
+        "smokeCommand",
+        "packFiles",
+        "safeClaims",
+        "notYetSupported"
+      ],
+      "properties": {
+        "kind": {
+          "type": "string",
+          "enum": [
+            "builder",
+            "skill"
+          ]
+        },
+        "status": {
+          "$ref": "#/$defs/status"
+        },
+        "packPath": {
+          "type": "string",
+          "minLength": 1
+        },
+        "readmePath": {
+          "type": "string",
+          "minLength": 1
+        },
+        "templatePath": {
+          "type": "string",
+          "minLength": 1
+        },
+        "templateEntryPath": {
+          "type": "string",
+          "minLength": 1
+        },
+        "examplePath": {
+          "type": "string",
+          "minLength": 1
+        },
+        "exampleEntryPath": {
+          "type": "string",
+          "minLength": 1
+        },
+        "smokeScriptPath": {
+          "type": "string",
+          "minLength": 1
+        },
+        "smokeCommand": {
+          "type": "string",
+          "minLength": 1
+        },
+        "envExamplePath": {
+          "type": "string",
+          "minLength": 1
+        },
+        "extraAssetPaths": {
+          "$ref": "#/$defs/stringArray"
+        },
+        "packFiles": {
+          "$ref": "#/$defs/stringArray"
+        },
+        "safeClaims": {
+          "$ref": "#/$defs/stringArray"
+        },
+        "notYetSupported": {
+          "$ref": "#/$defs/stringArray"
+        }
+      }
+    },
+    "builderPack": {
+      "unevaluatedProperties": false,
+      "allOf": [
+        {
+          "$ref": "#/$defs/basePack"
+        },
+        {
+          "type": "object",
+          "required": [
+            "target"
+          ],
+          "properties": {
+            "target": {
+              "type": "string",
+              "minLength": 1
+            }
+          }
+        }
+      ]
+    },
+    "skillPack": {
+      "unevaluatedProperties": false,
+      "allOf": [
+        {
+          "$ref": "#/$defs/basePack"
+        },
+        {
+          "type": "object",
+          "required": [
+            "id"
+          ],
+          "properties": {
+            "id": {
+              "type": "string",
+              "minLength": 1
+            }
+          }
+        }
+      ]
+    }
+  }
+}

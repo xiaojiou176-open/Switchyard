@@ -1,0 +1,11 @@
+{
+  "provider": "anthropic",
+  "model": "anthropic/claude-sonnet-4",
+  "lane": "byok",
+  "messages": [
+    {
+      "role": "user",
+      "content": "Summarize the current auth status."
+    }
+  ]
+}

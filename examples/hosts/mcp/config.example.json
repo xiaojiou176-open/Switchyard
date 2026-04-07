@@ -1,0 +1,23 @@
+{
+  "name": "switchyard-mcp-host-example",
+  "catalogCommand": "pnpm run switchyard:cli -- host-example --target mcp --json",
+  "startupCommand": "pnpm run switchyard:mcp -- --base-url http://127.0.0.1:4010",
+  "clientConfig": {
+    "command": "pnpm",
+    "args": [
+      "run",
+      "switchyard:mcp",
+      "--",
+      "--base-url",
+      "http://127.0.0.1:4010"
+    ]
+  },
+  "firstToolCall": {
+    "name": "switchyard.runtime.health",
+    "arguments": {}
+  },
+  "safeClaims": [
+    "partial MCP host example",
+    "read-only stdio client wiring"
+  ]
+}

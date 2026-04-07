@@ -1,0 +1,5 @@
+[
+  "pnpm run switchyard:cli -- surface-catalog --json",
+  "cat docs/discoverability-keyword-truth.md",
+  "cat docs/public-surface-support-matrix.md"
+]

@@ -1,0 +1,6 @@
+{
+  "provider": "openai",
+  "model": "openai/gpt-4.1",
+  "lane": "byok",
+  "input": "Summarize the latest provider health snapshot."
+}

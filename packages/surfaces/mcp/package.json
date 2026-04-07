@@ -1,0 +1,60 @@
+{
+  "name": "@switchyard/surface-mcp",
+  "version": "0.1.0",
+  "mcpName": "io.github.xiaojiou176-open/switchyard-mcp",
+  "description": "Read-only MCP surface for Switchyard runtime truth and catalogs.",
+  "license": "MIT",
+  "homepage": "https://github.com/xiaojiou176-open/Switchyard/tree/main/packages/surfaces/mcp#readme",
+  "bugs": {
+    "url": "https://github.com/xiaojiou176-open/Switchyard/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/xiaojiou176-open/Switchyard.git",
+    "directory": "packages/surfaces/mcp"
+  },
+  "type": "module",
+  "sideEffects": false,
+  "files": [
+    "dist",
+    "src",
+    "README.md",
+    "server.json"
+  ],
+  "main": "./dist/packages/surfaces/mcp/src/index.js",
+  "types": "./src/index.ts",
+  "bin": {
+    "switchyard-mcp": "./dist/packages/surfaces/mcp/src/cli.js"
+  },
+  "scripts": {
+    "build": "pnpm exec node ../../../scripts/build-package.mjs && pnpm exec node ./scripts/copy-package-assets.mjs",
+    "typecheck": "pnpm exec tsc -p tsconfig.json --pretty false",
+    "test": "pnpm run test:unit",
+    "test:unit": "pnpm exec vitest run --config ../../../vitest.config.ts --project surface-mcp"
+  },
+  "exports": {
+    ".": {
+      "types": "./src/index.ts",
+      "import": "./dist/packages/surfaces/mcp/src/index.js",
+      "default": "./dist/packages/surfaces/mcp/src/index.js"
+    },
+    "./cli": {
+      "import": "./dist/packages/surfaces/mcp/src/cli.js",
+      "default": "./dist/packages/surfaces/mcp/src/cli.js"
+    }
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "keywords": [
+    "switchyard",
+    "mcp",
+    "model-context-protocol",
+    "read-only",
+    "shared-provider-runtime"
+  ],
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.29.0",
+    "zod": "^4.3.6"
+  }
+}

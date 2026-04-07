@@ -1,0 +1,23 @@
+{
+  "target": "claude-code",
+  "status": "partial",
+  "templateShape": "message-runtime-helper",
+  "manifest": {
+    "starterTarget": "claude-code",
+    "runtimeBaseUrlEnv": "SWITCHYARD_RUNTIME_BASE_URL",
+    "catalogCommand": "pnpm run switchyard:cli -- builder-kit --target claude-code --json",
+    "invokeRoute": "/v1/runtime/invoke",
+    "mode": "message/runtime bridge",
+    "safeClaims": [
+      "partial Claude Code compatibility",
+      "thin message/runtime bridge",
+      "fail-closed helper starter"
+    ],
+    "notYetSupported": [
+      "terminal shell parity",
+      "approval parity",
+      "tool parity",
+      "mcp parity"
+    ]
+  }
+}

@@ -1,0 +1,26 @@
+{
+  "$schema": "../../../docs/starter-manifest-templates.schema.json",
+  "manifestVersion": 1,
+  "builderTemplates": [],
+  "skillTemplates": [
+    {
+      "id": "docs-seo-sync-pack",
+      "status": "partial",
+      "templateShape": "truth-sync-and-discoverability",
+      "manifest": {
+        "starterTarget": "docs-seo-sync-pack",
+        "catalogCommand": "pnpm run switchyard:cli -- skill-pack --target docs-seo-sync-pack --json",
+        "safeClaims": [
+          "docs truth-sync starter",
+          "discoverability helper",
+          "no marketing autopilot"
+        ],
+        "notYetSupported": [
+          "marketing copy generation",
+          "launch automation",
+          "claim escalation without review"
+        ]
+      }
+    }
+  ]
+}

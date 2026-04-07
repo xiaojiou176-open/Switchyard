@@ -1,0 +1,21 @@
+{
+  "target": "mcp",
+  "status": "partial",
+  "templateShape": "read-only-runtime-inspector",
+  "manifest": {
+    "starterTarget": "mcp",
+    "startupCommand": "pnpm run switchyard:mcp -- --base-url http://127.0.0.1:4010",
+    "catalogCommand": "pnpm run switchyard:cli -- builder-kit --target mcp --json",
+    "mode": "read-only stdio runtime inspection",
+    "safeClaims": [
+      "partial read-only MCP surface",
+      "runtime inspection over stdio",
+      "not an execution brain"
+    ],
+    "notYetSupported": [
+      "runtime invoke through MCP",
+      "acquisition write through MCP",
+      "embedded consumer parity"
+    ]
+  }
+}

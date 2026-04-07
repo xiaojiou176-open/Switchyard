@@ -1,0 +1,15 @@
+{
+  "name": "switchyard-openclaw-host-example",
+  "runtimeBaseUrlEnv": "SWITCHYARD_RUNTIME_BASE_URL",
+  "catalogCommand": "pnpm run switchyard:cli -- host-example --target openclaw --json",
+  "request": {
+    "provider": "chatgpt",
+    "lane": "web",
+    "model": "gpt-4o",
+    "input": "Return the current remediation summary."
+  },
+  "safeClaims": [
+    "partial OpenClaw host example",
+    "delegation-first config"
+  ]
+}
