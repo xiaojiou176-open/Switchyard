@@ -4,7 +4,7 @@ import type { WebLaneContext } from "./provider-runtime.js";
 import { WebProviderRegistry } from "./registry.js";
 
 export class WebLoginLane {
-  constructor(private readonly registry: WebProviderRegistry) {}
+  constructor(readonly registry: WebProviderRegistry) {}
 
   async discover(context: WebLaneContext = {}) {
     return Promise.all(

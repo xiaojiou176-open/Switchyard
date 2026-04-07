@@ -139,4 +139,35 @@ describe('kernel registry and runtime skeleton', () => {
       }),
     ]);
   });
+
+  it('dispatches execution through the configured lane executor after planning', async () => {
+    const registry = createTestRegistry();
+    const runtime = createSwitchyardRuntime({ registry });
+    const byokExecutor = {
+      execute: ({ plan }: { plan: { selection: { laneId: string; providerId: string } } }) =>
+        `${plan.selection.laneId}:${plan.selection.providerId}`,
+    };
+
+    const result = await runtime.invoke(
+      {
+        surface: 'service',
+        providerId: 'gemini',
+        modelReference: 'gemini/gemini-2.5-pro',
+        credentialStates: {
+          byok: 'configured',
+          'web-login': 'missing',
+        },
+      },
+      {
+        byok: byokExecutor,
+      },
+      {
+        byok: {
+          prompt: 'hello',
+        } as unknown,
+      },
+    );
+
+    expect(result).toBe('byok:gemini');
+  });
 });

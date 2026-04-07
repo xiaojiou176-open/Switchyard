@@ -5,6 +5,7 @@ import { fileURLToPath } from "node:url";
 import { describe, expect, it } from "vitest";
 
 import { buildAuthPortalShellModel } from "../../../apps/auth-portal/src/index.js";
+import { SwitchyardContractError } from "../../../packages/contracts/src/index.js";
 import {
   createSwitchyardService,
   type SwitchyardServiceOptions,
@@ -14,6 +15,8 @@ import {
   createCredentialRecord,
   upsertStoredWebProviderSession,
 } from "../../../packages/credentials/src/index.js";
+import type { WebLoginLane } from "../../../packages/lanes/web/src/index.js";
+import { SwitchyardHttpSurface } from "../../../packages/surfaces/http/src/index.js";
 import {
   getInvokeProofExpectation,
   runWebLoginLiveVerification,
@@ -99,6 +102,28 @@ function postSurface(
   body?: unknown,
 ) {
   return requestSurface(service, "POST", pathname, body);
+}
+
+function createMockWebLane(
+  options: {
+    authStatus?: () => Promise<unknown[]>;
+    invoke?: () => Promise<unknown>;
+  } = {},
+): WebLoginLane {
+  return {
+    discover: async () => [],
+    authStatus: options.authStatus ?? (async () => []),
+    invoke:
+      options.invoke ??
+      (async () => ({
+        ok: false,
+        provider: "chatgpt",
+        errorCategory: "session-incomplete",
+        message: "ChatGPT session is incomplete.",
+        diagnostics: [],
+        suggestedAction: "Re-login in the attached browser.",
+      })),
+  } as unknown as WebLoginLane;
 }
 
 describe("Switchyard HTTP surface", () => {
@@ -1436,6 +1461,126 @@ describe("Switchyard HTTP surface", () => {
     expect(payload.text).toBe("SWITCHYARD_BYOK_OK");
   });
 
+  it("exposes BYOK provider discovery through the service frontdoor", async () => {
+    const service = createTestService({
+      useLocalWebAuthStore: false,
+    });
+
+    const response = await getSurface(service, "/v1/runtime/byok/providers");
+    const payload = (await response.json()) as {
+      discovery: {
+        lane: string;
+        providers: Array<{
+          providerId: string;
+          lane: string;
+          defaultModel?: string;
+        }>;
+      };
+    };
+
+    expect(response.status).toBe(200);
+    expect(payload.discovery.lane).toBe("byok");
+    expect(payload.discovery.providers).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({
+          providerId: "gemini",
+          lane: "byok",
+          defaultModel: "gemini/gemini-2.5-flash",
+        }),
+        expect.objectContaining({
+          providerId: "openai",
+          lane: "byok",
+        }),
+      ]),
+    );
+  });
+
+  it("uses the kernel-backed lane planner for dual-lane providers when lane is omitted", async () => {
+    const fetchSpy = async () => ({
+      ok: true,
+      status: 200,
+      json: async () => ({
+        candidates: [
+          {
+            content: {
+              parts: [{ text: "SWITCHYARD_KERNEL_BYOK_OK" }],
+            },
+          },
+        ],
+      }),
+    });
+
+    const service = createTestService({
+      useLocalWebAuthStore: false,
+      runtimeEnv: {
+        SWITCHYARD_GEMINI_API_KEY: "gemini-test-key",
+      },
+      liveProofFetch: fetchSpy as typeof fetch,
+    });
+
+    const response = await postSurface(service, "/v1/runtime/invoke", {
+      provider: "gemini",
+      model: "gemini-2.5-flash",
+      input: "Reply with exactly SWITCHYARD_KERNEL_BYOK_OK",
+    });
+
+    const payload = (await response.json()) as {
+      lane: string;
+      provider: string;
+      model: string;
+      text: string;
+    };
+
+    expect(response.status).toBe(200);
+    expect(payload.lane).toBe("byok");
+    expect(payload.provider).toBe("gemini");
+    expect(payload.model).toBe("gemini-2.5-flash");
+    expect(payload.text).toBe("SWITCHYARD_KERNEL_BYOK_OK");
+  });
+
+  it("serves a BYOK invoke through the explicit byok route alias", async () => {
+    const fetchSpy = async () => ({
+      ok: true,
+      status: 200,
+      json: async () => ({
+        candidates: [
+          {
+            content: {
+              parts: [{ text: "SWITCHYARD_BYOK_ALIAS_OK" }],
+            },
+          },
+        ],
+      }),
+    });
+
+    const service = createTestService({
+      useLocalWebAuthStore: false,
+      runtimeEnv: {
+        SWITCHYARD_GEMINI_API_KEY: "gemini-test-key",
+      },
+      liveProofFetch: fetchSpy as typeof fetch,
+    });
+
+    const response = await postSurface(service, "/v1/runtime/byok/invoke", {
+      provider: "gemini",
+      model: "gemini-2.5-flash",
+      input: "Reply with exactly SWITCHYARD_BYOK_ALIAS_OK",
+    });
+
+    const payload = (await response.json()) as {
+      lane: string;
+      provider: string;
+      model: string;
+      text: string;
+    };
+
+    expect(response.status).toBe(200);
+    expect(payload.lane).toBe("byok");
+    expect(payload.provider).toBe("gemini");
+    expect(payload.model).toBe("gemini-2.5-flash");
+    expect(payload.text).toBe("SWITCHYARD_BYOK_ALIAS_OK");
+  });
+
   it("returns a structured missing-credential error for BYOK service invoke", async () => {
     const service = createTestService({
       useLocalWebAuthStore: false,
@@ -1462,5 +1607,136 @@ describe("Switchyard HTTP surface", () => {
     expect(payload.lane).toBe("byok");
     expect(payload.error.type).toBe("missing-credential");
     expect(payload.error.message).toContain("Missing credential for gemini");
+  });
+
+  it("fails closed on the explicit BYOK route when no BYOK client is configured", async () => {
+    const surface = new SwitchyardHttpSurface({
+      webLane: createMockWebLane(),
+    });
+
+    const response = await surface.handle("POST", "/v1/runtime/byok/invoke", {
+      provider: "gemini",
+      model: "gemini-2.5-flash",
+      input: "hello",
+    });
+
+    expect(response.status).toBe(503);
+    expect(response.body).toMatchObject({
+      lane: "byok",
+      error: {
+        type: "provider-unavailable",
+      },
+    });
+  });
+
+  it("maps runtime contract errors on the explicit BYOK route to structured responses", async () => {
+    const surface = new SwitchyardHttpSurface({
+      webLane: createMockWebLane(),
+      runtime: {} as never,
+      invokeRuntime: async () => {
+        throw new SwitchyardContractError(
+          "missing-credential",
+          "Missing credential for gemini.",
+        );
+      },
+    });
+
+    const response = await surface.handle("POST", "/v1/runtime/byok/invoke", {
+      provider: "gemini",
+      model: "gemini-2.5-flash",
+      input: "hello",
+    });
+
+    expect(response.status).toBe(409);
+    expect(response.body).toMatchObject({
+      error: {
+        type: "missing-credential",
+        message: "Missing credential for gemini.",
+      },
+    });
+  });
+
+  it("passes through pre-rendered runtime responses on the generic invoke route", async () => {
+    const surface = new SwitchyardHttpSurface({
+      webLane: createMockWebLane(),
+      runtime: {} as never,
+      invokeRuntime: async () => ({
+        status: 202,
+        body: {
+          ok: true,
+          source: "runtime-kernel",
+        },
+      }),
+    });
+
+    const response = await surface.handle("POST", "/v1/runtime/invoke", {
+      provider: "chatgpt",
+      model: "gpt-4o-mini",
+      input: "hello",
+      lane: "web",
+    });
+
+    expect(response).toMatchObject({
+      status: 202,
+      body: {
+        ok: true,
+        source: "runtime-kernel",
+      },
+    });
+  });
+
+  it("renders structured web-login failures through the runtime-backed generic invoke route", async () => {
+    const service = createTestService({
+      useLocalWebAuthStore: false,
+    });
+
+    const response = await postSurface(service, "/v1/runtime/invoke", {
+      provider: "chatgpt",
+      model: "gpt-4o",
+      input: "hello",
+      lane: "web",
+    });
+
+    const payload = (await response.json()) as {
+      authPortal: { mode: string };
+      routes: { authPortal: string };
+      error: { type: string; diagnostics: unknown[] };
+      remediation?: unknown;
+    };
+
+    expect(response.status).toBe(409);
+    expect(payload.authPortal.mode).toBe("local-first");
+    expect(payload.routes.authPortal).toBe("/v1/runtime/auth-portal");
+    expect(payload.error.type).toBeTruthy();
+    expect(Array.isArray(payload.error.diagnostics)).toBe(true);
+    expect(payload.remediation).toBeTruthy();
+  });
+
+  it("maps runtime contract errors on the generic invoke route to structured responses", async () => {
+    const surface = new SwitchyardHttpSurface({
+      webLane: createMockWebLane(),
+      runtime: {} as never,
+      invokeRuntime: async () => {
+        throw new SwitchyardContractError(
+          "provider-unavailable",
+          "Provider is currently unavailable.",
+        );
+      },
+    });
+
+    const response = await surface.handle("POST", "/v1/runtime/invoke", {
+      provider: "chatgpt",
+      model: "gpt-4o-mini",
+      input: "hello",
+      lane: "web",
+    });
+
+    expect(response.status).toBe(503);
+    expect(response.body).toMatchObject({
+      error: {
+        type: "provider-unavailable",
+        message: "Provider is currently unavailable.",
+      },
+    });
   });
 });
