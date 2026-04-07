@@ -88,6 +88,19 @@ describe("run-pre-push-gate script", () => {
     expect(processExit).toHaveBeenCalledWith(7);
   });
 
+  it("throws the underlying spawn error when the child process cannot be started", async () => {
+    const spawnSync = vi.fn(() => ({
+      status: 1,
+      error: new Error("spawn failed"),
+    }));
+
+    vi.doMock("node:child_process", () => ({ spawnSync }));
+
+    const { run } = await import("../../../scripts/run-pre-push-gate.mjs");
+
+    expect(() => run("pnpm", ["typecheck"])).toThrow(/spawn failed/i);
+  });
+
   it("throws when repo-owned vitest processes never drain before the timeout", async () => {
     const repoRoot = process.cwd();
     const spawnSync = vi.fn(() => ({
