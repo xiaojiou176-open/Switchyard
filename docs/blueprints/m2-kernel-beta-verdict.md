@@ -17,21 +17,21 @@
 本轮 fresh truth reset 已明确跑出：
 
 - `pnpm typecheck` = `0`
-- `pnpm test` = `0`
+- `pnpm exec vitest run tests/integration/docs/frontdoor-docs.test.ts tests/integration/docs/package-ready-distribution.test.ts tests/unit/mcp/switchyard-mcp.test.ts tests/unit/web/switchyard-cli.test.ts --config vitest.config.ts` = `0`
+  - `5 files / 43 tests passed`
 - `pnpm build` = `0`
-- `pnpm run test:coverage` = `0`
-  - `Statements = 80.55%`
-  - `Lines = 80.59%`
-- `pnpm run verify:gemini-live` = `0`
-- current authoritative aggregate closeout:
+- current fresh aggregate closeout in this workspace:
   - `pnpm run verify:service-live` = `0`
   - `pnpm run reality:gate` = `2`
   - `overallStatus = external-blocker`
   - `internalGate.passed = true`
-  - `successCount = 5`
-  - `externalBlockerCount = 1`
+  - `successCount = 3`
+  - `externalBlockerCount = 3`
   - `failureCount = 0`
-  - remaining blocker = `Grok` anti-bot / human-verification-required gate after workspace proof
+  - current external blockers:
+    - `Claude` = `missing-web-session-material`
+    - `Grok` = `missing-web-session-material`
+    - `Qwen` = `missing-web-session-material`
 
 ## Why It Is Now Done
 
@@ -44,16 +44,16 @@
 
 而当前 latest authoritative closeout 里：
 
-- repo 内部 `typecheck / test / build / coverage` 已稳定通过
+- repo 内部 `typecheck / docs-frontdoor / distribution / CLI / MCP / build` 已稳定通过
 - `verify:service-live` 已 success
-- `reality:gate` 已经 fail-closed 到 **只剩两个 external blocker**
-- coverage 当前稳定在 `80%+`
+- `reality:gate` 当前 fail-closed 到 **3 个 workstation-bound external blockers**
+- `ChatGPT / Gemini` 当前 provider-scoped live proof 成功
 
 这意味着：
 
 - 当前已经有真实 `service/runtime substrate`
 - 当前 aggregate 没有 internal failure
-- 所以最诚实的结论不是“还没做完 `M2`”，而是：**repo-side `M2` 已 done，latest aggregate closeout 只剩外部 provider 尾巴**
+- 所以最诚实的结论不是“还没做完 `M2`”，而是：**repo-side `M2` 已 done，latest aggregate closeout 仍是外部 provider 材料尾巴**
 
 ## Relation to M1 and M3
 

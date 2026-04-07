@@ -15,6 +15,12 @@
 
 所以这里给的是 **可直接执行的最小 starter mini-projects**。
 
+如果你还没决定第一步到底该先跑哪一个，
+先别从这里直接盲选，先看：
+
+- [docs/first-success.md](../docs/first-success.md)
+- [docs/public-proof-pack.md](../docs/public-proof-pack.md)
+
 ## 当前 runnable starters
 
 - [examples/runtime-bridge/README.md](./runtime-bridge/README.md)
