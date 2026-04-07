@@ -1,0 +1,410 @@
+{
+  "$schema": "./starter-pack-comparison.schema.json",
+  "comparisonVersion": 1,
+  "filters": [
+    {
+      "id": "starter-kind",
+      "label": "Builder vs skill",
+      "field": "starterKind",
+      "values": [
+        {
+          "id": "builder",
+          "label": "Builder",
+          "comparisonIds": [
+            "codex-builder",
+            "claude-code-builder",
+            "openclaw-builder",
+            "mcp-inspector"
+          ]
+        },
+        {
+          "id": "skill",
+          "label": "Skill",
+          "comparisonIds": [
+            "runtime-diagnostics-skill",
+            "docs-seo-sync-skill"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "thin-runtime-bridges",
+      "label": "Thin runtime bridges",
+      "field": "firstSuccessMode",
+      "values": [
+        {
+          "id": "runtime-invoke",
+          "label": "Runtime invoke bridge",
+          "comparisonIds": [
+            "codex-builder",
+            "claude-code-builder",
+            "openclaw-builder"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "read-only-truth",
+      "label": "Read-only truth surfaces",
+      "field": "readOnly",
+      "values": [
+        {
+          "id": "true",
+          "label": "Read-only",
+          "comparisonIds": [
+            "mcp-inspector",
+            "runtime-diagnostics-skill",
+            "docs-seo-sync-skill"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "host-family",
+      "label": "Host family",
+      "field": "hostFamily",
+      "values": [
+        {
+          "id": "codex",
+          "label": "Codex",
+          "comparisonIds": [
+            "codex-builder"
+          ]
+        },
+        {
+          "id": "claude-code",
+          "label": "Claude Code",
+          "comparisonIds": [
+            "claude-code-builder"
+          ]
+        },
+        {
+          "id": "openclaw",
+          "label": "OpenClaw",
+          "comparisonIds": [
+            "openclaw-builder"
+          ]
+        },
+        {
+          "id": "mcp",
+          "label": "MCP",
+          "comparisonIds": [
+            "mcp-inspector"
+          ]
+        },
+        {
+          "id": "none",
+          "label": "No host family",
+          "comparisonIds": [
+            "runtime-diagnostics-skill",
+            "docs-seo-sync-skill"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "first-success-mode",
+      "label": "First success mode",
+      "field": "firstSuccessMode",
+      "values": [
+        {
+          "id": "runtime-invoke",
+          "label": "Runtime invoke",
+          "comparisonIds": [
+            "codex-builder",
+            "claude-code-builder",
+            "openclaw-builder"
+          ]
+        },
+        {
+          "id": "read-only-mcp",
+          "label": "Read-only MCP",
+          "comparisonIds": [
+            "mcp-inspector"
+          ]
+        },
+        {
+          "id": "provider-diagnostics",
+          "label": "Provider diagnostics",
+          "comparisonIds": [
+            "runtime-diagnostics-skill"
+          ]
+        },
+        {
+          "id": "docs-truth-sync",
+          "label": "Docs truth sync",
+          "comparisonIds": [
+            "docs-seo-sync-skill"
+          ]
+        }
+      ]
+    }
+  ],
+  "comparisons": [
+    {
+      "id": "codex-builder",
+      "label": "Build a Codex helper that forwards text requests into Switchyard",
+      "status": "partial",
+      "starterKind": "builder",
+      "recommendedPack": "codex",
+      "hostFamily": "codex",
+      "firstSuccessMode": "runtime-invoke",
+      "readOnly": false,
+      "needsRuntimeInvoke": true,
+      "needsMcpTransport": false,
+      "bestEntry": "pnpm run switchyard:cli -- builder-kit --target codex",
+      "smokeCommand": "pnpm run starter-pack:codex",
+      "copyReadyPackPath": "starter-packs/builders/codex",
+      "compareAgainst": [
+        "claude-code-builder",
+        "openclaw-builder",
+        "mcp-inspector"
+      ],
+      "recommendedDocs": [
+        "docs/starter-pack-chooser.md",
+        "docs/starter-pack-comparison.md",
+        "docs/compat/codex.md",
+        "docs/plugin-skill-starter-kits.md"
+      ],
+      "bestWhen": [
+        "You need a text-only runtime bridge.",
+        "You want a fail-closed Codex-shaped starter without claiming tool or worktree parity."
+      ],
+      "avoidWhen": [
+        "You need tool execution, MCP parity, or worktree parity.",
+        "You are actually looking for a read-only MCP inspector."
+      ],
+      "safeClaims": [
+        "partial Codex compatibility",
+        "thin runtime bridge",
+        "fail-closed helper starter"
+      ],
+      "notYetSupported": [
+        "tool execution parity",
+        "mcp parity",
+        "worktree parity"
+      ]
+    },
+    {
+      "id": "claude-code-builder",
+      "label": "Build a Claude Code-style message bridge into Switchyard",
+      "status": "partial",
+      "starterKind": "builder",
+      "recommendedPack": "claude-code",
+      "hostFamily": "claude-code",
+      "firstSuccessMode": "runtime-invoke",
+      "readOnly": false,
+      "needsRuntimeInvoke": true,
+      "needsMcpTransport": false,
+      "bestEntry": "pnpm run switchyard:cli -- builder-kit --target claude-code",
+      "smokeCommand": "pnpm run starter-pack:claude-code",
+      "copyReadyPackPath": "starter-packs/builders/claude-code",
+      "compareAgainst": [
+        "codex-builder",
+        "openclaw-builder",
+        "mcp-inspector"
+      ],
+      "recommendedDocs": [
+        "docs/starter-pack-chooser.md",
+        "docs/starter-pack-comparison.md",
+        "docs/compat/claude-code.md",
+        "docs/plugin-skill-starter-kits.md"
+      ],
+      "bestWhen": [
+        "You want to adapt message-shaped traffic into the current runtime invoke route.",
+        "You need a builder starter, not a terminal shell clone."
+      ],
+      "avoidWhen": [
+        "You need terminal shell parity or full tool parity.",
+        "You only need read-only inspection."
+      ],
+      "safeClaims": [
+        "partial Claude Code compatibility",
+        "thin message/runtime bridge",
+        "fail-closed compatibility helper"
+      ],
+      "notYetSupported": [
+        "terminal shell parity",
+        "approval parity",
+        "tool parity",
+        "mcp parity"
+      ]
+    },
+    {
+      "id": "openclaw-builder",
+      "label": "Build an OpenClaw-style delegation bridge without copying the product shell",
+      "status": "partial",
+      "starterKind": "builder",
+      "recommendedPack": "openclaw",
+      "hostFamily": "openclaw",
+      "firstSuccessMode": "runtime-invoke",
+      "readOnly": false,
+      "needsRuntimeInvoke": true,
+      "needsMcpTransport": false,
+      "bestEntry": "pnpm run switchyard:cli -- builder-kit --target openclaw",
+      "smokeCommand": "pnpm run starter-pack:openclaw",
+      "copyReadyPackPath": "starter-packs/builders/openclaw",
+      "compareAgainst": [
+        "codex-builder",
+        "claude-code-builder",
+        "mcp-inspector"
+      ],
+      "recommendedDocs": [
+        "docs/starter-pack-chooser.md",
+        "docs/starter-pack-comparison.md",
+        "docs/compat/openclaw.md",
+        "docs/compare/switchyard-vs-openclaw.md"
+      ],
+      "bestWhen": [
+        "You need a delegation-first request envelope.",
+        "You want the upstream-informed runtime path while keeping Switchyard's product boundary intact."
+      ],
+      "avoidWhen": [
+        "You need operator or control-plane parity.",
+        "You are looking for a read-only diagnostics pack."
+      ],
+      "safeClaims": [
+        "partial OpenClaw compatibility",
+        "delegation-first bridge",
+        "fail-closed adapter starter"
+      ],
+      "notYetSupported": [
+        "operator control-plane parity",
+        "product-shell parity",
+        "channel shell parity"
+      ]
+    },
+    {
+      "id": "mcp-inspector",
+      "label": "Expose Switchyard runtime truth through a read-only MCP inspector",
+      "status": "partial",
+      "starterKind": "builder",
+      "recommendedPack": "mcp",
+      "hostFamily": "mcp",
+      "firstSuccessMode": "read-only-mcp",
+      "readOnly": true,
+      "needsRuntimeInvoke": false,
+      "needsMcpTransport": true,
+      "bestEntry": "pnpm run switchyard:cli -- builder-kit --target mcp",
+      "smokeCommand": "pnpm run starter-pack:mcp",
+      "copyReadyPackPath": "starter-packs/builders/mcp",
+      "compareAgainst": [
+        "codex-builder",
+        "claude-code-builder",
+        "runtime-diagnostics-skill"
+      ],
+      "recommendedDocs": [
+        "docs/starter-pack-chooser.md",
+        "docs/starter-pack-comparison.md",
+        "docs/mcp.md",
+        "docs/api/mcp-readonly-server.md"
+      ],
+      "bestWhen": [
+        "You want runtime health, provider status, remediation, or catalog truth through a local MCP client.",
+        "You need a bounded inspector instead of a consumer-parity backend."
+      ],
+      "avoidWhen": [
+        "You need runtime invoke or acquisition writes through MCP.",
+        "You are actually building a compat helper for Codex, Claude Code, or OpenClaw."
+      ],
+      "safeClaims": [
+        "partial read-only MCP surface",
+        "runtime inspection only",
+        "bounded MCP starter"
+      ],
+      "notYetSupported": [
+        "execution brain",
+        "runtime invoke through MCP",
+        "acquisition write through MCP",
+        "embedded consumer parity"
+      ]
+    },
+    {
+      "id": "runtime-diagnostics-skill",
+      "label": "Create a read-only provider triage or diagnostics recipe",
+      "status": "partial",
+      "starterKind": "skill",
+      "recommendedPack": "runtime-diagnostics-pack",
+      "hostFamily": "none",
+      "firstSuccessMode": "provider-diagnostics",
+      "readOnly": true,
+      "needsRuntimeInvoke": false,
+      "needsMcpTransport": false,
+      "bestEntry": "pnpm run switchyard:cli -- skill-pack --target runtime-diagnostics-pack",
+      "smokeCommand": "pnpm run starter-pack:runtime-diagnostics-pack",
+      "copyReadyPackPath": "starter-packs/skills/runtime-diagnostics-pack",
+      "compareAgainst": [
+        "mcp-inspector",
+        "docs-seo-sync-skill"
+      ],
+      "recommendedDocs": [
+        "docs/starter-pack-chooser.md",
+        "docs/starter-pack-comparison.md",
+        "docs/plugin-skill-starter-kits.md",
+        "docs/mcp.md"
+      ],
+      "bestWhen": [
+        "You need to summarize provider readiness or triage incidents without invoking providers.",
+        "You want a repeatable skill recipe for diagnostics or support work."
+      ],
+      "avoidWhen": [
+        "You need acquisition writes, browser automation, or invoke.",
+        "You only need a read-only MCP inspector with no recipe layer."
+      ],
+      "safeClaims": [
+        "read-only diagnostics pack",
+        "provider triage helper",
+        "no invoke or write actions"
+      ],
+      "notYetSupported": [
+        "invoke",
+        "acquisition write",
+        "browser automation",
+        "execution-brain parity"
+      ]
+    },
+    {
+      "id": "docs-seo-sync-skill",
+      "label": "Create a truth-safe docs or SEO sync helper",
+      "status": "partial",
+      "starterKind": "skill",
+      "recommendedPack": "docs-seo-sync-pack",
+      "hostFamily": "none",
+      "firstSuccessMode": "docs-truth-sync",
+      "readOnly": true,
+      "needsRuntimeInvoke": false,
+      "needsMcpTransport": false,
+      "bestEntry": "pnpm run switchyard:cli -- skill-pack --target docs-seo-sync-pack",
+      "smokeCommand": "pnpm run starter-pack:docs-seo-sync-pack",
+      "copyReadyPackPath": "starter-packs/skills/docs-seo-sync-pack",
+      "compareAgainst": [
+        "runtime-diagnostics-skill",
+        "mcp-inspector"
+      ],
+      "recommendedDocs": [
+        "docs/starter-pack-chooser.md",
+        "docs/starter-pack-comparison.md",
+        "docs/plugin-skill-starter-kits.md",
+        "docs/discoverability-keyword-truth.md"
+      ],
+      "bestWhen": [
+        "You are syncing docs, metadata, or SEO copy to the latest support labels.",
+        "You want a bounded truth-sync starter, not a marketing autopilot."
+      ],
+      "avoidWhen": [
+        "You need autonomous publishing or launch automation.",
+        "You are actually trying to build a runtime bridge or diagnostics recipe."
+      ],
+      "safeClaims": [
+        "truth-sync starter",
+        "discoverability helper",
+        "not a marketing autopilot"
+      ],
+      "notYetSupported": [
+        "marketing autopilot",
+        "claim escalation without review",
+        "launch automation"
+      ]
+    }
+  ]
+}

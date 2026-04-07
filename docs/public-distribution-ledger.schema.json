@@ -1,0 +1,110 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/xiaojiou176-open/Switchyard/docs/public-distribution-ledger.schema.json",
+  "title": "Switchyard Public Distribution Ledger",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "$schema",
+    "ledgerVersion",
+    "entries"
+  ],
+  "properties": {
+    "$schema": {
+      "type": "string"
+    },
+    "ledgerVersion": {
+      "type": "integer",
+      "minimum": 1
+    },
+    "entries": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/entry"
+      }
+    }
+  },
+  "$defs": {
+    "status": {
+      "type": "string",
+      "enum": [
+        "supported now",
+        "partial",
+        "planned",
+        "research only",
+        "not now"
+      ]
+    },
+    "stringArray": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
+    },
+    "entry": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "target",
+        "status",
+        "officialPublicSurfaceExists",
+        "officialPublicSurface",
+        "currentListingStatus",
+        "strongestCurrentDistributionSurface",
+        "artifactNames",
+        "proofCommands",
+        "allowedClaims",
+        "forbiddenOverclaims",
+        "officialSources",
+        "sourceAnchors"
+      ],
+      "properties": {
+        "target": {
+          "type": "string",
+          "minLength": 1
+        },
+        "status": {
+          "$ref": "#/$defs/status"
+        },
+        "officialPublicSurfaceExists": {
+          "type": "boolean"
+        },
+        "officialPublicSurface": {
+          "type": "string",
+          "minLength": 1
+        },
+        "currentListingStatus": {
+          "type": "string",
+          "minLength": 1
+        },
+        "strongestCurrentDistributionSurface": {
+          "type": "string",
+          "minLength": 1
+        },
+        "artifactNames": {
+          "$ref": "#/$defs/stringArray"
+        },
+        "proofCommands": {
+          "$ref": "#/$defs/stringArray"
+        },
+        "allowedClaims": {
+          "$ref": "#/$defs/stringArray"
+        },
+        "forbiddenOverclaims": {
+          "$ref": "#/$defs/stringArray"
+        },
+        "officialSources": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "format": "uri"
+          }
+        },
+        "sourceAnchors": {
+          "$ref": "#/$defs/stringArray"
+        }
+      }
+    }
+  }
+}

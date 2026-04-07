@@ -1,0 +1,191 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/xiaojiou176-open/Switchyard/docs/starter-manifest-templates.schema.json",
+  "title": "Switchyard Starter Manifest Templates",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "$schema",
+    "manifestVersion",
+    "builderTemplates",
+    "skillTemplates"
+  ],
+  "properties": {
+    "$schema": {
+      "type": "string"
+    },
+    "manifestVersion": {
+      "type": "integer",
+      "minimum": 1
+    },
+    "builderTemplates": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/builderTemplate"
+      }
+    },
+    "skillTemplates": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/skillTemplate"
+      }
+    }
+  },
+  "$defs": {
+    "status": {
+      "type": "string",
+      "enum": [
+        "supported now",
+        "partial",
+        "planned",
+        "research only",
+        "not now"
+      ]
+    },
+    "stringArray": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
+    },
+    "builderTemplateManifest": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "starterTarget",
+        "catalogCommand",
+        "mode",
+        "safeClaims",
+        "notYetSupported"
+      ],
+      "properties": {
+        "starterTarget": {
+          "type": "string",
+          "minLength": 1
+        },
+        "runtimeBaseUrlEnv": {
+          "type": "string",
+          "minLength": 1
+        },
+        "startupCommand": {
+          "type": "string",
+          "minLength": 1
+        },
+        "catalogCommand": {
+          "type": "string",
+          "minLength": 1
+        },
+        "invokeRoute": {
+          "type": "string",
+          "minLength": 1
+        },
+        "mode": {
+          "type": "string",
+          "minLength": 1
+        },
+        "safeClaims": {
+          "$ref": "#/$defs/stringArray"
+        },
+        "notYetSupported": {
+          "$ref": "#/$defs/stringArray"
+        }
+      },
+      "allOf": [
+        {
+          "anyOf": [
+            {
+              "required": [
+                "runtimeBaseUrlEnv",
+                "invokeRoute"
+              ]
+            },
+            {
+              "required": [
+                "startupCommand"
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    "builderTemplate": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "target",
+        "status",
+        "templateShape",
+        "manifest"
+      ],
+      "properties": {
+        "target": {
+          "type": "string",
+          "minLength": 1
+        },
+        "status": {
+          "$ref": "#/$defs/status"
+        },
+        "templateShape": {
+          "type": "string",
+          "minLength": 1
+        },
+        "manifest": {
+          "$ref": "#/$defs/builderTemplateManifest"
+        }
+      }
+    },
+    "skillTemplateManifest": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "starterTarget",
+        "catalogCommand",
+        "safeClaims",
+        "notYetSupported"
+      ],
+      "properties": {
+        "starterTarget": {
+          "type": "string",
+          "minLength": 1
+        },
+        "catalogCommand": {
+          "type": "string",
+          "minLength": 1
+        },
+        "safeClaims": {
+          "$ref": "#/$defs/stringArray"
+        },
+        "notYetSupported": {
+          "$ref": "#/$defs/stringArray"
+        }
+      }
+    },
+    "skillTemplate": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "status",
+        "templateShape",
+        "manifest"
+      ],
+      "properties": {
+        "id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "status": {
+          "$ref": "#/$defs/status"
+        },
+        "templateShape": {
+          "type": "string",
+          "minLength": 1
+        },
+        "manifest": {
+          "$ref": "#/$defs/skillTemplateManifest"
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,221 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/xiaojiou176-open/Switchyard/docs/starter-pack-comparison.schema.json",
+  "title": "Switchyard Starter Pack Comparison",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "$schema",
+    "comparisonVersion",
+    "filters",
+    "comparisons"
+  ],
+  "properties": {
+    "$schema": {
+      "type": "string"
+    },
+    "comparisonVersion": {
+      "type": "integer",
+      "minimum": 1
+    },
+    "filters": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/filterGroup"
+      }
+    },
+    "comparisons": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/comparisonRow"
+      }
+    }
+  },
+  "$defs": {
+    "status": {
+      "type": "string",
+      "enum": [
+        "supported now",
+        "partial",
+        "planned",
+        "research only",
+        "not now"
+      ]
+    },
+    "starterKind": {
+      "type": "string",
+      "enum": [
+        "builder",
+        "skill"
+      ]
+    },
+    "hostFamily": {
+      "type": "string",
+      "enum": [
+        "codex",
+        "claude-code",
+        "openclaw",
+        "mcp",
+        "none"
+      ]
+    },
+    "firstSuccessMode": {
+      "type": "string",
+      "enum": [
+        "runtime-invoke",
+        "read-only-mcp",
+        "provider-diagnostics",
+        "docs-truth-sync"
+      ]
+    },
+    "stringArray": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
+    },
+    "filterValue": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "label",
+        "comparisonIds"
+      ],
+      "properties": {
+        "id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "label": {
+          "type": "string",
+          "minLength": 1
+        },
+        "comparisonIds": {
+          "$ref": "#/$defs/stringArray"
+        }
+      }
+    },
+    "filterGroup": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "label",
+        "field",
+        "values"
+      ],
+      "properties": {
+        "id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "label": {
+          "type": "string",
+          "minLength": 1
+        },
+        "field": {
+          "type": "string",
+          "minLength": 1
+        },
+        "values": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/filterValue"
+          }
+        }
+      }
+    },
+    "comparisonRow": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "label",
+        "status",
+        "starterKind",
+        "recommendedPack",
+        "hostFamily",
+        "firstSuccessMode",
+        "readOnly",
+        "needsRuntimeInvoke",
+        "needsMcpTransport",
+        "bestEntry",
+        "smokeCommand",
+        "copyReadyPackPath",
+        "compareAgainst",
+        "recommendedDocs",
+        "bestWhen",
+        "avoidWhen",
+        "safeClaims",
+        "notYetSupported"
+      ],
+      "properties": {
+        "id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "label": {
+          "type": "string",
+          "minLength": 1
+        },
+        "status": {
+          "$ref": "#/$defs/status"
+        },
+        "starterKind": {
+          "$ref": "#/$defs/starterKind"
+        },
+        "recommendedPack": {
+          "type": "string",
+          "minLength": 1
+        },
+        "hostFamily": {
+          "$ref": "#/$defs/hostFamily"
+        },
+        "firstSuccessMode": {
+          "$ref": "#/$defs/firstSuccessMode"
+        },
+        "readOnly": {
+          "type": "boolean"
+        },
+        "needsRuntimeInvoke": {
+          "type": "boolean"
+        },
+        "needsMcpTransport": {
+          "type": "boolean"
+        },
+        "bestEntry": {
+          "type": "string",
+          "minLength": 1
+        },
+        "smokeCommand": {
+          "type": "string",
+          "minLength": 1
+        },
+        "copyReadyPackPath": {
+          "type": "string",
+          "minLength": 1
+        },
+        "compareAgainst": {
+          "$ref": "#/$defs/stringArray"
+        },
+        "recommendedDocs": {
+          "$ref": "#/$defs/stringArray"
+        },
+        "bestWhen": {
+          "$ref": "#/$defs/stringArray"
+        },
+        "avoidWhen": {
+          "$ref": "#/$defs/stringArray"
+        },
+        "safeClaims": {
+          "$ref": "#/$defs/stringArray"
+        },
+        "notYetSupported": {
+          "$ref": "#/$defs/stringArray"
+        }
+      }
+    }
+  }
+}

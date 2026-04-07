@@ -1,0 +1,101 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/xiaojiou176-open/Switchyard/docs/skill-pack-catalog.schema.json",
+  "title": "Switchyard Skill Pack Catalog",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "$schema",
+    "catalogVersion",
+    "packs"
+  ],
+  "properties": {
+    "$schema": {
+      "type": "string"
+    },
+    "catalogVersion": {
+      "type": "integer",
+      "minimum": 1
+    },
+    "packs": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/skillPack"
+      }
+    }
+  },
+  "$defs": {
+    "status": {
+      "type": "string",
+      "enum": [
+        "supported now",
+        "partial",
+        "planned",
+        "research only",
+        "not now"
+      ]
+    },
+    "stringArray": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
+    },
+    "skillPack": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "status",
+        "starterShape",
+        "bestEntry",
+        "recommendedDocs",
+        "backingSurfaces",
+        "notYetSupported"
+      ],
+      "properties": {
+        "id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "status": {
+          "$ref": "#/$defs/status"
+        },
+        "starterShape": {
+          "type": "string",
+          "minLength": 1
+        },
+        "bestEntry": {
+          "type": "string",
+          "minLength": 1
+        },
+        "requiredInputs": {
+          "$ref": "#/$defs/stringArray"
+        },
+        "starterSteps": {
+          "$ref": "#/$defs/stringArray"
+        },
+        "outputArtifacts": {
+          "$ref": "#/$defs/stringArray"
+        },
+        "safeClaims": {
+          "$ref": "#/$defs/stringArray"
+        },
+        "recommendedDocs": {
+          "$ref": "#/$defs/stringArray"
+        },
+        "copyReadyPackPath": {
+          "type": "string",
+          "minLength": 1
+        },
+        "backingSurfaces": {
+          "$ref": "#/$defs/stringArray"
+        },
+        "notYetSupported": {
+          "$ref": "#/$defs/stringArray"
+        }
+      }
+    }
+  }
+}

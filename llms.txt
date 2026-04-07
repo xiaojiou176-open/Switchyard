@@ -1,0 +1,118 @@
+Switchyard
+
+Shared provider runtime for AI apps.
+
+Current truth:
+- Supports BYOK + Web/Login as the only V1 supply lanes.
+- Fresh internal gate is green for `pnpm typecheck`, `pnpm test`, and `pnpm build`.
+- Fresh `pnpm run test:coverage` currently exits `0`, and coverage is back above the repo-wide floor:
+  - `Statements = 80.55%`
+  - `Lines = 80.59%`
+- Live verification depends on local end-user credentials and browser session materials on the current machine.
+- Fresh `verify:gemini-live` is `0` and succeeds through `SWITCHYARD_GEMINI_API_KEY`.
+- Fresh authoritative aggregate closeout is currently:
+  - `pnpm run verify:service-live` = `0`
+  - `pnpm run reality:gate` = `2`
+  - `overallStatus = external-blocker`
+  - `internalGate.passed = true`
+  - `successCount = 4`
+  - `externalBlockerCount = 2`
+  - `failureCount = 0`
+  - blockers:
+    - `grok = refreshable-but-degraded / provider-adjacent`
+    - `qwen = user-action-required / permission-gated`
+- `auth-status` / stored `ready` still only means local session materials are present; future reruns on a different workstation or browser state still need fresh live verification.
+- Current top-level closeout status is:
+  - `PROGRAM PAUSED - ONLY TRUE EXTERNAL BLOCKERS REMAIN`
+- Any future narrower or greener closeout result from a credentialed workstation is still environment-bound and must be rerun before reuse.
+
+Compatibility status:
+- Codex compatibility: public `partial`; thin fail-closed runtime adapter is landed, but there is no tool/MCP/worktree parity.
+- Claude Code compatibility: public `partial`; thin fail-closed runtime adapter is landed, but there is no tool/MCP/terminal parity.
+- OpenClaw compatibility: public `partial`; thin fail-closed runtime adapter is landed, but there is no product-shell or operator parity.
+- CLI starter: public `partial`; read-only builder/runtime helper is landed, but it is not an execution brain or distribution commitment.
+- MCP adapter/server surface: public `partial`; a committed read-only MCP server/tool surface is landed on `main`, but it is not an execution brain and not a full consumer-parity backend.
+
+First-party integration status:
+- campus-copilot: fresh 2026-04-03 cross-repo audit confirms a bounded Switchyard BFF bridge on a clean dedicated seam worktree.
+- CortexPilot: last-known planning classification = provider/base_url seam exists, but no verified Switchyard slice is landed in this program run.
+- multi-ai-sidepanel: current committed repo truth includes a maintainer-local / partial Switchyard runtime-backed analyst lane while browser-native compare stays local.
+
+Important docs:
+- README.md
+- docs/README.md
+- docs/api/service-http-reference.md
+- docs/api/openapi.yaml
+- docs/api/sdk-quickstart.md
+- docs/api/mcp-readonly-server.md
+- docs/api/error-diagnostics-reference.md
+- docs/api/web-login-acquisition.md
+- docs/compat/README.md
+- docs/compat/codex.md
+- docs/compat/claude-code.md
+- docs/compat/openclaw.md
+- docs/public-surface-catalog.md
+- docs/public-surface-catalog.json
+- docs/public-surface-catalog.schema.json
+- docs/public-distribution-ledger.md
+- docs/plugin-skill-starter-kits.md
+- docs/starter-pack-chooser.md
+- docs/starter-pack-chooser.json
+- docs/starter-pack-chooser.schema.json
+- docs/starter-pack-comparison.md
+- docs/starter-pack-comparison.json
+- docs/starter-pack-comparison.schema.json
+- docs/builder-journeys.md
+- docs/builder-journeys.json
+- docs/builder-journeys.schema.json
+- docs/builder-intent-router.md
+- docs/builder-intent-router.json
+- docs/builder-intent-router.schema.json
+- docs/host-integration-playbooks.md
+- docs/host-integration-playbooks.json
+- docs/host-integration-playbooks.schema.json
+- docs/host-integration-examples.md
+- examples/hosts/index.json
+- examples/hosts/index.schema.json
+- docs/host-integration-examples.md
+- examples/hosts/index.json
+- examples/hosts/index.schema.json
+- docs/starter-manifest-templates.md
+- docs/starter-manifest-templates.schema.json
+- docs/starter-manifest-examples.md
+- docs/starter-manifest-examples.schema.json
+- examples/README.md
+- starter-packs/README.md
+- docs/starter-pack-index.md
+- docs/provider-runtime-catalog.md
+- docs/provider-runtime-catalog.json
+- docs/provider-runtime-catalog.schema.json
+- docs/compat-target-catalog.md
+- docs/compat-target-catalog.json
+- docs/compat-target-catalog.schema.json
+- docs/builder-kit-catalog.md
+- docs/builder-kit-catalog.json
+- docs/builder-kit-catalog.schema.json
+- docs/skill-pack-catalog.md
+- docs/skill-pack-catalog.json
+- docs/skill-pack-catalog.schema.json
+- docs/mcp.md
+- docs/mcp-tool-catalog.md
+- docs/mcp-tool-catalog.json
+- docs/mcp-tool-catalog.schema.json
+- docs/faq.md
+- docs/glossary.md
+- docs/i18n.md
+- docs/testing-pyramid.md
+- docs/discoverability-keyword-truth.md
+- docs/discoverability-keyword-truth.json
+- docs/discoverability-keyword-truth.schema.json
+- docs/compare/switchyard-vs-codex.md
+- docs/compare/switchyard-vs-claude-code.md
+- docs/product/v1-brief.md
+- docs/product/scope-and-nongoals.md
+- docs/adr/0001-v1-boundary-and-lane-model.md
+- docs/adr/0003-upstream-relationship-openclaw-zero-token.md
+- docs/contracts/provider-runtime-contract.md
+- docs/contracts/service-and-sdk-surfaces.md
+- docs/blueprints/v1-delivery-plan.md

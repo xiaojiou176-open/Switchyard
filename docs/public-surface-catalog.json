@@ -1,0 +1,1241 @@
+{
+  "$schema": "./public-surface-catalog.schema.json",
+  "catalogVersion": 1,
+  "generatedFrom": "durable docs truth on main",
+  "publicSurfaces": [
+    {
+      "surface": "HTTP/API",
+      "status": "supported now",
+      "truthfulMeaning": "Current public frontdoor carries durable runtime discovery, auth, remediation, acquisition, and invoke HTTP routes.",
+      "sourceAnchors": [
+        "docs/api/openapi.yaml",
+        "docs/api/service-http-reference.md",
+        "packages/surfaces/http/src/http-surface.ts",
+        "packages/surfaces/http/src/service-language.ts"
+      ]
+    },
+    {
+      "surface": "SDK/client",
+      "status": "partial",
+      "truthfulMeaning": "BYOK SDK, service client, and web helper exist, but they do not replace the service/runtime substrate as the primary public frontdoor.",
+      "sourceAnchors": [
+        "docs/api/sdk-quickstart.md",
+        "packages/sdk/src/index.ts",
+        "packages/surfaces/sdk-client/src/service-client.ts"
+      ]
+    },
+    {
+      "surface": "CLI",
+      "status": "partial",
+      "truthfulMeaning": "Read-only builder/runtime helper is landed; it is not an execution brain or distribution commitment.",
+      "sourceAnchors": [
+        "scripts/switchyard-cli.mjs",
+        "tests/unit/web/switchyard-cli.test.ts",
+        "docs/blueprints/wave6-outward-packaging-threshold.md"
+      ],
+      "readOnly": true,
+      "commands": [
+        "providers",
+        "health",
+        "auth-status",
+        "provider-status",
+        "provider-probe",
+        "provider-remediation",
+        "provider-current-page",
+        "provider-current-console",
+        "provider-current-network",
+        "provider-store-readiness",
+        "provider-live-readiness",
+        "provider-attach-target",
+        "provider-diagnose-ladder",
+        "provider-support-bundle",
+        "provider-diagnose",
+        "surface-catalog",
+        "surface-catalog-schema",
+        "compat-target-catalog",
+        "compat-target-catalog-schema",
+        "compat-targets",
+        "compat-target",
+        "builder-kit-catalog",
+        "builder-kit-catalog-schema",
+        "builder-kits",
+        "builder-kit",
+        "skill-pack-catalog",
+        "skill-pack-catalog-schema",
+        "skill-packs",
+        "skill-pack",
+        "host-playbooks",
+        "host-playbooks-schema",
+        "host-playbook",
+        "host-examples",
+        "host-examples-schema",
+        "host-example",
+        "builder-journeys",
+        "builder-journeys-schema",
+        "builder-journey",
+        "builder-intent-router",
+        "builder-intent-router-schema",
+        "builder-intent",
+        "keyword-truth",
+        "keyword-truth-schema",
+        "keyword-entry",
+        "provider-catalog",
+        "provider-catalog-schema",
+        "provider-entry",
+        "starter-manifests",
+        "starter-manifests-schema",
+        "starter-examples",
+        "starter-examples-schema",
+        "starter-pack-index",
+        "starter-pack-index-schema",
+        "starter-pack-entry",
+        "starter-pack-chooser",
+        "starter-pack-chooser-schema",
+        "starter-pack-scenario",
+        "starter-pack-comparison",
+        "starter-pack-comparison-schema",
+        "starter-pack-filter",
+        "builder-template",
+        "builder-example",
+        "skill-template",
+        "skill-example",
+        "mcp-status",
+        "mcp-tools",
+        "mcp-tool-catalog",
+        "mcp-tool-catalog-schema",
+        "mcp-tool"
+      ]
+    },
+    {
+      "surface": "MCP",
+      "status": "partial",
+      "truthfulMeaning": "A read-only stdio MCP server/tool surface is landed on main and delegates to the same runtime inspection substrate, but it is not an execution brain or full consumer-parity backend.",
+      "sourceAnchors": [
+        "docs/mcp.md",
+        "packages/surfaces/mcp/src/index.ts",
+        "scripts/switchyard-mcp.mjs",
+        "tests/unit/mcp/switchyard-mcp.test.ts"
+      ],
+      "readOnly": true
+    },
+    {
+      "surface": "i18n",
+      "status": "partial",
+      "truthfulMeaning": "Current state is a bilingual developer frontdoor, not full product i18n.",
+      "sourceAnchors": [
+        "docs/i18n.md",
+        "README.md",
+        "docs/README.md"
+      ]
+    }
+  ],
+  "compatTargets": [
+    {
+      "target": "codex",
+      "status": "partial",
+      "builderFacing": true,
+      "failClosed": true,
+      "transport": "responses",
+      "route": "/v1/runtime/invoke",
+      "supportedModes": [
+        "chat",
+        "plan",
+        "copilot-brain"
+      ],
+      "truthfulMeaning": "Thin fail-closed runtime adapter is landed for text/runtime delegation only.",
+      "notYetSupported": [
+        "tool-execution",
+        "mcp-execution",
+        "execution-brain",
+        "terminal-shell",
+        "approval-ui",
+        "browser-automation"
+      ],
+      "notes": [
+        "builder-facing runtime adapter only",
+        "no tool or MCP parity"
+      ],
+      "sourceAnchors": [
+        "docs/compat/codex.md",
+        "packages/consumers/codex/src/index.ts",
+        "tests/unit/compat/codex-consumer.test.ts"
+      ]
+    },
+    {
+      "target": "claude-code",
+      "status": "partial",
+      "builderFacing": true,
+      "failClosed": true,
+      "transport": "anthropic-compatible",
+      "route": "/v1/runtime/invoke",
+      "supportedModes": [
+        "chat",
+        "plan",
+        "copilot-brain"
+      ],
+      "truthfulMeaning": "Thin fail-closed message/runtime bridge is landed, but terminal, approval, tool, and MCP parity are not.",
+      "notYetSupported": [
+        "tool-execution",
+        "mcp-execution",
+        "execution-brain",
+        "terminal-shell",
+        "approval-ui",
+        "browser-automation"
+      ],
+      "notes": [
+        "builder-facing runtime adapter only",
+        "header/body fidelity bridge is intentionally thin",
+        "no terminal shell, tool plane, or MCP parity"
+      ],
+      "sourceAnchors": [
+        "docs/compat/claude-code.md",
+        "packages/consumers/claude-code/src/index.ts",
+        "tests/unit/compat/claude-code-consumer.test.ts"
+      ]
+    },
+    {
+      "target": "openclaw",
+      "status": "partial",
+      "builderFacing": true,
+      "failClosed": true,
+      "transport": "delegated-runtime",
+      "route": "/v1/runtime/invoke",
+      "supportedModes": [
+        "chat",
+        "plan",
+        "copilot-brain"
+      ],
+      "truthfulMeaning": "Delegation-first thin runtime bridge is landed, but operator/control-plane/product-shell parity is not.",
+      "notYetSupported": [
+        "tool-execution",
+        "mcp-execution",
+        "execution-brain",
+        "terminal-shell",
+        "approval-ui",
+        "browser-automation"
+      ],
+      "notes": [
+        "future consumer-side adapter only",
+        "provider/runtime delegation without product-shell inheritance",
+        "no operator control plane or channel shell parity"
+      ],
+      "sourceAnchors": [
+        "docs/compat/openclaw.md",
+        "packages/consumers/openclaw/src/index.ts",
+        "tests/unit/compat/openclaw-consumer.test.ts"
+      ]
+    }
+  ],
+  "builderKits": [
+    {
+      "target": "codex",
+      "status": "partial",
+      "starterShape": "responses-runtime-helper",
+      "bestEntry": "pnpm run switchyard:cli -- compat-target --target codex",
+      "requiredInputs": [
+        "service runtime base URL",
+        "Codex-side request text",
+        "explicit provider/lane choice when the target provider is dual-lane"
+      ],
+      "starterSteps": [
+        "Read the Codex compat target truth first.",
+        "Point the helper at the current Switchyard service runtime base URL.",
+        "Keep the helper text-only and delegate actual invocation through the thin compat adapter.",
+        "Expose unsupported features as fail-closed instead of silently dropping them."
+      ],
+      "outputArtifacts": [
+        "builder-side runtime helper",
+        "thin request bridge",
+        "truthful status page or README snippet"
+      ],
+      "safeClaims": [
+        "partial Codex compatibility",
+        "thin runtime bridge",
+        "fail-closed builder helper"
+      ],
+      "recommendedDocs": [
+        "docs/starter-pack-chooser.md",
+        "docs/starter-pack-comparison.md",
+        "docs/host-integration-playbooks.md",
+        "docs/host-integration-examples.md",
+        "docs/compat/codex.md",
+        "docs/public-surface-support-matrix.md",
+        "docs/plugin-skill-starter-kits.md"
+      ],
+      "copyReadyPackPath": "starter-packs/builders/codex",
+      "notYetSupported": [
+        "tool-execution parity",
+        "mcp parity",
+        "worktree parity"
+      ]
+    },
+    {
+      "target": "claude-code",
+      "status": "partial",
+      "starterShape": "message-runtime-helper",
+      "bestEntry": "pnpm run switchyard:cli -- compat-target --target claude-code",
+      "requiredInputs": [
+        "service runtime base URL",
+        "Claude Code-style message payload",
+        "explicit target provider when multiple providers fit the model family"
+      ],
+      "starterSteps": [
+        "Read the Claude Code compat truth page first.",
+        "Normalize the message payload into the thin runtime bridge shape.",
+        "Delegate through the existing Switchyard runtime invoke route.",
+        "Keep tool or terminal claims fail-closed and visibly unsupported."
+      ],
+      "outputArtifacts": [
+        "message/runtime bridge helper",
+        "gateway-format adapter",
+        "fail-closed compatibility note"
+      ],
+      "safeClaims": [
+        "partial Claude Code compatibility",
+        "thin message/runtime bridge",
+        "no terminal or tool parity"
+      ],
+      "recommendedDocs": [
+        "docs/starter-pack-chooser.md",
+        "docs/starter-pack-comparison.md",
+        "docs/host-integration-playbooks.md",
+        "docs/host-integration-examples.md",
+        "docs/compat/claude-code.md",
+        "docs/public-surface-support-matrix.md",
+        "docs/plugin-skill-starter-kits.md"
+      ],
+      "copyReadyPackPath": "starter-packs/builders/claude-code",
+      "notYetSupported": [
+        "terminal shell parity",
+        "approval parity",
+        "tool parity",
+        "mcp parity"
+      ]
+    },
+    {
+      "target": "openclaw",
+      "status": "partial",
+      "starterShape": "delegated-runtime-helper",
+      "bestEntry": "pnpm run switchyard:cli -- compat-target --target openclaw",
+      "requiredInputs": [
+        "service runtime base URL",
+        "delegation-first request envelope",
+        "explicit understanding that the OpenClaw product shell stays outside Switchyard"
+      ],
+      "starterSteps": [
+        "Read the OpenClaw compat truth page and upstream boundary reminder first.",
+        "Use the delegation-first runtime bridge instead of copying the product shell.",
+        "Keep operator or control-plane expectations outside the starter.",
+        "Document the remaining parity gaps before exposing the helper."
+      ],
+      "outputArtifacts": [
+        "delegation-first runtime helper",
+        "thin adapter README",
+        "bounded parity disclaimer"
+      ],
+      "safeClaims": [
+        "partial OpenClaw compatibility",
+        "delegation-first bridge",
+        "no operator or product-shell parity"
+      ],
+      "recommendedDocs": [
+        "docs/starter-pack-chooser.md",
+        "docs/starter-pack-comparison.md",
+        "docs/host-integration-playbooks.md",
+        "docs/host-integration-examples.md",
+        "docs/compat/openclaw.md",
+        "docs/compare/switchyard-vs-openclaw.md",
+        "docs/plugin-skill-starter-kits.md"
+      ],
+      "copyReadyPackPath": "starter-packs/builders/openclaw",
+      "notYetSupported": [
+        "operator control-plane parity",
+        "product-shell parity",
+        "channel shell parity"
+      ]
+    },
+    {
+      "target": "mcp",
+      "status": "partial",
+      "starterShape": "read-only-runtime-inspector",
+      "bestEntry": "pnpm run switchyard:mcp -- --base-url http://127.0.0.1:4010",
+      "requiredInputs": [
+        "service runtime base URL",
+        "local MCP client capable of stdio transport",
+        "read-only use case"
+      ],
+      "starterSteps": [
+        "Start the read-only Switchyard MCP server over stdio.",
+        "Enumerate the published tools before wiring client UX around them.",
+        "Route only inspection and diagnostics requests through this surface.",
+        "Keep invoke, acquisition, and browser-automation requests visibly unsupported."
+      ],
+      "outputArtifacts": [
+        "stdio MCP client config",
+        "read-only runtime inspector",
+        "bounded tool inventory"
+      ],
+      "safeClaims": [
+        "partial MCP surface",
+        "read-only MCP server",
+        "runtime inspection only"
+      ],
+      "recommendedDocs": [
+        "docs/starter-pack-chooser.md",
+        "docs/starter-pack-comparison.md",
+        "docs/host-integration-playbooks.md",
+        "docs/host-integration-examples.md",
+        "docs/mcp.md",
+        "docs/api/mcp-readonly-server.md",
+        "docs/plugin-skill-starter-kits.md"
+      ],
+      "copyReadyPackPath": "starter-packs/builders/mcp",
+      "notYetSupported": [
+        "execution brain",
+        "runtime invoke through MCP",
+        "acquisition write through MCP",
+        "embedded consumer parity"
+      ]
+    }
+  ],
+  "skillPacks": [
+    {
+      "id": "runtime-diagnostics-pack",
+      "status": "partial",
+      "starterShape": "read-only-runtime-diagnostics",
+      "bestEntry": "pnpm run switchyard:cli -- skill-pack --target runtime-diagnostics-pack",
+      "requiredInputs": [
+        "current provider id",
+        "runtime diagnostics access",
+        "read-only automation context"
+      ],
+      "starterSteps": [
+        "Read provider diagnose and support-bundle data first.",
+        "Summarize readiness, remediation, and attach-target truth without invoking providers.",
+        "Escalate missing browser/login state as explicit blocker text.",
+        "Keep every action read-only."
+      ],
+      "outputArtifacts": [
+        "diagnostics skill recipe",
+        "provider triage checklist",
+        "bounded incident summary"
+      ],
+      "safeClaims": [
+        "read-only diagnostics pack",
+        "runtime readiness summary",
+        "no invoke/write actions"
+      ],
+      "recommendedDocs": [
+        "docs/starter-pack-chooser.md",
+        "docs/plugin-skill-starter-kits.md",
+        "docs/mcp.md",
+        "docs/public-surface-support-matrix.md"
+      ],
+      "copyReadyPackPath": "starter-packs/skills/runtime-diagnostics-pack",
+      "backingSurfaces": [
+        "CLI",
+        "MCP",
+        "HTTP/API"
+      ],
+      "notYetSupported": [
+        "invoke",
+        "acquisition write",
+        "browser automation",
+        "execution-brain parity"
+      ]
+    },
+    {
+      "id": "docs-seo-sync-pack",
+      "status": "partial",
+      "starterShape": "truth-sync-and-discoverability",
+      "bestEntry": "pnpm run switchyard:cli -- skill-pack --target docs-seo-sync-pack",
+      "requiredInputs": [
+        "current public-surface catalog",
+        "discoverability keyword table",
+        "human review before publishing claims"
+      ],
+      "starterSteps": [
+        "Read the current surface catalog and keyword truth table first.",
+        "Sync docs or builder metadata to the latest truthful support labels.",
+        "Keep partial and research-only labels intact instead of upgrading claims.",
+        "Hand the result to a human reviewer before any outward publication."
+      ],
+      "outputArtifacts": [
+        "docs sync recipe",
+        "SEO/discoverability checklist",
+        "truth-safe keyword set"
+      ],
+      "safeClaims": [
+        "truth-sync starter",
+        "discoverability helper",
+        "not a marketing autopilot"
+      ],
+      "recommendedDocs": [
+        "docs/starter-pack-chooser.md",
+        "docs/plugin-skill-starter-kits.md",
+        "docs/discoverability-keyword-truth.md",
+        "docs/public-surface-catalog.md"
+      ],
+      "copyReadyPackPath": "starter-packs/skills/docs-seo-sync-pack",
+      "backingSurfaces": [
+        "public-surface catalog",
+        "support matrix",
+        "discoverability truth"
+      ],
+      "notYetSupported": [
+        "marketing autopilot",
+        "claim escalation without review",
+        "launch automation"
+      ]
+    }
+  ],
+  "hostExamples": [
+    {
+      "target": "codex",
+      "status": "partial",
+      "hostShape": "responses-client-config",
+      "bestEntry": "pnpm run switchyard:cli -- host-example --target codex",
+      "examplePath": "examples/hosts/codex",
+      "configPath": "examples/hosts/codex/config.example.json",
+      "smokeScriptPath": "examples/hosts/codex/smoke.mjs",
+      "smokeCommand": "pnpm run example:host-codex",
+      "firstSuccessCheck": "Runs one text-only runtime invoke request through the host example config.",
+      "relatedCompatTarget": "codex",
+      "relatedStarterPackPath": "starter-packs/builders/codex",
+      "relatedDocs": [
+        "docs/host-integration-examples.md",
+        "docs/host-integration-playbooks.md",
+        "docs/starter-pack-chooser.md",
+        "docs/compat/codex.md",
+        "examples/hosts/codex/README.md"
+      ],
+      "safeClaims": [
+        "partial Codex host example",
+        "Responses-style runtime bridge config",
+        "copy-paste host wiring"
+      ],
+      "notYetSupported": [
+        "tool execution parity",
+        "worktree parity",
+        "mcp parity"
+      ]
+    },
+    {
+      "target": "claude-code",
+      "status": "partial",
+      "hostShape": "message-gateway-config",
+      "bestEntry": "pnpm run switchyard:cli -- host-example --target claude-code",
+      "examplePath": "examples/hosts/claude-code",
+      "configPath": "examples/hosts/claude-code/config.example.json",
+      "smokeScriptPath": "examples/hosts/claude-code/smoke.mjs",
+      "smokeCommand": "pnpm run example:host-claude-code",
+      "firstSuccessCheck": "Runs one message-shaped runtime invoke request through the host example config.",
+      "relatedCompatTarget": "claude-code",
+      "relatedStarterPackPath": "starter-packs/builders/claude-code",
+      "relatedDocs": [
+        "docs/host-integration-examples.md",
+        "docs/host-integration-playbooks.md",
+        "docs/starter-pack-chooser.md",
+        "docs/compat/claude-code.md",
+        "examples/hosts/claude-code/README.md"
+      ],
+      "safeClaims": [
+        "partial Claude Code host example",
+        "message/runtime bridge config",
+        "copy-paste host wiring"
+      ],
+      "notYetSupported": [
+        "terminal parity",
+        "tool parity",
+        "approval parity"
+      ]
+    },
+    {
+      "target": "openclaw",
+      "status": "partial",
+      "hostShape": "delegation-runtime-config",
+      "bestEntry": "pnpm run switchyard:cli -- host-example --target openclaw",
+      "examplePath": "examples/hosts/openclaw",
+      "configPath": "examples/hosts/openclaw/config.example.json",
+      "smokeScriptPath": "examples/hosts/openclaw/smoke.mjs",
+      "smokeCommand": "pnpm run example:host-openclaw",
+      "firstSuccessCheck": "Runs one delegation-first runtime invoke request through the host example config.",
+      "relatedCompatTarget": "openclaw",
+      "relatedStarterPackPath": "starter-packs/builders/openclaw",
+      "relatedDocs": [
+        "docs/host-integration-examples.md",
+        "docs/host-integration-playbooks.md",
+        "docs/starter-pack-chooser.md",
+        "docs/compat/openclaw.md",
+        "examples/hosts/openclaw/README.md"
+      ],
+      "safeClaims": [
+        "partial OpenClaw host example",
+        "delegation-first config",
+        "copy-paste host wiring"
+      ],
+      "notYetSupported": [
+        "operator parity",
+        "product-shell parity",
+        "channel shell parity"
+      ]
+    },
+    {
+      "target": "mcp",
+      "status": "partial",
+      "hostShape": "stdio-client-config",
+      "bestEntry": "pnpm run switchyard:cli -- host-example --target mcp",
+      "examplePath": "examples/hosts/mcp",
+      "configPath": "examples/hosts/mcp/config.example.json",
+      "smokeScriptPath": "examples/hosts/mcp/smoke.mjs",
+      "smokeCommand": "pnpm run example:host-mcp",
+      "firstSuccessCheck": "Starts the read-only MCP server, lists tools, and reads runtime health through the host example config.",
+      "relatedCompatTarget": "mcp",
+      "relatedStarterPackPath": "starter-packs/builders/mcp",
+      "relatedDocs": [
+        "docs/host-integration-examples.md",
+        "docs/host-integration-playbooks.md",
+        "docs/starter-pack-chooser.md",
+        "docs/mcp.md",
+        "examples/hosts/mcp/README.md"
+      ],
+      "safeClaims": [
+        "partial MCP host example",
+        "read-only stdio client wiring",
+        "runtime inspection only"
+      ],
+      "notYetSupported": [
+        "execution brain",
+        "runtime invoke through MCP",
+        "acquisition write through MCP"
+      ]
+    }
+  ],
+  "providerCatalog": [
+    {
+      "providerId": "openai",
+      "displayName": "OpenAI",
+      "lane": "byok",
+      "authMode": "byok",
+      "stabilityTarget": "baseline",
+      "truthfulMeaning": "Supported V1 BYOK provider family on the static catalog."
+    },
+    {
+      "providerId": "anthropic",
+      "displayName": "Anthropic",
+      "lane": "byok",
+      "authMode": "byok",
+      "stabilityTarget": "baseline",
+      "truthfulMeaning": "Supported V1 BYOK provider family on the static catalog."
+    },
+    {
+      "providerId": "gemini",
+      "displayName": "Gemini",
+      "lane": "byok",
+      "authMode": "byok",
+      "stabilityTarget": "baseline",
+      "truthfulMeaning": "Supported V1 BYOK provider family on the static catalog."
+    },
+    {
+      "providerId": "xai",
+      "displayName": "xAI / Grok API",
+      "lane": "byok",
+      "authMode": "byok",
+      "stabilityTarget": "baseline",
+      "truthfulMeaning": "Supported V1 BYOK provider family on the static catalog."
+    },
+    {
+      "providerId": "openrouter",
+      "displayName": "OpenRouter",
+      "lane": "byok",
+      "authMode": "byok",
+      "stabilityTarget": "baseline",
+      "truthfulMeaning": "Supported V1 BYOK provider family on the static catalog."
+    },
+    {
+      "providerId": "groq",
+      "displayName": "Groq",
+      "lane": "byok",
+      "authMode": "byok",
+      "stabilityTarget": "baseline",
+      "truthfulMeaning": "Supported V1 BYOK provider family on the static catalog."
+    },
+    {
+      "providerId": "qwen",
+      "displayName": "Qwen API",
+      "lane": "byok",
+      "authMode": "byok",
+      "stabilityTarget": "baseline",
+      "truthfulMeaning": "Supported V1 BYOK provider family on the static catalog."
+    },
+    {
+      "providerId": "vertex",
+      "displayName": "Vertex AI",
+      "lane": "byok",
+      "authMode": "byok",
+      "stabilityTarget": "baseline",
+      "truthfulMeaning": "Supported V1 BYOK provider family on the static catalog."
+    },
+    {
+      "providerId": "bedrock",
+      "displayName": "Bedrock",
+      "lane": "byok",
+      "authMode": "byok",
+      "stabilityTarget": "baseline",
+      "truthfulMeaning": "Supported V1 BYOK provider family on the static catalog."
+    },
+    {
+      "providerId": "chatgpt",
+      "displayName": "ChatGPT",
+      "lane": "web-login",
+      "authMode": "web-login",
+      "stabilityTarget": "high-stability",
+      "truthfulMeaning": "Supported V1 Web/Login provider and part of the high-stability trio."
+    },
+    {
+      "providerId": "gemini",
+      "displayName": "Gemini",
+      "lane": "web-login",
+      "authMode": "web-login",
+      "stabilityTarget": "high-stability",
+      "truthfulMeaning": "Supported V1 Web/Login provider and part of the high-stability trio."
+    },
+    {
+      "providerId": "claude",
+      "displayName": "Claude",
+      "lane": "web-login",
+      "authMode": "web-login",
+      "stabilityTarget": "high-stability",
+      "truthfulMeaning": "Supported V1 Web/Login provider and part of the high-stability trio."
+    },
+    {
+      "providerId": "grok",
+      "displayName": "Grok",
+      "lane": "web-login",
+      "authMode": "web-login",
+      "stabilityTarget": "baseline",
+      "truthfulMeaning": "Supported V1 Web/Login provider at the baseline stability tier."
+    },
+    {
+      "providerId": "qwen",
+      "displayName": "Qwen",
+      "lane": "web-login",
+      "authMode": "web-login",
+      "stabilityTarget": "baseline",
+      "truthfulMeaning": "Supported V1 Web/Login provider at the baseline stability tier."
+    }
+  ],
+  "mcp": {
+    "status": "partial",
+    "truthfulMeaning": "Switchyard currently ships a committed read-only MCP server/tool surface that delegates to existing runtime inspection routes, but it does not ship a full execution backend or embedded consumer-parity bridge host.",
+    "readOnly": true,
+    "serverTransport": true,
+    "bridgeHosting": false,
+    "startupCommand": "pnpm run switchyard:mcp",
+    "notYetSupported": [
+      "bridge hosting",
+      "runtime invoke",
+      "acquisition write",
+      "tool execution",
+      "browser automation"
+    ],
+    "sourceAnchors": [
+      "docs/mcp.md",
+      "packages/surfaces/mcp/src/index.ts",
+      "scripts/switchyard-mcp.mjs",
+      "tests/unit/mcp/switchyard-mcp.test.ts"
+    ],
+    "tools": [
+      {
+        "name": "switchyard.runtime.bootstrap",
+        "title": "Switchyard Runtime Bootstrap",
+        "providerScoped": false,
+        "route": "/v1/runtime/bootstrap",
+        "readOnlyHint": true
+      },
+      {
+        "name": "switchyard.providers.list",
+        "title": "List Switchyard Providers",
+        "providerScoped": false,
+        "route": "/v1/runtime/providers",
+        "readOnlyHint": true
+      },
+      {
+        "name": "switchyard.runtime.health",
+        "title": "Switchyard Runtime Health",
+        "providerScoped": false,
+        "route": "/v1/runtime/health",
+        "readOnlyHint": true
+      },
+      {
+        "name": "switchyard.auth.status",
+        "title": "Switchyard Auth Status",
+        "providerScoped": false,
+        "route": "/v1/runtime/auth-status",
+        "readOnlyHint": true
+      },
+      {
+        "name": "switchyard.provider.status",
+        "title": "Switchyard Provider Status",
+        "providerScoped": true,
+        "route": "/v1/runtime/providers/:provider/status",
+        "readOnlyHint": true
+      },
+      {
+        "name": "switchyard.provider.probe",
+        "title": "Switchyard Provider Probe",
+        "providerScoped": true,
+        "route": "/v1/runtime/providers/:provider/probe",
+        "readOnlyHint": true
+      },
+      {
+        "name": "switchyard.provider.remediation",
+        "title": "Switchyard Provider Remediation",
+        "providerScoped": true,
+        "route": "/v1/runtime/providers/:provider/remediation",
+        "readOnlyHint": true
+      },
+      {
+        "name": "switchyard.provider.current_page",
+        "title": "Switchyard Provider Current Page",
+        "providerScoped": true,
+        "route": "/v1/runtime/providers/:provider/debug/current-page",
+        "readOnlyHint": true
+      },
+      {
+        "name": "switchyard.provider.current_console",
+        "title": "Switchyard Provider Current Console",
+        "providerScoped": true,
+        "route": "/v1/runtime/providers/:provider/debug/current-console",
+        "readOnlyHint": true
+      },
+      {
+        "name": "switchyard.provider.current_network",
+        "title": "Switchyard Provider Current Network",
+        "providerScoped": true,
+        "route": "/v1/runtime/providers/:provider/debug/current-network",
+        "readOnlyHint": true
+      },
+      {
+        "name": "switchyard.provider.store_readiness",
+        "title": "Switchyard Provider Store Readiness",
+        "providerScoped": true,
+        "route": "/v1/runtime/providers/:provider/debug/support-bundle",
+        "readOnlyHint": true
+      },
+      {
+        "name": "switchyard.provider.live_readiness",
+        "title": "Switchyard Provider Live Readiness",
+        "providerScoped": true,
+        "route": "/v1/runtime/providers/:provider/debug/support-bundle",
+        "readOnlyHint": true
+      },
+      {
+        "name": "switchyard.provider.attach_target",
+        "title": "Switchyard Provider Attach Target",
+        "providerScoped": true,
+        "route": "/v1/runtime/providers/:provider/debug/support-bundle",
+        "readOnlyHint": true
+      },
+      {
+        "name": "switchyard.provider.diagnose_ladder",
+        "title": "Switchyard Provider Diagnose Ladder",
+        "providerScoped": true,
+        "route": "/v1/runtime/providers/:provider/debug/support-bundle",
+        "readOnlyHint": true
+      },
+      {
+        "name": "switchyard.provider.support_bundle",
+        "title": "Switchyard Provider Support Bundle",
+        "providerScoped": true,
+        "route": "/v1/runtime/providers/:provider/debug/support-bundle",
+        "readOnlyHint": true
+      },
+      {
+        "name": "switchyard.provider.diagnose",
+        "title": "Switchyard Provider Diagnose Snapshot",
+        "providerScoped": true,
+        "route": "/v1/runtime/providers/:provider/debug/support-bundle",
+        "readOnlyHint": true
+      },
+      {
+        "name": "switchyard.catalog.surface_catalog",
+        "title": "Switchyard Surface Catalog",
+        "providerScoped": false,
+        "route": "docs/public-surface-catalog.json",
+        "readOnlyHint": true
+      },
+      {
+        "name": "switchyard.catalog.surface_catalog_schema",
+        "title": "Switchyard Surface Catalog Schema",
+        "providerScoped": false,
+        "route": "docs/public-surface-catalog.schema.json",
+        "readOnlyHint": true
+      },
+      {
+        "name": "switchyard.catalog.provider_catalog",
+        "title": "Switchyard Provider Catalog",
+        "providerScoped": false,
+        "route": "docs/provider-runtime-catalog.json#providers",
+        "readOnlyHint": true
+      },
+      {
+        "name": "switchyard.catalog.provider_catalog_schema",
+        "title": "Switchyard Provider Catalog Schema",
+        "providerScoped": false,
+        "route": "docs/provider-runtime-catalog.schema.json",
+        "readOnlyHint": true
+      },
+      {
+        "name": "switchyard.catalog.provider_entry",
+        "title": "Switchyard Provider Entry",
+        "providerScoped": false,
+        "route": "docs/provider-runtime-catalog.json#providers[providerId:lane]",
+        "readOnlyHint": true
+      },
+      {
+        "name": "switchyard.catalog.compat_target_catalog",
+        "title": "Switchyard Compat Target Catalog",
+        "providerScoped": false,
+        "route": "docs/compat-target-catalog.json",
+        "readOnlyHint": true
+      },
+      {
+        "name": "switchyard.catalog.compat_target_catalog_schema",
+        "title": "Switchyard Compat Target Catalog Schema",
+        "providerScoped": false,
+        "route": "docs/compat-target-catalog.schema.json",
+        "readOnlyHint": true
+      },
+      {
+        "name": "switchyard.catalog.compat_targets",
+        "title": "Switchyard Compat Targets",
+        "providerScoped": false,
+        "route": "docs/compat-target-catalog.json#targets",
+        "readOnlyHint": true
+      },
+      {
+        "name": "switchyard.catalog.compat_target",
+        "title": "Switchyard Compat Target",
+        "providerScoped": false,
+        "route": "docs/compat-target-catalog.json#targets[target]",
+        "readOnlyHint": true
+      },
+      {
+        "name": "switchyard.catalog.builder_kit_catalog",
+        "title": "Switchyard Builder Kit Catalog",
+        "providerScoped": false,
+        "route": "docs/builder-kit-catalog.json",
+        "readOnlyHint": true
+      },
+      {
+        "name": "switchyard.catalog.builder_kit_catalog_schema",
+        "title": "Switchyard Builder Kit Catalog Schema",
+        "providerScoped": false,
+        "route": "docs/builder-kit-catalog.schema.json",
+        "readOnlyHint": true
+      },
+      {
+        "name": "switchyard.catalog.builder_kits",
+        "title": "Switchyard Builder Kits",
+        "providerScoped": false,
+        "route": "docs/builder-kit-catalog.json#kits",
+        "readOnlyHint": true
+      },
+      {
+        "name": "switchyard.catalog.builder_kit",
+        "title": "Switchyard Builder Kit",
+        "providerScoped": false,
+        "route": "docs/builder-kit-catalog.json#kits[target]",
+        "readOnlyHint": true
+      },
+      {
+        "name": "switchyard.catalog.skill_pack_catalog",
+        "title": "Switchyard Skill Pack Catalog",
+        "providerScoped": false,
+        "route": "docs/skill-pack-catalog.json",
+        "readOnlyHint": true
+      },
+      {
+        "name": "switchyard.catalog.skill_pack_catalog_schema",
+        "title": "Switchyard Skill Pack Catalog Schema",
+        "providerScoped": false,
+        "route": "docs/skill-pack-catalog.schema.json",
+        "readOnlyHint": true
+      },
+      {
+        "name": "switchyard.catalog.skill_packs",
+        "title": "Switchyard Skill Packs",
+        "providerScoped": false,
+        "route": "docs/skill-pack-catalog.json#packs",
+        "readOnlyHint": true
+      },
+      {
+        "name": "switchyard.catalog.skill_pack",
+        "title": "Switchyard Skill Pack",
+        "providerScoped": false,
+        "route": "docs/skill-pack-catalog.json#packs[id]",
+        "readOnlyHint": true
+      },
+      {
+        "name": "switchyard.catalog.host_playbooks",
+        "title": "Switchyard Host Playbooks",
+        "providerScoped": false,
+        "route": "docs/host-integration-playbooks.json#playbooks",
+        "readOnlyHint": true
+      },
+      {
+        "name": "switchyard.catalog.host_playbooks_schema",
+        "title": "Switchyard Host Playbooks Schema",
+        "providerScoped": false,
+        "route": "docs/host-integration-playbooks.schema.json",
+        "readOnlyHint": true
+      },
+      {
+        "name": "switchyard.catalog.host_playbook",
+        "title": "Switchyard Host Playbook",
+        "providerScoped": false,
+        "route": "docs/host-integration-playbooks.json#playbooks[host]",
+        "readOnlyHint": true
+      },
+      {
+        "name": "switchyard.catalog.host_examples",
+        "title": "Switchyard Host Examples",
+        "providerScoped": false,
+        "route": "examples/hosts/index.json#hostExamples",
+        "readOnlyHint": true
+      },
+      {
+        "name": "switchyard.catalog.host_examples_schema",
+        "title": "Switchyard Host Examples Schema",
+        "providerScoped": false,
+        "route": "examples/hosts/index.schema.json",
+        "readOnlyHint": true
+      },
+      {
+        "name": "switchyard.catalog.host_example",
+        "title": "Switchyard Host Example",
+        "providerScoped": false,
+        "route": "examples/hosts/index.json#hostExamples[target]",
+        "readOnlyHint": true
+      },
+      {
+        "name": "switchyard.catalog.builder_journeys",
+        "title": "Switchyard Builder Journeys",
+        "providerScoped": false,
+        "route": "docs/builder-journeys.json",
+        "readOnlyHint": true
+      },
+      {
+        "name": "switchyard.catalog.builder_journeys_schema",
+        "title": "Switchyard Builder Journeys Schema",
+        "providerScoped": false,
+        "route": "docs/builder-journeys.schema.json",
+        "readOnlyHint": true
+      },
+      {
+        "name": "switchyard.catalog.builder_journey",
+        "title": "Switchyard Builder Journey",
+        "providerScoped": false,
+        "route": "docs/builder-journeys.json#journeys[id]",
+        "readOnlyHint": true
+      },
+      {
+        "name": "switchyard.catalog.builder_intent_router",
+        "title": "Switchyard Builder Intent Router",
+        "providerScoped": false,
+        "route": "docs/builder-intent-router.json",
+        "readOnlyHint": true
+      },
+      {
+        "name": "switchyard.catalog.builder_intent_router_schema",
+        "title": "Switchyard Builder Intent Router Schema",
+        "providerScoped": false,
+        "route": "docs/builder-intent-router.schema.json",
+        "readOnlyHint": true
+      },
+      {
+        "name": "switchyard.catalog.builder_intent",
+        "title": "Switchyard Builder Intent Entry",
+        "providerScoped": false,
+        "route": "docs/builder-intent-router.json#intents[id]",
+        "readOnlyHint": true
+      },
+      {
+        "name": "switchyard.catalog.keyword_truth",
+        "title": "Switchyard Keyword Truth",
+        "providerScoped": false,
+        "route": "docs/discoverability-keyword-truth.json",
+        "readOnlyHint": true
+      },
+      {
+        "name": "switchyard.catalog.keyword_truth_schema",
+        "title": "Switchyard Keyword Truth Schema",
+        "providerScoped": false,
+        "route": "docs/discoverability-keyword-truth.schema.json",
+        "readOnlyHint": true
+      },
+      {
+        "name": "switchyard.catalog.keyword_entry",
+        "title": "Switchyard Keyword Truth Entry",
+        "providerScoped": false,
+        "route": "docs/discoverability-keyword-truth.json#entries[id]",
+        "readOnlyHint": true
+      },
+      {
+        "name": "switchyard.catalog.starter_manifests",
+        "title": "Switchyard Starter Manifests",
+        "providerScoped": false,
+        "route": "docs/starter-manifest-templates.json",
+        "readOnlyHint": true
+      },
+      {
+        "name": "switchyard.catalog.starter_manifests_schema",
+        "title": "Switchyard Starter Manifest Schema",
+        "providerScoped": false,
+        "route": "docs/starter-manifest-templates.schema.json",
+        "readOnlyHint": true
+      },
+      {
+        "name": "switchyard.catalog.starter_examples",
+        "title": "Switchyard Starter Examples",
+        "providerScoped": false,
+        "route": "docs/starter-manifest-examples.json",
+        "readOnlyHint": true
+      },
+      {
+        "name": "switchyard.catalog.starter_examples_schema",
+        "title": "Switchyard Starter Example Schema",
+        "providerScoped": false,
+        "route": "docs/starter-manifest-examples.schema.json",
+        "readOnlyHint": true
+      },
+      {
+        "name": "switchyard.catalog.starter_pack_index",
+        "title": "Switchyard Starter Pack Index",
+        "providerScoped": false,
+        "route": "starter-packs/index.json",
+        "readOnlyHint": true
+      },
+      {
+        "name": "switchyard.catalog.starter_pack_index_schema",
+        "title": "Switchyard Starter Pack Index Schema",
+        "providerScoped": false,
+        "route": "starter-packs/index.schema.json",
+        "readOnlyHint": true
+      },
+      {
+        "name": "switchyard.catalog.starter_pack_entry",
+        "title": "Switchyard Starter Pack Entry",
+        "providerScoped": false,
+        "route": "starter-packs/index.json#builderPacks[target]|skillPacks[id]",
+        "readOnlyHint": true
+      },
+      {
+        "name": "switchyard.catalog.starter_pack_chooser",
+        "title": "Switchyard Starter Pack Chooser",
+        "providerScoped": false,
+        "route": "docs/starter-pack-chooser.json",
+        "readOnlyHint": true
+      },
+      {
+        "name": "switchyard.catalog.starter_pack_chooser_schema",
+        "title": "Switchyard Starter Pack Chooser Schema",
+        "providerScoped": false,
+        "route": "docs/starter-pack-chooser.schema.json",
+        "readOnlyHint": true
+      },
+      {
+        "name": "switchyard.catalog.starter_pack_scenario",
+        "title": "Switchyard Starter Pack Scenario",
+        "providerScoped": false,
+        "route": "docs/starter-pack-chooser.json#scenarios[id]",
+        "readOnlyHint": true
+      },
+      {
+        "name": "switchyard.catalog.starter_pack_comparison",
+        "title": "Switchyard Starter Pack Comparison",
+        "providerScoped": false,
+        "route": "docs/starter-pack-comparison.json",
+        "readOnlyHint": true
+      },
+      {
+        "name": "switchyard.catalog.starter_pack_comparison_schema",
+        "title": "Switchyard Starter Pack Comparison Schema",
+        "providerScoped": false,
+        "route": "docs/starter-pack-comparison.schema.json",
+        "readOnlyHint": true
+      },
+      {
+        "name": "switchyard.catalog.starter_pack_filter",
+        "title": "Switchyard Starter Pack Filter",
+        "providerScoped": false,
+        "route": "docs/starter-pack-comparison.json#filters[id]",
+        "readOnlyHint": true
+      },
+      {
+        "name": "switchyard.catalog.builder_template",
+        "title": "Switchyard Builder Template",
+        "providerScoped": false,
+        "route": "docs/starter-manifest-templates.json#builderTemplates[target]",
+        "readOnlyHint": true
+      },
+      {
+        "name": "switchyard.catalog.builder_example",
+        "title": "Switchyard Builder Example",
+        "providerScoped": false,
+        "route": "docs/starter-manifest-examples.json#builderExamples[target]",
+        "readOnlyHint": true
+      },
+      {
+        "name": "switchyard.catalog.skill_template",
+        "title": "Switchyard Skill Template",
+        "providerScoped": false,
+        "route": "docs/starter-manifest-templates.json#skillTemplates[id]",
+        "readOnlyHint": true
+      },
+      {
+        "name": "switchyard.catalog.skill_example",
+        "title": "Switchyard Skill Example",
+        "providerScoped": false,
+        "route": "docs/starter-manifest-examples.json#skillExamples[id]",
+        "readOnlyHint": true
+      },
+      {
+        "name": "switchyard.catalog.mcp_status",
+        "title": "Switchyard MCP Status",
+        "providerScoped": false,
+        "route": "docs/public-surface-catalog.json#mcp",
+        "readOnlyHint": true
+      },
+      {
+        "name": "switchyard.catalog.mcp_tools",
+        "title": "Switchyard MCP Tools",
+        "providerScoped": false,
+        "route": "docs/mcp-tool-catalog.json#tools",
+        "readOnlyHint": true
+      },
+      {
+        "name": "switchyard.catalog.mcp_tool_catalog",
+        "title": "Switchyard MCP Tool Catalog",
+        "providerScoped": false,
+        "route": "docs/mcp-tool-catalog.json",
+        "readOnlyHint": true
+      },
+      {
+        "name": "switchyard.catalog.mcp_tool_catalog_schema",
+        "title": "Switchyard MCP Tool Catalog Schema",
+        "providerScoped": false,
+        "route": "docs/mcp-tool-catalog.schema.json",
+        "readOnlyHint": true
+      },
+      {
+        "name": "switchyard.catalog.mcp_tool",
+        "title": "Switchyard MCP Tool Entry",
+        "providerScoped": false,
+        "route": "docs/mcp-tool-catalog.json#tools[name]",
+        "readOnlyHint": true
+      }
+    ]
+  }
+}

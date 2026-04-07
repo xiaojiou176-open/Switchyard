@@ -1,0 +1,194 @@
+{
+  "$schema": "./host-integration-playbooks.schema.json",
+  "playbookVersion": 1,
+  "playbooks": [
+    {
+      "host": "codex",
+      "status": "partial",
+      "recommendedPack": "codex",
+      "recommendedScenario": "codex-builder",
+      "hostSurface": "Responses-style runtime helper",
+      "bestEntry": "pnpm run switchyard:cli -- host-playbook --target codex",
+      "firstSuccessGoal": "Send one text-only request from a Codex-shaped host into /v1/runtime/invoke without pretending tool or worktree parity.",
+      "requiredInputs": [
+        "Switchyard service runtime base URL",
+        "Codex-side request text",
+        "explicit provider/lane choice when the target provider is dual-lane"
+      ],
+      "setupSteps": [
+        "Read the Codex compat page and the starter-pack chooser scenario first.",
+        "Start from starter-packs/builders/codex or the runtime-bridge example instead of inventing a new host contract.",
+        "Keep the host contract text-only and route invocation through the existing service/runtime surface.",
+        "Expose unsupported features as fail-closed rather than emulating Codex worktree or tool flows."
+      ],
+      "verifySteps": [
+        "Run the pack-local smoke command or the runtime-bridge example.",
+        "Confirm that one text request reaches /v1/runtime/invoke and returns a bounded output.",
+        "Confirm that no tool execution or worktree claims appear in host-facing docs."
+      ],
+      "relatedDocs": [
+        "docs/starter-pack-chooser.md",
+        "docs/compat/codex.md",
+        "docs/plugin-skill-starter-kits.md",
+        "examples/runtime-bridge/README.md"
+      ],
+      "safeClaims": [
+        "partial Codex compatibility",
+        "thin runtime bridge",
+        "text-only first success"
+      ],
+      "doNotClaim": [
+        "tool execution parity",
+        "mcp parity",
+        "worktree parity",
+        "full Codex support"
+      ],
+      "searchKeywords": [
+        "switchyard codex host integration",
+        "switchyard codex runtime helper",
+        "switchyard codex first success"
+      ]
+    },
+    {
+      "host": "claude-code",
+      "status": "partial",
+      "recommendedPack": "claude-code",
+      "recommendedScenario": "claude-code-builder",
+      "hostSurface": "Message/runtime bridge",
+      "bestEntry": "pnpm run switchyard:cli -- host-playbook --target claude-code",
+      "firstSuccessGoal": "Adapt one Claude Code-style message payload into the current runtime invoke route without copying the terminal shell.",
+      "requiredInputs": [
+        "Switchyard service runtime base URL",
+        "Claude Code-style message payload",
+        "explicit target provider when multiple providers fit the same model family"
+      ],
+      "setupSteps": [
+        "Read the Claude Code compat page and the chooser scenario first.",
+        "Start from starter-packs/builders/claude-code instead of a generic shell wrapper.",
+        "Normalize the host payload into the landed thin message/runtime bridge.",
+        "Keep terminal, approval, and tool stories visibly unsupported."
+      ],
+      "verifySteps": [
+        "Run the claude-code starter-pack smoke.",
+        "Confirm that one message-shaped payload reaches the runtime and returns a bounded reply.",
+        "Confirm that docs still label the host flow as partial and fail-closed."
+      ],
+      "relatedDocs": [
+        "docs/starter-pack-chooser.md",
+        "docs/compat/claude-code.md",
+        "docs/plugin-skill-starter-kits.md",
+        "starter-packs/README.md"
+      ],
+      "safeClaims": [
+        "partial Claude Code compatibility",
+        "thin message/runtime bridge",
+        "no terminal or tool parity"
+      ],
+      "doNotClaim": [
+        "terminal shell parity",
+        "approval parity",
+        "tool parity",
+        "full Claude Code support"
+      ],
+      "searchKeywords": [
+        "switchyard claude code integration",
+        "switchyard claude code host bridge",
+        "switchyard claude code first success"
+      ]
+    },
+    {
+      "host": "openclaw",
+      "status": "partial",
+      "recommendedPack": "openclaw",
+      "recommendedScenario": "openclaw-builder",
+      "hostSurface": "Delegation-first runtime bridge",
+      "bestEntry": "pnpm run switchyard:cli -- host-playbook --target openclaw",
+      "firstSuccessGoal": "Wire one OpenClaw-style delegation request into Switchyard without importing the upstream product shell.",
+      "requiredInputs": [
+        "Switchyard service runtime base URL",
+        "delegation-first request envelope",
+        "explicit agreement that operator/control-plane stays outside Switchyard"
+      ],
+      "setupSteps": [
+        "Read the OpenClaw compat page and upstream relationship docs first.",
+        "Start from starter-packs/builders/openclaw rather than cloning shell semantics.",
+        "Keep the integration limited to runtime delegation and bounded fail-closed disclaimers.",
+        "Do not let host docs slide into product-shell or operator parity wording."
+      ],
+      "verifySteps": [
+        "Run the openclaw starter-pack smoke.",
+        "Confirm that one delegation-shaped request reaches the runtime path.",
+        "Confirm that host docs still keep OpenClaw in the consumer dimension, not the V1 input lane."
+      ],
+      "relatedDocs": [
+        "docs/starter-pack-chooser.md",
+        "docs/compat/openclaw.md",
+        "docs/compare/switchyard-vs-openclaw.md",
+        "starter-packs/README.md"
+      ],
+      "safeClaims": [
+        "partial OpenClaw compatibility",
+        "delegation-first bridge",
+        "no product-shell parity"
+      ],
+      "doNotClaim": [
+        "operator parity",
+        "control-plane parity",
+        "product-shell parity",
+        "raw upstream fork"
+      ],
+      "searchKeywords": [
+        "switchyard openclaw integration",
+        "switchyard delegation bridge",
+        "switchyard openclaw host helper"
+      ]
+    },
+    {
+      "host": "mcp",
+      "status": "partial",
+      "recommendedPack": "mcp",
+      "recommendedScenario": "mcp-inspector",
+      "hostSurface": "Read-only stdio MCP inspector",
+      "bestEntry": "pnpm run switchyard:cli -- host-playbook --target mcp",
+      "firstSuccessGoal": "Connect a local MCP client to the read-only Switchyard server, list tools, and read one runtime truth surface.",
+      "requiredInputs": [
+        "Switchyard service runtime base URL",
+        "local MCP client that supports stdio transport",
+        "read-only use case"
+      ],
+      "setupSteps": [
+        "Read the MCP status page and the chooser scenario first.",
+        "Start from the mcp starter pack or mcp-inspector example instead of writing a new server host.",
+        "Use the host flow only for inspection and diagnostics.",
+        "Keep runtime invoke, acquisition write, and browser automation visibly unsupported."
+      ],
+      "verifySteps": [
+        "Run the mcp starter-pack smoke or the mcp-inspector example.",
+        "Confirm that the host can list tools and read runtime health.",
+        "Confirm that no write-plane or execution-brain wording appears in host-facing docs."
+      ],
+      "relatedDocs": [
+        "docs/starter-pack-chooser.md",
+        "docs/mcp.md",
+        "docs/api/mcp-readonly-server.md",
+        "examples/mcp-inspector/README.md"
+      ],
+      "safeClaims": [
+        "partial read-only MCP surface",
+        "runtime inspection only",
+        "bounded MCP host starter"
+      ],
+      "doNotClaim": [
+        "execution brain",
+        "runtime invoke through MCP",
+        "acquisition write through MCP",
+        "full Codex or Claude Code parity backend"
+      ],
+      "searchKeywords": [
+        "switchyard mcp host integration",
+        "switchyard read only mcp starter",
+        "switchyard mcp first success"
+      ]
+    }
+  ]
+}

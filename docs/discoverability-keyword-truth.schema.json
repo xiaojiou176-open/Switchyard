@@ -1,0 +1,79 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/xiaojiou176-open/Switchyard/docs/discoverability-keyword-truth.schema.json",
+  "title": "Switchyard Keyword Truth Table",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "$schema",
+    "keywordVersion",
+    "entries"
+  ],
+  "properties": {
+    "$schema": {
+      "type": "string"
+    },
+    "keywordVersion": {
+      "type": "integer",
+      "minimum": 1
+    },
+    "entries": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/entry"
+      }
+    }
+  },
+  "$defs": {
+    "truthStatus": {
+      "type": "string",
+      "enum": [
+        "claimable-now",
+        "partial-with-label",
+        "not-claimable"
+      ]
+    },
+    "stringArray": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
+    },
+    "entry": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "term",
+        "truthStatus",
+        "truthfulMeaning",
+        "requiredLabels",
+        "canonicalDocs"
+      ],
+      "properties": {
+        "id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "term": {
+          "type": "string",
+          "minLength": 1
+        },
+        "truthStatus": {
+          "$ref": "#/$defs/truthStatus"
+        },
+        "truthfulMeaning": {
+          "type": "string",
+          "minLength": 1
+        },
+        "requiredLabels": {
+          "$ref": "#/$defs/stringArray"
+        },
+        "canonicalDocs": {
+          "$ref": "#/$defs/stringArray"
+        }
+      }
+    }
+  }
+}

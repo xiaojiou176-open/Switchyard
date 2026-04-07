@@ -1,0 +1,11 @@
+{
+  "name": "switchyard-builder-marketplace",
+  "version": "0.1.0",
+  "plugins": [
+    {
+      "source": "./plugins/switchyard-builder-suite",
+      "name": "switchyard-builder-suite",
+      "description": "Truth-first Switchyard builder skills for runtime diagnostics and docs/SEO sync."
+    }
+  ]
+}

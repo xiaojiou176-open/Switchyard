@@ -1,0 +1,389 @@
+{
+  "$schema": "./starter-pack-chooser.schema.json",
+  "chooserVersion": 1,
+  "questions": [
+    {
+      "id": "artifact-type",
+      "prompt": "What are you building first?",
+      "options": [
+        {
+          "id": "builder-helper",
+          "label": "A builder/helper that delegates requests or inspects runtime state",
+          "recommendedScenarios": [
+            "codex-builder",
+            "claude-code-builder",
+            "openclaw-builder",
+            "mcp-inspector"
+          ],
+          "why": [
+            "Choose a builder pack when you are wiring another tool or local helper into Switchyard.",
+            "Builder packs are the narrow path for thin compat helpers and read-only runtime inspection."
+          ]
+        },
+        {
+          "id": "skill-pack",
+          "label": "A skills or automation pack that reads truth surfaces",
+          "recommendedScenarios": [
+            "runtime-diagnostics-skill",
+            "docs-seo-sync-skill"
+          ],
+          "why": [
+            "Choose a skill pack when you want a bounded recipe for diagnostics or docs truth-sync work.",
+            "Skill packs stay read-only and keep claim escalation fail-closed."
+          ]
+        }
+      ]
+    },
+    {
+      "id": "job-to-be-done",
+      "prompt": "Which first job do you need to solve?",
+      "options": [
+        {
+          "id": "codex-text-bridge",
+          "label": "Bridge Codex-style text requests into the Switchyard runtime",
+          "recommendedScenarios": [
+            "codex-builder"
+          ],
+          "why": [
+            "The Codex pack is the thin runtime bridge for Responses-style text traffic.",
+            "It is the honest first step when you need a Codex helper, not full tool or worktree parity."
+          ]
+        },
+        {
+          "id": "claude-code-message-bridge",
+          "label": "Bridge Claude Code-style message payloads into the runtime",
+          "recommendedScenarios": [
+            "claude-code-builder"
+          ],
+          "why": [
+            "The Claude Code pack is the thin message/runtime bridge for gateway-style integration.",
+            "It keeps terminal, approval, and tool parity out of scope."
+          ]
+        },
+        {
+          "id": "openclaw-delegation-bridge",
+          "label": "Bridge delegation-first OpenClaw requests without copying the product shell",
+          "recommendedScenarios": [
+            "openclaw-builder"
+          ],
+          "why": [
+            "The OpenClaw pack keeps the delegation shape while leaving operator and product-shell semantics outside Switchyard.",
+            "It is the honest pack when you want runtime delegation, not a raw upstream fork."
+          ]
+        },
+        {
+          "id": "read-only-runtime-inspection",
+          "label": "Inspect runtime truth through a read-only MCP surface",
+          "recommendedScenarios": [
+            "mcp-inspector"
+          ],
+          "why": [
+            "The MCP pack is the right starter when your first goal is inspection and diagnostics through stdio tools.",
+            "It is intentionally read-only and should not be mistaken for an execution backend."
+          ]
+        },
+        {
+          "id": "provider-triage",
+          "label": "Produce a read-only provider triage or incident recipe",
+          "recommendedScenarios": [
+            "runtime-diagnostics-skill"
+          ],
+          "why": [
+            "The runtime diagnostics pack turns support-bundle truth into a bounded incident recipe.",
+            "It is the right pack when you want diagnosis without invoke or acquisition writes."
+          ]
+        },
+        {
+          "id": "docs-seo-truth-sync",
+          "label": "Sync docs, SEO, or builder metadata to truthful support labels",
+          "recommendedScenarios": [
+            "docs-seo-sync-skill"
+          ],
+          "why": [
+            "The docs/SEO sync pack is for truth-safe discoverability work, not launch automation.",
+            "It keeps human review in the loop before any outward publishing."
+          ]
+        }
+      ]
+    }
+  ],
+  "scenarios": [
+    {
+      "id": "codex-builder",
+      "label": "Build a Codex helper that forwards text requests into Switchyard",
+      "status": "partial",
+      "starterKind": "builder",
+      "recommendedPack": "codex",
+      "bestEntry": "pnpm run switchyard:cli -- builder-kit --target codex",
+      "whyThisPack": [
+        "Use the Codex pack when your first need is a text-only runtime bridge.",
+        "This pack already points at the narrow landed adapter instead of inventing a new compat story."
+      ],
+      "bestWhen": [
+        "You need a helper or plugin that forwards text requests into the service runtime.",
+        "You want a fail-closed Codex-shaped starter without claiming tool or worktree parity."
+      ],
+      "avoidWhen": [
+        "You need tool execution, MCP parity, or worktree parity.",
+        "You are actually trying to build a read-only runtime inspector."
+      ],
+      "compareAgainst": [
+        "claude-code-builder",
+        "openclaw-builder",
+        "mcp-inspector"
+      ],
+      "recommendedDocs": [
+        "docs/starter-pack-chooser.md",
+        "docs/compat/codex.md",
+        "docs/plugin-skill-starter-kits.md",
+        "starter-packs/README.md"
+      ],
+      "searchKeywords": [
+        "switchyard codex starter",
+        "switchyard codex helper",
+        "switchyard responses runtime bridge"
+      ],
+      "safeClaims": [
+        "partial Codex compatibility",
+        "thin runtime bridge",
+        "fail-closed helper starter"
+      ],
+      "notYetSupported": [
+        "tool execution parity",
+        "mcp parity",
+        "worktree parity"
+      ]
+    },
+    {
+      "id": "claude-code-builder",
+      "label": "Build a Claude Code-style message bridge into Switchyard",
+      "status": "partial",
+      "starterKind": "builder",
+      "recommendedPack": "claude-code",
+      "bestEntry": "pnpm run switchyard:cli -- builder-kit --target claude-code",
+      "whyThisPack": [
+        "Use the Claude Code pack when your first need is a message/runtime bridge.",
+        "This pack keeps terminal, approval, and tool claims fail-closed."
+      ],
+      "bestWhen": [
+        "You want to adapt message-shaped traffic into the current runtime invoke route.",
+        "You need a builder starter, not a terminal shell clone."
+      ],
+      "avoidWhen": [
+        "You need terminal shell parity or full tool parity.",
+        "You only need read-only inspection."
+      ],
+      "compareAgainst": [
+        "codex-builder",
+        "openclaw-builder",
+        "mcp-inspector"
+      ],
+      "recommendedDocs": [
+        "docs/starter-pack-chooser.md",
+        "docs/compat/claude-code.md",
+        "docs/plugin-skill-starter-kits.md",
+        "starter-packs/README.md"
+      ],
+      "searchKeywords": [
+        "switchyard claude code starter",
+        "switchyard claude code gateway helper",
+        "switchyard message runtime bridge"
+      ],
+      "safeClaims": [
+        "partial Claude Code compatibility",
+        "thin message/runtime bridge",
+        "fail-closed compatibility helper"
+      ],
+      "notYetSupported": [
+        "terminal shell parity",
+        "approval parity",
+        "tool parity",
+        "mcp parity"
+      ]
+    },
+    {
+      "id": "openclaw-builder",
+      "label": "Build an OpenClaw-style delegation bridge without copying the product shell",
+      "status": "partial",
+      "starterKind": "builder",
+      "recommendedPack": "openclaw",
+      "bestEntry": "pnpm run switchyard:cli -- builder-kit --target openclaw",
+      "whyThisPack": [
+        "Use the OpenClaw pack when your first need is delegation-first runtime bridging.",
+        "This pack preserves the runtime delegation shape without importing operator or product-shell baggage."
+      ],
+      "bestWhen": [
+        "You need a delegation-first request envelope.",
+        "You want the upstream-informed runtime path while keeping Switchyard's product boundary intact."
+      ],
+      "avoidWhen": [
+        "You need operator or control-plane parity.",
+        "You are looking for a read-only diagnostics pack."
+      ],
+      "compareAgainst": [
+        "codex-builder",
+        "claude-code-builder",
+        "mcp-inspector"
+      ],
+      "recommendedDocs": [
+        "docs/starter-pack-chooser.md",
+        "docs/compat/openclaw.md",
+        "docs/compare/switchyard-vs-openclaw.md",
+        "starter-packs/README.md"
+      ],
+      "searchKeywords": [
+        "switchyard openclaw starter",
+        "switchyard delegation bridge",
+        "switchyard openclaw compat helper"
+      ],
+      "safeClaims": [
+        "partial OpenClaw compatibility",
+        "delegation-first bridge",
+        "fail-closed adapter starter"
+      ],
+      "notYetSupported": [
+        "operator control-plane parity",
+        "product-shell parity",
+        "channel shell parity"
+      ]
+    },
+    {
+      "id": "mcp-inspector",
+      "label": "Expose Switchyard runtime truth through a read-only MCP inspector",
+      "status": "partial",
+      "starterKind": "builder",
+      "recommendedPack": "mcp",
+      "bestEntry": "pnpm run switchyard:cli -- builder-kit --target mcp",
+      "whyThisPack": [
+        "Use the MCP pack when your first need is read-only runtime inspection over stdio tools.",
+        "This pack already matches the landed partial MCP surface without pretending it can invoke or automate browsers."
+      ],
+      "bestWhen": [
+        "You want runtime health, provider status, remediation, or catalog truth through a local MCP client.",
+        "You need a bounded inspector instead of a consumer-parity backend."
+      ],
+      "avoidWhen": [
+        "You need runtime invoke or acquisition writes through MCP.",
+        "You are actually building a compat helper for Codex, Claude Code, or OpenClaw."
+      ],
+      "compareAgainst": [
+        "codex-builder",
+        "claude-code-builder",
+        "runtime-diagnostics-skill"
+      ],
+      "recommendedDocs": [
+        "docs/starter-pack-chooser.md",
+        "docs/mcp.md",
+        "docs/api/mcp-readonly-server.md",
+        "starter-packs/README.md"
+      ],
+      "searchKeywords": [
+        "switchyard mcp starter",
+        "switchyard read only mcp server",
+        "switchyard runtime inspector"
+      ],
+      "safeClaims": [
+        "partial read-only MCP surface",
+        "runtime inspection only",
+        "bounded MCP starter"
+      ],
+      "notYetSupported": [
+        "execution brain",
+        "runtime invoke through MCP",
+        "acquisition write through MCP",
+        "embedded consumer parity"
+      ]
+    },
+    {
+      "id": "runtime-diagnostics-skill",
+      "label": "Create a read-only provider triage or diagnostics recipe",
+      "status": "partial",
+      "starterKind": "skill",
+      "recommendedPack": "runtime-diagnostics-pack",
+      "bestEntry": "pnpm run switchyard:cli -- skill-pack --target runtime-diagnostics-pack",
+      "whyThisPack": [
+        "Use this skill pack when you need a bounded incident recipe built on support-bundle truth.",
+        "It stays read-only and is already shaped around readiness, remediation, and attach-target evidence."
+      ],
+      "bestWhen": [
+        "You need to summarize provider readiness or triage incidents without invoking providers.",
+        "You want a repeatable skill recipe for diagnostics or support work."
+      ],
+      "avoidWhen": [
+        "You need acquisition writes, browser automation, or invoke.",
+        "You only need a read-only MCP inspector with no recipe layer."
+      ],
+      "compareAgainst": [
+        "mcp-inspector",
+        "docs-seo-sync-skill"
+      ],
+      "recommendedDocs": [
+        "docs/starter-pack-chooser.md",
+        "docs/plugin-skill-starter-kits.md",
+        "docs/mcp.md",
+        "starter-packs/README.md"
+      ],
+      "searchKeywords": [
+        "switchyard runtime diagnostics pack",
+        "switchyard provider triage starter",
+        "switchyard support bundle skill pack"
+      ],
+      "safeClaims": [
+        "read-only diagnostics pack",
+        "provider triage helper",
+        "no invoke or write actions"
+      ],
+      "notYetSupported": [
+        "invoke",
+        "acquisition write",
+        "browser automation",
+        "execution-brain parity"
+      ]
+    },
+    {
+      "id": "docs-seo-sync-skill",
+      "label": "Create a truth-safe docs or SEO sync helper",
+      "status": "partial",
+      "starterKind": "skill",
+      "recommendedPack": "docs-seo-sync-pack",
+      "bestEntry": "pnpm run switchyard:cli -- skill-pack --target docs-seo-sync-pack",
+      "whyThisPack": [
+        "Use this pack when you need docs or discoverability sync while keeping support claims truthful.",
+        "It already assumes human review before outward publishing and keeps launch automation out of scope."
+      ],
+      "bestWhen": [
+        "You are syncing docs, metadata, or SEO copy to the latest support labels.",
+        "You want a bounded truth-sync starter, not a marketing autopilot."
+      ],
+      "avoidWhen": [
+        "You need autonomous publishing or launch automation.",
+        "You are actually trying to build a runtime bridge or diagnostics recipe."
+      ],
+      "compareAgainst": [
+        "runtime-diagnostics-skill",
+        "mcp-inspector"
+      ],
+      "recommendedDocs": [
+        "docs/starter-pack-chooser.md",
+        "docs/plugin-skill-starter-kits.md",
+        "docs/discoverability-keyword-truth.md",
+        "starter-packs/README.md"
+      ],
+      "searchKeywords": [
+        "switchyard docs seo sync pack",
+        "switchyard discoverability starter",
+        "switchyard truthful seo helper"
+      ],
+      "safeClaims": [
+        "truth-sync starter",
+        "discoverability helper",
+        "not a marketing autopilot"
+      ],
+      "notYetSupported": [
+        "marketing autopilot",
+        "claim escalation without review",
+        "launch automation"
+      ]
+    }
+  ]
+}

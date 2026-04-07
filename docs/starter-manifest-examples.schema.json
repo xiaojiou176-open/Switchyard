@@ -1,0 +1,258 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/xiaojiou176-open/Switchyard/docs/starter-manifest-examples.schema.json",
+  "title": "Switchyard Starter Manifest Examples",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "$schema",
+    "exampleVersion",
+    "builderExamples",
+    "skillExamples"
+  ],
+  "properties": {
+    "$schema": {
+      "type": "string"
+    },
+    "exampleVersion": {
+      "type": "integer",
+      "minimum": 1
+    },
+    "builderExamples": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/builderExample"
+      }
+    },
+    "skillExamples": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/skillExample"
+      }
+    }
+  },
+  "$defs": {
+    "status": {
+      "type": "string",
+      "enum": [
+        "supported now",
+        "partial",
+        "planned",
+        "research only",
+        "not now"
+      ]
+    },
+    "stringArray": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
+    },
+    "requestMessage": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "role",
+        "content"
+      ],
+      "properties": {
+        "role": {
+          "type": "string",
+          "minLength": 1
+        },
+        "content": {
+          "type": "string",
+          "minLength": 1
+        }
+      }
+    },
+    "runtimeRequest": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "model",
+        "lane"
+      ],
+      "properties": {
+        "provider": {
+          "type": "string",
+          "minLength": 1
+        },
+        "model": {
+          "type": "string",
+          "minLength": 1
+        },
+        "lane": {
+          "type": "string",
+          "minLength": 1
+        },
+        "input": {
+          "type": "string",
+          "minLength": 1
+        },
+        "messages": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/requestMessage"
+          },
+          "minItems": 1
+        }
+      },
+      "anyOf": [
+        {
+          "required": [
+            "input"
+          ]
+        },
+        {
+          "required": [
+            "messages"
+          ]
+        }
+      ]
+    },
+    "toolCall": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "name",
+        "arguments"
+      ],
+      "properties": {
+        "name": {
+          "type": "string",
+          "minLength": 1
+        },
+        "arguments": {
+          "type": "object"
+        }
+      }
+    },
+    "builderExamplePayload": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "name"
+      ],
+      "properties": {
+        "name": {
+          "type": "string",
+          "minLength": 1
+        },
+        "runtimeBaseUrlEnv": {
+          "type": "string",
+          "minLength": 1
+        },
+        "catalogCommand": {
+          "type": "string",
+          "minLength": 1
+        },
+        "startupCommand": {
+          "type": "string",
+          "minLength": 1
+        },
+        "request": {
+          "$ref": "#/$defs/runtimeRequest"
+        },
+        "toolCall": {
+          "$ref": "#/$defs/toolCall"
+        }
+      },
+      "anyOf": [
+        {
+          "required": [
+            "request"
+          ]
+        },
+        {
+          "required": [
+            "toolCall"
+          ]
+        }
+      ]
+    },
+    "builderExample": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "target",
+        "status",
+        "exampleShape",
+        "example",
+        "safeClaims"
+      ],
+      "properties": {
+        "target": {
+          "type": "string",
+          "minLength": 1
+        },
+        "status": {
+          "$ref": "#/$defs/status"
+        },
+        "exampleShape": {
+          "type": "string",
+          "minLength": 1
+        },
+        "example": {
+          "$ref": "#/$defs/builderExamplePayload"
+        },
+        "safeClaims": {
+          "$ref": "#/$defs/stringArray"
+        }
+      }
+    },
+    "skillExamplePayload": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "name",
+        "catalogCommand",
+        "steps"
+      ],
+      "properties": {
+        "name": {
+          "type": "string",
+          "minLength": 1
+        },
+        "catalogCommand": {
+          "type": "string",
+          "minLength": 1
+        },
+        "steps": {
+          "$ref": "#/$defs/stringArray"
+        }
+      }
+    },
+    "skillExample": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "status",
+        "exampleShape",
+        "example",
+        "safeClaims"
+      ],
+      "properties": {
+        "id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "status": {
+          "$ref": "#/$defs/status"
+        },
+        "exampleShape": {
+          "type": "string",
+          "minLength": 1
+        },
+        "example": {
+          "$ref": "#/$defs/skillExamplePayload"
+        },
+        "safeClaims": {
+          "$ref": "#/$defs/stringArray"
+        }
+      }
+    }
+  }
+}

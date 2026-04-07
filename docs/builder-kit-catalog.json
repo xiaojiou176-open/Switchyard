@@ -1,0 +1,176 @@
+{
+  "$schema": "./builder-kit-catalog.schema.json",
+  "catalogVersion": 1,
+  "kits": [
+    {
+      "target": "codex",
+      "status": "partial",
+      "starterShape": "responses-runtime-helper",
+      "bestEntry": "pnpm run switchyard:cli -- compat-target --target codex",
+      "requiredInputs": [
+        "service runtime base URL",
+        "Codex-side request text",
+        "explicit provider/lane choice when the target provider is dual-lane"
+      ],
+      "starterSteps": [
+        "Read the Codex compat target truth first.",
+        "Point the helper at the current Switchyard service runtime base URL.",
+        "Keep the helper text-only and delegate actual invocation through the thin compat adapter.",
+        "Expose unsupported features as fail-closed instead of silently dropping them."
+      ],
+      "outputArtifacts": [
+        "builder-side runtime helper",
+        "thin request bridge",
+        "truthful status page or README snippet"
+      ],
+      "safeClaims": [
+        "partial Codex compatibility",
+        "thin runtime bridge",
+        "fail-closed builder helper"
+      ],
+      "recommendedDocs": [
+        "docs/starter-pack-chooser.md",
+        "docs/starter-pack-comparison.md",
+        "docs/host-integration-playbooks.md",
+        "docs/host-integration-examples.md",
+        "docs/compat/codex.md",
+        "docs/public-surface-support-matrix.md",
+        "docs/plugin-skill-starter-kits.md"
+      ],
+      "copyReadyPackPath": "starter-packs/builders/codex",
+      "notYetSupported": [
+        "tool-execution parity",
+        "mcp parity",
+        "worktree parity"
+      ]
+    },
+    {
+      "target": "claude-code",
+      "status": "partial",
+      "starterShape": "message-runtime-helper",
+      "bestEntry": "pnpm run switchyard:cli -- compat-target --target claude-code",
+      "requiredInputs": [
+        "service runtime base URL",
+        "Claude Code-style message payload",
+        "explicit target provider when multiple providers fit the model family"
+      ],
+      "starterSteps": [
+        "Read the Claude Code compat truth page first.",
+        "Normalize the message payload into the thin runtime bridge shape.",
+        "Delegate through the existing Switchyard runtime invoke route.",
+        "Keep tool or terminal claims fail-closed and visibly unsupported."
+      ],
+      "outputArtifacts": [
+        "message/runtime bridge helper",
+        "gateway-format adapter",
+        "fail-closed compatibility note"
+      ],
+      "safeClaims": [
+        "partial Claude Code compatibility",
+        "thin message/runtime bridge",
+        "no terminal or tool parity"
+      ],
+      "recommendedDocs": [
+        "docs/starter-pack-chooser.md",
+        "docs/starter-pack-comparison.md",
+        "docs/host-integration-playbooks.md",
+        "docs/host-integration-examples.md",
+        "docs/compat/claude-code.md",
+        "docs/public-surface-support-matrix.md",
+        "docs/plugin-skill-starter-kits.md"
+      ],
+      "copyReadyPackPath": "starter-packs/builders/claude-code",
+      "notYetSupported": [
+        "terminal shell parity",
+        "approval parity",
+        "tool parity",
+        "mcp parity"
+      ]
+    },
+    {
+      "target": "openclaw",
+      "status": "partial",
+      "starterShape": "delegated-runtime-helper",
+      "bestEntry": "pnpm run switchyard:cli -- compat-target --target openclaw",
+      "requiredInputs": [
+        "service runtime base URL",
+        "delegation-first request envelope",
+        "explicit understanding that the OpenClaw product shell stays outside Switchyard"
+      ],
+      "starterSteps": [
+        "Read the OpenClaw compat truth page and upstream boundary reminder first.",
+        "Use the delegation-first runtime bridge instead of copying the product shell.",
+        "Keep operator or control-plane expectations outside the starter.",
+        "Document the remaining parity gaps before exposing the helper."
+      ],
+      "outputArtifacts": [
+        "delegation-first runtime helper",
+        "thin adapter README",
+        "bounded parity disclaimer"
+      ],
+      "safeClaims": [
+        "partial OpenClaw compatibility",
+        "delegation-first bridge",
+        "no operator or product-shell parity"
+      ],
+      "recommendedDocs": [
+        "docs/starter-pack-chooser.md",
+        "docs/starter-pack-comparison.md",
+        "docs/host-integration-playbooks.md",
+        "docs/host-integration-examples.md",
+        "docs/compat/openclaw.md",
+        "docs/compare/switchyard-vs-openclaw.md",
+        "docs/plugin-skill-starter-kits.md"
+      ],
+      "copyReadyPackPath": "starter-packs/builders/openclaw",
+      "notYetSupported": [
+        "operator control-plane parity",
+        "product-shell parity",
+        "channel shell parity"
+      ]
+    },
+    {
+      "target": "mcp",
+      "status": "partial",
+      "starterShape": "read-only-runtime-inspector",
+      "bestEntry": "pnpm run switchyard:mcp -- --base-url http://127.0.0.1:4010",
+      "requiredInputs": [
+        "service runtime base URL",
+        "local MCP client capable of stdio transport",
+        "read-only use case"
+      ],
+      "starterSteps": [
+        "Start the read-only Switchyard MCP server over stdio.",
+        "Enumerate the published tools before wiring client UX around them.",
+        "Route only inspection and diagnostics requests through this surface.",
+        "Keep invoke, acquisition, and browser-automation requests visibly unsupported."
+      ],
+      "outputArtifacts": [
+        "stdio MCP client config",
+        "read-only runtime inspector",
+        "bounded tool inventory"
+      ],
+      "safeClaims": [
+        "partial MCP surface",
+        "read-only MCP server",
+        "runtime inspection only"
+      ],
+      "recommendedDocs": [
+        "docs/starter-pack-chooser.md",
+        "docs/starter-pack-comparison.md",
+        "docs/host-integration-playbooks.md",
+        "docs/host-integration-examples.md",
+        "docs/mcp.md",
+        "docs/api/mcp-readonly-server.md",
+        "docs/plugin-skill-starter-kits.md"
+      ],
+      "copyReadyPackPath": "starter-packs/builders/mcp",
+      "notYetSupported": [
+        "execution brain",
+        "runtime invoke through MCP",
+        "acquisition write through MCP",
+        "embedded consumer parity"
+      ]
+    }
+  ]
+}
