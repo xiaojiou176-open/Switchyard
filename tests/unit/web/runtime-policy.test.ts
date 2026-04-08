@@ -46,6 +46,7 @@ describe("runtime policy path guards", () => {
     expect(() => assertSafePathSegment("../Profile 1", "profile directory")).toThrow(
       /single path segment/u,
     );
+    expect(assertSafePathSegment(" Profile 1 ", "profile directory")).toBe("Profile 1");
   });
 
   it("uses the documented default cache policy when no override is provided", () => {
@@ -140,6 +141,11 @@ describe("runtime policy path guards", () => {
         SWITCHYARD_BROWSER_MODE: "existing-browser-session",
       }),
     ).toBe("existing-browser-session");
+    expect(
+      resolveCredentialedBrowserMode({
+        SWITCHYARD_BROWSER_MODE: "existing-chrome-profile",
+      }),
+    ).toBe("isolated-chrome-root");
   });
 
   it("uses the documented default isolated profile display name unless overridden", () => {
