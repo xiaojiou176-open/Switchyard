@@ -15,6 +15,14 @@
   />
 </p>
 
+<p align="center">
+  <img
+    src="./.github/switchyard-storefront-loop.gif"
+    alt="Switchyard storefront loop preview."
+    width="960"
+  />
+</p>
+
 ## 30 秒版本
 
 如果你现在只想先用一句人话记住它：
@@ -35,10 +43,12 @@
 
 - `repo-side gate = green`
   - `pnpm typecheck`、frontdoor/docs/distribution/MCP/CLI slice、`pnpm build` 当前都过
-- fresh `verify:service-live` 当前停在 `Gemini = user-action-required`
-  - 也就是说，repo 自己没先垮，但这台 credentialed workstation 上的 Gemini 会话还需要真人补一步
-- `latest aggregate = external-blocker on this workspace`
-  - front door 现在该同步成 `Gemini / Grok`，不再继续复读旧的 `Claude / Grok / Qwen`
+- recent live/browser proof has already demonstrated the runtime lane end to end
+  - 当前 rerun 可能会因为这台 credentialed workstation 的登录态、订阅状态或真人补一步而停住
+  - 这类 `user-action-required` / auth-freshness 漂移，默认记作 `workstation-bound external reality`, 不记作 repo blocker
+- front door should stay anchored to durable truth, not single-rerun turbulence
+  - 也就是说，README 更该强调 `repo-side gate green + public proof pack + distribution status`
+  - 单次 `verify:service-live` 的工作站态漂移只应该进入 live notes，不该主导产品身份
 
 ## 快速入口
 
@@ -53,6 +63,8 @@
 
 如果你已经明确自己在走 builder / distribution 路线，再看：
 
+- [DISTRIBUTION.md](./DISTRIBUTION.md)
+- [INTEGRATIONS.md](./INTEGRATIONS.md)
 - [docs/plugin-skill-starter-kits.md](./docs/plugin-skill-starter-kits.md)
 - [docs/public-distribution-ledger.md](./docs/public-distribution-ledger.md)
 
@@ -524,12 +536,18 @@ repo 外如果真的需要放当前仓专属的临时缓存，也只能落在：
 默认治理规则是：
 
 - TTL = `7 days`
-- max bytes = `5 GiB`
+- max bytes = `8 GiB`
 - 清理优先级
   - 先删 `temp`
   - 再删旧 debug / support bundles
   - 再删 repo-external disposable browser artifacts
   - 最后才允许显式 `--include-managed-browser`
+
+在做 live / browser / cleanup 动作前，先跑：
+
+```bash
+pnpm run scan:host-process-risks
+```
 
 ```bash
 pnpm run audit:runtime-footprint
@@ -577,7 +595,7 @@ export SWITCHYARD_CHROME_USER_DATA_DIR="$HOME/.cache/switchyard/browser/chrome-u
 export SWITCHYARD_CHROME_PROFILE_NAME="switchyard"
 export SWITCHYARD_EXTERNAL_CACHE_ROOT="$HOME/.cache/switchyard"
 export SWITCHYARD_CACHE_TTL_DAYS=7
-export SWITCHYARD_CACHE_MAX_BYTES=5368709120
+export SWITCHYARD_CACHE_MAX_BYTES=8589934592
 export SWITCHYARD_WEB_AUTH_EXISTING_PROFILE_CDP_URL="http://127.0.0.1:9338"
 ```
 
