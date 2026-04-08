@@ -360,7 +360,7 @@
    - 不准把 `web-login-live-proof-*`、support bundle、debug bundle、临时编译目录一直堆在 `.runtime-cache/` 或 `~/.cache/switchyard/` 里不管。
    - 默认治理规则固定为：
      - `TTL = 7 days`
-     - `maxBytes = 5 GiB`
+     - `maxBytes = 8 GiB`
    - shared tool caches 不归当前 repo 自动清理：
      - `pnpm store`
      - `~/.npm`

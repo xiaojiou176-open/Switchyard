@@ -328,7 +328,7 @@ No.
 默认治理参数是：
 
 - `TTL = 7 days`
-- `maxBytes = 5 GiB`
+- `maxBytes = 8 GiB`
 
 ## Does Switchyard own my real Chrome profile?
 

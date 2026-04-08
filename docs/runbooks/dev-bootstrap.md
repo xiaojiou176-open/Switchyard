@@ -231,7 +231,7 @@ repo 外如果还需要当前仓专属的临时缓存，也只能进：
 默认治理规则现在是：
 
 - `TTL = 7 days`
-- `maxBytes = 5 GiB`
+- `maxBytes = 8 GiB`
 - repo-native cleanup 会同时审计：
   - repo-local `.runtime-cache/`
   - repo-external `~/.cache/switchyard`
@@ -252,6 +252,12 @@ repo 外如果还需要当前仓专属的临时缓存，也只能进：
 - 默认不删 `managed-browser-profile`
 - 只有显式传 `--include-managed-browser`，并且脚本确认当前没有活跃监听或活跃 Chrome/Chromium profile 占用时，才允许删除 managed browser 工位
 
+在执行 live / browser / cleanup 类命令前，先跑：
+
+```bash
+pnpm run scan:host-process-risks
+```
+
 ## 本地 credentialed 浏览器默认模式
 
 现在这仓更推荐的本地 credentialed 工作方式不是 repo-local managed browser 常开，而是：
@@ -270,7 +276,7 @@ export SWITCHYARD_CHROME_USER_DATA_DIR="$HOME/.cache/switchyard/browser/chrome-u
 export SWITCHYARD_CHROME_PROFILE_NAME="switchyard"
 export SWITCHYARD_EXTERNAL_CACHE_ROOT="$HOME/.cache/switchyard"
 export SWITCHYARD_CACHE_TTL_DAYS=7
-export SWITCHYARD_CACHE_MAX_BYTES=5368709120
+export SWITCHYARD_CACHE_MAX_BYTES=8589934592
 export SWITCHYARD_WEB_AUTH_EXISTING_PROFILE_CDP_URL="http://127.0.0.1:9338"
 ```
 
