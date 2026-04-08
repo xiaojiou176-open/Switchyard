@@ -33,7 +33,7 @@ export default defineConfig({
     exclude: commonProjectConfig.exclude,
     coverage: {
       provider: 'v8',
-      reporter: ['text-summary', 'json-summary', 'html'],
+      reporter: ['text-summary', 'json-summary'],
       reportsDirectory: 'coverage',
       exclude: [
         ...commonProjectConfig.exclude,
