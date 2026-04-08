@@ -4,7 +4,9 @@ import { join, resolve } from "node:path";
 import { describe, expect, it } from "vitest";
 
 import {
+  assertPathInsideAllowedRoots,
   assertSafePathSegment,
+  resolveExternalCacheRoot,
   resolveCacheMaxBytes,
   resolveCacheTtlDays,
   resolveIsolatedChromeUserDataDir,
@@ -83,5 +85,46 @@ describe("runtime policy path guards", () => {
         SWITCHYARD_CACHE_MAX_BYTES: "",
       }),
     ).toBe(8 * 1024 * 1024 * 1024);
+  });
+
+  it("expands a tilde-based external cache root outside the repo worktree", () => {
+    const repoRoot = "/tmp/switchyard-repo";
+    const resolved = resolveExternalCacheRoot(
+      {
+        SWITCHYARD_EXTERNAL_CACHE_ROOT: "~/.cache/switchyard-tests",
+      },
+      repoRoot,
+    );
+
+    expect(resolved.endsWith("/.cache/switchyard-tests")).toBe(true);
+  });
+
+  it("rejects external cache roots that point back inside the repo", () => {
+    expect(() =>
+      resolveExternalCacheRoot(
+        {
+          SWITCHYARD_EXTERNAL_CACHE_ROOT: "./.runtime-cache/external",
+        },
+        "/tmp/switchyard-repo",
+      ),
+    ).toThrow(/must live outside the repo worktree/u);
+  });
+
+  it("accepts child paths inside allowed roots and rejects outsiders", () => {
+    expect(
+      assertPathInsideAllowedRoots(
+        "/tmp/switchyard-safe/cache/profile",
+        ["/tmp/switchyard-safe", "/tmp/other-root"],
+        "browser root",
+      ),
+    ).toBe("/tmp/switchyard-safe/cache/profile");
+
+    expect(() =>
+      assertPathInsideAllowedRoots(
+        "/etc/switchyard-profile",
+        ["/tmp/switchyard-safe"],
+        "browser root",
+      ),
+    ).toThrow(/must stay inside one of/u);
   });
 });
