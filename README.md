@@ -7,6 +7,14 @@
 
 > **把终端用户已有的 AI 访问资格，统一收编成一个可被 AI 产品消费的共享运行时。**
 
+<p align="center">
+  <img
+    src="./.github/social-preview-switchyard.svg"
+    alt="Switchyard social preview: shared provider runtime for AI apps. BYOK plus Web/Login. Repo-side gate green. Latest live truth remains workstation-bound."
+    width="960"
+  />
+</p>
+
 ## 30 秒版本
 
 如果你现在只想先用一句人话记住它：

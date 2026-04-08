@@ -7,7 +7,6 @@ const MINIMUM_STATEMENTS_PCT = 80;
 const MINIMUM_LINES_PCT = 80;
 const repoRoot = resolve(process.cwd());
 const coverageSummaryPath = join(repoRoot, "coverage", "coverage-summary.json");
-
 const coverageCommand = spawnSync(
   "pnpm",
   ["run", "test:coverage:raw"],
