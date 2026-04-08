@@ -146,6 +146,11 @@ describe("runtime policy path guards", () => {
         SWITCHYARD_BROWSER_MODE: "existing-chrome-profile",
       }),
     ).toBe("isolated-chrome-root");
+    expect(
+      resolveCredentialedBrowserMode({
+        SWITCHYARD_BROWSER_MODE: "not-a-real-mode",
+      }),
+    ).toBe("isolated-chrome-root");
   });
 
   it("uses the documented default isolated profile display name unless overridden", () => {
