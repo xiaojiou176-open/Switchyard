@@ -107,6 +107,7 @@ jobs:
           cache-dir: ${{ runner.temp }}/trivy-cache
           format: sarif
           output: trivy-results.sarif
+          limit-severities-for-sarif: true
           exit-code: "1"
           severity: HIGH,CRITICAL
           ignore-unfixed: true
