@@ -100,12 +100,14 @@ describe("runtime policy path guards", () => {
   });
 
   it("rejects external cache roots that point back inside the repo", () => {
+    const repoRoot = "/tmp/switchyard-repo";
+
     expect(() =>
       resolveExternalCacheRoot(
         {
-          SWITCHYARD_EXTERNAL_CACHE_ROOT: "./.runtime-cache/external",
+          SWITCHYARD_EXTERNAL_CACHE_ROOT: `${repoRoot}/.runtime-cache/external`,
         },
-        "/tmp/switchyard-repo",
+        repoRoot,
       ),
     ).toThrow(/must live outside the repo worktree/u);
   });
