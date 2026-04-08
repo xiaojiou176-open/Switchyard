@@ -21,6 +21,8 @@
   "scripts": {
     "install": "node -e \"console.log('Switchyard workspace dependencies installed.')\"",
     "prepare": "simple-git-hooks",
+    "scan:host-process-risks": "bash scripts/ci/host-safety-gate.sh",
+    "check:host-safety": "bash scripts/ci/host-safety-gate.sh",
     "build:root": "pnpm exec tsc -p tsconfig.json --pretty false",
     "build": "pnpm run build:root && pnpm -r build",
     "typecheck:root": "pnpm exec tsc -p tsconfig.json --pretty false",
@@ -92,6 +94,8 @@
   },
   "pnpm": {
     "overrides": {
+      "@hono/node-server": "1.19.13",
+      "hono": "4.12.12",
       "vite": "8.0.5"
     }
   }
