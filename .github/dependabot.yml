@@ -3,7 +3,9 @@ updates:
   - package-ecosystem: "github-actions"
     directory: "/"
     schedule:
-      interval: "weekly"
+      interval: "daily"
+      time: "03:17"
+      timezone: "America/Los_Angeles"
     cooldown:
       default-days: 7
     open-pull-requests-limit: 5
@@ -11,7 +13,9 @@ updates:
   - package-ecosystem: "npm"
     directory: "/"
     schedule:
-      interval: "weekly"
+      interval: "daily"
+      time: "03:17"
+      timezone: "America/Los_Angeles"
     cooldown:
       default-days: 7
     open-pull-requests-limit: 5

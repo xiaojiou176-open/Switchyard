@@ -10,8 +10,8 @@
 
 当前轮的边界固定是：
 
-- package / starter-pack / docs / CLI / MCP frontdoor 要做到 public-ready
-- `SDK / hosted / homepage / release publish / custom domain` 不在这轮
+- package / starter-pack / docs / GitHub Pages homepage / CLI / MCP frontdoor 要做到 public-ready
+- `SDK / hosted runtime / release publish / custom domain` 不在这轮
 - 没有 fresh 证据，不准把 `public-ready` 写成 `officially listed`
 
 ## 当前结论

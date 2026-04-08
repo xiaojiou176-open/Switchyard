@@ -27,10 +27,10 @@
 
 - `repo-side gate = green`
   - `pnpm typecheck`、frontdoor/docs/distribution/MCP/CLI slice、`pnpm build` 当前都过
-- `verify:service-live = green`
-  - trio 统一 service-first invoke 当前是通的
+- fresh `verify:service-live` 当前停在 `Gemini = user-action-required`
+  - 也就是说，repo 自己没先垮，但这台 credentialed workstation 上的 Gemini 会话还需要真人补一步
 - `latest aggregate = external-blocker on this workspace`
-  - 当前这台 workspace 上仍停在 `Claude / Grok / Qwen = missing-web-session-material`
+  - front door 现在该同步成 `Gemini / Grok`，不再继续复读旧的 `Claude / Grok / Qwen`
 
 ## 快速入口
 
@@ -47,6 +47,26 @@
 
 - [docs/plugin-skill-starter-kits.md](./docs/plugin-skill-starter-kits.md)
 - [docs/public-distribution-ledger.md](./docs/public-distribution-ledger.md)
+
+## 治理分层
+
+当前这仓把验证和治理分成 5 层，先把它理解成 5 道安检门：
+
+- `pre-commit`
+  - 本地最早拦截 secrets 与 frontdoor hygiene
+- `pre-push`
+  - 本地提交前的 coverage / test / build 总闸
+- `hosted`
+  - GitHub Actions 负责 repo-side 代码与合同
+- `nightly`
+  - hosted-safe 的定时重检查，不碰真人登录态
+- `manual`
+  - 只在 credentialed workstation 上处理 live/provider/browser realism
+
+更完整的层级说明看：
+
+- [docs/testing-pyramid.md](./docs/testing-pyramid.md)
+- [docs/runbooks/dev-bootstrap.md](./docs/runbooks/dev-bootstrap.md)
 
 这里的“访问资格”包括：
 
@@ -332,9 +352,11 @@ flowchart LR
 
 当前更准确的阶段是：
 
-> **`Switchyard` 的 fresh internal gate 已经站稳，`verify:service-live` 也已经成功。**
+> **`Switchyard` 的 fresh internal gate 仍然站得住。**
 >
-> **但 latest aggregate closeout 仍是 `external-blocker`，而且当前这轮 fresh rerun 在这台 workspace 上停在 `Claude / Grok / Qwen = missing-web-session-material`。**
+> **但 latest fresh rerun in this workspace 已经不该继续写成 `Claude / Grok / Qwen`。**
+>
+> **当前 frontdoor 应同步成：repo-side green；fresh `verify:service-live` 当前停在 `Gemini = user-action-required`；workspace external blocker pack 用 `Gemini / Grok`。**
 >
 > **但这仍然是 environment-bound truth：换机器、换浏览器会话、换凭证材料以后，依然要重新跑 live gate。**
 
@@ -401,7 +423,7 @@ flowchart LR
 
 > **当前 live repo 已经不是“文档好了但代码没站起来”。**
 >
-> **今天更稳、更诚实的说法是：repo-side gate 已经通过，`verify:service-live` 也已经成功，但 latest aggregate closeout 在这台 workspace 上仍停在 `Claude / Grok / Qwen = missing-web-session-material`。**
+> **今天更稳、更诚实的说法是：repo-side gate 已经过闸；fresh service-first spot check 当前停在 `Gemini = user-action-required`；workspace external blocker pack 现在该写成 `Gemini / Grok`。**
 >
 > **也就是说，当前 program 不是卡在内部工程债，而是 paused 在一组 workstation-bound external blockers。**
 >
@@ -419,7 +441,7 @@ flowchart LR
 >
 > **它也不覆盖更高优先级的 ADR / blueprint / task board。**
 >
-> 当前这些更高优先级工件需要同步到同一个更诚实的结论：当前顶层 program 状态仍然是 `PROGRAM PAUSED - ONLY TRUE EXTERNAL BLOCKERS REMAIN`，原因不是内部工程漂移，而是 latest aggregate closeout 在当前这台 workspace 上仍停在 `Claude / Grok / Qwen = missing-web-session-material` 这一组 workstation-bound external blockers。
+> 当前这些更高优先级工件需要同步到同一个更诚实的结论：当前顶层 program 状态仍然是 `PROGRAM PAUSED - ONLY TRUE EXTERNAL BLOCKERS REMAIN`，原因不是内部工程漂移，而是当前这台 workspace 的 blocker pack 该写成 `Gemini / Grok`，而且它们都属于 workstation-bound external blockers。
 
 同时补一个当前工程现实：
 
@@ -428,8 +450,8 @@ flowchart LR
 > - BYOK lane 通过统一 service runtime 入口暴露
 > - SDK 也可以围绕同一 service entrypoint 提供 client
 >
-> 更诚实的当前写法应该是：**repo-side substrate 已经站住，但 latest aggregate closeout 仍 paused 在一组外部网页登录材料缺口。**
-> 说得更直白一点：地基已经打牢，真正没过线的不是 repo 自己，而是当前这台机器上 `Claude / Grok / Qwen` 还缺 provider-specific cookie bundle 和 browser user agent 这两类 live proof 材料。
+> 更诚实的当前写法应该是：**repo-side substrate 已经站住，但 current workspace live truth 仍 paused 在一组外部 browser/session blockers。**
+> 说得更直白一点：地基已经打牢，真正没过线的不是 repo 自己，而是当前这台机器上 `Gemini / Grok` 还没有把真人登录后的 browser/session 状态稳定收口成可复验的 live proof。
 
 如果你需要把 `store-ready != live-ready` 看得更具体一点，现在有一条专门的 browser diagnose 工具：
 

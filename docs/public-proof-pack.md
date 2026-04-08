@@ -88,24 +88,17 @@ pnpm run example:mcp-inspector
 
 因为 live gate 永远不是 repo 常量。
 
-当前这台 workspace 上的 fresh rerun 是：
+当前这台 workspace 上，front door 现在该同步成下面这句，而不是继续贴旧成绩单：
 
-- `pnpm run verify:service-live` = `0`
-- `pnpm run reality:gate` = `2`
-- `overallStatus = external-blocker`
-- `internalGate.passed = true`
-- `successCount = 3`
-- `externalBlockerCount = 3`
-- `failureCount = 0`
-- current external blockers:
-  - `Claude` = `missing-web-session-material`
-  - `Grok` = `missing-web-session-material`
-  - `Qwen` = `missing-web-session-material`
+- `repo-side gate = green`
+- fresh `pnpm run verify:service-live` 当前停在 `Gemini = user-action-required`
+- current workspace external blocker pack = `Gemini / Grok`
+- detailed aggregate wording 仍然属于 credentialed workstation truth，不应在多个 frontdoor 页面重复抄写
 
 翻成人话：
 
 - repo 自己没有卡在内部工程债
-- 当前卡住的是这台机器上的网页登录材料还不完整
+- 当前卡住的是这台机器上的网页登录会话还需要真人补动作，或者继续处理外部 browser/session 问题
 - 换一台机器、换一组 cookie bundle、换一套 browser user agent，结论都可能变
 
 ## 最小证明包

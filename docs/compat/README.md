@@ -25,36 +25,15 @@ These are **related repo seam snapshots**, not public compatibility claims.
 | `CortexPilot` | future reselection | provider/base_url seam exists in planning, but it is not a current public compat surface |
 | `multi-ai-sidepanel` | bounded seam landed | a maintainer-local runtime-backed analyst lane exists, while compare-first browser UX stays local |
 
-## Pages
+## Primary Pages
 
 - [docs/compat/codex.md](./codex.md)
 - [docs/compat/claude-code.md](./claude-code.md)
 - [docs/compat/openclaw.md](./openclaw.md)
-- [docs/compat-target-catalog.md](../compat-target-catalog.md)
-- [docs/compat-target-catalog.json](../compat-target-catalog.json)
-- [docs/compat-target-catalog.schema.json](../compat-target-catalog.schema.json)
-- [docs/builder-kit-catalog.md](../builder-kit-catalog.md)
-- [docs/builder-kit-catalog.json](../builder-kit-catalog.json)
-- [docs/builder-kit-catalog.schema.json](../builder-kit-catalog.schema.json)
-- [docs/skill-pack-catalog.md](../skill-pack-catalog.md)
-- [docs/skill-pack-catalog.json](../skill-pack-catalog.json)
-- [docs/skill-pack-catalog.schema.json](../skill-pack-catalog.schema.json)
+- [docs/public-distribution-ledger.md](../public-distribution-ledger.md)
 - [docs/public-surface-catalog.md](../public-surface-catalog.md)
-- [docs/public-surface-catalog.json](../public-surface-catalog.json)
-- [docs/public-surface-catalog.schema.json](../public-surface-catalog.schema.json)
-- [docs/plugin-skill-starter-kits.md](../plugin-skill-starter-kits.md)
-- [docs/starter-manifest-templates.md](../starter-manifest-templates.md)
-- [docs/starter-manifest-templates.schema.json](../starter-manifest-templates.schema.json)
-- [docs/starter-manifest-examples.md](../starter-manifest-examples.md)
-- [docs/starter-manifest-examples.schema.json](../starter-manifest-examples.schema.json)
-- [docs/starter-pack-index.md](../starter-pack-index.md)
-- [docs/starter-pack-chooser.md](../starter-pack-chooser.md)
-- [docs/starter-pack-comparison.md](../starter-pack-comparison.md)
-- [docs/host-integration-playbooks.md](../host-integration-playbooks.md)
-- [docs/host-integration-examples.md](../host-integration-examples.md)
-- [docs/provider-runtime-catalog.md](../provider-runtime-catalog.md)
-- [docs/provider-runtime-catalog.json](../provider-runtime-catalog.json)
-- [docs/provider-runtime-catalog.schema.json](../provider-runtime-catalog.schema.json)
+- [docs/README.md](../README.md)
+  - 如果你要完整 atlas，而不是 compat 这一小柜，请直接回总目录
 
 ## Builder / Plugin / Skills Entry
 
