@@ -61,7 +61,7 @@ export const DEFAULT_EXTERNAL_CACHE_ROOT = join(
   "switchyard",
 );
 export const DEFAULT_CACHE_TTL_DAYS = 7;
-export const DEFAULT_CACHE_MAX_BYTES = 5 * 1024 * 1024 * 1024;
+export const DEFAULT_CACHE_MAX_BYTES = 8 * 1024 * 1024 * 1024;
 export const DEFAULT_ISOLATED_CHROME_USER_DATA_DIR = join(
   DEFAULT_EXTERNAL_CACHE_ROOT,
   "browser",
