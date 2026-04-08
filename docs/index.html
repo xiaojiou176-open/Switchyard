@@ -1,0 +1,94 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Switchyard</title>
+    <style>
+      :root {
+        color-scheme: light;
+        --bg: #f6f1e8;
+        --panel: #fffaf2;
+        --ink: #173126;
+        --accent: #2b6c4a;
+        --border: #d9cfbf;
+      }
+
+      body {
+        margin: 0;
+        font-family: Georgia, "Times New Roman", serif;
+        background: radial-gradient(circle at top, #fffdf8, var(--bg) 68%);
+        color: var(--ink);
+      }
+
+      main {
+        max-width: 720px;
+        margin: 56px auto;
+        padding: 32px 24px;
+      }
+
+      .panel {
+        background: var(--panel);
+        border: 1px solid var(--border);
+        border-radius: 20px;
+        padding: 28px 24px;
+        box-shadow: 0 18px 50px rgba(23, 49, 38, 0.08);
+      }
+
+      h1 {
+        margin: 0 0 12px;
+        font-size: 2.6rem;
+        line-height: 1;
+      }
+
+      p {
+        line-height: 1.6;
+      }
+
+      ul {
+        margin: 24px 0 0;
+        padding-left: 20px;
+      }
+
+      li {
+        margin: 10px 0;
+      }
+
+      a {
+        color: var(--accent);
+        font-weight: 600;
+      }
+
+      .note {
+        margin-top: 24px;
+        padding-top: 18px;
+        border-top: 1px solid var(--border);
+        font-size: 0.96rem;
+      }
+    </style>
+  </head>
+  <body>
+    <main>
+      <section class="panel">
+        <h1>Switchyard</h1>
+        <p>Shared provider runtime for AI apps.</p>
+        <p>
+          This Pages front door stays intentionally thin. For live claims, use the
+          proof pack and distribution ledger instead of treating this page like a
+          second website.
+        </p>
+        <ul>
+          <li><a href="./public-proof-pack.html">Public Proof Pack</a></li>
+          <li><a href="./public-distribution-ledger.html">Distribution Ledger</a></li>
+          <li><a href="./README.html">Docs Atlas</a></li>
+          <li><a href="./first-success.html">First Success</a></li>
+          <li><a href="https://github.com/xiaojiou176-open/Switchyard">GitHub Repo</a></li>
+        </ul>
+        <p class="note">
+          Current rule of thumb: repo-side gate can be green while live/provider/browser
+          truth is still credentialed-workstation-bound.
+        </p>
+      </section>
+    </main>
+  </body>
+</html>

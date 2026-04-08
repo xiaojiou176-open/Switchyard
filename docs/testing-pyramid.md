@@ -130,6 +130,23 @@
 
 而不是假装还能在云端复现本地 credentialed 路径。
 
+## 5-Layer Governance
+
+如果把这仓的验证链理解成 5 道安检门，当前 SSOT 是：
+
+| Layer | Current role | Current default surface |
+| --- | --- | --- |
+| `pre-commit` | 最早拦截 secrets 与 focused hygiene drift | `pnpm run hook:pre-commit` |
+| `pre-push` | 本地提交前总闸 | `pnpm run hook:pre-push` |
+| `hosted` | GitHub Actions on `push/pull_request` | `ci.yml` / `security.yml` / `workflow-hygiene.yml` |
+| `nightly` | hosted-safe scheduled recheck | scheduled workflow + nightly-timed dependency automation |
+| `manual` | credentialed workstation realism | `verify:*` / `reality:gate` / browser diagnosis / runtime hygiene |
+
+说得更直白一点：
+
+> 前四层是“仓里的合同和代码有没有坏”。
+> 第五层才是“真人浏览器、真人登录态、真人账号动作有没有真的过关”。
+
 ## What This Repo Tries To Avoid
 
 - fake tests

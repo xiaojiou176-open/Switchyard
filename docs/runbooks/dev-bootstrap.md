@@ -41,6 +41,30 @@
 
 ---
 
+## 当前验证分层（5 layers）
+
+这份 runbook 现在只负责第五层，也就是 `manual / credentialed workstation`。
+
+更直白一点说：
+
+- `pre-commit`
+  - 本地最早拦截 secrets 与 frontdoor hygiene
+- `pre-push`
+  - 本地 coverage / test / build 总闸
+- `hosted`
+  - GitHub Actions 负责 repo-side 代码与合同
+- `nightly`
+  - hosted-safe 的定时重检查
+- `manual`
+  - 真实 provider / browser / session realism，只能在 credentialed workstation 上验
+
+如果你要看完整 5-layer 总图，先看：
+
+- [docs/testing-pyramid.md](../testing-pyramid.md)
+- [README.md](../../README.md)
+
+---
+
 ## 当前 live reality（truth-first checkpoint）
 
 这份 runbook 现在不能再按“仓库还是 docs-only、还没开工”来理解。
@@ -56,20 +80,11 @@
 
 当前更保守、也更适合接手验收的写法是：
 
-- `Gemini BYOK` 的 live verifier 路径已经存在，而且这轮 fresh rerun 已经成功
 - `typecheck / test / build` 已经可以稳定通过
 - `test:coverage` 也已经重新回到稳定通过，并回到 80% 线以上
-- `reality:gate` 当前已经不再报 internal failure，但 latest authoritative rerun 仍停在 3 个 workstation-bound external blockers
-- 当前这轮 fresh rerun 里：
-  - `ChatGPT` provider-scoped live proof 当前 success
-  - `Gemini` provider-scoped verifier 当前 success
-  - `reality:gate`
-    - `overallStatus = external-blocker`
-    - `internalGate.passed = true`
-    - webLogin summary = `success 3 / external-blocker 3 / failure 0`
-    - remaining blockers = `Claude + Grok + Qwen` missing-web-session-material
-- `verify:service-live` 这轮 fresh rerun 当前仍然成功
-- 所以 runbook 现在服务的现实阶段不是“继续压内部工程债”，而是“在一个 repo-side 已过闸、aggregate 只剩外部尾巴的 credentialed workstation 上继续维护 repo-local runtime hygiene，并在未来换环境时重新做 truth reset”
+- fresh `verify:service-live` 当前不该继续写成 green，而是停在 `Gemini = user-action-required`
+- current outward wording 要同步到 `Gemini / Grok` 这组 workspace external blockers
+- 所以 runbook 现在服务的现实阶段不是“继续压内部工程债”，而是“在一个 repo-side 已过闸、front door 已把 blocker pack 写成 `Gemini / Grok` 的 credentialed workstation 上继续维护 repo-local runtime hygiene，并在未来换环境时重新做 truth reset”
 
 当前 closeout 输出里的 `external-blocker` 还会再带一个 `classification` 字段，用来说明“为什么它仍然是外部尾巴”：
 
@@ -89,7 +104,7 @@
 
 而更接近：
 
-> **“在 repo-side gate 已过、`verify:service-live` 已成功、但 aggregate 仍停在一组 workstation-bound external blockers 的 credentialed workstation 上，继续维护 repo-local runtime hygiene，并在未来环境变化时重新做 truth reset”**
+> **“在 repo-side gate 已过、但 current workspace live truth 仍停在一组 workstation-bound external blockers 的 credentialed workstation 上，继续维护 repo-local runtime hygiene，并在未来环境变化时重新做 truth reset”**
 
 同时保留一个很重要的护栏：
 
