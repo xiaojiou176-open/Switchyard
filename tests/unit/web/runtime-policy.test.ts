@@ -5,6 +5,8 @@ import { describe, expect, it } from "vitest";
 
 import {
   assertSafePathSegment,
+  resolveCacheMaxBytes,
+  resolveCacheTtlDays,
   resolveIsolatedChromeUserDataDir,
   resolveSourceChromeProfileSelection,
 } from "../../../scripts/runtime-policy.mjs";
@@ -40,5 +42,46 @@ describe("runtime policy path guards", () => {
     expect(() => assertSafePathSegment("../Profile 1", "profile directory")).toThrow(
       /single path segment/u,
     );
+  });
+
+  it("uses the documented default cache policy when no override is provided", () => {
+    expect(resolveCacheTtlDays({})).toBe(7);
+    expect(resolveCacheMaxBytes({})).toBe(8 * 1024 * 1024 * 1024);
+  });
+
+  it("accepts positive integer cache policy overrides from env", () => {
+    expect(
+      resolveCacheTtlDays({
+        SWITCHYARD_CACHE_TTL_DAYS: "14",
+      }),
+    ).toBe(14);
+    expect(
+      resolveCacheMaxBytes({
+        SWITCHYARD_CACHE_MAX_BYTES: `${9 * 1024 * 1024 * 1024}`,
+      }),
+    ).toBe(9 * 1024 * 1024 * 1024);
+  });
+
+  it("falls back to defaults when cache policy overrides are empty, invalid, or non-positive", () => {
+    expect(
+      resolveCacheTtlDays({
+        SWITCHYARD_CACHE_TTL_DAYS: "0",
+      }),
+    ).toBe(7);
+    expect(
+      resolveCacheTtlDays({
+        SWITCHYARD_CACHE_TTL_DAYS: "not-a-number",
+      }),
+    ).toBe(7);
+    expect(
+      resolveCacheMaxBytes({
+        SWITCHYARD_CACHE_MAX_BYTES: "-1",
+      }),
+    ).toBe(8 * 1024 * 1024 * 1024);
+    expect(
+      resolveCacheMaxBytes({
+        SWITCHYARD_CACHE_MAX_BYTES: "",
+      }),
+    ).toBe(8 * 1024 * 1024 * 1024);
   });
 });
