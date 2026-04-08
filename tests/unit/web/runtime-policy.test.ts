@@ -6,7 +6,9 @@ import { describe, expect, it } from "vitest";
 import {
   assertPathInsideAllowedRoots,
   assertSafePathSegment,
+  resolveCredentialedBrowserMode,
   resolveExternalCacheRoot,
+  resolveIsolatedChromeProfileDisplayName,
   resolveCacheMaxBytes,
   resolveCacheTtlDays,
   resolveIsolatedChromeUserDataDir,
@@ -128,5 +130,24 @@ describe("runtime policy path guards", () => {
         "browser root",
       ),
     ).toThrow(/must stay inside one of/u);
+  });
+
+  it("defaults browser mode by environment and honors explicit overrides", () => {
+    expect(resolveCredentialedBrowserMode({})).toBe("isolated-chrome-root");
+    expect(resolveCredentialedBrowserMode({ CI: "true" })).toBe("managed-browser");
+    expect(
+      resolveCredentialedBrowserMode({
+        SWITCHYARD_BROWSER_MODE: "existing-browser-session",
+      }),
+    ).toBe("existing-browser-session");
+  });
+
+  it("uses the documented default isolated profile display name unless overridden", () => {
+    expect(resolveIsolatedChromeProfileDisplayName({})).toBe("switchyard");
+    expect(
+      resolveIsolatedChromeProfileDisplayName({
+        SWITCHYARD_CHROME_PROFILE_NAME: "Switchyard QA",
+      }),
+    ).toBe("Switchyard QA");
   });
 });
