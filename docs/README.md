@@ -4,6 +4,19 @@
 
 This page is the developer frontdoor for `Switchyard`.
 
+## Page Roles / 页面分工
+
+为了不让 front door 变成三块写同一件事，先把角色分开：
+
+- [README.md](../README.md)
+  - repo front door / 项目总览 / 当前最短人话入口
+- [docs/public-proof-pack.md](./public-proof-pack.md)
+  - live truth / proof wording / allowed claims
+- [docs/public-distribution-ledger.md](./public-distribution-ledger.md)
+  - distribution status / listing truth / package-ready 边界
+- [docs/README.md](./README.md)
+  - full atlas / 完整文档地图
+
 ## Quick Routes / 最短路线
 
 如果你现在只想知道“我第一站该去哪”，先从这里四选一：

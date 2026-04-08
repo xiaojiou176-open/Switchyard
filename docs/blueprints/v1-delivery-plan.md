@@ -68,28 +68,11 @@ V1 的外部复用方式固定为：
 
 按当前 fresh reality，这个 workspace checkpoint 现在更诚实的描述是：
 
-- `pnpm typecheck` = `0`
-- `pnpm exec vitest run tests/integration/docs/frontdoor-docs.test.ts tests/integration/docs/package-ready-distribution.test.ts tests/unit/mcp/switchyard-mcp.test.ts tests/unit/web/switchyard-cli.test.ts --config vitest.config.ts` = `0`
-  - `5 files / 43 tests passed`
-- `pnpm build` = `0`
-- authoritative aggregate closeout in this workspace:
-  - `pnpm run verify:service-live` = `0`
-  - `pnpm run reality:gate` = `2`
-  - `overallStatus = external-blocker`
-  - `internalGate.passed = true`
-  - `successCount = 3`
-  - `externalBlockerCount = 3`
-  - `failureCount = 0`
-  - remaining blockers:
-    - `Claude` missing-web-session-material
-    - `Grok` missing-web-session-material
-    - `Qwen` missing-web-session-material
-- 当前 fresh 已确认：
-  - `ChatGPT` provider-scoped live proof 当前 success
-  - `Gemini` provider-scoped live proof 当前 success
-  - `verify:service-live` 当前 success
-  - `reality:gate` 当前仍停在 3 个 external blockers
-  - 这仍然是 credentialed workstation 的时间片真相，不是 repo 常量
+- `repo-side gate` 仍然是 green
+- fresh `verify:service-live` 当前不该再写成 trio 全绿，而是停在 `Gemini = user-action-required`
+- 当前 outward wording 要同步到 `Gemini / Grok` 这组 workspace external blockers
+- detailed live snapshot 继续放在 `docs/public-proof-pack.md` 与 current task board，不再把 exact count 长期写死在 blueprint 主体里
+- 这仍然是 credentialed workstation 的时间片真相，不是 repo 常量
 
 因此，当前最诚实的阶段语义是：
 
@@ -110,11 +93,9 @@ V1 的外部复用方式固定为：
 当前 `M3` 的进一步扩展条件也应该按这个 checkpoint 收紧：
 
 - 保持 `pnpm run verify:service-live` / `verify:web-login-live` / `reality:gate` 在 credentialed workstation 上可复验
-- `pnpm run verify:web-login-live` = `0`
-- `pnpm run reality:gate` = `2`
-- `overallStatus = external-blocker`
-- remaining blockers = `Claude / Grok / Qwen` session-material gaps on this workspace
-- `ChatGPT` 与 `Gemini` 的 live proof 当前 success，并可被 fresh rerun 复验
+- frontdoor 当前统一用 `repo-side green + workspace external blockers` 说法，不再继续抄 exact blocker counts
+- 这轮要同步的 current blocker pack = `Gemini / Grok`
+- 更细的 provider-by-provider live snapshot 继续看 `docs/public-proof-pack.md`
 - 进入 M3 之前，先读 `docs/blueprints/m3-first-party-integration-readiness.md`
 
 ---
