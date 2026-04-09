@@ -36,6 +36,8 @@ things:
 - the repo-owned packet is complete as a portable host-native skill folder
 - ClawHub/OpenHands are the best-fit later submission lanes, not a claim that a
   live listing or merge already exists here
+- the OpenHands/extensions lane currently has a fresh external review receipt at
+  PR #161, but `review-pending` is still not the same as `listed-live`
 - this packet stays secondary to the repo's primary runtime identity
 
 ## What this packet must not claim

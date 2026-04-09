@@ -229,11 +229,12 @@ describe("Switchyard docs frontdoor contracts", () => {
     expect(readme).toContain("docs/glossary.md");
     expect(readme).toContain("docs/testing-pyramid.md");
     expect(readme).toContain("pnpm run test:coverage");
-    expect(readme).toContain("latest fresh rerun in this workspace");
-    expect(readme).toContain("fresh `verify:service-live` 当前停在 `Gemini = user-action-required`");
-    expect(readme).toContain("`Gemini / Grok`");
-    expect(readme).toContain("未来接手者如果换了机器");
-    expect(readme).toContain("必须重新跑 live gate");
+    expect(readme).toContain("当前稳定主货是 **shared provider runtime**");
+    expect(readme).toContain("read-only MCP descriptor");
+    expect(readme).toContain("runtime-diagnostics");
+    expect(readme).toContain("artifact-ready != listed-live");
+    expect(readme).toContain("proof / runbook truth");
+    expect(readme).toContain("它们不该反过来改写 repo 的稳定身份");
     expect(readme).toContain("credentialed workstation");
     expect(readme).toContain("docs/public-surface-support-matrix.md");
     expect(readme).toContain("docs/public-surface-catalog.md");
@@ -268,8 +269,9 @@ describe("Switchyard docs frontdoor contracts", () => {
     expect(readme).toContain("docs/blueprints/openclaw-zero-token-adoption-ledger.md");
     expect(readme).toContain("docs/discoverability-keyword-truth.json");
     expect(readme).toContain("docs/discoverability-keyword-truth.schema.json");
-    expect(readme).toContain("workspace external blocker pack");
-    expect(readme).toContain("browser/session blockers");
+    expect(readme).not.toContain("fresh `verify:service-live` 当前停在 `Gemini = user-action-required`");
+    expect(readme).not.toContain("workspace external blocker pack");
+    expect(readme).not.toContain("browser/session blockers");
   });
 
   it("keeps blocker wording and default service port aligned across frontdoor docs", () => {
@@ -281,7 +283,8 @@ describe("Switchyard docs frontdoor contracts", () => {
     const sdkQuickstart = read("docs/api/sdk-quickstart.md");
     const webLoginAcquisition = read("docs/api/web-login-acquisition.md");
 
-    expect(readme).toContain("`Gemini / Grok`");
+    expect(readme).toContain("具体的环境现场记录，交给这些地方承接");
+    expect(readme).not.toContain("`Gemini / Grok`");
     expect(proofPack).toContain("`Gemini / Grok`");
     expect(v1Plan).toContain("`Gemini / Grok`");
     expect(v1Plan).toContain("live snapshot 继续放在 `docs/public-proof-pack.md`");
