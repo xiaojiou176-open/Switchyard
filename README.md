@@ -390,8 +390,7 @@ flowchart LR
 - [docs/testing-pyramid.md](./docs/testing-pyramid.md)
 - [docs/runbooks/dev-bootstrap.md](./docs/runbooks/dev-bootstrap.md)
 
-如果你需要对某个 provider 做 browser/session 级别的现场排障，再去运行对应 live diagnostics；但那属于 **runbook lane**，不属于 stable front door。
-- 写一份 support bundle 到 `.runtime-cache/browser-support/`
+如果你需要对某个 provider 做 browser/session 级别的现场排障，再去运行对应 live diagnostics；但那属于 **runbook lane**，不属于 stable front door。需要 support bundle 时，也只把它写到 `.runtime-cache/browser-support/`。
 
 这条命令的意义可以先这样理解：
 

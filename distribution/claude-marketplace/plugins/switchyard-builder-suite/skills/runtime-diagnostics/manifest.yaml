@@ -10,10 +10,10 @@ skill:
 
 registry_targets:
   clawhub:
-    status: host-lane-documented
+    status: listed-live
     package_shape: skill-folder
     listing_url: https://www.clawhub.ai/skills/switchyard-runtime-diagnostics
-    note: Listing URL may exist, but this packet does not treat it as canonical live proof without fresh host-side read-back.
+    note: Fresh 2026-04-08 America/Los_Angeles read-back confirmed this listing is live.
     submit_via: clawhub publish . --slug switchyard-runtime-diagnostics --name "Switchyard Runtime Diagnostics" --version 1.0.0 --tags switchyard,mcp,diagnostics,runtime,read-only
   openhands-extensions:
     status: review-pending
@@ -25,9 +25,8 @@ registry_targets:
 boundaries:
   product_identity: Read-only Switchyard runtime diagnostics and catalog routing through the repo-native MCP surface.
   canonical_repo_version: 0.1.0
-  official_listing_state: host-lane-documented-openhands-review-pending
+  official_listing_state: clawhub-live-openhands-review-pending
   not_claimed:
-    - No live ClawHub listing is claimed without fresh host-side read-back
     - No live OpenHands/extensions listing exists yet
     - No official MCP Registry listing exists yet
     - No full host parity or execution-brain claim is made

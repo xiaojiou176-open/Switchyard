@@ -34,8 +34,7 @@ things:
 ## Current truthful state
 
 - the repo-owned packet is complete as a portable host-native skill folder
-- ClawHub/OpenHands are the best-fit later submission lanes, not a claim that a
-  live listing or merge already exists here
+- a ClawHub skill page for this packet can be read back live today
 - the OpenHands/extensions lane currently has a fresh external review receipt at
   PR #161, but `review-pending` is still not the same as `listed-live`
 - this packet stays secondary to the repo's primary runtime identity
@@ -43,7 +42,6 @@ things:
 ## What this packet must not claim
 
 - no live OpenHands/extensions listing without fresh PR or read-back
-- no ClawHub listing without fresh host-side read-back
 - no published npm package or official MCP Registry listing without fresh
   receipt
 - no execution-brain or full host-parity claim
