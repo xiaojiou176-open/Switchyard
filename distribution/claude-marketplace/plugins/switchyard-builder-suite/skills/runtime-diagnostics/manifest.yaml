@@ -19,6 +19,7 @@ registry_targets:
     status: review-pending
     package_shape: skill-folder
     submission_url: https://github.com/OpenHands/extensions/pull/161
+    note: Fresh read-back confirms PR #161 is open; treat this as external review receipt, not a live listing.
     submit_via: submit this folder as skills/switchyard-runtime-diagnostics/ in OpenHands/extensions
 
 boundaries:
