@@ -10,6 +10,8 @@ This page is the developer frontdoor for `Switchyard`.
 
 - [README.md](../README.md)
   - repo front door / 项目总览 / 当前最短人话入口
+- [docs/index.html](./index.html)
+  - static docs atlas / reviewer-facing route map / Pages front door
 - [docs/public-proof-pack.md](./public-proof-pack.md)
   - live truth / proof wording / allowed claims
 - [docs/public-distribution-ledger.md](./public-distribution-ledger.md)
@@ -19,8 +21,10 @@ This page is the developer frontdoor for `Switchyard`.
 
 ## Quick Routes / 最短路线
 
-如果你现在只想知道“我第一站该去哪”，先从这里四选一：
+如果你现在只想知道“我第一站该去哪”，先从这里五选一：
 
+- 我想先看静态 docs atlas，再决定读哪条 lane
+  - [docs/index.html](./index.html)
 - 我想先用 30 秒看懂它
   - [docs/media/30-second-overview.md](./media/30-second-overview.md)
 - 我想先跑通默认第一把成功
@@ -36,11 +40,13 @@ This page is the developer frontdoor for `Switchyard`.
 
 如果你不想一上来就翻完整 docs 树，先走这条默认路线：
 
-1. 先看 [docs/media/30-second-overview.md](./media/30-second-overview.md)
+1. 先看 [docs/index.html](./index.html)
+   - 先按问题类型挑你真正该读的 shelf
+2. 再看 [docs/media/30-second-overview.md](./media/30-second-overview.md)
    - 先用一句话记住它的第一身份
-2. 再看 [docs/first-success.md](./first-success.md)
+3. 再看 [docs/first-success.md](./first-success.md)
    - 先跑 service，再做第一把 bounded invoke / inspect
-3. 最后看 [docs/public-proof-pack.md](./public-proof-pack.md)
+4. 最后看 [docs/public-proof-pack.md](./public-proof-pack.md)
    - 把当前能证明什么、不能 overclaim 什么一并看清楚
 
 ## Start Here / 从这里开始
