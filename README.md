@@ -10,7 +10,7 @@
 <p align="center">
   <img
     src="./.github/social-preview-switchyard.svg"
-    alt="Switchyard social preview: shared provider runtime for AI apps. BYOK plus Web/Login. Repo-side gate green. Latest live truth remains workstation-bound."
+    alt="Switchyard social preview: shared provider runtime for AI apps. BYOK plus Web/Login. Read-only MCP descriptor. Runtime-diagnostics packet. Later lanes need fresh read-back."
     width="960"
   />
 </p>
@@ -37,18 +37,22 @@
 
 - [docs/media/30-second-overview.md](./docs/media/30-second-overview.md)
 
-## 当前证据条
+## 当前主货、次级货与 later lanes
 
-如果你现在最关心的不是愿景，而是“这仓到底是不是 PPT”，先看这 3 条：
+如果你现在最关心的是“这个仓今天到底该怎么被诚实地介绍”，先记这 4 句：
 
-- `repo-side gate = green`
-  - `pnpm typecheck`、frontdoor/docs/distribution/MCP/CLI slice、`pnpm build` 当前都过
-- recent live/browser proof has already demonstrated the runtime lane end to end
-  - 当前 rerun 可能会因为这台 credentialed workstation 的登录态、订阅状态或真人补一步而停住
-  - 这类 `user-action-required` / auth-freshness 漂移，默认记作 `workstation-bound external reality`, 不记作 repo blocker
-- front door should stay anchored to durable truth, not single-rerun turbulence
-  - 也就是说，README 更该强调 `repo-side gate green + public proof pack + distribution status`
-  - 单次 `verify:service-live` 的工作站态漂移只应该进入 live notes，不该主导产品身份
+- **主货**
+  - `Switchyard` 当前稳定主货是 **shared provider runtime**
+  - 当前 repo-native 主前门是 `service/runtime`，次主前门是 `packages/surfaces/mcp/server.json` 这条 **read-only MCP descriptor**
+- **次级 public packet**
+  - `distribution/claude-marketplace/plugins/switchyard-builder-suite/skills/runtime-diagnostics/` 是当前最完整的 host-native public skill packet
+  - 它教 agent **怎么 attach、怎么诊断、哪些不能 claim**，不是在宣布官方上架
+- **later lanes**
+  - `distribution/claude-marketplace/` bundle、npm package publish、official MCP Registry、Docker/runtime catalog、以及更外层 consumer compat rollout 都还是 later lanes
+  - 这些 lane 可以有 repo-owned artifact，但 **artifact-ready != listed-live**
+- **时间片 live 结果**
+  - `verify:*live` / `reality:gate` 这类结果属于 credentialed workstation 上的环境真相
+  - 它们很重要，但它们是 **proof / runbook truth**，不该反过来改写 repo 的稳定身份
 
 ## 快速入口
 
@@ -364,127 +368,29 @@ flowchart LR
 ## 仓库现状
 
 当前仓库已经不再是“只有文档、还没开工”的状态。  
-而且在当前这台 workspace 上，它也已经可以被更诚实地描述成：
+但这轮 front door 要守住的重点，不是某一次 credentialed workstation rerun 的成绩单，而是 **repo-owned 的稳定身份**。
 
-> **repo-side gate 已经站稳。**
->
-> **但 latest live truth 仍然是 workstation-bound，而且这次 fresh rerun 仍然停在 3 个 external blockers。**
+当前更稳的 repo truth 可以压成下面这 4 句：
 
-当前更准确的阶段是：
+- `Switchyard` 是 **shared provider runtime for AI apps**
+- V1 只收敛在 `BYOK + Web/Login`
+- 当前 repo-native 主前门是 `service/runtime`，机器可读前门是 `packages/surfaces/mcp/server.json`
+- `runtime-diagnostics` public skill packet 是 companion surface；bundle / package / registry / Docker / broader compat rollout 都还是 later lanes
 
-> **`Switchyard` 的 fresh internal gate 仍然站得住。**
->
-> **但 latest fresh rerun in this workspace 已经不该继续写成 `Claude / Grok / Qwen`。**
->
-> **当前 frontdoor 应同步成：repo-side green；fresh `verify:service-live` 当前停在 `Gemini = user-action-required`；workspace external blocker pack 用 `Gemini / Grok`。**
->
-> **但这仍然是 environment-bound truth：换机器、换浏览器会话、换凭证材料以后，依然要重新跑 live gate。**
+如果你更关心 live/browser 现实，可以把它理解成“餐厅试营业当天的现场记录”，不是印在营业执照上的固定身份：
 
-这不是跳过 docs-first，而是按 docs-first 的顺序往前走了一步：
+- `verify:*live` / `reality:gate` 属于 **proof / runbook truth**
+- 它们依赖当前机器上的 credential、cookie bundle、browser session 和 user agent
+- 它们必须按环境 fresh rerun
+- 它们不该反过来改写 repo 的稳定身份
 
-> 先把“我们到底要做什么”写成合同，  
-> 再用最小但真实的代码把内核立起来。
+所以 README 现在只保留边界本身；具体的环境现场记录，交给这些地方承接：
 
-这样做的好处是：
+- [docs/public-proof-pack.md](./docs/public-proof-pack.md)
+- [docs/testing-pyramid.md](./docs/testing-pyramid.md)
+- [docs/runbooks/dev-bootstrap.md](./docs/runbooks/dev-bootstrap.md)
 
-- 后续 Agent 不需要边做边猜
-- 代码和合同已经开始互相校验
-- 参考仓不会反客为主
-- 目录不会长歪
-- 范围不会失控
-
-### 当前 live reality（truth-first 说明）
-
-这里必须把两层真相拆开写，不然很容易把某次带凭证的 closeout 结果误读成 repo 常量：
-
-- **repo 内部真相**
-  - `pnpm typecheck`
-  - `pnpm test`
-  - `pnpm build`
-  这些 internal gate fresh 通过时，只说明仓内代码、测试、构建链是站得住的。
-- **live 环境真相**
-  - `pnpm run verify:gemini-live`
-  - `pnpm run verify-web-login-live`
-  - `pnpm run verify:service-live`
-  - `pnpm run reality:gate`
-  这些 live gate 永远依赖**当前这台机器上的终端用户凭证、cookie bundle、browser user agent、已登录浏览器会话**，所以不是 repo 常量。
-
-当前最关键的现实点是：
-
-- `apps/service/src/web-auth-acquisition.ts` 已经把 5 家 `Web/Login` provider 接进 local-first acquisition 主线
-- `verify:web-login-live`、`verify:gemini-live`、`reality:gate` 都已存在且能 fresh 复验
-- 当前这轮 **latest fresh rerun in this workspace** 说明的，不是“内部有没有做完”，而是“当前这台机器上还缺哪些 live/browser 材料”
-- 当前 Program L1 的 fresh repo-side rerun 已确认：
-  - `pnpm typecheck` = 0
-  - `pnpm exec vitest run tests/integration/docs/frontdoor-docs.test.ts tests/integration/docs/package-ready-distribution.test.ts tests/unit/mcp/switchyard-mcp.test.ts tests/unit/web/switchyard-cli.test.ts --config vitest.config.ts` = 0
-    - `5 files / 43 tests passed`
-  - `pnpm build` = 0
-  - `pnpm run reality:gate` = `2`
-  - 当前 latest fresh aggregate closeout：
-    - `pnpm run verify:service-live` = `0`
-    - `overallStatus = external-blocker`
-    - `internalGate.passed = true`
-    - `successCount = 3`
-    - `externalBlockerCount = 3`
-    - `failureCount = 0`
-    - current external blockers:
-      - `Claude` = `missing-web-session-material`
-      - `Grok` = `missing-web-session-material`
-      - `Qwen` = `missing-web-session-material`
-- 当前 fresh 已确认：
-  - `Gemini BYOK` 已经成功
-  - `ChatGPT` provider-scoped live proof 当前 success
-  - `Gemini` provider-scoped live proof 当前 success
-  - `verify:service-live` 当前也已成功
-  - 当前这台 workspace 上，top-level program 不是 internal blocker，但 aggregate closeout 仍停在 3 个外部网页登录材料缺口
-  - `auth-status ready` 仍然只说明本地材料在，不自动替代 future live rerun
-
-更重要的一点：
-
-> **当前 live repo 已经不是“文档好了但代码没站起来”。**
->
-> **今天更稳、更诚实的说法是：repo-side gate 已经过闸；fresh service-first spot check 当前停在 `Gemini = user-action-required`；workspace external blocker pack 现在该写成 `Gemini / Grok`。**
->
-> **也就是说，当前 program 不是卡在内部工程债，而是 paused 在一组 workstation-bound external blockers。**
->
-> **但环境边界仍然成立：未来接手者如果换了机器、换了浏览器会话、换了凭证材料，仍然必须重新跑 live gate，而不是把这次 green 当成永久常量。**
-
-同时要保留一个工程护栏：
-
-> **所有 live 结论都是时间片真相。**
->
-> README 里的这段说明只负责解释“为什么 live gate 不是 repo 常量”，不替代你下一次接手时重新运行：
-> - `pnpm run verify:gemini-live`
-> - `pnpm run verify-web-login-live`
-> - `pnpm run verify:service-live`
-> - `pnpm run reality:gate`
->
-> **它也不覆盖更高优先级的 ADR / blueprint / task board。**
->
-> 当前这些更高优先级工件需要同步到同一个更诚实的结论：当前顶层 program 状态仍然是 `PROGRAM PAUSED - ONLY TRUE EXTERNAL BLOCKERS REMAIN`，原因不是内部工程漂移，而是当前这台 workspace 的 blocker pack 该写成 `Gemini / Grok`，而且它们都属于 workstation-bound external blockers。
-
-同时补一个当前工程现实：
-
-> 当前仓里已经存在一片新的 `service/runtime substrate` 稳定化证据：
-> - `verify:service-live`
-> - BYOK lane 通过统一 service runtime 入口暴露
-> - SDK 也可以围绕同一 service entrypoint 提供 client
->
-> 更诚实的当前写法应该是：**repo-side substrate 已经站住，但 current workspace live truth 仍 paused 在一组外部 browser/session blockers。**
-> 说得更直白一点：地基已经打牢，真正没过线的不是 repo 自己，而是当前这台机器上 `Gemini / Grok` 还没有把真人登录后的 browser/session 状态稳定收口成可复验的 live proof。
-
-如果你需要把 `store-ready != live-ready` 看得更具体一点，现在有一条专门的 browser diagnose 工具：
-
-```bash
-pnpm run diagnose:web-login-browser -- --provider chatgpt --reload --json
-```
-
-它会：
-
-- 读取本地 auth store 的 session truth
-- 连接 canonical browser attach target
-- 输出 `current-page / current-console / current-network`
-- 写一份 support bundle 到 `.runtime-cache/browser-support/`
+如果你需要对某个 provider 做 browser/session 级别的现场排障，再去运行对应 live diagnostics；但那属于 **runbook lane**，不属于 stable front door。需要 support bundle 时，也只把它写到 `.runtime-cache/browser-support/`。
 
 这条命令的意义可以先这样理解：
 
