@@ -5,7 +5,7 @@
 1. `Switchyard` 不是聊天产品。  
 2. 它是一个 `shared provider runtime for AI apps`。  
 3. 它把 `BYOK + Web/Login` 这两类 AI 访问资格，统一成别的 AI 产品可接入的 service-first substrate。  
-4. 它今天已经有真实 runtime、partial thin compat、partial read-only MCP surface、starter packs 和 truth-first public docs，但还没有 full parity。  
+4. 它今天已经有 repo-native runtime、read-only MCP descriptor、runtime-diagnostics public skill packet、starter packs 和 truth-first public docs；Docker / registry / marketplace / package publication 仍是 later lanes。
 
 ## 一句话版本
 
@@ -25,6 +25,7 @@
 - `service-first runtime frontdoor`
 - `partial thin compat`
 - `partial read-only MCP surface`
+- `runtime-diagnostics` public skill packet
 - `copy-ready starter packs`
 
 ## 它今天还不能诚实说什么
@@ -32,8 +33,9 @@
 - `full Codex parity`
 - `full Claude Code parity`
 - `full OpenClaw parity`
+- `published npm/runtime package`
+- `official registry or marketplace listing`
 - `MCP execution brain`
-- `officially listed everywhere`
 
 ## 如果你下一步只做一件事
 

@@ -4,39 +4,21 @@ Shared provider runtime for AI apps.
 
 Current truth:
 - Supports BYOK + Web/Login as the only V1 supply lanes.
-- Fresh internal gate is green for `pnpm typecheck`, `pnpm test`, and `pnpm build`.
-- Fresh docs/distribution/MCP/CLI slice also passes:
-  - `pnpm exec vitest run tests/integration/docs/frontdoor-docs.test.ts tests/integration/docs/package-ready-distribution.test.ts tests/unit/mcp/switchyard-mcp.test.ts tests/unit/web/switchyard-cli.test.ts --config vitest.config.ts`
-  - `5 files / 43 tests passed`
+- Stable repo identity is `shared provider runtime for AI apps`, not a chat product, hosted control plane, or raw upstream fork.
+- Primary repo-native surfaces today are the service/runtime front door and the read-only MCP descriptor at `packages/surfaces/mcp/server.json`.
+- Secondary public packet today is `distribution/claude-marketplace/plugins/switchyard-builder-suite/skills/runtime-diagnostics/`.
+- Current outward claims stay at `partial thin compat`, `partial read-only MCP surface`, `copy-ready starter packs`, and `docs-first builder front door`.
+- Later lanes remain documented but not live by default: marketplace-compatible bundle rollout, npm or registry publication, Docker/runtime catalog publication, and broader consumer compat publication.
 - Live verification depends on local end-user credentials and browser session materials on the current machine.
-- Fresh aggregate closeout in this workspace is currently:
-  - `pnpm run verify:service-live` = `0`
-  - `pnpm run reality:gate` = `2`
-  - `overallStatus = external-blocker`
-  - `internalGate.passed = true`
-  - `successCount = 3`
-  - `externalBlockerCount = 3`
-  - `failureCount = 0`
-  - blockers:
-    - `claude = session-material-missing`
-    - `grok = session-material-missing`
-    - `qwen = session-material-missing`
-- `auth-status` / stored `ready` still only means local session materials are present; future reruns on a different workstation or browser state still need fresh live verification.
-- Current top-level closeout status is:
-  - `PROGRAM PAUSED - ONLY TRUE EXTERNAL BLOCKERS REMAIN`
-- Any future narrower or greener closeout result from a credentialed workstation is still environment-bound and must be rerun before reuse.
+- Live verification remains workstation-bound. Any `verify:*live` or `reality:gate` result is proof/runbook truth for one credentialed environment, not permanent public identity.
+- `auth-status ready` only means local materials are present; it does not replace a fresh live rerun.
 
 Compatibility status:
-- Codex compatibility: public `partial`; thin fail-closed runtime adapter is landed, but there is no tool/MCP/worktree parity.
-- Claude Code compatibility: public `partial`; thin fail-closed runtime adapter is landed, but there is no tool/MCP/terminal parity.
-- OpenClaw compatibility: public `partial`; thin fail-closed runtime adapter is landed, but there is no product-shell or operator parity.
+- Codex compatibility: public `partial`; thin fail-closed runtime adapter is landed, but there is no tool/MCP/worktree parity claim.
+- Claude Code compatibility: public `partial`; thin fail-closed runtime adapter is landed, but there is no tool/MCP/terminal parity claim.
+- OpenClaw compatibility: public `partial`; thin fail-closed runtime adapter is landed, but there is no product-shell or operator parity claim.
 - CLI starter: public `partial`; read-only builder/runtime helper is landed, but it is not an execution brain or distribution commitment.
-- MCP adapter/server surface: public `partial`; a committed read-only MCP server/tool surface is landed on `main`, but it is not an execution brain and not a full consumer-parity backend.
-
-First-party integration status:
-- campus-copilot: fresh 2026-04-03 cross-repo audit confirms a bounded Switchyard BFF bridge on a clean dedicated seam worktree.
-- CortexPilot: last-known planning classification = provider/base_url seam exists, but no verified Switchyard slice is landed in this program run.
-- multi-ai-sidepanel: current committed repo truth includes a maintainer-local / partial Switchyard runtime-backed analyst lane while browser-native compare stays local.
+- MCP adapter/server surface: public `partial`; a committed read-only MCP server/tool surface is landed, but it is not an execution brain and not a full consumer-parity backend.
 
 Important docs:
 - README.md
