@@ -3,91 +3,477 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Switchyard</title>
+    <title>Switchyard Docs Atlas</title>
+    <meta
+      name="description"
+      content="Docs atlas for Switchyard: choose the shortest route for first success, proof, builder adoption, and public distribution without overclaiming live publication."
+    />
     <style>
       :root {
         color-scheme: light;
-        --bg: #f6f1e8;
-        --panel: #fffaf2;
+        --bg: #f7f3eb;
+        --panel: rgba(255, 251, 245, 0.9);
+        --panel-strong: rgba(252, 248, 239, 0.96);
         --ink: #173126;
+        --muted: #52605a;
         --accent: #2b6c4a;
-        --border: #d9cfbf;
+        --accent-soft: rgba(43, 108, 74, 0.1);
+        --gold: #b7863d;
+        --border: #dbd0bf;
+        --shadow: rgba(23, 49, 38, 0.08);
+      }
+
+      * {
+        box-sizing: border-box;
       }
 
       body {
         margin: 0;
-        font-family: Georgia, "Times New Roman", serif;
-        background: radial-gradient(circle at top, #fffdf8, var(--bg) 68%);
+        font-family: Inter, "Helvetica Neue", Arial, sans-serif;
+        background:
+          radial-gradient(circle at top right, rgba(183, 134, 61, 0.14), transparent 26%),
+          linear-gradient(180deg, #fffdf9 0%, var(--bg) 46%, #f1eadf 100%);
         color: var(--ink);
-      }
-
-      main {
-        max-width: 720px;
-        margin: 56px auto;
-        padding: 32px 24px;
-      }
-
-      .panel {
-        background: var(--panel);
-        border: 1px solid var(--border);
-        border-radius: 20px;
-        padding: 28px 24px;
-        box-shadow: 0 18px 50px rgba(23, 49, 38, 0.08);
-      }
-
-      h1 {
-        margin: 0 0 12px;
-        font-size: 2.6rem;
-        line-height: 1;
-      }
-
-      p {
-        line-height: 1.6;
-      }
-
-      ul {
-        margin: 24px 0 0;
-        padding-left: 20px;
-      }
-
-      li {
-        margin: 10px 0;
       }
 
       a {
         color: var(--accent);
+        text-decoration: none;
+      }
+
+      a:hover {
+        color: #214f37;
+      }
+
+      .shell {
+        width: min(1180px, calc(100% - 32px));
+        margin: 0 auto;
+        padding: 24px 0 72px;
+      }
+
+      .topbar,
+      .hero,
+      .section,
+      .strip {
+        background: var(--panel);
+        border: 1px solid rgba(23, 49, 38, 0.08);
+        border-radius: 28px;
+        box-shadow: 0 22px 56px var(--shadow);
+      }
+
+      .topbar {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 12px 18px;
+        align-items: center;
+        justify-content: space-between;
+        padding: 18px 20px;
+        margin-bottom: 24px;
+      }
+
+      .brand {
+        display: flex;
+        flex-direction: column;
+        gap: 6px;
+      }
+
+      .brand strong {
+        font-size: 1.15rem;
+        letter-spacing: 0.06em;
+        text-transform: uppercase;
+      }
+
+      .brand span {
+        color: var(--muted);
+        max-width: 48rem;
+      }
+
+      .top-links {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+      }
+
+      .pill {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        padding: 10px 14px;
+        border-radius: 999px;
+        border: 1px solid rgba(23, 49, 38, 0.12);
+        background: rgba(255, 255, 255, 0.78);
+        color: var(--ink);
+        font-size: 0.94rem;
         font-weight: 600;
       }
 
-      .note {
-        margin-top: 24px;
-        padding-top: 18px;
-        border-top: 1px solid var(--border);
-        font-size: 0.96rem;
+      .hero {
+        display: grid;
+        grid-template-columns: minmax(0, 1.2fr) minmax(300px, 0.8fr);
+        gap: 22px;
+        padding: 28px;
+        margin-bottom: 24px;
+      }
+
+      .eyebrow,
+      .section-kicker {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        padding: 6px 12px;
+        border-radius: 999px;
+        background: var(--accent-soft);
+        color: var(--accent);
+        font-size: 0.82rem;
+        font-weight: 700;
+        letter-spacing: 0.04em;
+        text-transform: uppercase;
+      }
+
+      h1,
+      h2,
+      h3 {
+        margin: 0;
+        line-height: 1.08;
+      }
+
+      h1 {
+        margin-top: 18px;
+        font-size: clamp(2.6rem, 5vw, 4.4rem);
+        letter-spacing: -0.04em;
+      }
+
+      h2 {
+        font-size: clamp(1.7rem, 3vw, 2.4rem);
+      }
+
+      p {
+        line-height: 1.65;
+      }
+
+      .lede {
+        margin-top: 18px;
+        max-width: 60ch;
+        font-size: 1.08rem;
+        color: var(--muted);
+      }
+
+      .hero-note,
+      .hero-proof {
+        background: var(--panel-strong);
+        border: 1px solid rgba(23, 49, 38, 0.08);
+        border-radius: 24px;
+        padding: 22px;
+      }
+
+      .hero-proof strong {
+        display: block;
+        margin-bottom: 10px;
+        font-size: 1.05rem;
+      }
+
+      .signal-row {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+        margin-top: 22px;
+      }
+
+      .signal-pill {
+        display: inline-flex;
+        align-items: center;
+        padding: 8px 12px;
+        border-radius: 999px;
+        border: 1px solid rgba(23, 49, 38, 0.1);
+        background: rgba(255, 255, 255, 0.72);
+        color: var(--ink);
+        font-size: 0.92rem;
+      }
+
+      .cta-row {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 12px;
+        margin-top: 22px;
+      }
+
+      .cta-primary,
+      .cta-secondary {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        padding: 12px 18px;
+        border-radius: 999px;
+        font-weight: 700;
+      }
+
+      .cta-primary {
+        background: var(--ink);
+        color: #fefcf8;
+      }
+
+      .cta-secondary {
+        border: 1px solid rgba(23, 49, 38, 0.16);
+        background: rgba(255, 255, 255, 0.72);
+        color: var(--ink);
+      }
+
+      .section {
+        padding: 24px;
+        margin-bottom: 20px;
+      }
+
+      .section-head {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 12px 18px;
+        align-items: end;
+        justify-content: space-between;
+        margin-bottom: 8px;
+      }
+
+      .section-intro {
+        max-width: 66ch;
+        color: var(--muted);
+        margin: 0 0 18px;
+      }
+
+      .grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+        gap: 16px;
+      }
+
+      .card,
+      .route-card,
+      .atlas-card {
+        background: rgba(255, 255, 255, 0.7);
+        border: 1px solid rgba(23, 49, 38, 0.08);
+        border-radius: 22px;
+        padding: 18px;
+      }
+
+      .route-card strong,
+      .atlas-card strong,
+      .card strong {
+        display: block;
+        font-size: 1.02rem;
+        margin-bottom: 10px;
+      }
+
+      .route-card p,
+      .atlas-card p,
+      .card p {
+        margin: 0;
+        color: var(--muted);
+      }
+
+      .route-card ul,
+      .card ul {
+        margin: 12px 0 0;
+        padding-left: 18px;
+        color: var(--muted);
+      }
+
+      .atlas-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+        gap: 16px;
+      }
+
+      .strip {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+        gap: 14px;
+        padding: 18px 20px;
+        margin-bottom: 20px;
+      }
+
+      .strip-card strong {
+        display: block;
+        font-size: 0.98rem;
+        margin-bottom: 8px;
+      }
+
+      .strip-card p {
+        margin: 0;
+        color: var(--muted);
+        font-size: 0.95rem;
+      }
+
+      .quiet {
+        margin-top: 14px;
+        color: var(--muted);
+        font-size: 0.95rem;
+      }
+
+      @media (max-width: 860px) {
+        .hero {
+          grid-template-columns: 1fr;
+        }
       }
     </style>
   </head>
   <body>
-    <main>
-      <section class="panel">
-        <h1>Switchyard</h1>
-        <p>Shared provider runtime for AI apps.</p>
-        <p>
-          This Pages front door stays intentionally thin. For live claims, use the
-          proof pack and distribution ledger instead of treating this page like a
-          second website.
+    <main class="shell">
+      <section class="topbar">
+        <div class="brand">
+          <strong>Switchyard Docs Atlas</strong>
+          <span>
+            Shared provider runtime docs, routed like an adoption desk instead
+            of a giant file cabinet.
+          </span>
+        </div>
+        <div class="top-links">
+          <a class="pill" href="../index.html">Front door</a>
+          <a class="pill" href="./README.html">Full docs atlas</a>
+          <a class="pill" href="./public-proof-pack.html">Proof pack</a>
+          <a class="pill" href="./public-distribution-ledger.html">Distribution ledger</a>
+          <a class="pill" href="https://github.com/xiaojiou176-open/Switchyard">GitHub repo</a>
+        </div>
+      </section>
+
+      <section class="hero">
+        <div class="hero-note">
+          <span class="eyebrow">Developer front door</span>
+          <h1>Choose the shortest truthful route before you read the whole atlas.</h1>
+          <p class="lede">
+            Switchyard is not a chat product and not a hosted magic shell. This
+            docs front door works best when it behaves like an adoption map:
+            first understand the runtime identity, then the first-success path,
+            then the builder or listing lane you actually need.
+          </p>
+          <div class="signal-row" aria-label="Front-door signals">
+            <span class="signal-pill">Shared provider runtime first</span>
+            <span class="signal-pill">BYOK + Web/Login only</span>
+            <span class="signal-pill">Builder packs stay fail-closed</span>
+            <span class="signal-pill">Artifact-ready is not listed-live</span>
+          </div>
+          <div class="cta-row">
+            <a class="cta-primary" href="./first-success.html">Open first success</a>
+            <a class="cta-secondary" href="./README.html">Open full docs atlas</a>
+          </div>
+          <p class="quiet">
+            Current rule of thumb: repo-side green and proof-pack green still do
+            not erase credentialed workstation reality or later listing work.
+          </p>
+        </div>
+
+        <div class="hero-proof">
+          <strong>Read it in this order</strong>
+          <ol>
+            <li>30-second overview when you need the product sentence fast.</li>
+            <li>First success when you want one bounded route that actually runs.</li>
+            <li>Public proof pack when the question becomes “what is really proved”.</li>
+            <li>Builder routes only after the runtime identity already feels stable.</li>
+          </ol>
+          <p class="quiet">
+            This page is intentionally still docs-first. It is here to route a
+            reviewer, not to invent a fake app UI.
+          </p>
+        </div>
+      </section>
+
+      <section class="section">
+        <div class="section-head">
+          <div>
+            <div class="section-kicker">Question router</div>
+            <h2>Start from the question, not the file tree.</h2>
+          </div>
+        </div>
+        <p class="section-intro">
+          The fastest way to understand Switchyard is to match your current
+          question to the one route built for it. That keeps the docs front door
+          reviewer-friendly even though the repo contains a large atlas behind it.
         </p>
-        <ul>
-          <li><a href="./public-proof-pack.html">Public Proof Pack</a></li>
-          <li><a href="./public-distribution-ledger.html">Distribution Ledger</a></li>
-          <li><a href="./README.html">Docs Atlas</a></li>
-          <li><a href="./first-success.html">First Success</a></li>
-          <li><a href="https://github.com/xiaojiou176-open/Switchyard">GitHub Repo</a></li>
-        </ul>
-        <p class="note">
-          Current rule of thumb: repo-side gate can be green while live/provider/browser
-          truth is still credentialed-workstation-bound.
+        <div class="grid">
+          <article class="route-card">
+            <strong>I need the 30-second product verdict.</strong>
+            <p>
+              Go here when you need one clean sentence for what Switchyard is,
+              what V1 includes, and what it refuses to pretend.
+            </p>
+            <ul>
+              <li><a href="./media/30-second-overview.html">30-second overview</a></li>
+              <li><a href="./public-proof-pack.html">Proof pack</a></li>
+            </ul>
+          </article>
+          <article class="route-card">
+            <strong>I want one builder path to first success.</strong>
+            <p>
+              Use this when you are not browsing theory. You want one bounded
+              route from runtime identity to a real starter or host example.
+            </p>
+            <ul>
+              <li><a href="./first-success.html">First success</a></li>
+              <li><a href="./starter-pack-chooser.html">Starter-pack chooser</a></li>
+              <li><a href="./builder-journeys.html">Builder journeys</a></li>
+            </ul>
+          </article>
+          <article class="route-card">
+            <strong>I need proof, listing truth, or adoption boundaries.</strong>
+            <p>
+              Open these shelves when the question becomes packaging, public
+              claims, official listings, or what is still later-lane only.
+            </p>
+            <ul>
+              <li><a href="./public-proof-pack.html">Public proof pack</a></li>
+              <li><a href="./public-distribution-ledger.html">Distribution ledger</a></li>
+              <li><a href="./public-surface-catalog.html">Public surface catalog</a></li>
+            </ul>
+          </article>
+        </div>
+      </section>
+
+      <section class="strip" aria-label="Atlas strips">
+        <article class="strip-card">
+          <strong>Identity shelf</strong>
+          <p>30-second overview, V1 brief, scope, and runtime identity.</p>
+        </article>
+        <article class="strip-card">
+          <strong>Execution shelf</strong>
+          <p>First success, host playbooks, host examples, and MCP docs.</p>
+        </article>
+        <article class="strip-card">
+          <strong>Adoption shelf</strong>
+          <p>Starter chooser, comparison, journeys, and compat surfaces.</p>
+        </article>
+        <article class="strip-card">
+          <strong>Trust shelf</strong>
+          <p>Proof pack, distribution ledger, keyword truth, and testing pyramid.</p>
+        </article>
+      </section>
+
+      <section class="section">
+        <div class="section-head">
+          <div>
+            <div class="section-kicker">Atlas map</div>
+            <h2>What each docs shelf is for</h2>
+          </div>
+        </div>
+        <p class="section-intro">
+          The point of this second cut is IA, not ornament. Each shelf below
+          answers one kind of review question and helps visitors avoid opening
+          the wrong page first.
         </p>
+        <div class="atlas-grid">
+          <article class="atlas-card">
+            <strong>Identity and scope</strong>
+            <p>Use the 30-second overview, V1 brief, and non-goals pages when you need the product sentence to stay honest.</p>
+          </article>
+          <article class="atlas-card">
+            <strong>First success and host wiring</strong>
+            <p>Use first-success, host playbooks, and host examples when you want a runnable builder path instead of a broad architecture read.</p>
+          </article>
+          <article class="atlas-card">
+            <strong>Builder selection and comparison</strong>
+            <p>Use chooser, comparison, and journeys when you are deciding which starter or host contract to begin with.</p>
+          </article>
+          <article class="atlas-card">
+            <strong>Proof and listing boundaries</strong>
+            <p>Use proof pack, distribution ledger, and public surface catalog when you are checking what is package-ready, listed-live, or still later.</p>
+          </article>
+        </div>
       </section>
     </main>
   </body>

@@ -58,6 +58,8 @@
 
 如果你现在只想知道“第一步该去哪”，先走这三条最短路径之一：
 
+- 我想先看一张 reviewer-facing 的 docs atlas 首页
+  - 先看 [docs/index.html](./docs/index.html)
 - 我想先用 30 秒看懂它
   - 先看 [docs/media/30-second-overview.md](./docs/media/30-second-overview.md)
 - 我想跑通默认第一把成功
@@ -71,6 +73,7 @@
 - [INTEGRATIONS.md](./INTEGRATIONS.md)
 - [docs/plugin-skill-starter-kits.md](./docs/plugin-skill-starter-kits.md)
 - [docs/public-distribution-ledger.md](./docs/public-distribution-ledger.md)
+- [docs/README.md](./docs/README.md)
 
 ## 治理分层
 
