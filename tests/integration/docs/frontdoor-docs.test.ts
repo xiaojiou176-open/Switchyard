@@ -99,6 +99,11 @@ describe("Switchyard docs frontdoor contracts", () => {
       "docs/compare/switchyard-vs-claude-code.md",
       "docs/compare/switchyard-vs-openclaw.md",
       "docs/mcp.md",
+      "docs/plugin-skill-starter-kits.md",
+      "docs/starter-pack-chooser.md",
+      "docs/builder-journeys.md",
+      "docs/host-integration-playbooks.md",
+      "docs/host-integration-examples.md",
     ];
 
     for (const relativePath of frontdoorFiles) {
