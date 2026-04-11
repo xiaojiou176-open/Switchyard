@@ -1,23 +1,25 @@
 # Switchyard Host Integration Examples
 
-这页可以先把它理解成：
+Treat this page as:
 
-> **选完 starter pack 之后，第一把 host-local 配置到底长什么样，而且最小 first success 要怎么跑。**
+> **What should the first host-local config look like once I picked a starter
+> pack, and what is the smallest first success?**
 
-说得更直白一点：
+In plain English:
 
-- `docs/starter-pack-chooser.md` 像导购台
-- `starter-packs/` 像整包搬运箱
-- 这页则像“装到你家主机上的接线示意图”
+- the chooser is the front desk
+- `starter-packs/` is the crate of reusable parts
+- this page is the wiring diagram you copy into your own host
 
-它的目标不是再发明一个产品层，而是把当前已经 landed 的 thin compat / MCP / builder-facing truth，补成一组更容易复制、也更容易点火的 host-local examples。
+It does not create a new product layer. It turns the current thin compat, MCP,
+and builder truth into copy-ready host-local examples.
 
-## Machine-readable Source
+## Machine-Readable Source
 
 - [examples/hosts/index.json](../examples/hosts/index.json)
 - [examples/hosts/index.schema.json](../examples/hosts/index.schema.json)
 
-## Read-only CLI Access
+## Read-Only Access
 
 ```bash
 pnpm run switchyard:cli -- host-examples
@@ -25,6 +27,10 @@ pnpm run switchyard:cli -- host-examples-schema
 pnpm run switchyard:cli -- host-example --target codex
 pnpm run switchyard:cli -- host-example --target mcp
 ```
+
+- `switchyard.catalog.host_examples`
+- `switchyard.catalog.host_examples_schema`
+- `switchyard.catalog.host_example`
 
 ## Runnable Example Commands
 
@@ -35,41 +41,33 @@ pnpm run example:host-openclaw
 pnpm run example:host-mcp
 ```
 
-## Read-only MCP Access
-
-- `switchyard.catalog.host_examples`
-- `switchyard.catalog.host_examples_schema`
-- `switchyard.catalog.host_example`
-
 ## Quick Pick
 
 | If your host is... | Start here | Why | Do not expect |
 | --- | --- | --- | --- |
-| `Codex` | [examples/hosts/codex/README.md](../examples/hosts/codex/README.md) | Responses-style runtime bridge config + one bounded invoke smoke | tool/worktree parity |
-| `Claude Code` | [examples/hosts/claude-code/README.md](../examples/hosts/claude-code/README.md) | message/runtime bridge config + one bounded invoke smoke | terminal/tool parity |
-| `OpenClaw` | [examples/hosts/openclaw/README.md](../examples/hosts/openclaw/README.md) | delegation-first host config + one bounded invoke smoke | product-shell parity |
-| `MCP client` | [examples/hosts/mcp/README.md](../examples/hosts/mcp/README.md) | read-only stdio client wiring + one bounded MCP smoke | execution brain / write plane |
+| `Codex` | [examples/hosts/codex/README.md](../examples/hosts/codex/README.md) | Responses-style runtime bridge config plus one bounded invoke smoke | tool/worktree parity |
+| `Claude Code` | [examples/hosts/claude-code/README.md](../examples/hosts/claude-code/README.md) | message/runtime bridge config plus one bounded invoke smoke | terminal/tool parity |
+| `OpenClaw` | [examples/hosts/openclaw/README.md](../examples/hosts/openclaw/README.md) | delegation-first host config plus one bounded invoke smoke | product-shell parity |
+| `MCP client` | [examples/hosts/mcp/README.md](../examples/hosts/mcp/README.md) | read-only stdio client wiring plus one bounded MCP smoke | execution brain / write plane |
 
 ## What These Examples Help With
 
 - host-local first-run wiring
 - copy-paste config examples for builder hosts
 - bounded runnable glue for one first-success check
-- SEO/discoverability pages that answer:
-  - `How do I wire Switchyard into Codex?`
-  - `How do I wire Switchyard into Claude Code?`
-  - `What does a Switchyard MCP client config look like?`
+- SEO/discoverability pages that answer concrete builder questions
 
 ## What These Examples Do Not Mean
 
-这些 examples 不等于：
+These examples do **not** mean:
 
 - full host parity
-- shipped plugin marketplace
-- production-ready distro package
-- MCP execution backend
+- a shipped plugin marketplace
+- a production-ready distro package
+- an MCP execution backend
 
-它们只是当前 thin / partial / fail-closed builder surfaces 的 **host-local runnable glue + config examples**。
+They are only the current thin, partial, fail-closed builder surfaces turned
+into host-local runnable glue and config examples.
 
 ## Related Pages
 
