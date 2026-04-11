@@ -2,10 +2,13 @@
 
 **Shared provider runtime for AI apps.**
 
-`Switchyard` 不是聊天产品，也不是 personal assistant，也不是另一个全家桶 AI 平台。  
-它要做的是更纯的一层：
+Switchyard turns end-user `BYOK + Web/Login` access into one service-first
+runtime that AI products can call without rebuilding provider routing,
+credential/session handling, and diagnostics from scratch.
 
-> **把终端用户已有的 AI 访问资格，统一收编成一个可被 AI 产品消费的共享运行时。**
+It is **not** a chat product, **not** a personal assistant, and **not** another
+all-in-one AI platform. It exists to be the shared runtime layer that other AI
+apps can depend on.
 
 <p align="center">
   <img
@@ -23,109 +26,131 @@
   />
 </p>
 
-## 30 秒版本
+## Builder Thesis
 
-如果你现在只想先用一句人话记住它：
-
-> **`Switchyard` 不是另一个 AI App。**
+> **One shared provider runtime for AI apps.**
 >
-> **它是一层 shared provider runtime。**
->
-> **它把 `BYOK + Web/Login` 这两类真实 AI 访问资格，统一变成别的 AI 产品可直接接入的 service-first substrate。**
+> Use Switchyard when you want AI products to plug into real end-user access
+> lanes without every product re-inventing provider contracts, session logic,
+> and diagnostics.
 
-如果你只想先读一页最短说明：
+## Current Public Boundary
 
-- [docs/media/30-second-overview.md](./docs/media/30-second-overview.md)
+Today the truthful public story is:
 
-## 当前主货、次级货与 later lanes
+- **Primary public front door**: the GitHub Pages docs atlas plus this root
+  README
+- **Primary repo-native runtime surface**: `apps/service/` and the
+  service/runtime HTTP contract
+- **Secondary machine-readable surface**:
+  `packages/surfaces/mcp/server.json`, a **read-only MCP descriptor**
+- **Builder-facing packet**:
+  `distribution/claude-marketplace/plugins/switchyard-builder-suite/skills/runtime-diagnostics/`
+  plus starter packs and host examples
+- **Not claimed today**: official marketplace listings, official MCP Registry
+  listing, npm publication, hosted multi-tenant runtime, write-capable MCP, or
+  full consumer parity
 
-如果你现在最关心的是“这个仓今天到底该怎么被诚实地介绍”，先记这 4 句：
+Artifact-ready still does **not** mean listed-live.
 
-- **主货**
-  - `Switchyard` 当前稳定主货是 **shared provider runtime**
-  - 当前 repo-native 主前门是 `service/runtime`，次主前门是 `packages/surfaces/mcp/server.json` 这条 **read-only MCP descriptor**
-- **次级 public packet**
-  - `distribution/claude-marketplace/plugins/switchyard-builder-suite/skills/runtime-diagnostics/` 是当前最完整的 host-native public skill packet
-  - 它教 agent **怎么 attach、怎么诊断、哪些不能 claim**，不是在宣布官方上架
-- **later lanes**
-  - `distribution/claude-marketplace/` bundle、npm package publish、official MCP Registry、Docker/runtime catalog、以及更外层 consumer compat rollout 都还是 later lanes
-  - 这些 lane 可以有 repo-owned artifact，但 **artifact-ready != listed-live**
-- **时间片 live 结果**
-  - `verify:*live` / `reality:gate` 这类结果属于 credentialed workstation 上的环境真相
-  - 它们很重要，但它们是 **proof / runbook truth**，不该反过来改写 repo 的稳定身份
+## Public Language Policy
 
-## 快速入口
+Switchyard now treats the public front door as **English-first**.
 
-如果你现在只想知道“第一步该去哪”，先走这三条最短路径之一：
+- The default landing path for global developers stays English-first.
+- Bilingual support remains available through glossary and i18n helper pages.
+- Live/browser realism notes belong in proof and runbook surfaces, not in the
+  stable top-level product sentence.
 
-- 我想先看一张 reviewer-facing 的 docs atlas 首页
-  - 先看 [docs/index.html](./docs/index.html)
-- 我想先用 30 秒看懂它
-  - 先看 [docs/media/30-second-overview.md](./docs/media/30-second-overview.md)
-- 我想跑通默认第一把成功
-  - 先看 [docs/first-success.md](./docs/first-success.md)
-- 我想先看它现在到底能证明什么
-  - 先看 [docs/public-proof-pack.md](./docs/public-proof-pack.md)
+## Open The Right Door
 
-如果你已经明确自己在走 builder / distribution 路线，再看：
+| If you need to... | Open this first |
+| --- | --- |
+| understand the product in 30 seconds | [docs/media/30-second-overview.md](./docs/media/30-second-overview.md) |
+| run the shortest first success | [docs/first-success.md](./docs/first-success.md) |
+| inspect what is really proved today | [docs/public-proof-pack.md](./docs/public-proof-pack.md) |
+| see what is package-ready vs listed-live | [docs/public-distribution-ledger.md](./docs/public-distribution-ledger.md) |
+| browse the full docs atlas | [docs/index.html](./docs/index.html) and [docs/README.md](./docs/README.md) |
 
-- [DISTRIBUTION.md](./DISTRIBUTION.md)
-- [INTEGRATIONS.md](./INTEGRATIONS.md)
-- [docs/plugin-skill-starter-kits.md](./docs/plugin-skill-starter-kits.md)
-- [docs/public-distribution-ledger.md](./docs/public-distribution-ledger.md)
-- [docs/README.md](./docs/README.md)
+## 30-Second Version
 
-## 治理分层
+If you only remember four lines, remember these:
 
-当前这仓把验证和治理分成 5 层，先把它理解成 5 道安检门：
+1. Switchyard is **not** another AI app.
+2. It is a **shared provider runtime for AI apps**.
+3. It turns `BYOK + Web/Login` access into a service-first substrate that other
+   AI products can call.
+4. Today it ships a repo-native runtime, a partial read-only MCP surface, a
+   runtime-diagnostics packet, starter packs, and truth-first public docs. npm,
+   registry, marketplace, Docker, and broader publication remain later lanes.
 
-- `pre-commit`
-  - 本地最早拦截 secrets 与 frontdoor hygiene
-- `pre-push`
-  - 本地提交前的 coverage / test / build 总闸
-- `hosted`
-  - GitHub Actions 负责 repo-side 代码与合同
-- `nightly`
-  - hosted-safe 的定时重检查，不碰真人登录态
-- `manual`
-  - 只在 credentialed workstation 上处理 live/provider/browser realism
+## First Success
 
-更完整的层级说明看：
+If you want the fastest truthful first success, run the shortest bounded path:
 
-- [docs/testing-pyramid.md](./docs/testing-pyramid.md)
-- [docs/runbooks/dev-bootstrap.md](./docs/runbooks/dev-bootstrap.md)
+1. Start the local runtime:
 
-这里的“访问资格”包括：
+   ```bash
+   pnpm run start:service-local
+   ```
 
-- 官方 API Key
-- Web/Login / OAuth / subscription 会话
-- 未来才可能进入的 agent-native 能力来源
+2. Prove the read-only truth surface is alive:
 
----
+   ```bash
+   pnpm run example:mcp-inspector
+   ```
 
-## 为什么要有这个项目
+3. Prove the runtime can accept one minimal invoke:
 
-很多 AI 产品都在重复做同一层脏活：
+   ```bash
+   pnpm run example:runtime-bridge
+   ```
 
-- 每个产品都重写 provider contract
-- 每个产品都自己处理 auth/session/refresh
-- Web/Login provider 很脆，但真实用户又经常只有订阅，没有 API Key
-- provider routing、capability mapping、错误归一化、diagnostics 到处散落
+The default service port is `http://127.0.0.1:4010`.
 
-`Switchyard` 要做的不是把这些能力塞回某一个产品里，而是把这层重复劳动变成：
+If you want the full step-by-step path and failure routing, open
+[docs/first-success.md](./docs/first-success.md).
 
-> **一个可复用、可服务化、可被依赖的共享 Provider Runtime。**
+## Why Switchyard Exists
 
----
+Many AI products keep rebuilding the same messy layer:
 
-## V1 范围
+- provider contracts
+- auth/session plumbing
+- provider routing
+- diagnostics and remediation
+- builder starter surfaces
 
-### V1 只做两条供给 lane
+Switchyard exists so that this repeated work can become one reusable runtime:
+
+> **a shared provider runtime that AI apps can plug into, instead of each app
+> re-inventing the provider layer alone**
+
+## What It Is
+
+- a shared provider runtime for AI apps
+- a service-first runtime surface with SDK and MCP companion surfaces
+- a builder-facing repo that keeps proof, starter packs, and truth contracts
+  aligned
+- a runtime layer that stays fail-closed on claims it cannot honestly prove
+
+## What It Is Not
+
+- not a chat product
+- not a personal assistant
+- not a control-plane-first SaaS
+- not a hosted multi-tenant runtime today
+- not a browser plugin
+- not a raw fork product of any upstream repo
+
+## V1 Scope
+
+Switchyard V1 is intentionally narrow:
 
 - `BYOK`
 - `Web/Login`
 
-### 固定网页登录 provider
+Current Web/Login provider set:
 
 1. `ChatGPT`
 2. `Gemini`
@@ -133,19 +158,7 @@
 4. `Grok`
 5. `Qwen`
 
-其中高稳定目标为：
-
-- `ChatGPT`
-- `Gemini`
-- `Claude`
-
-### BYOK 范围
-
-真实打通：
-
-- `Gemini API Key`
-
-代码支持必须覆盖：
+Current BYOK code support must cover:
 
 - `OpenAI`
 - `Anthropic`
@@ -156,668 +169,218 @@
 - `Vertex AI`
 - `Bedrock`
 
-### 当前明确不做
+Explicit non-goals right now:
 
 - `Agent Input Lane`
-- `Codex` / `Claude Code` 作为供给侧输入来源
+- `Codex` / `Claude Code` as supply-side sources
 - `Gemini CLI`
-- 同 provider 多账户池化
-- 平台共享凭证
-- raw fork 产品
-- control-plane 主线
+- shared public credentials
+- multi-tenant account pooling
+- a hosted control plane
 
----
+## Architecture In One Sentence
 
-## 产品边界
+Switchyard separates **lane**, **provider**, **consumer**, and **surface** so
+that the runtime stays reusable even while builder routes and public claims stay
+fail-closed.
 
-### 它是什么
-
-- 面向 AI 产品开发者的共享 runtime
-- 统一 provider / auth / session / diagnostics 语言
-- 对外以 service/runtime API substrate 为当前主前门
-- SDK/client 保留为正式消费面，但建立在同一 substrate 上
-
-### 它不是什么
-
-- 不是聊天产品
-- 不是 channel hub
-- 不是 personal assistant
-- 不是 control-plane first 的 SaaS
-- 不是某个上游大产品的换皮 fork
-
----
-
-## 核心原则
-
-### 1. 产品独立，技术深借
-
-`Switchyard` 的路线不是：
-
-- 完全闭门从零重复造轮子
-
-也不是：
-
-- 把强上游直接 raw fork 公开发布
-
-而是：
-
-> **Independent Product, Upstream-Informed Runtime**
-
-翻成人话：
-
-- 产品是我们的
-- 技术认真向强上游学习
-- 能借的借
-- 该迁移的迁移
-- 但公开产品身份、合同、架构语言必须是 `Switchyard` 自己的
-
-### 2. `openclaw-zero-token` 是技术母本，不是产品母本
-
-这条是当前最重要的战略裁决之一。
-
-`openclaw-zero-token` 很强，尤其在 Web/Login 供给侧运行时上已经覆盖了大量最脏最难的问题。  
-所以 `Switchyard` 必须深度研究它。
-
-但这不等于：
-
-- `Switchyard` 要变成它的变种
-- `Switchyard` 要继承它的产品世界观
-- `Switchyard` 要用 raw fork 方式对外存在
-
-### 3. 用户显式控制，系统透明诊断
-
-`Switchyard` 不靠黑盒兜底来营造“稳定错觉”。
-
-当前默认失败策略是：
-
-1. 明确报错
-2. 明确诊断
-3. 把选择权交还给用户
-
-不做：
-
-- 偷偷切 provider
-- 偷偷换账号
-- 平台暗箱 failover
-
-### 4. API substrate first，SDK/client 保留为正式消费面
-
-当前 truth freeze 后，repo 的公开口径统一成：
-
-- `API substrate first`
-- `service/runtime` 是当前主前门
-- `SDK/client` 是正式消费面，但建立在同一 substrate 上
-
-### 5. 凭证永远归终端用户
-
-`Switchyard` 不拥有公共 AI 资格。  
-它只处理终端用户自己带来的凭证。
-
----
-
-## 当前主线参考体系
-
-### 主线主参考
-
-- `Vercel AI SDK`
-- `LiteLLM`
-- `openclaw-zero-token`
-
-### 它们的分工
-
-- `Vercel AI SDK`：SDK/contracts/byok abstraction 骨架
-- `LiteLLM`：BYOK gateway / sidecar 样本
-- `openclaw-zero-token`：Web/Login 技术母本
-
-### 本地工作区主参考路径
-
-当前工作区内，三大主线参考的本地路径可按占位写法记为：
-
-- `Vercel AI SDK`
-  `<local-reference-root>/ai`
-- `LiteLLM`
-  `<local-reference-root>/litellm`
-- `openclaw-zero-token`
-  `<local-reference-root>/openclaw-zero-token`
-
-这里的 `<local-reference-root>` 指你在本机放第三方参考仓的根目录；公开文档里不要写个人绝对路径。
-
-这里要特别强调：
-
-> **在 Web/Login 这条 lane 上，`openclaw-zero-token` 不是“众多参考之一”，而是当前最重要的技术母本。**
->
-> 它不是产品母本，但它是当前最值得深度研究、模仿、拆解、迁移的上游运行时来源。
-
-### 次级或边缘参考
-
-- `ChatALL`：产品壳 / 能力矩阵样板
-- `codex`、`claude-code`、`openclaw`：后续 consumer compat 参考
-
----
-
-## 架构方向
-
-当前正式采用的骨架原则是：
-
-- `lane`
-- `provider`
-- `consumer`
-- `surface`
-
-四层拆开。
-
-高层关系可以先这样理解：
+High-level shape:
 
 ```mermaid
 flowchart LR
-    A["BYOK Lane"] --> K["Switchyard Kernel"]
-    B["Web/Login Lane"] --> K["Switchyard Kernel"]
-    K --> H["HTTP Service Surface"]
-    K --> S["SDK Surface"]
-    H --> F["First-party Repos"]
-    S --> D["Future AI App Integrators"]
-    H --> C["Future Consumer Compat"]
+    A["BYOK lane"] --> K["Switchyard kernel"]
+    B["Web/Login lane"] --> K["Switchyard kernel"]
+    K --> H["HTTP service surface"]
+    K --> S["SDK surface"]
+    H --> F["First-party integrations"]
+    S --> D["Future AI app consumers"]
+    H --> C["Future consumer compat"]
 ```
 
-这里最重要的不是图本身，而是它表达的顺序：
+## What Ships Now vs Later
 
-- 先把供给侧两条 lane 做稳
-- 再通过 service/SDK 暴露统一内核
-- 再让 first-party repo 接入
-- 最后才进入 `Codex / Claude Code / OpenClaw` 的 compat
+### Ships now
 
----
+- service-first runtime surface
+- partial read-only MCP surface
+- partial thin compat packages
+- runtime-diagnostics public skill packet
+- starter packs and host examples
+- proof-first docs atlas and public distribution ledger
 
-## 当前交付阶段
+### Still later
 
-交付顺序已经固定：
+- official marketplace listings
+- official MCP Registry listing
+- npm publication read-back
+- Docker/runtime catalog publication
+- hosted multi-tenant runtime
+- full consumer parity
+- write-capable MCP
 
-1. `Kernel Alpha`
-2. `Kernel Beta`
-3. `First-party Integration`
-4. `Consumer Compat`
+## Proof And Reality Truth
 
-当前仓库已经完成的是：
+Live/browser outcomes are important, but they are **proof / runbook truth for a
+credentialed workstation**, not the stable repo identity.
 
-- 产品定义
-- ADR
-- contracts
-- delivery blueprint
-- `pnpm workspace` 基础骨架
-- `Kernel Alpha` 的最小代码主干
-  - `contracts / kernel / credentials / diagnostics`
-  - `BYOK` baseline（含 `Gemini API Key` 真实请求路径）
-  - `Web/Login` baseline（固定 5 家 provider 全部进入 runtime 路径）
-  - `service surface` 与 `sdk surface` 的最小统一入口
-- `Web/Login` reality tooling
-  - `verify:web-login-live`
-    - provider 级复验可用 `pnpm exec node scripts/verify-web-login-live.mjs --provider <provider>`
-  - `verify:gemini-live`
-  - `reality:gate`
-  - `live-proof` 模块
-- 高稳定 trio 的 acquisition 起步实现
-  - `ChatGPT`
-  - `Gemini`
-  - `Claude`
+That means:
 
-当前还没有全部进入 full-support / full-parity 主线的，是：
+- repo-side green does not erase local browser/session blockers
+- one workstation result should not rewrite the top-level product sentence
+- current live/browser reality belongs in
+  [docs/public-proof-pack.md](./docs/public-proof-pack.md)
+  and [docs/runbooks/dev-bootstrap.md](./docs/runbooks/dev-bootstrap.md)
 
-- `LiteLLM` / `openclaw-zero-token` 的 sidecar labs 深化
-- 更大范围的 first-party expansion
-- full consumer compat parity
+Use the proof pack when the question becomes:
 
----
+- what is really proved today
+- which blockers are external-only
+- which results depend on local credentials and browser session materials
 
-## 仓库现状
+## Distribution Truth
 
-当前仓库已经不再是“只有文档、还没开工”的状态。  
-但这轮 front door 要守住的重点，不是某一次 credentialed workstation rerun 的成绩单，而是 **repo-owned 的稳定身份**。
+Current distribution truth is intentionally narrow:
 
-当前更稳的 repo truth 可以压成下面这 4 句：
+- GitHub Pages storefront is live and remains the primary public homepage
+- repo materials are package-ready for the MCP surface and thin compat packages
+- official marketplace or registry publication is **not** claimed yet
+- builder packets and starter packs are public repo surfaces, not official
+  listings
 
-- `Switchyard` 是 **shared provider runtime for AI apps**
-- V1 只收敛在 `BYOK + Web/Login`
-- 当前 repo-native 主前门是 `service/runtime`，机器可读前门是 `packages/surfaces/mcp/server.json`
-- `runtime-diagnostics` public skill packet 是 companion surface；bundle / package / registry / Docker / broader compat rollout 都还是 later lanes
+See:
 
-如果你更关心 live/browser 现实，可以把它理解成“餐厅试营业当天的现场记录”，不是印在营业执照上的固定身份：
+- [DISTRIBUTION.md](./DISTRIBUTION.md)
+- [INTEGRATIONS.md](./INTEGRATIONS.md)
+- [docs/public-distribution-ledger.md](./docs/public-distribution-ledger.md)
 
-- `verify:*live` / `reality:gate` 属于 **proof / runbook truth**
-- 它们依赖当前机器上的 credential、cookie bundle、browser session 和 user agent
-- 它们必须按环境 fresh rerun
-- 它们不该反过来改写 repo 的稳定身份
+## Docs Atlas
 
-所以 README 现在只保留边界本身；具体的环境现场记录，交给这些地方承接：
+### Product and first route
 
+- [docs/index.html](./docs/index.html)
+- [docs/README.md](./docs/README.md)
+- [docs/media/30-second-overview.md](./docs/media/30-second-overview.md)
+- [docs/first-success.md](./docs/first-success.md)
 - [docs/public-proof-pack.md](./docs/public-proof-pack.md)
+- [docs/shared-provider-runtime.md](./docs/shared-provider-runtime.md)
+- [docs/product/v1-brief.md](./docs/product/v1-brief.md)
+- [docs/product/scope-and-nongoals.md](./docs/product/scope-and-nongoals.md)
+
+### API and runtime surfaces
+
+- [docs/api/service-http-reference.md](./docs/api/service-http-reference.md)
+- [docs/api/openapi.yaml](./docs/api/openapi.yaml)
+- [docs/api/sdk-quickstart.md](./docs/api/sdk-quickstart.md)
+- [docs/api/mcp-readonly-server.md](./docs/api/mcp-readonly-server.md)
+- [docs/api/error-diagnostics-reference.md](./docs/api/error-diagnostics-reference.md)
+- [docs/api/web-login-acquisition.md](./docs/api/web-login-acquisition.md)
+- [docs/mcp.md](./docs/mcp.md)
+
+### Public truth and distribution surfaces
+
+- [docs/public-surface-support-matrix.md](./docs/public-surface-support-matrix.md)
+- [docs/public-surface-catalog.md](./docs/public-surface-catalog.md)
+- [docs/public-surface-catalog.schema.json](./docs/public-surface-catalog.schema.json)
+- [docs/public-distribution-ledger.md](./docs/public-distribution-ledger.md)
+- [docs/discoverability-keyword-truth.md](./docs/discoverability-keyword-truth.md)
+- [docs/discoverability-keyword-truth.json](./docs/discoverability-keyword-truth.json)
+- [docs/discoverability-keyword-truth.schema.json](./docs/discoverability-keyword-truth.schema.json)
+
+### Builders, starter packs, and host routes
+
+- [docs/plugin-skill-starter-kits.md](./docs/plugin-skill-starter-kits.md)
+- [docs/starter-pack-index.md](./docs/starter-pack-index.md)
+- [docs/starter-pack-chooser.md](./docs/starter-pack-chooser.md)
+- [docs/starter-pack-comparison.md](./docs/starter-pack-comparison.md)
+- [docs/builder-journeys.md](./docs/builder-journeys.md)
+- [docs/builder-intent-router.md](./docs/builder-intent-router.md)
+- [docs/host-integration-playbooks.md](./docs/host-integration-playbooks.md)
+- [docs/host-integration-examples.md](./docs/host-integration-examples.md)
+- [docs/starter-manifest-templates.md](./docs/starter-manifest-templates.md)
+- [docs/starter-manifest-templates.schema.json](./docs/starter-manifest-templates.schema.json)
+- [docs/starter-manifest-examples.md](./docs/starter-manifest-examples.md)
+- [docs/starter-manifest-examples.schema.json](./docs/starter-manifest-examples.schema.json)
+- [examples/README.md](./examples/README.md)
+- [starter-packs/README.md](./starter-packs/README.md)
+
+### Compatibility and comparisons
+
+- [docs/compat/README.md](./docs/compat/README.md)
+- [docs/compat/codex.md](./docs/compat/codex.md)
+- [docs/compat/claude-code.md](./docs/compat/claude-code.md)
+- [docs/compat/openclaw.md](./docs/compat/openclaw.md)
+- [docs/compare/byok-vs-web-login.md](./docs/compare/byok-vs-web-login.md)
+- [docs/compare/switchyard-vs-codex.md](./docs/compare/switchyard-vs-codex.md)
+- [docs/compare/switchyard-vs-claude-code.md](./docs/compare/switchyard-vs-claude-code.md)
+- [docs/compare/switchyard-vs-openclaw.md](./docs/compare/switchyard-vs-openclaw.md)
+
+### Machine-readable catalogs
+
+- [docs/provider-runtime-catalog.md](./docs/provider-runtime-catalog.md)
+- [docs/provider-runtime-catalog.json](./docs/provider-runtime-catalog.json)
+- [docs/provider-runtime-catalog.schema.json](./docs/provider-runtime-catalog.schema.json)
+- [docs/compat-target-catalog.md](./docs/compat-target-catalog.md)
+- [docs/compat-target-catalog.json](./docs/compat-target-catalog.json)
+- [docs/compat-target-catalog.schema.json](./docs/compat-target-catalog.schema.json)
+- [docs/builder-kit-catalog.md](./docs/builder-kit-catalog.md)
+- [docs/builder-kit-catalog.json](./docs/builder-kit-catalog.json)
+- [docs/builder-kit-catalog.schema.json](./docs/builder-kit-catalog.schema.json)
+- [docs/skill-pack-catalog.md](./docs/skill-pack-catalog.md)
+- [docs/skill-pack-catalog.json](./docs/skill-pack-catalog.json)
+- [docs/skill-pack-catalog.schema.json](./docs/skill-pack-catalog.schema.json)
+- [docs/mcp-tool-catalog.md](./docs/mcp-tool-catalog.md)
+- [docs/mcp-tool-catalog.json](./docs/mcp-tool-catalog.json)
+- [docs/mcp-tool-catalog.schema.json](./docs/mcp-tool-catalog.schema.json)
+
+### Program and blueprint truth
+
+- [docs/blueprints/m2-kernel-beta-verdict.md](./docs/blueprints/m2-kernel-beta-verdict.md)
+- [docs/blueprints/m3-first-party-integration-readiness.md](./docs/blueprints/m3-first-party-integration-readiness.md)
+- [docs/blueprints/openclaw-zero-token-adoption-ledger.md](./docs/blueprints/openclaw-zero-token-adoption-ledger.md)
+- [docs/blueprints/v1-delivery-plan.md](./docs/blueprints/v1-delivery-plan.md)
+
+### Support surfaces
+
+- [docs/faq.md](./docs/faq.md)
+- [docs/glossary.md](./docs/glossary.md)
+- [docs/i18n.md](./docs/i18n.md)
 - [docs/testing-pyramid.md](./docs/testing-pyramid.md)
-- [docs/runbooks/dev-bootstrap.md](./docs/runbooks/dev-bootstrap.md)
 
-如果你需要对某个 provider 做 browser/session 级别的现场排障，再去运行对应 live diagnostics；但那属于 **runbook lane**，不属于 stable front door。需要 support bundle 时，也只把它写到 `.runtime-cache/browser-support/`。
+## Truth Rules
 
-这条命令的意义可以先这样理解：
+- `supported` means there is a durable, repo-backed public surface now.
+- `partial` means a real narrow slice exists, but it is not the full promised
+  shape.
+- `planned` means the route is intentional but not landed.
+- `research` means investigation exists but support does not.
+- `not now` means the surface is explicitly outside the current public front
+  door.
 
-> `auth-status ready` 像是“钥匙已经放进抽屉里”。  
-> `live-ready` 则是“人真的已经站在正确的房门前，而且门把手能转开”。
+## Security And Local Runtime Boundaries
 
-## Repo-local Runtime Artifacts
+- Do not publish cookie bundles, browser profiles, or other credential
+  materials.
+- `.runtime-cache/`, `.agents/`, and `.env*` stay out of public release
+  surfaces.
+- Repo-local cleanup only applies to Switchyard-owned runtime artifacts, never
+  to machine-wide caches or other apps.
+- Before live/browser/cleanup actions, run:
 
-如果你想知道这个仓本地到底会留下哪些运行时副产物，可以先把它理解成：
+  ```bash
+  pnpm run scan:host-process-risks
+  ```
 
-- `managed-browser-profile`
-  - `.runtime-cache/switchyard-web-auth-browser`
-  - 这是 `Switchyard` 自己的 managed browser 工位，不是普通可随手丢掉的临时文件
-- `debug-evidence`
-  - `.runtime-cache/browser-debug/bundles`
-  - 这里放的是 `current-page.png` / `summary.json` 这类调试证据
-- `support-bundles`
-  - `.runtime-cache/browser-support`
-  - 这里放 provider support bundle，默认会参与 TTL / 容量治理，但不会跑到 repo 外的任意位置
-- `disposable-generated`
-  - `.runtime-cache/temp`
-  - 这里放 live proof / service proof 这种可重建的临时编译产物
+For local runtime hygiene, browser/session acquisition, and operational
+footprint, go to [docs/runbooks/dev-bootstrap.md](./docs/runbooks/dev-bootstrap.md).
 
-可以把这些资产先看成一张“归属表”：
+## Verification Entry Points
 
-| 资产类型 | 默认位置 | 会不会自动治理 | 说明 |
-| :--- | :--- | :--- | :--- |
-| repo-local runtime artifacts | `.runtime-cache/` | 会 | 当前 repo 自己的 support bundle / debug bundle / temp proof / managed fallback 都尽量收进这里 |
-| repo-external dedicated cache | `~/.cache/switchyard/` | 会 | 只允许放当前 repo 专属的外部临时缓存 |
-| 真实 Chrome Profile `switchyard` | Chrome 用户数据目录 | 不会 | 这是用户资产，不是 repo cache |
-| 共享工具缓存 | `pnpm store` / `~/.npm` / `~/Library/Caches/ms-playwright` / `.serena/cache` 等 | 不会 | 不属于本仓自动清理面 |
+- `pnpm run typecheck`
+- `pnpm run test:coverage`
+- `pnpm run test:docs-frontdoor`
+- `pnpm run build`
 
-repo 外如果真的需要放当前仓专属的临时缓存，也只能落在：
+## One Final Sentence
 
-- `~/.cache/switchyard`
-
-说得更直白一点：
-
-> repo 内可清理运行时资产，尽量统一进 `.runtime-cache/`。
-> repo 外专属临时缓存，只允许进 `~/.cache/switchyard/`。
-> `~/.npm`、`pnpm store`、`~/Library/Caches/ms-playwright`、`.serena/cache` 这些共享工具缓存，不属于本仓自动清理面。
-> `.serena/` 本身属于本机 MCP 缓存，保持 ignore，不纳入当前仓 runtime 治理。
-
-现在仓里有一条 repo-native 的体检和清理入口，会同时审计：
-
-- repo-local `.runtime-cache/`
-- repo-external `~/.cache/switchyard`
-
-默认治理规则是：
-
-- TTL = `7 days`
-- max bytes = `8 GiB`
-- 清理优先级
-  - 先删 `temp`
-  - 再删旧 debug / support bundles
-  - 再删 repo-external disposable browser artifacts
-  - 最后才允许显式 `--include-managed-browser`
-
-在做 live / browser / cleanup 动作前，先跑：
-
-```bash
-pnpm run scan:host-process-risks
-```
-
-```bash
-pnpm run audit:runtime-footprint
-pnpm run cleanup:runtime -- --dry-run
-```
-
-可以先这样理解：
-
-> `audit:runtime-footprint` 像盘库存。  
-> `cleanup:runtime -- --dry-run` 像先拿清单和彩色贴纸演练一遍，不真的扔东西。
-
-如果你真的要动高风险那一档，也必须显式写出来：
-
-```bash
-pnpm run cleanup:runtime -- --apply --include-managed-browser
-```
-
-这条命令不会碰 machine-wide 临时目录、Docker 全局缓存、`~/.npm`、`pnpm store` 或 Chrome 的用户资产。
-它只治理当前 repo 自己的 `.runtime-cache/`，再加上专属的 `~/.cache/switchyard/`。
-它也会回收 verifier / writeback 在 `.runtime-cache/switchyard-*` 下留下的临时 auth-store 工作目录，以及 repo-local 的 app-service / reality-gate 日志报告，避免把 browser/session 副本和调试日志长期堆在 repo 内。
-其中 `~/.cache/switchyard/browser/chrome-user-data` 是当前 repo 的永久浏览器工位，不参与 TTL / cap 自动裁剪。
-
-## Credentialed Browser Mode
-
-这仓现在把本地 credentialed 浏览器开发默认理解成：
-
-- **默认本地入口**
-  - `isolated-chrome-root`
-- **repo 专属独立 Chrome 根目录**
-  - `~/.cache/switchyard/browser/chrome-user-data`
-  - steady-state 只保留一个 repo-owned 实例
-  - 缺席则启动，存在则 attach，不 second-launch
-- **repo-local managed fallback**
-  - `.runtime-cache/switchyard-web-auth-browser`
-  - 只保留成显式 opt-in 的隔离 fallback
-- **默认 Chrome 根目录**
-  - 只在一次性 seed / reseed 时读取
-  - 不再作为 steady-state 工作工位
-
-推荐的本地配置长这样：
-
-```bash
-export SWITCHYARD_BROWSER_MODE=isolated-chrome-root
-export SWITCHYARD_CHROME_USER_DATA_DIR="$HOME/.cache/switchyard/browser/chrome-user-data"
-export SWITCHYARD_CHROME_PROFILE_NAME="switchyard"
-export SWITCHYARD_EXTERNAL_CACHE_ROOT="$HOME/.cache/switchyard"
-export SWITCHYARD_CACHE_TTL_DAYS=7
-export SWITCHYARD_CACHE_MAX_BYTES=8589934592
-export SWITCHYARD_WEB_AUTH_EXISTING_PROFILE_CDP_URL="http://127.0.0.1:9338"
-```
-
-如果你不想手抄，直接把这组变量从仓里的 `.env.example` 拿过去，再按你自己的机器路径改就行。
-
-第一次把默认 Chrome 根目录里的 `switchyard` profile 搬到 repo 专属根目录时，用这组命令：
-
-```bash
-pnpm run seed:isolated-chrome-root -- --json
-# 只有你明确想重建独立根目录时才用：
-pnpm run reseed:isolated-chrome-root -- --json
-```
-
-这里有个很重要的边界：
-
-> `Switchyard` 现在的 steady-state 浏览器工位不是默认 Chrome 根目录里的公共房间。
-> 它是 repo 专属的独立根目录：`~/.cache/switchyard/browser/chrome-user-data`。
-> 这套根目录是**永久工位**，不是 disposable cache，不会被 TTL / cap 自动清掉。
-
-同时也明确一条 fail-closed 规则：
-
-- steady-state 不再默认猜测任意全局 Chrome user-data-dir
-- 默认 Chrome 根目录只用于显式 seed / reseed
-- 本地 credentialed 调试默认走 repo 专属独立 Chrome 根目录
-- 当前 repo 的 canonical isolated-root CDP 端口 = `9338`
-- 只有隔离 fallback 或无状态路径才走 repo-local managed browser
-
-还有一条这轮补上的宿主机安全边界：
-
-> `Switchyard` 的 browser bootstrap 不再通过 `detached: true` + `.unref()` 留下一个游离的 Chrome child handle。
-> 新实例启动必须走宿主机 launcher handoff；已在线的 repo-owned 浏览器如果要补开登录页，必须走 CDP `/json/new`。
-> 如果当前宿主机没法证明这条 handoff 安全成立，就要 fail-closed，改用 `Attach Existing Browser Session`，而不是偷偷退回 detached launch。
-
-还有一条这轮新增的真实性规则：
-
-> `ready` 现在不再只是“曾经 capture 成功过一次”。  
-> 它更接近“当前 local auth store、当前 attached browser、以及当前 browser root 上的关键持久 cookie 仍然彼此一致”。
-
-说得更直白一点：
-
-- store 里还记着旧材料
-- 但当前浏览器页已经掉到登录页
-- 或当前 root 上关键 session cookie 根本没落盘
-
-这种情况以后不会再被继续包装成 `ready`。
-
-## Docker Boundary
-
-当前 `Switchyard` 没有 repo-owned Docker runtime。
-
-- 这轮不会把 Docker 拉进当前缓存治理面
-- `cleanup:runtime` 也不是 machine-wide Docker 清盘命令
-- 如果未来引入 Docker sidecar / 容器 / volume / network
-  - 必须同步补 repo-native cleanup policy
-  - 只能清理明确带 `switchyard` 归属的资源
-  - 禁止 machine-wide destructive prune
-
-## CI Boundary
-
-当前仓继续只用 GitHub Hosted Runner。
-
-- `.github/workflows/ci.yml`
-  - `runs-on: ubuntu-latest`
-- `.github/workflows/security.yml`
-  - `runs-on: ubuntu-latest`
-- repository code scanning default setup
-  - `runner_type: standard`
-
-云端 CI 当前只负责 repo-side gate：
-
-- `pnpm typecheck`
-- `pnpm test`
-- `pnpm build`
-- security / repository code scanning
-
-而下面这些属于 **local credentialed only**：
-
-- `pnpm run verify:gemini-live`
-- `pnpm run verify-web-login-live`
-- `pnpm run verify:service-live`
-- `pnpm run reality:gate`
-- `pnpm run diagnose:web-login-browser`
-- `pnpm run capture:web-debug-bundle`
-
-如果在 CI 里误触发这些 live 路径，现在会 fail-closed，直接报 `credentialed-workstation only`，而不是偷偷去依赖云端没有的本地 Profile / 登录态。
-
-## Public Surface Status
-
-如果你现在只想知道“哪些窗口开着、哪些还在装修”，直接看这两页：
-
-- [docs/public-surface-support-matrix.md](docs/public-surface-support-matrix.md)
-- [docs/public-surface-catalog.md](docs/public-surface-catalog.md)
-- [docs/public-distribution-ledger.md](docs/public-distribution-ledger.md)
-- [docs/blueprints/openclaw-zero-token-adoption-ledger.md](docs/blueprints/openclaw-zero-token-adoption-ledger.md)
-
-最短版结论是：
-
-- `Switchyard for Codex` = `partial / thin compat landed / not full parity`
-- `Switchyard for Claude Code` = `partial / thin compat landed / not full parity`
-- `Switchyard for OpenClaw` = `partial / thin compat landed / not full parity`
-- `HTTP / API` = `supported now`
-- `SDK/client` = `partial`
-- `CLI` = `partial`
-- `MCP` = `partial / read-only server-tool surface landed / not execution brain`
-- `Codex / Claude Code / OpenClaw compat` = `partial`
-- `i18n` = `partial`
-
-## Developer Frontdoor
-
-如果你是第一次来看这个仓，先别一下打开下面整排目录柜。
-
-先按这个顺序走，会更接近“先点火，再开地图”：
-
-1. [docs/media/30-second-overview.md](docs/media/30-second-overview.md)
-   - 30 秒先搞懂 `Switchyard` 是什么，不是什么
-2. [docs/first-success.md](docs/first-success.md)
-   - 当前最短默认成功路径：先把 service/runtime 跑起来，再做第一把 bounded invoke / inspect
-3. [docs/public-proof-pack.md](docs/public-proof-pack.md)
-   - 当前这仓到底已经能证明什么、哪些只是 partial、哪些还受 workstation 边界约束
-4. [docs/README.md](docs/README.md)
-   - 再回完整 docs frontdoor，按目标深入
-
-如果你已经知道自己要做什么，再打开下面这批文档：
-
-- [docs/README.md](docs/README.md)
-  - 文档总入口 / docs frontdoor
-- [docs/media/30-second-overview.md](docs/media/30-second-overview.md)
-  - 30 秒版本的产品身份、可证明事实和非目标
-- [docs/first-success.md](docs/first-success.md)
-  - 默认 first-success 路径 / 先点火再扩展
-- [docs/public-proof-pack.md](docs/public-proof-pack.md)
-  - 当前 proof、最小 smoke、allowed claims / forbidden overclaim
-- [docs/api/service-http-reference.md](docs/api/service-http-reference.md)
-  - 当前 committed 的 HTTP runtime routes、`/v1/runtime/auth-portal`、以及 service-first 调试入口
-- [docs/api/openapi.yaml](docs/api/openapi.yaml)
-  - machine-readable OpenAPI contract for the current HTTP runtime surface
-- [docs/api/sdk-quickstart.md](docs/api/sdk-quickstart.md)
-  - 当前 committed 的 SDK / service client quickstart
-- [docs/api/mcp-readonly-server.md](docs/api/mcp-readonly-server.md)
-  - 当前 committed 的 read-only MCP server starter
-- [docs/public-surface-support-matrix.md](docs/public-surface-support-matrix.md)
-  - 当前公开 surface 的 truth table；local-only thin starters 会单独标明还没 Git-closed
-- [docs/public-surface-catalog.md](docs/public-surface-catalog.md)
-  - plugin / skills / builder tooling 可直接读取的 machine-readable catalog
-- [docs/public-distribution-ledger.md](docs/public-distribution-ledger.md)
-  - 当前 package-ready / starter-pack-ready / official-listing-not-claimed 的上架账本
-- [docs/public-surface-catalog.schema.json](docs/public-surface-catalog.schema.json)
-  - public surface catalog 的 machine-readable contract schema
-- [docs/plugin-skill-starter-kits.md](docs/plugin-skill-starter-kits.md)
-  - plugin / skills builder 从哪条窄路开始接的 starter-kit 说明书
-- [docs/starter-manifest-templates.md](docs/starter-manifest-templates.md)
-  - copy-paste 级 starter manifest 模板
-- [docs/starter-manifest-templates.schema.json](docs/starter-manifest-templates.schema.json)
-  - starter manifest 模板的 machine-readable schema
-- [docs/starter-manifest-examples.md](docs/starter-manifest-examples.md)
-  - runnable starter examples / 可直接照着改的例子
-- [docs/starter-manifest-examples.schema.json](docs/starter-manifest-examples.schema.json)
-  - starter manifest examples 的 machine-readable schema
-- [examples/README.md](examples/README.md)
-  - 真正能直接跑起来的 starter mini-projects / 样板间
-- [starter-packs/README.md](starter-packs/README.md)
-  - 按目标拆好的 copy-ready starter packs / 可复制的整包样板
-- [docs/starter-pack-index.md](docs/starter-pack-index.md)
-  - starter-packs 的 machine-readable 总目录
-- [docs/starter-pack-chooser.md](docs/starter-pack-chooser.md)
-  - 回答“我该先拿哪个 pack 开始”的 chooser / decision frontdoor
-- [docs/starter-pack-comparison.md](docs/starter-pack-comparison.md)
-  - 回答“这些 pack 并排看差在哪、该怎么按约束筛选”的 comparison / filter frontdoor
-- [docs/builder-journeys.md](docs/builder-journeys.md)
-  - 回答“如果我是某类 builder，我该沿哪一条完整路径走到 first success”的 journey frontdoor
-- [docs/builder-intent-router.md](docs/builder-intent-router.md)
-  - 回答“我现在这个问题第一站该去哪”的 builder intent router
-- [docs/host-integration-playbooks.md](docs/host-integration-playbooks.md)
-  - 回答“选完之后怎么接进宿主环境”的 host integration frontdoor
-- [docs/host-integration-examples.md](docs/host-integration-examples.md)
-  - 给出 host-local config 长什么样的 copy-paste examples
-- [docs/provider-runtime-catalog.md](docs/provider-runtime-catalog.md)
-  - provider / lane / authMode / stability 的静态目录
-- [docs/provider-runtime-catalog.json](docs/provider-runtime-catalog.json)
-  - machine-readable provider runtime directory
-- [docs/provider-runtime-catalog.schema.json](docs/provider-runtime-catalog.schema.json)
-  - schema for the machine-readable provider runtime directory
-- [docs/compat-target-catalog.md](docs/compat-target-catalog.md)
-  - dedicated thin compat target directory
-- [docs/compat-target-catalog.json](docs/compat-target-catalog.json)
-  - machine-readable compat target directory
-- [docs/compat-target-catalog.schema.json](docs/compat-target-catalog.schema.json)
-  - schema for the machine-readable compat target directory
-- [docs/builder-kit-catalog.md](docs/builder-kit-catalog.md)
-  - dedicated builder kit directory
-- [docs/builder-kit-catalog.json](docs/builder-kit-catalog.json)
-  - machine-readable builder kit directory
-- [docs/builder-kit-catalog.schema.json](docs/builder-kit-catalog.schema.json)
-  - schema for the machine-readable builder kit directory
-- [docs/skill-pack-catalog.md](docs/skill-pack-catalog.md)
-  - dedicated skill pack directory
-- [docs/skill-pack-catalog.json](docs/skill-pack-catalog.json)
-  - machine-readable skill pack directory
-- [docs/skill-pack-catalog.schema.json](docs/skill-pack-catalog.schema.json)
-  - schema for the machine-readable skill pack directory
-- [docs/mcp-tool-catalog.md](docs/mcp-tool-catalog.md)
-  - dedicated read-only MCP tool directory
-- [docs/mcp-tool-catalog.json](docs/mcp-tool-catalog.json)
-  - machine-readable MCP tool directory
-- [docs/mcp-tool-catalog.schema.json](docs/mcp-tool-catalog.schema.json)
-  - schema for the machine-readable MCP tool directory
-- [docs/blueprints/m2-kernel-beta-verdict.md](docs/blueprints/m2-kernel-beta-verdict.md)
-  - 当前 `M2 / Kernel Beta` 的 fresh honest verdict
-- [docs/blueprints/m3-first-party-integration-readiness.md](docs/blueprints/m3-first-party-integration-readiness.md)
-  - 当前 `M3` 只允许进入 readiness package，不允许偷跑实施
-- [docs/blueprints/wave4-consumer-contract-freeze.md](docs/blueprints/wave4-consumer-contract-freeze.md)
-  - `Wave 4` thin compat contract freeze
-- [docs/blueprints/openclaw-zero-token-adoption-ledger.md](docs/blueprints/openclaw-zero-token-adoption-ledger.md)
-  - `openclaw-zero-token` 技术吸收状态账本
-- [docs/api/error-diagnostics-reference.md](docs/api/error-diagnostics-reference.md)
-  - error / diagnostics frontdoor
-- [docs/api/web-login-acquisition.md](docs/api/web-login-acquisition.md)
-  - Web/Login acquisition route reference
-- [docs/runbooks/dev-bootstrap.md](docs/runbooks/dev-bootstrap.md)
-  - 如果你要处理 Web/Login builder first success，这里是 browser / auth-portal / runtime hygiene 的最快入口
-- [docs/compat/codex.md](docs/compat/codex.md)
-  - `Switchyard + Codex` 当前 truth
-- [docs/compat/claude-code.md](docs/compat/claude-code.md)
-  - `Switchyard + Claude Code` 当前 truth
-- [docs/compat/openclaw.md](docs/compat/openclaw.md)
-  - `Switchyard + OpenClaw` 当前 truth
-- [packages/consumers/codex/README.md](packages/consumers/codex/README.md)
-  - `@switchyard/consumer-codex` 的 package-ready frontdoor
-- [packages/consumers/claude-code/README.md](packages/consumers/claude-code/README.md)
-  - `@switchyard/consumer-claude-code` 的 package-ready frontdoor
-- [packages/consumers/openclaw/README.md](packages/consumers/openclaw/README.md)
-  - `@switchyard/consumer-openclaw` 的 package-ready frontdoor
-- [packages/surfaces/mcp/README.md](packages/surfaces/mcp/README.md)
-  - `@switchyard/surface-mcp` 与 `switchyard-mcp` bin 的 package-ready frontdoor
-- [docs/compat/README.md](docs/compat/README.md)
-  - compatibility matrix frontdoor
-- [docs/mcp.md](docs/mcp.md)
-  - `Switchyard + MCP` 当前 truth
-- [docs/glossary.md](docs/glossary.md)
-  - bilingual glossary / 双语术语表
-- [docs/i18n.md](docs/i18n.md)
-  - bilingual developer surface status
-- [docs/testing-pyramid.md](docs/testing-pyramid.md)
-  - test pyramid / gates / coverage philosophy
-  - `pnpm run test:coverage` is the stable gating path for `text-summary` + `coverage/coverage-summary.json`
-  - `pnpm run test:coverage:html` is the optional local HTML report path
-- [docs/discoverability-keyword-truth.md](docs/discoverability-keyword-truth.md)
-  - truthful keyword capture table
-- [docs/discoverability-keyword-truth.json](docs/discoverability-keyword-truth.json)
-  - machine-readable keyword truth table for docs / SEO tooling
-  - if you only need keyword-claim truth, start here
-- [docs/discoverability-keyword-truth.schema.json](docs/discoverability-keyword-truth.schema.json)
-  - schema for the machine-readable keyword truth table
-- [docs/builder-intent-router.json](docs/builder-intent-router.json)
-  - machine-readable first-hop router for builder questions
-- [docs/builder-intent-router.schema.json](docs/builder-intent-router.schema.json)
-  - schema for the machine-readable builder intent router
-- [docs/faq.md](docs/faq.md)
-  - 常见问题 / planned vs supported
-- [docs/shared-provider-runtime.md](docs/shared-provider-runtime.md)
-  - `shared provider runtime` / `AI app backend` frontdoor
-- [docs/compare/byok-vs-web-login.md](docs/compare/byok-vs-web-login.md)
-  - `BYOK + Web/Login` 为什么都要做
-- [docs/compare/switchyard-vs-codex.md](docs/compare/switchyard-vs-codex.md)
-  - `Switchyard vs Codex`
-- [docs/compare/switchyard-vs-claude-code.md](docs/compare/switchyard-vs-claude-code.md)
-  - `Switchyard vs Claude Code`
-- [docs/compare/switchyard-vs-openclaw.md](docs/compare/switchyard-vs-openclaw.md)
-  - `Switchyard vs OpenClaw` 的 truth-first 比较
-
----
-
-## 阅读顺序
-
-如果你是第一次进入这个仓，建议从这里开始：
-
-1. `docs/product/v1-brief.md`
-2. `docs/product/scope-and-nongoals.md`
-3. `docs/adr/0001-v1-boundary-and-lane-model.md`
-4. `docs/adr/0002-external-repo-adoption-matrix.md`
-5. `docs/adr/0003-upstream-relationship-openclaw-zero-token.md`
-6. `docs/adr/0004-architecture-skeleton-monorepo.md`
-7. `docs/contracts/provider-runtime-contract.md`
-8. `docs/contracts/auth-accounts-and-credentials.md`
-9. `docs/contracts/service-and-sdk-surfaces.md`
-10. `docs/blueprints/v1-delivery-plan.md`
-
----
-
-## 现在最重要的一句话
-
-> `Switchyard` 不试图做一个更大的 `openclaw-zero-token`。  
-> 它要做的是：
-> **一个更纯粹、更适合被 AI 产品依赖和服务化接入的共享 Provider Runtime。**
-
----
-
-## Security
-
-- 安全漏洞请优先通过 GitHub Security Advisories / private vulnerability reporting 提交。
-- 不要在公开 issue 里贴出 cookie bundle、session artifact、browser profile 路径或其他凭证材料。
-- 当前本地运行时状态目录如 `.runtime-cache/`、`.agents/`、`.env*` 都不应进入远端发布面。
-
-更多细节见 [SECURITY.md](SECURITY.md)。
-
-补充一条本地运维边界：
-
-- repo-local cleanup 只允许作用在当前仓的 `.runtime-cache/`
-- 不要把 `cleanup:runtime` 误当成 machine-wide 清磁盘命令
-- `managed-browser-profile` 默认受保护；只有显式传 `--include-managed-browser` 才会尝试删除
-
-## License
-
-本项目使用 [MIT License](LICENSE)。
-
-这句话，就是当前这个仓最核心的产品存在理由。
+> Switchyard exists because AI apps should share one honest provider runtime
+> instead of each product rebuilding the provider layer alone.

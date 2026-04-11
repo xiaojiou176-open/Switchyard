@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "description": "Thin fail-closed Codex runtime bridge for Switchyard.",
   "license": "MIT",
-  "homepage": "https://github.com/xiaojiou176-open/Switchyard/tree/main/packages/consumers/codex#readme",
+  "homepage": "https://xiaojiou176-open.github.io/Switchyard/compat/codex.html",
   "bugs": {
     "url": "https://github.com/xiaojiou176-open/Switchyard/issues"
   },

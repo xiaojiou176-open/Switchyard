@@ -4,7 +4,7 @@
   "mcpName": "io.github.xiaojiou176-open/switchyard-mcp",
   "description": "Read-only MCP surface for Switchyard runtime truth and catalogs.",
   "license": "MIT",
-  "homepage": "https://github.com/xiaojiou176-open/Switchyard/tree/main/packages/surfaces/mcp#readme",
+  "homepage": "https://xiaojiou176-open.github.io/Switchyard/mcp.html",
   "bugs": {
     "url": "https://github.com/xiaojiou176-open/Switchyard/issues"
   },
