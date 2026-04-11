@@ -87,6 +87,18 @@ describe("Switchyard docs frontdoor contracts", () => {
       "docs/public-distribution-ledger.md",
       "docs/public-surface-support-matrix.md",
       "docs/public-surface-catalog.md",
+      "docs/shared-provider-runtime.md",
+      "docs/product/v1-brief.md",
+      "docs/product/scope-and-nongoals.md",
+      "docs/compat/README.md",
+      "docs/compat/codex.md",
+      "docs/compat/claude-code.md",
+      "docs/compat/openclaw.md",
+      "docs/compare/byok-vs-web-login.md",
+      "docs/compare/switchyard-vs-codex.md",
+      "docs/compare/switchyard-vs-claude-code.md",
+      "docs/compare/switchyard-vs-openclaw.md",
+      "docs/mcp.md",
     ];
 
     for (const relativePath of frontdoorFiles) {

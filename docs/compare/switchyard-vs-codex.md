@@ -4,36 +4,34 @@
 
 They solve different layers of the stack.
 
-中文短答：
-
-它们不是同一层产品。
-
 ## Codex
 
-更接近：
+Codex is closer to:
 
-- coding agent product
-- terminal/app workflow
-- consumer-side tool surface
+- a coding-agent product
+- a terminal/app workflow shell
+- a consumer-side tool surface
 
 ## Switchyard
 
-更接近：
+Switchyard is closer to:
 
-- shared provider runtime
+- a shared provider runtime
 - auth/session/provider normalization
-- AI app backend/runtime layer
+- an AI app backend/runtime layer
 
 ## Truthful Relationship Today
 
-- `Switchyard` currently has `partial` Codex compatibility, but only in a thin fail-closed sense.
-- `Codex` is a future consumer compat target.
-- The landed slice today is a Responses-style runtime bridge, not a clone of the Codex app shell.
-- Full Codex parity is still not supported.
+- Switchyard currently has `partial` Codex compatibility, but only in a thin
+  fail-closed sense
+- Codex remains a future consumer-compat target
+- the landed slice today is a Responses-style runtime bridge, not a clone of
+  the Codex app shell
+- full Codex parity is still not supported
 
 ## Why This Page Exists
 
-为了让这些搜索是 truthfully captured 的：
+This page exists so searches like these land on a truthful explanation:
 
 - `Switchyard vs Codex`
 - `Codex alternative for shared provider runtime`

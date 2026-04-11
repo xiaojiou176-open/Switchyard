@@ -4,25 +4,21 @@
 
 They are related, but they are not the same product shape.
 
-中文短答：
+## What Switchyard Borrows
 
-它们有关联，但不是同一种产品。
-
-## What Switchyard borrows
-
-`Switchyard` 深借的是：
+Switchyard borrows:
 
 - Web/Login runtime ideas
 - browser/session capture structure
 - thin gateway/runtime seams
 
-## What Switchyard does not inherit
+## What Switchyard Does Not Inherit
 
-`Switchyard` 不继承这些东西：
+Switchyard does not inherit:
 
-- OpenClaw product shell
-- operator/gateway worldview
-- channels / bigger assistant platform shape
+- the OpenClaw product shell
+- the operator/gateway worldview
+- channels or a larger assistant-platform shape
 - full control-plane semantics
 
 ## Product Difference
@@ -31,22 +27,24 @@ They are related, but they are not the same product shape.
 
 - shared provider runtime
 - AI app integration layer
-- BYOK + Web/Login
+- `BYOK + Web/Login`
 
 ### OpenClaw
 
-- broader assistant / gateway / operator product world
-- larger control-plane and consumer product shell
+- a broader assistant, gateway, and operator product world
+- a larger control-plane and consumer product shell
 
 ## Truthful Relationship Today
 
-- `Switchyard` currently has `partial` OpenClaw compatibility, but only in a thin fail-closed sense.
-- The landed slice today is a delegation-first runtime bridge, not an OpenClaw product-shell clone.
-- Full OpenClaw parity is still not supported.
+- Switchyard currently has `partial` OpenClaw compatibility, but only in a thin
+  fail-closed sense
+- the landed slice today is a delegation-first runtime bridge, not an OpenClaw
+  product-shell clone
+- full OpenClaw parity is still not supported
 
 ## Truthful Keyword Capture
 
-This page is safe for:
+This page is safe for searches like:
 
 - `Switchyard vs OpenClaw`
 - `OpenClaw alternative for shared provider runtime`
@@ -56,4 +54,4 @@ This page is **not** a claim that:
 
 - Switchyard already supports OpenClaw compatibility today
 - Switchyard is an OpenClaw fork
-- Switchyard is replacing the full OpenClaw product surface
+- Switchyard replaces the full OpenClaw product surface

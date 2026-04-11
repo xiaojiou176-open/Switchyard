@@ -2,7 +2,8 @@
 
 ## Why Both Exist
 
-`Switchyard V1` keeps both lanes because real users do not all arrive with the same kind of access.
+`Switchyard V1` keeps both lanes because real users do not all arrive with the
+same kind of access.
 
 ### BYOK
 
@@ -12,31 +13,37 @@
 
 ### Web/Login
 
-- browser login / OAuth / subscription session
+- browser login, OAuth, or subscription session
 - useful when the user has real product access but no API key
 
 ## Why This Matters for AI App Builders
 
-很多 AI app 会卡在这里：
+Many AI apps get trapped here:
 
-- 只做 BYOK，很多真实用户进不来
-- 只做 Web/Login，正规 API developer path 又不完整
+- if they only support BYOK, many real users cannot enter
+- if they only support Web/Login, the standard API-builder path stays
+  incomplete
 
-所以这两条 lane 不是“重复”，而是：
+So these two lanes are not duplicates.
 
-> 一条给标准 API，  
-> 一条给真实网页登录资格。
+> one lane is for standard API access
+>
+> one lane is for real browser-backed user entitlement
 
 ## Truthful Status Today
 
-- Gemini BYOK: live verification exists, but the current fresh rerun is blocked by missing local API-key material
+- Gemini BYOK: live verification exists, but the current fresh rerun can still
+  stop on missing local API-key material
 - Web/Login:
-  - all 5 providers now have a real acquisition / remediation path in the repo
-  - current fresh rerun is blocked because the local browser session materials are missing
-  - on a credentialed workstation, Gemini can narrow further to a browser-session repair blocker
+  - all five providers have a real acquisition/remediation path in the repo
+  - the current fresh rerun can still stop when the local browser session
+    materials are missing
+  - on a credentialed workstation, Gemini can narrow further to a
+    browser-session repair blocker
 
-这不代表 lane 自己被删了，也不代表 repo regression。
+This does **not** mean the lanes were deleted or that the repo regressed.
 
-它表示的是：
+It means:
 
-> 当前这台机器上的用户自带凭证和浏览器会话材料没有在 fresh rerun 时就位。
+> the current workstation did not have the user-owned credential or browser
+> session material ready at fresh rerun time

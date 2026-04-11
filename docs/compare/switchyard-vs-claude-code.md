@@ -2,37 +2,35 @@
 
 ## Short Answer
 
-They are related by future compatibility, but they are not the same product shape.
-
-中文短答：
-
-它们未来可能兼容，但不是同一层产品。
+They may connect later, but they are not the same product shape.
 
 ## Claude Code
 
-更接近：
+Claude Code is closer to:
 
-- terminal-native coding tool
-- consumer-side workflow and shell
-- gateway/API compatibility consumer
+- a terminal-native coding tool
+- a consumer-side workflow shell
+- a gateway/API compatibility consumer
 
 ## Switchyard
 
-更接近：
+Switchyard is closer to:
 
-- provider runtime
-- BYOK + Web/Login normalization
-- service-first AI runtime for apps
+- a provider runtime
+- `BYOK + Web/Login` normalization
+- a service-first AI runtime for apps
 
 ## Truthful Relationship Today
 
-- `Switchyard` currently has `partial` Claude Code compatibility, but only in a thin fail-closed sense.
-- The landed slice today is a gateway/API-format runtime bridge, not a recreation of the Claude Code shell.
-- Full Claude Code parity is still not supported.
+- Switchyard currently has `partial` Claude Code compatibility, but only in a
+  thin fail-closed sense
+- the landed slice today is a gateway/API-format runtime bridge, not a
+  recreation of the Claude Code shell
+- full Claude Code parity is still not supported
 
 ## Why This Page Exists
 
-为了让这些搜索有 truth-first 页面：
+This page exists so searches like these land on a truth-first explanation:
 
 - `Switchyard vs Claude Code`
 - `Claude Code gateway compatibility`
