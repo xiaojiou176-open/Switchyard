@@ -1,74 +1,71 @@
 # Switchyard Public Proof Pack
 
-这页不是在喊：
+This page does **not** claim that Switchyard has already finished every lane,
+provider, compat route, or distribution surface.
 
-> `Switchyard` 已经把所有 lane、所有 provider、所有 compat、所有 distribution 都做完了。
+It exists to answer one narrower question:
 
-更直白一点说：
+> **What can this repository honestly prove today?**
 
-> 这页只负责回答：
->
-> **今天这个仓到底已经能证明什么。**
+## One-Line Verdict
 
-## 一句话版本
+Today Switchyard can be honestly proved as:
 
-`Switchyard` 当前已经能被诚实地证明成：
+- a `shared provider runtime for AI apps`
+- a `BYOK + Web/Login` service-first substrate
+- a builder-facing runtime repo with partial thin compat, a partial read-only
+  MCP surface, and copy-ready starter packs
 
-- 一个 `shared provider runtime for AI apps`
-- `BYOK + Web/Login` 双 lane 的 service-first substrate
-- 带有 partial thin compat、partial read-only MCP、copy-ready starter packs 的 builder-facing runtime repo
+## Four Things This Repo Can Prove Today
 
-## 今天能证明的 4 件事
+### 1. The repo-side gate is real
 
-### 1. Repo-side gate 是真的
-
-这不是“文档看起来很认真”。
-
-当前这仓已经有 fresh repo-side evidence：
+This is not just "the docs look polished." The repo has fresh repo-side
+evidence:
 
 - `pnpm typecheck` = `0`
 - `pnpm exec vitest run tests/integration/docs/frontdoor-docs.test.ts tests/integration/docs/package-ready-distribution.test.ts tests/unit/mcp/switchyard-mcp.test.ts tests/unit/web/switchyard-cli.test.ts --config vitest.config.ts` = `0`
   - `5 files / 43 tests passed`
 - `pnpm build` = `0`
 
-### 2. Service-first runtime frontdoor 是真的
+### 2. The service-first runtime front door is real
 
-你可以直接走：
+Start here:
 
 - [docs/api/service-http-reference.md](./api/service-http-reference.md)
 - [docs/api/openapi.yaml](./api/openapi.yaml)
 - [examples/runtime-bridge/README.md](../examples/runtime-bridge/README.md)
 
-最小 invoke 证明命令是：
+Minimal invoke proof:
 
 ```bash
 pnpm run start:service-local
 pnpm run example:runtime-bridge
 ```
 
-### 3. Read-only MCP surface 不是口号
+### 3. The read-only MCP surface is not just marketing copy
 
-最小 read-only proof 命令是：
+Minimal read-only proof:
 
 ```bash
 pnpm run example:mcp-inspector
 ```
 
-它能证明：
+That proves:
 
-- MCP server 能起
-- tool inventory 能列
-- `switchyard.runtime.health` 能读
+- the MCP server boots
+- the tool inventory is readable
+- `switchyard.runtime.health` is readable
 
-但它不证明：
+That does **not** prove:
 
-- write plane
-- execution brain
+- a write plane
+- an execution brain
 - runtime invoke through MCP
 
-### 4. Public surface 的边界是被写清楚的
+### 4. The public boundary is written down, not implied
 
-当前公开说法不是“全支持”，而是按 truth table 分层：
+Current public truth is intentionally layered:
 
 - `HTTP / API` = `supported now`
 - `SDK/client` = `partial`
@@ -76,54 +73,57 @@ pnpm run example:mcp-inspector
 - `MCP` = `partial / read-only`
 - `Codex / Claude Code / OpenClaw compat` = `partial / thin / fail-closed`
 
-看这几页就够：
+Use these pages:
 
 - [docs/public-surface-support-matrix.md](./public-surface-support-matrix.md)
 - [docs/public-distribution-ledger.md](./public-distribution-ledger.md)
 - [docs/compat/README.md](./compat/README.md)
 
-## 当前这台 workspace 的 latest live truth
+## Current Live Truth For This Workspace
 
-这部分一定要用最保守、最诚实的话来说。
+This section must stay conservative because live reality is never a repo
+constant.
 
-因为 live gate 永远不是 repo 常量。
-
-当前这台 workspace 上，front door 现在该同步成下面这句，而不是继续贴旧成绩单：
+For the current credentialed workstation, the front door should sync to this
+wording instead of copying an old scorecard:
 
 - `repo-side gate = green`
-- fresh `pnpm run verify:service-live` 当前停在 `Gemini = user-action-required`
-- current workspace external blocker pack = `Gemini / Grok`
-- detailed aggregate wording 仍然属于 credentialed workstation truth，不应在多个 frontdoor 页面重复抄写
+- fresh `pnpm run verify:service-live` currently stops at
+  `Gemini = user-action-required`
+- the current workspace external blocker pack is `Gemini / Grok`
+- detailed aggregate wording belongs in credentialed-workstation proof, not in
+  every front-door page
 
-翻成人话：
+In plain English:
 
-- repo 自己没有卡在内部工程债
-- 当前卡住的是这台机器上的网页登录会话还需要真人补动作，或者继续处理外部 browser/session 问题
-- 换一台机器、换一组 cookie bundle、换一套 browser user agent，结论都可能变
+- the repo is not blocked on internal engineering debt
+- the current stop is workstation-specific browser/session/user action reality
+- a different machine, cookie bundle, or browser user agent may change the
+  outcome
 
-## 最小证明包
+## Minimal Proof Bundle
 
-如果你只想最快做一轮“我信它是真的”的验证，按这个顺序：
+If you want the fastest "I believe this is real" route, run these in order:
 
-### A. 先证明 service 活着
+### A. Prove the service is alive
 
 ```bash
 pnpm run start:service-local
 ```
 
-### B. 先证明 read-only truth 能被读到
+### B. Prove the read-only truth surface is reachable
 
 ```bash
 pnpm run example:mcp-inspector
 ```
 
-### C. 再证明最小 invoke 能打通
+### C. Prove one bounded invoke path can run
 
 ```bash
 pnpm run example:runtime-bridge
 ```
 
-### D. 如果你就在 credentialed workstation 上，再跑 aggregate reality
+### D. If you are already on a credentialed workstation, run aggregate reality
 
 ```bash
 pnpm run reality:gate
@@ -131,7 +131,7 @@ pnpm run reality:gate
 
 ## Allowed Claims Now
 
-现在可以诚实说：
+You can honestly claim:
 
 - `shared provider runtime`
 - `BYOK + Web/Login`
@@ -144,13 +144,13 @@ pnpm run reality:gate
 
 ## Forbidden Overclaims
 
-现在不能诚实说：
+You cannot honestly claim:
 
 - `full Codex parity`
 - `full Claude Code parity`
 - `full OpenClaw parity`
 - `MCP execution brain`
-- `officially listed in marketplace / registry`
+- `officially listed in a marketplace or registry`
 - `all Web/Login providers are live-ready on every machine`
 
 ## Related Pages
