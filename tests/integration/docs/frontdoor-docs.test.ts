@@ -10,6 +10,8 @@ function read(relativePath: string) {
   return readFileSync(resolve(repoRoot, relativePath), "utf8");
 }
 
+const hanRegex = /[\p{Script=Han}]/u;
+
 describe("Switchyard docs frontdoor contracts", () => {
   it("keeps the docs frontdoor linked to the current API, compat, MCP, i18n, and testing guides", () => {
     const docsReadme = read("docs/README.md");
@@ -72,6 +74,41 @@ describe("Switchyard docs frontdoor contracts", () => {
     expect(docsReadme).toContain("docs/discoverability-keyword-truth.md");
     expect(docsReadme).toContain("docs/discoverability-keyword-truth.json");
     expect(docsReadme).toContain("docs/discoverability-keyword-truth.schema.json");
+  });
+
+  it("keeps the primary public frontdoor English-first while allowing helper-page bilingual support", () => {
+    const frontdoorFiles = [
+      "README.md",
+      "docs/README.md",
+      "docs/index.html",
+      "docs/media/30-second-overview.md",
+      "docs/first-success.md",
+      "docs/public-proof-pack.md",
+      "docs/public-distribution-ledger.md",
+      "docs/public-surface-support-matrix.md",
+      "docs/public-surface-catalog.md",
+    ];
+
+    for (const relativePath of frontdoorFiles) {
+      expect(hanRegex.test(read(relativePath))).toBe(false);
+    }
+
+    const readme = read("README.md");
+    const docsReadme = read("docs/README.md");
+    const i18n = read("docs/i18n.md");
+
+    expect(readme).toContain("English-first");
+    expect(docsReadme).toContain("English-first");
+    expect(i18n).toContain("English-first");
+    expect(i18n).toContain("bilingual helper pages");
+    expect(i18n).not.toContain("bilingual developer frontdoor");
+
+    const docsIndex = read("docs/index.html");
+    expect(docsIndex).toContain("Switchyard Docs Atlas");
+    expect(docsIndex).toContain("Choose the shortest truthful route");
+    expect(docsIndex).toContain("Open first success");
+    expect(docsIndex).toContain("public-proof-pack.html");
+    expect(docsIndex).toContain("public-distribution-ledger.html");
   });
 
   it("keeps compat claims explicitly fail-closed instead of full support", () => {
@@ -212,11 +249,8 @@ describe("Switchyard docs frontdoor contracts", () => {
   it("keeps the README developer frontdoor aligned with truthful compatibility and docs links", () => {
     const readme = read("README.md");
 
-    expect(readme).toContain("Switchyard for Codex");
-    expect(
-      readme.includes("planned / not supported yet on committed main") ||
-        readme.includes("partial / thin compat landed / not full parity"),
-    ).toBe(true);
+    expect(readme).toContain("Shared provider runtime for AI apps.");
+    expect(readme).toContain("English-first");
     expect(readme).toContain("docs/media/30-second-overview.md");
     expect(readme).toContain("docs/first-success.md");
     expect(readme).toContain("docs/public-proof-pack.md");
@@ -229,12 +263,11 @@ describe("Switchyard docs frontdoor contracts", () => {
     expect(readme).toContain("docs/glossary.md");
     expect(readme).toContain("docs/testing-pyramid.md");
     expect(readme).toContain("pnpm run test:coverage");
-    expect(readme).toContain("当前稳定主货是 **shared provider runtime**");
+    expect(readme).toContain("shared provider runtime");
     expect(readme).toContain("read-only MCP descriptor");
     expect(readme).toContain("runtime-diagnostics");
-    expect(readme).toContain("artifact-ready != listed-live");
+    expect(readme).toContain("Artifact-ready still does **not** mean listed-live");
     expect(readme).toContain("proof / runbook truth");
-    expect(readme).toContain("它们不该反过来改写 repo 的稳定身份");
     expect(readme).toContain("credentialed workstation");
     expect(readme).toContain("docs/public-surface-support-matrix.md");
     expect(readme).toContain("docs/public-surface-catalog.md");
@@ -271,7 +304,7 @@ describe("Switchyard docs frontdoor contracts", () => {
     expect(readme).toContain("docs/discoverability-keyword-truth.schema.json");
     expect(readme).not.toContain("fresh `verify:service-live` 当前停在 `Gemini = user-action-required`");
     expect(readme).not.toContain("workspace external blocker pack");
-    expect(readme).not.toContain("browser/session blockers");
+    expect(readme).not.toContain("bilingual developer frontdoor");
   });
 
   it("keeps blocker wording and default service port aligned across frontdoor docs", () => {
@@ -283,7 +316,7 @@ describe("Switchyard docs frontdoor contracts", () => {
     const sdkQuickstart = read("docs/api/sdk-quickstart.md");
     const webLoginAcquisition = read("docs/api/web-login-acquisition.md");
 
-    expect(readme).toContain("具体的环境现场记录，交给这些地方承接");
+    expect(readme).toContain("Live/browser outcomes are important");
     expect(readme).not.toContain("`Gemini / Grok`");
     expect(proofPack).toContain("`Gemini / Grok`");
     expect(v1Plan).toContain("`Gemini / Grok`");

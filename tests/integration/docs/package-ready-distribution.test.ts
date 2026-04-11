@@ -26,6 +26,30 @@ describe("package-ready public distribution surfaces", () => {
     expect(compatReadme).toContain("public-distribution-ledger");
   });
 
+  it("keeps homepage metadata aligned with the Pages-first public roots", () => {
+    const rootManifest = readJson<{ homepage: string }>("package.json");
+    const codexManifest = readJson<{ homepage: string }>("packages/consumers/codex/package.json");
+    const claudeManifest = readJson<{ homepage: string }>(
+      "packages/consumers/claude-code/package.json",
+    );
+    const openclawManifest = readJson<{ homepage: string }>(
+      "packages/consumers/openclaw/package.json",
+    );
+    const mcpManifest = readJson<{ homepage: string }>("packages/surfaces/mcp/package.json");
+
+    expect(rootManifest.homepage).toBe("https://xiaojiou176-open.github.io/Switchyard/");
+    expect(codexManifest.homepage).toBe(
+      "https://xiaojiou176-open.github.io/Switchyard/compat/codex.html",
+    );
+    expect(claudeManifest.homepage).toBe(
+      "https://xiaojiou176-open.github.io/Switchyard/compat/claude-code.html",
+    );
+    expect(openclawManifest.homepage).toBe(
+      "https://xiaojiou176-open.github.io/Switchyard/compat/openclaw.html",
+    );
+    expect(mcpManifest.homepage).toBe("https://xiaojiou176-open.github.io/Switchyard/mcp.html");
+  });
+
   it("ships package-ready metadata for consumer and MCP surfaces without overclaiming registry publication", () => {
     const packages = [
       {

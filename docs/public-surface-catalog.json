@@ -121,7 +121,7 @@
     {
       "surface": "i18n",
       "status": "partial",
-      "truthfulMeaning": "Current state is a bilingual developer frontdoor, not full product i18n.",
+      "truthfulMeaning": "The default public front door is English-first; bilingual helper pages remain available, but they do not define the main landing path.",
       "sourceAnchors": [
         "docs/i18n.md",
         "README.md",
