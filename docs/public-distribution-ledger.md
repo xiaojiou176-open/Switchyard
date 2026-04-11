@@ -62,6 +62,20 @@ pnpm run switchyard:cli -- distribution-surface --target mcp
 | Builder starter packs | `no` — not an official marketplace surface | public repo frontdoor only | public GitHub repo paths + machine-readable index + CLI/MCP catalogs | `starter-packs/**`, `starter-packs/index.json`, `docs/starter-pack-index.md` | `pnpm run starter-pack:codex`, `pnpm run starter-pack:mcp` | `copy-ready starter packs`, `builder-facing public frontdoor`, `local-first first-success kits` | `official plugin marketplace listing`, `fully supported host product integration` |
 | Skill packs / docs SEO packs | `no` — not an official marketplace surface | public repo frontdoor only | public docs + machine-readable catalogs + starter packs + marketplace-compatible bundle | `docs/skill-pack-catalog.*`, `starter-packs/skills/**`, `docs/discoverability-keyword-truth.*`, `distribution/claude-marketplace/` | `pnpm run starter-pack:runtime-diagnostics-pack`, `pnpm run starter-pack:docs-seo-sync-pack` | `truth-first builder automation packs`, `public docs/discoverability helpers`, `marketplace-ready bundle artifact` | `official plugin listing`, `launch automation`, `supported publication pipeline` |
 
+## Packet-Scoped Host Read-Back
+
+This ledger stays repo-wide on purpose.
+
+- If a secondary packet such as `switchyard-runtime-diagnostics` has its own
+  host-lane read-back, keep that receipt in the packet README and manifest.
+- Task-supplied 2026-04-11 external read-back says the runtime-diagnostics
+  packet currently has a readable ClawHub page plus a negative host-side
+  safety/trust warning, and an OpenHands receipt at `PR #161` that is still
+  `review-pending`.
+- Those packet-scoped host receipts do **not** upgrade the repo-wide `Skill
+  packs / docs SEO packs` row into an official listing, npm publication, or
+  official MCP Registry listing.
+
 ## Official Surface Anchors
 
 - `Codex`

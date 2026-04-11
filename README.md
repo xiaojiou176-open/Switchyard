@@ -246,6 +246,10 @@ Current distribution truth is intentionally narrow:
 - official marketplace or registry publication is **not** claimed yet
 - builder packets and starter packs are public repo surfaces, not official
   listings
+- packet-scoped host receipts, including the
+  `switchyard-runtime-diagnostics` packet, belong in the packet's own manifest
+  and README; they do **not** upgrade repo-wide npm, marketplace, or official
+  MCP Registry truth
 
 See:
 
