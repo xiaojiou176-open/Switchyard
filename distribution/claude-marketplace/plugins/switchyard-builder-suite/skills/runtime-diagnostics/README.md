@@ -34,10 +34,15 @@ things:
 ## Current truthful state
 
 - the repo-owned packet is complete as a portable host-native skill folder
-- a ClawHub skill page for this packet can be read back live today
-- the OpenHands/extensions lane currently has a fresh external review receipt at
-  PR #161, but `review-pending` is still not the same as `listed-live`
+- task-supplied 2026-04-11 external read-back says a ClawHub page for this
+  packet is live, but the host also shows a negative safety/trust warning; keep
+  that scoped to this packet instead of treating it as repo-wide acceptance
+- task-supplied 2026-04-11 external read-back says the OpenHands/extensions
+  lane currently has PR #161 open with `review-pending` status and blocked
+  mergeability; that is still not the same as `listed-live`
 - this packet stays secondary to the repo's primary runtime identity
+- repo-wide npm, official MCP Registry, and marketplace truth still follow the
+  top-level Switchyard distribution ledger
 
 ## What this packet must not claim
 
