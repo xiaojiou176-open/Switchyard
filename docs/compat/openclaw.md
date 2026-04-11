@@ -8,15 +8,16 @@
 
 ## What We Can Truthfully Say Today
 
-- `openclaw-zero-token` is a technical upstream for Web/Login runtime ideas.
-- current repo truth is now `partial`, but only in a delegation-first thin sense.
+- `openclaw-zero-token` is a technical upstream for Web/Login runtime ideas
+- the current repo truth is `partial`, but only in a delegation-first thin
+  sense
 
 ## What Is Already Landed
 
-- `Switchyard` already uses OpenClaw research to shape:
+- Switchyard already uses OpenClaw research to shape:
   - Web/Login runtime boundaries
   - auth/session design
-  - thin HTTP/runtime ideas
+  - thin HTTP/runtime seams
   - a delegation-first thin adapter at `packages/consumers/openclaw/src/index.ts`
 
 ## What Is Not Landed
@@ -27,15 +28,16 @@
 
 ## Boundary Reminder
 
-`OpenClaw` 不是一个“顺手兼容一下就好”的薄 consumer。
+OpenClaw is not a small “easy compat target.”
 
-它更像一整套大的产品世界：
+It carries a much larger product world:
 
 - gateway control plane
-- operator/node/session protocol
+- operator and session protocol
 - plugin/backend boundaries
 
-所以这页要明确告诉读者：
+So this page needs to say something very specific:
 
-> 现在已经不是纯 research-only thinking。  
-> 但它仍然只是 fail-closed thin compat，不是 OpenClaw product-shell parity。
+> this repo is no longer pure research-only thinking,
+> but it is still only fail-closed thin compat, not OpenClaw product-shell
+> parity

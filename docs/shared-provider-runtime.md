@@ -2,23 +2,23 @@
 
 ## What It Means
 
-A shared provider runtime is the layer that sits between AI apps and upstream AI providers.
+A shared provider runtime is the layer that sits between AI apps and upstream
+AI providers.
 
-中文解释：
+Think of it like one power box for many rooms: each room still does its own
+work, but none of them has to wire directly into the high-voltage grid alone.
 
-它就像一个统一配电箱。  
-不同房间都要用电，但你不想每个房间自己去拉外面的高压线。
-
-`Switchyard` 想做的就是这层：
+That is the layer Switchyard is trying to own:
 
 - provider access normalization
-- auth/session normalization
+- auth and session normalization
 - diagnostics normalization
-- service / SDK surfaces for AI apps
+- service and SDK surfaces for AI apps
 
 ## Why It Matters
 
-Without a shared provider runtime, every app repeats the same work:
+Without a shared provider runtime, every app keeps rebuilding the same messy
+provider layer:
 
 - provider-specific auth handling
 - model naming differences
@@ -26,7 +26,7 @@ Without a shared provider runtime, every app repeats the same work:
 - error normalization
 - Web/Login edge cases
 
-## What Switchyard Claims Today
+## What Switchyard Can Truthfully Claim Today
 
 Truthfully claimable now:
 
@@ -48,14 +48,14 @@ Not truthfully claimable now:
 
 ## Why This Page Exists
 
-因为很多搜索和 AI 工具会直接抓：
+Searchers and AI tools often look for phrases like:
 
 - `shared provider runtime`
 - `AI app backend`
 - `multi-provider runtime`
 
-如果没有一页把这层说清楚，项目就很容易被误读成：
+If this layer is not named clearly, the repo is easy to misread as:
 
-- 聊天产品
-- agent shell
-- 又一个大而全的平台
+- a chat product
+- an agent shell
+- another all-in-one AI platform

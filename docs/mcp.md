@@ -8,23 +8,22 @@
 
 ## Why This Page Exists
 
-因为很多人会搜：
+Many users search for:
 
 - `Switchyard MCP`
 - `Switchyard MCP server`
 - `AI runtime MCP backend`
 
-如果没有这一页，搜索者和 AI 工具很容易把：
+Without this page, it is easy to confuse:
 
-- `read-only thin surface`
-- `full MCP backend`
-
-混成一回事。
+- a read-only thin surface
+- a full MCP backend
 
 ## What Is True Right Now
 
-- `Switchyard` currently ships a committed service runtime and SDK/client surfaces.
-- `Switchyard` now also ships a committed **read-only stdio MCP server/tool surface**:
+- Switchyard ships a committed service runtime and SDK/client surfaces
+- Switchyard now also ships a committed **read-only stdio MCP server/tool
+  surface**:
   - startup command:
     - `pnpm run switchyard:mcp`
   - committed package:
@@ -33,46 +32,47 @@
     - service-runtime-backed
     - local-first
     - read-only
-- the current landed toolset is intentionally narrow:
+- the landed toolset is intentionally narrow:
   - `switchyard.runtime.bootstrap`
   - `switchyard.providers.list`
   - `switchyard.runtime.health`
   - `switchyard.auth.status`
-  - provider-scoped status / probe / remediation / current-page / current-console / current-network
-  - provider support-bundle / readiness / attach-target / diagnose ladder
+  - provider-scoped status, probe, remediation, current-page, current-console,
+    and current-network
+  - provider support-bundle, readiness, attach-target, and diagnose ladder
   - doc-backed catalog truth for:
     - surface catalog schema
-    - compat target catalog / schema / entries
-    - builder kit catalog / schema / entries
-    - skill pack catalog / schema / entries
-    - provider catalog / provider entry
-    - builder kits / skill packs
-    - host playbooks / host examples
+    - compat target catalog, schema, and entries
+    - builder kit catalog, schema, and entries
+    - skill pack catalog, schema, and entries
+    - provider catalog and provider entry
+    - builder kits and skill packs
+    - host playbooks and host examples
     - builder journeys
     - builder intent router
     - keyword truth
-    - starter manifests / starter examples / their schemas
-    - starter-pack index / chooser / comparison
-    - builder templates / builder examples
-    - skill templates / skill examples
+    - starter manifests and starter examples plus schemas
+    - starter-pack index, chooser, and comparison
+    - builder templates and builder examples
+    - skill templates and skill examples
 - this surface is **not**:
   - an execution brain
   - a write plane
   - a full Codex / Claude Code embedded backend
-  - a worktree / tool / terminal parity layer
+  - a worktree, tool, or terminal parity layer
 
 ## What Is Plausible Later
 
-如果未来阶段 gate 继续打开，一个更合理的方向是：
+If later phase gates open further, a more reasonable direction is:
 
-- 在当前 read-only surface 之上继续补更稳的 adapter ergonomics
-- 不把 MCP 语义倒灌进 provider runtime core
+- improve adapter ergonomics on top of the current read-only surface
+- avoid forcing MCP semantics back into the provider-runtime core
 
-如果你只是想让 plugin / skills / builder tooling 先知道当前 truth，
-现在最稳的入口有两条：
+If plugin, skills, or builder tooling only needs current truth, the stable
+entrypoints today are:
 
-- 直接连接 `pnpm run switchyard:mcp`
-- 或读取：
+- connect directly to `pnpm run switchyard:mcp`
+- or read:
   - `pnpm run switchyard:cli -- mcp-status`
   - `pnpm run switchyard:cli -- surface-catalog`
   - `pnpm run switchyard:cli -- compat-target-catalog`
@@ -94,23 +94,23 @@
   - `pnpm run switchyard:cli -- starter-pack-scenario --target mcp-inspector`
   - `docs/public-surface-catalog.json`
 
-如果你想要一份“能直接跑起来”的最小样板，不想自己从零拼 client 配置，
-可以直接看：
+If you want a minimal runnable sample instead of assembling a client manually,
+open:
 
 - [examples/mcp-inspector/README.md](../examples/mcp-inspector/README.md)
 
-如果你现在更想知道：
+If your real question is:
 
-> **“我应该先拿 `mcp` 这个 starter pack，还是别的 pack？”**
+> **Should I start with the `mcp` starter pack or another pack?**
 
-那先别只看 tool inventory，直接看：
+Do not stop at the tool inventory. Go here next:
 
 - [docs/starter-pack-chooser.md](./starter-pack-chooser.md)
 - `switchyard.catalog.starter_pack_chooser`
 - `switchyard.catalog.starter_pack_scenario`
 
-如果你已经决定把 `Switchyard` 接进一个宿主，而不是只读当前真相，
-下一步再看：
+If you have already decided to attach Switchyard to a host instead of only
+reading current truth, go here next:
 
 - [docs/host-integration-playbooks.md](./host-integration-playbooks.md)
 - `switchyard.catalog.host_playbooks`
@@ -121,9 +121,9 @@
 
 ## Fastest Route By Question
 
-你可以把这块理解成“值班台分诊表”：
+Treat this section like a triage desk:
 
-- 你要看 runtime / auth / provider 当前状态：
+- if you need runtime, auth, or provider state:
   - `switchyard.runtime.bootstrap`
   - `switchyard.providers.list`
   - `switchyard.runtime.health`
@@ -140,7 +140,7 @@
   - `switchyard.provider.diagnose_ladder`
   - `switchyard.provider.support_bundle`
   - `switchyard.provider.diagnose`
-- 你要看 surface / compat / provider truth：
+- if you need surface, compat, or provider truth:
   - `switchyard.catalog.surface_catalog`
   - `switchyard.catalog.surface_catalog_schema`
   - `switchyard.catalog.compat_target_catalog`
@@ -153,7 +153,7 @@
   - `switchyard.catalog.provider_entry`
   - `switchyard.catalog.compat_targets`
   - `switchyard.catalog.compat_target`
-- 你要选 builder path / skill pack / starter pack：
+- if you need a builder path, skill pack, or starter pack:
   - `switchyard.catalog.builder_kits`
   - `switchyard.catalog.builder_kit`
   - `switchyard.catalog.skill_packs`
@@ -171,7 +171,7 @@
   - `switchyard.catalog.starter_pack_comparison`
   - `switchyard.catalog.starter_pack_comparison_schema`
   - `switchyard.catalog.starter_pack_filter`
-- 你要一条完整 builder journey，或要看 keyword-claim truth：
+- if you need a full builder journey or keyword-claim truth:
   - `switchyard.catalog.builder_journeys`
   - `switchyard.catalog.builder_journeys_schema`
   - `switchyard.catalog.builder_journey`
@@ -181,32 +181,33 @@
   - `switchyard.catalog.keyword_truth`
   - `switchyard.catalog.keyword_truth_schema`
   - `switchyard.catalog.keyword_entry`
-- 你要宿主接入说明和 runnable example：
+- if you need host integration docs or runnable examples:
   - `switchyard.catalog.host_playbooks`
   - `switchyard.catalog.host_playbooks_schema`
   - `switchyard.catalog.host_playbook`
   - `switchyard.catalog.host_examples`
   - `switchyard.catalog.host_examples_schema`
   - `switchyard.catalog.host_example`
-- 你要 starter template / example truth，或想先确认 MCP 自己现在暴露了什么：
+- if you need starter templates/examples or the MCP inventory itself:
   - `switchyard.catalog.builder_template`
   - `switchyard.catalog.builder_example`
-- `switchyard.catalog.skill_template`
-- `switchyard.catalog.skill_example`
-- `switchyard.catalog.mcp_status`
-- `switchyard.catalog.mcp_tools`
-- `switchyard.catalog.mcp_tool_catalog`
-- `switchyard.catalog.mcp_tool_catalog_schema`
-- `switchyard.catalog.mcp_tool`
+  - `switchyard.catalog.skill_template`
+  - `switchyard.catalog.skill_example`
+  - `switchyard.catalog.mcp_status`
+  - `switchyard.catalog.mcp_tools`
+  - `switchyard.catalog.mcp_tool_catalog`
+  - `switchyard.catalog.mcp_tool_catalog_schema`
+  - `switchyard.catalog.mcp_tool`
 
 ## What Would Be Fake Today
 
-以下说法现在都不诚实：
+These claims are still dishonest:
 
 - `Switchyard MCP has full tool parity today`
 - `Switchyard MCP is already an execution brain`
 - `Switchyard is already a Codex/Claude Code MCP backend`
 
-当前最多能诚实写成：
+The most truthful public wording today is:
 
-> `Switchyard` now ships a committed **read-only MCP surface** on `main`, but it is still only a thin partial server/tool slice.
+> Switchyard ships a committed **read-only MCP surface** on `main`, but it is
+> still only a thin partial server/tool slice.

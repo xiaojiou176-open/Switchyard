@@ -29,6 +29,9 @@ jobs:
       - name: Install
         run: pnpm install --frozen-lockfile
 
+      - name: Host-process safety gate
+        run: pnpm run scan:host-process-risks
+
       - name: Typecheck
         run: pnpm typecheck
 
