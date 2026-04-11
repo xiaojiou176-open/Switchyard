@@ -8,15 +8,15 @@
 
 ## What We Can Truthfully Say Today
 
-- current repo truth is now `partial`, but only in a very thin sense.
+- the current repo truth is `partial`, but only in a very thin sense
 - the landed slice is intentionally narrow:
-  - text-only message bridge
+  - a text-only message bridge
   - shared runtime delegation through `/v1/runtime/invoke`
   - fail-closed rejection for tool execution and terminal-shell parity
 
 ## What Is Already Landed
 
-- `Switchyard` already has:
+- Switchyard already has:
   - a durable service runtime
   - durable auth/session contracts
   - durable service vs SDK surface contracts
@@ -24,21 +24,19 @@
 
 ## What Is Not Landed
 
-- no terminal shell / worktree parity
+- no terminal shell or worktree parity
 - no approval UX parity
 - no tool/MCP parity
 - no truthful basis to claim full Claude Code support today
 
 ## Boundary Reminder
 
-不要把这些 future compat 想成：
+Do not imagine this as:
 
-- 复制 Claude Code 终端壳
-- 复制 Claude Code plugin/worktree/approval UI
+- recreating the Claude Code terminal shell
+- recreating Claude Code plugin/worktree/approval UX
 
-更诚实的理解是：
+The more truthful reading is:
 
-> 如果以后做，也应该先从网关/API 兼容层切入，  
-> 而不是把 Claude Code 的产品壳搬进 `Switchyard`。
-
-当前 landed thin adapter，只能算这条路线的第一刀，而且仍然必须 fail-closed。
+> if this grows later, it should grow from the gateway/API compatibility layer
+> first, not by copying the Claude Code product shell into Switchyard
