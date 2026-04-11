@@ -1,25 +1,25 @@
 # Switchyard Compatibility Matrix
 
-This page is the compatibility frontdoor.
+This page is the compatibility front door.
 
-这页是兼容性总入口，不是营销页。
+It is not the marketing page.
 
 ## Current Truth
 
 ### Public compatibility targets
 
-| Target | Status | Truthful Meaning |
+| Target | Status | Truthful meaning |
 | --- | --- | --- |
-| `Codex` | `partial` | thin fail-closed runtime adapter is landed; full Codex parity is still not supported |
-| `Claude Code` | `partial` | thin fail-closed runtime adapter is landed; tool/MCP/terminal parity is still not supported |
-| `OpenClaw` | `partial` | thin fail-closed runtime adapter is landed; operator/control-plane parity is still not supported |
+| `Codex` | `partial` | a thin fail-closed runtime adapter is landed; full Codex parity is still not supported |
+| `Claude Code` | `partial` | a thin fail-closed runtime adapter is landed; tool/MCP/terminal parity is still not supported |
+| `OpenClaw` | `partial` | a thin fail-closed runtime adapter is landed; operator/control-plane parity is still not supported |
 | `MCP` | `partial` | a read-only runtime-backed MCP server/tool surface is landed, but this is still not embedded Codex / Claude Code / OpenClaw parity |
 
 ### Related first-party seam snapshots
 
 These are **related repo seam snapshots**, not public compatibility claims.
 
-| Repo | Current relation | Truthful Meaning |
+| Repo | Current relation | Truthful meaning |
 | --- | --- | --- |
 | `campus-copilot` | bounded seam landed | a thin BFF bridge exists, but it is not the whole consumer contract |
 | `CortexPilot` | future reselection | provider/base_url seam exists in planning, but it is not a current public compat surface |
@@ -33,14 +33,14 @@ These are **related repo seam snapshots**, not public compatibility claims.
 - [docs/public-distribution-ledger.md](../public-distribution-ledger.md)
 - [docs/public-surface-catalog.md](../public-surface-catalog.md)
 - [docs/README.md](../README.md)
-  - 如果你要完整 atlas，而不是 compat 这一小柜，请直接回总目录
+  - if you want the full atlas instead of the compat shelf, go back to the main docs index
 
 ## Builder / Plugin / Skills Entry
 
-如果你是要给外部工具、plugin、skills pack、automation builder 读当前 truth，
-不要靠人工抄文档。
+If an external tool, plugin, skills pack, or automation builder needs current
+truth, do not copy it by hand.
 
-优先用：
+Prefer:
 
 - `pnpm run switchyard:cli -- public-distribution-ledger`
 - `pnpm run switchyard:cli -- public-distribution-ledger-schema`
@@ -93,12 +93,10 @@ These are **related repo seam snapshots**, not public compatibility claims.
 - `pnpm run switchyard:cli -- builder-example --target codex`
 - `pnpm run switchyard:cli -- skill-template --target runtime-diagnostics-pack`
 - `pnpm run switchyard:cli -- skill-example --target runtime-diagnostics-pack`
-- `pnpm run switchyard:cli -- provider-catalog`
-- `pnpm run switchyard:cli -- provider-entry --target chatgpt`
 - `pnpm run switchyard:cli -- mcp-status`
 - `pnpm run switchyard:cli -- mcp-tools`
 
-或者直接读取：
+Or read these machine-readable files directly:
 
 - [docs/public-distribution-ledger.json](../public-distribution-ledger.json)
 - [docs/compat-target-catalog.json](../compat-target-catalog.json)
@@ -106,11 +104,14 @@ These are **related repo seam snapshots**, not public compatibility claims.
 
 ## Important Rule
 
-`partial`、`planned` 和 `research only` 都不等于 `supported`。  
-这页的目的就是避免把这些标签混写。
+`partial`, `planned`, and `research only` never mean `supported`.
 
-更直白一点说：
+That is the whole point of this page.
 
-- public compatibility targets 只使用 frontdoor truth labels：`partial / planned / research only`
-- first-party repo seam snapshots 不应伪装成 public support matrix
-- 当某一行只是 narrow landed slice 时，必须把 `thin / bounded / fail-closed` 写明白
+In plain English:
+
+- public compatibility targets only use front-door truth labels such as
+  `partial / planned / research only`
+- first-party seam snapshots must not pretend to be the public support matrix
+- whenever the landed slice is narrow, `thin / bounded / fail-closed` must be
+  stated directly
