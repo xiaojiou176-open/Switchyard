@@ -52,9 +52,11 @@ It does **not** mean:
 ## Fastest Public Surfaces
 
 - [README.md](README.md)
+- [llms-install.md](llms-install.md)
 - [INTEGRATIONS.md](INTEGRATIONS.md)
 - [docs/public-distribution-ledger.md](docs/public-distribution-ledger.md)
 - [docs/submission-packet-ledger.md](docs/submission-packet-ledger.md)
+- [docs/mcp-listings-cockpit.md](docs/mcp-listings-cockpit.md)
 - [docs/plugin-skill-starter-kits.md](docs/plugin-skill-starter-kits.md)
 - [docs/starter-pack-chooser.md](docs/starter-pack-chooser.md)
 
@@ -72,6 +74,9 @@ That page keeps three boxes separate:
 
 This matters because a packet-scoped host receipt still does **not** upgrade
 Switchyard-wide npm, Official MCP Registry, or hosted-runtime truth.
+
+If you need the current registry / marketplace / owner-manual cockpit, open
+[docs/mcp-listings-cockpit.md](docs/mcp-listings-cockpit.md).
 
 ## Minimal Human Action Packs
 

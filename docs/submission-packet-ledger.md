@@ -57,6 +57,10 @@ The runtime-diagnostics packet is a different box.
 It is useful for host ecosystems that want a self-contained folder, but it is
 still a **secondary packet lane**.
 
+If you need the current outer-lane verdicts for Cline, owner-manual forms,
+Smithery, or HiMarket, open
+[`docs/mcp-listings-cockpit.md`](./mcp-listings-cockpit.md).
+
 Use these files together:
 
 1. `distribution/claude-marketplace/plugins/switchyard-builder-suite/skills/runtime-diagnostics/README.md`
