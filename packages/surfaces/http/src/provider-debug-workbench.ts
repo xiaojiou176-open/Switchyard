@@ -169,6 +169,90 @@ function renderDetailedBrowserDiagnostics(sharedDiagnostic: SharedDiagnosticStat
   </section>`;
 }
 
+function renderEvidenceStack(
+  debug: ServiceProviderDebugSupportView,
+  currentPageDiagnostic: string,
+  currentConsoleDiagnostic: string,
+  currentNetworkDiagnostic: string,
+): string {
+  return `<details class="evidence-stack">
+    <summary>Evidence stack, repair ladder, and raw JSON surfaces</summary>
+    <div class="evidence-stack-body">
+      <section class="section">
+        <header class="section-header">
+          <h2>Current browser evidence</h2>
+          <p>The safest way to reason about a web-login provider is: first what Switchyard stored, then what the current browser page actually shows, then what console and network saw during the same inspection window.</p>
+        </header>
+        <div class="section-grid">
+          <article class="section-card">
+            <h3>Current page</h3>
+            <p>${escapeHtml(currentPageDiagnostic)}</p>
+            <div class="meta-row">
+              ${renderOptionalCode("classification", debug.currentPage.classification)}
+              ${renderOptionalCode("url", debug.currentPage.url)}
+              ${renderOptionalCode("title", debug.currentPage.title)}
+            </div>
+          </article>
+          <article class="section-card">
+            <h3>Capture provenance</h3>
+            <div class="meta-row">
+              ${renderOptionalCode("browser mode", debug.captureProvenance?.browserMode)}
+              ${renderOptionalCode("captured", debug.captureProvenance?.capturedAt)}
+              ${renderOptionalCode("profile", debug.captureProvenance?.profileName)}
+            </div>
+            <p>${escapeHtml(debug.persistenceAudit?.summary ?? "No persistence audit summary is currently available.")}</p>
+          </article>
+        </div>
+      </section>
+
+      <section class="section">
+        <header class="section-header">
+          <h2>Current console and network</h2>
+          <p>These are evidence surfaces, not vanity metrics. Empty entries mean Switchyard did not see fresh events during this inspection window, not that the provider is automatically healthy.</p>
+        </header>
+        <div class="section-grid">
+          <article class="section-card">
+            <h3>Current console</h3>
+            <p>${escapeHtml(currentConsoleDiagnostic)}</p>
+            ${renderConsoleEntries(debug.currentConsole)}
+          </article>
+          <article class="section-card">
+            <h3>Current network</h3>
+            <p>${escapeHtml(currentNetworkDiagnostic)}</p>
+            ${renderNetworkEntries(debug.currentNetwork)}
+          </article>
+        </div>
+      </section>
+
+      <section class="section">
+        <header class="section-header">
+          <h2>Diagnose ladder</h2>
+          <p>Walk this in order. It is the repair ladder for this provider on this machine, not a product KPI wall.</p>
+        </header>
+        <ol class="ladder">
+          ${debug.diagnoseLadder.map((step) => renderDiagnoseStep(step)).join("")}
+        </ol>
+      </section>
+
+      <section class="section">
+        <header class="section-header">
+          <h2>JSON truth surfaces</h2>
+          <p>Use these routes when you want the raw evidence that backs this page. They stay read-only on purpose.</p>
+        </header>
+        <div class="json-link-grid">
+          <a href="${escapeHtml(debug.routes.status)}" target="_blank" rel="noopener">Status JSON</a>
+          <a href="${escapeHtml(debug.routes.probe)}" target="_blank" rel="noopener">Probe JSON</a>
+          <a href="${escapeHtml(debug.routes.remediation)}" target="_blank" rel="noopener">Remediation JSON</a>
+          <a href="${escapeHtml(debug.routes.debugCurrentPage)}" target="_blank" rel="noopener">Current page JSON</a>
+          <a href="${escapeHtml(debug.routes.debugCurrentConsole)}" target="_blank" rel="noopener">Current console JSON</a>
+          <a href="${escapeHtml(debug.routes.debugCurrentNetwork)}" target="_blank" rel="noopener">Current network JSON</a>
+          <a href="${escapeHtml(debug.routes.debugSupportBundle)}" target="_blank" rel="noopener">Support bundle JSON</a>
+        </div>
+      </section>
+    </div>
+  </details>`;
+}
+
 function renderSummaryCard(title: string, status: string, summary: string, meta: string): string {
   const tone = mapTone(status);
 
@@ -606,6 +690,24 @@ export function renderProviderDebugWorkbench(
         margin-top: 0.85rem;
       }
 
+      .evidence-stack {
+        margin-bottom: 1rem;
+        border: 1px solid var(--line);
+        border-radius: 20px;
+        background: var(--panel);
+        box-shadow: var(--shadow);
+      }
+
+      .evidence-stack summary {
+        cursor: pointer;
+        padding: 1rem 1.15rem;
+        color: var(--muted);
+      }
+
+      .evidence-stack-body {
+        padding: 0 1rem 1rem;
+      }
+
       :focus-visible {
         outline: 2px solid var(--accent);
         outline-offset: 2px;
@@ -695,78 +797,12 @@ export function renderProviderDebugWorkbench(
             .join(""),
         )}
       </section>
-
-      <section class="section">
-        <header class="section-header">
-          <h2>Current browser evidence</h2>
-          <p>The safest way to reason about a web-login provider is: first what Switchyard stored, then what the current browser page actually shows, then what console and network saw during the same inspection window.</p>
-        </header>
-        <div class="section-grid">
-          <article class="section-card">
-            <h3>Current page</h3>
-            <p>${escapeHtml(currentPageDiagnostic)}</p>
-            <div class="meta-row">
-              ${renderOptionalCode("classification", debug.currentPage.classification)}
-              ${renderOptionalCode("url", debug.currentPage.url)}
-              ${renderOptionalCode("title", debug.currentPage.title)}
-            </div>
-          </article>
-          <article class="section-card">
-            <h3>Capture provenance</h3>
-            <div class="meta-row">
-              ${renderOptionalCode("browser mode", debug.captureProvenance?.browserMode)}
-              ${renderOptionalCode("captured", debug.captureProvenance?.capturedAt)}
-              ${renderOptionalCode("profile", debug.captureProvenance?.profileName)}
-            </div>
-            <p>${escapeHtml(debug.persistenceAudit?.summary ?? "No persistence audit summary is currently available.")}</p>
-          </article>
-        </div>
-      </section>
-
-      <section class="section">
-        <header class="section-header">
-          <h2>Current console and network</h2>
-          <p>These are evidence surfaces, not vanity metrics. Empty entries mean Switchyard did not see fresh events during this inspection window, not that the provider is automatically healthy.</p>
-        </header>
-        <div class="section-grid">
-          <article class="section-card">
-            <h3>Current console</h3>
-            <p>${escapeHtml(currentConsoleDiagnostic)}</p>
-            ${renderConsoleEntries(debug.currentConsole)}
-          </article>
-          <article class="section-card">
-            <h3>Current network</h3>
-            <p>${escapeHtml(currentNetworkDiagnostic)}</p>
-            ${renderNetworkEntries(debug.currentNetwork)}
-          </article>
-        </div>
-      </section>
-
-      <section class="section">
-        <header class="section-header">
-          <h2>Diagnose ladder</h2>
-          <p>Walk this in order. It is the repair ladder for this provider on this machine, not a product KPI wall.</p>
-        </header>
-        <ol class="ladder">
-          ${debug.diagnoseLadder.map((step) => renderDiagnoseStep(step)).join("")}
-        </ol>
-      </section>
-
-      <section class="section">
-        <header class="section-header">
-          <h2>JSON truth surfaces</h2>
-          <p>Use these routes when you want the raw evidence that backs this page. They stay read-only on purpose.</p>
-        </header>
-        <div class="json-link-grid">
-          <a href="${escapeHtml(debug.routes.status)}" target="_blank" rel="noopener">Status JSON</a>
-          <a href="${escapeHtml(debug.routes.probe)}" target="_blank" rel="noopener">Probe JSON</a>
-          <a href="${escapeHtml(debug.routes.remediation)}" target="_blank" rel="noopener">Remediation JSON</a>
-          <a href="${escapeHtml(debug.routes.debugCurrentPage)}" target="_blank" rel="noopener">Current page JSON</a>
-          <a href="${escapeHtml(debug.routes.debugCurrentConsole)}" target="_blank" rel="noopener">Current console JSON</a>
-          <a href="${escapeHtml(debug.routes.debugCurrentNetwork)}" target="_blank" rel="noopener">Current network JSON</a>
-          <a href="${escapeHtml(debug.routes.debugSupportBundle)}" target="_blank" rel="noopener">Support bundle JSON</a>
-        </div>
-      </section>
+      ${renderEvidenceStack(
+        debug,
+        currentPageDiagnostic,
+        currentConsoleDiagnostic,
+        currentNetworkDiagnostic,
+      )}
     </main>
   </body>
 </html>`;

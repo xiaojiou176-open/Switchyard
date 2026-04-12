@@ -900,6 +900,7 @@ describe("Switchyard HTTP surface", () => {
 
     expect(workbenchResponse.status).toBe(200);
     expect(workbenchHtml).toContain("Detailed browser diagnostics");
+    expect(workbenchHtml).toContain("Evidence stack, repair ladder, and raw JSON surfaces");
     expect(workbenchHtml).toContain(
       "Fresh browser inspection is currently unavailable. Use the detailed browser diagnostics tray below for the raw transport error.",
     );

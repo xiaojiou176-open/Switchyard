@@ -90,6 +90,8 @@ describe('auth portal shell', () => {
     expect(html).toContain('Inspect current browser');
     expect(html).toContain('Web/Login live readiness');
     expect(html).toContain('The five provider verdicts that matter first');
+    expect(html).toContain('Portal rules, workflows, and browser handoff model');
+    expect(html).toContain('BYOK inventory and local key slots');
     expect(html).toContain('Login');
     expect(html).toContain('Status');
     expect(html).toContain('Re-auth');

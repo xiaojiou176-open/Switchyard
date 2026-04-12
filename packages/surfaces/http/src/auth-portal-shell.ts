@@ -761,6 +761,20 @@ function renderSection(section: AuthPortalSection): string {
   </section>`;
 }
 
+function renderCollapsedSection(
+  section: AuthPortalSection,
+  title: string,
+  description: string,
+): string {
+  return `<details class="secondary-context-stack">
+    <summary>${escapeHtml(title)}</summary>
+    <div class="secondary-context-body">
+      <p>${escapeHtml(description)}</p>
+      ${renderSection(section)}
+    </div>
+  </details>`;
+}
+
 function orderSectionsForDisplay(sections: readonly AuthPortalSection[]): AuthPortalSection[] {
   return [...sections].sort((left, right) => {
     if (left.id === right.id) {
@@ -881,6 +895,24 @@ function renderBoundaryRail(model: AuthPortalShellModel): string {
       <p>${escapeHtml(model.trustBoundary)}</p>
     </article>
   </section>`;
+}
+
+function renderSecondaryPortalContext(model: AuthPortalShellModel): string {
+  return `<details class="secondary-context-stack">
+    <summary>Portal rules, workflows, and browser handoff model</summary>
+    <div class="secondary-context-body">
+      ${renderBoundaryRail(model)}
+      <section class="policy-list" aria-label="Supported policies">
+        ${model.supportedPolicies
+          .map((policy) => `<span class="policy-pill">${escapeHtml(policy)}</span>`)
+          .join('')}
+      </section>
+      <section class="workflow-grid" aria-label="Auth workflows">
+        ${model.workflows.map((workflow) => renderWorkflowSummary(workflow)).join('')}
+      </section>
+      ${renderModeGuide()}
+    </div>
+  </details>`;
 }
 
 function renderModeGuide(): string {
@@ -1333,6 +1365,24 @@ export function renderAuthPortalShell(model: AuthPortalShellModel): string {
         color: var(--ink);
         text-decoration: none;
         border-bottom: 1px solid rgba(255, 255, 255, 0.28);
+      }
+
+      .secondary-context-stack {
+        margin-bottom: 1rem;
+        border: 1px solid var(--line);
+        border-radius: 20px;
+        background: var(--panel);
+        box-shadow: var(--shadow);
+      }
+
+      .secondary-context-stack summary {
+        cursor: pointer;
+        padding: 1rem 1.15rem;
+        color: var(--muted);
+      }
+
+      .secondary-context-body {
+        padding: 0 1rem 1rem;
       }
 
       .policy-list {
@@ -1830,19 +1880,20 @@ export function renderAuthPortalShell(model: AuthPortalShellModel): string {
           </article>
         </div>
       </section>
-      ${renderWebLoginPriorityRail(model)}
-      ${renderBoundaryRail(model)}
-      <section class="policy-list" aria-label="Supported policies">
-        ${model.supportedPolicies
-          .map((policy) => `<span class="policy-pill">${escapeHtml(policy)}</span>`)
-          .join('')}
-      </section>
-      <section class="workflow-grid" aria-label="Auth workflows">
-        ${model.workflows.map((workflow) => renderWorkflowSummary(workflow)).join('')}
-      </section>
       <section id="auth-portal-feedback" class="feedback" role="status" aria-live="polite" aria-atomic="true" tabindex="-1" hidden></section>
-      ${orderedSections.map((section) => renderSection(section)).join('')}
-      ${renderModeGuide()}
+      ${renderWebLoginPriorityRail(model)}
+      ${orderedSections
+        .map((section) =>
+          section.id === "byok"
+            ? renderCollapsedSection(
+                section,
+                "BYOK inventory and local key slots",
+                "Open this only when you need the local API-key inventory. Keep the Web/Login live wall above as the primary front-door truth.",
+              )
+            : renderSection(section),
+        )
+        .join('')}
+      ${renderSecondaryPortalContext(model)}
     </main>
     ${renderRouteCatalog(model.routeCatalog)}
     ${renderPortalScript(model.routeCatalog)}
