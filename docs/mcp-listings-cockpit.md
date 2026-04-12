@@ -14,7 +14,7 @@ It separates:
 | Lane | Current status | Exact receipt or blocker |
 | --- | --- | --- |
 | Official MCP Registry | `exact blocker` | `npm publish` for `@switchyard/surface-mcp@0.1.0` returned `404 Not Found - PUT https://registry.npmjs.org/@switchyard%2fsurface-mcp`; current blocker is npm scope/package ownership under the active `xiaojiou176` account. |
-| Cline MCP Marketplace | `review-pending` after issue creation | See the live issue receipt once created. |
+| Cline MCP Marketplace | `review-pending` | Live issue receipt: `https://github.com/cline/mcp-marketplace/issues/1321` |
 | mcpservers.org | `owner-manual-ready` | Public form packet below is complete enough for owner submit. |
 | MCP.so | `owner-manual-ready` | Public `/submit` packet below is complete enough for owner submit. |
 | LobeHub MCP Marketplace | `owner-manual-ready` | Listing packet below is prepared; login/import remains owner-only. |
