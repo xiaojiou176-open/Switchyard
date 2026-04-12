@@ -56,6 +56,8 @@ That proves:
 - the MCP server boots
 - the tool inventory is readable
 - `switchyard.runtime.health` is readable
+- the same runtime truth can also be opened through a thin local browser-facing
+  auth/debug shell
 
 That does **not** prove:
 
@@ -72,6 +74,8 @@ Current public truth is intentionally layered:
 - `CLI` = `partial`
 - `MCP` = `partial / read-only`
 - `Codex / Claude Code / OpenClaw compat` = `partial / thin / fail-closed`
+- local auth/debug HTML pages stay thin and read-only over the same runtime
+  truth; they are not a hosted control plane
 
 Use these pages:
 
@@ -89,8 +93,8 @@ wording instead of copying an old scorecard:
 
 - `repo-side gate = green`
 - fresh `pnpm run verify:service-live` currently stops at
-  `Gemini = user-action-required`
-- the current workspace external blocker pack is `Gemini / Grok`
+  `Claude = account-action-required`
+- the current workspace external blocker pack is `Claude / Grok`
 - detailed aggregate wording belongs in credentialed-workstation proof, not in
   every front-door page
 

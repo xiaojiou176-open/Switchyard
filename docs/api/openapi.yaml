@@ -14,6 +14,7 @@ tags:
   - name: discovery
   - name: auth
   - name: providers
+  - name: debug
   - name: acquisition
   - name: invocation
 paths:
@@ -183,6 +184,76 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/GenericObject'
+  /v1/runtime/providers/{providerId}/debug/current-page:
+    get:
+      tags: [debug]
+      summary: Read the latest current-page slice for a provider
+      operationId: getProviderCurrentPage
+      parameters:
+        - $ref: '#/components/parameters/ProviderId'
+      responses:
+        '200':
+          description: Provider current-page payload
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericObject'
+  /v1/runtime/providers/{providerId}/debug/current-console:
+    get:
+      tags: [debug]
+      summary: Read the latest current-console slice for a provider
+      operationId: getProviderCurrentConsole
+      parameters:
+        - $ref: '#/components/parameters/ProviderId'
+      responses:
+        '200':
+          description: Provider current-console payload
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericObject'
+  /v1/runtime/providers/{providerId}/debug/current-network:
+    get:
+      tags: [debug]
+      summary: Read the latest current-network slice for a provider
+      operationId: getProviderCurrentNetwork
+      parameters:
+        - $ref: '#/components/parameters/ProviderId'
+      responses:
+        '200':
+          description: Provider current-network payload
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericObject'
+  /v1/runtime/providers/{providerId}/debug/support-bundle:
+    get:
+      tags: [debug]
+      summary: Read the provider support-bundle snapshot
+      operationId: getProviderSupportBundle
+      parameters:
+        - $ref: '#/components/parameters/ProviderId'
+      responses:
+        '200':
+          description: Provider support-bundle payload
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericObject'
+  /v1/runtime/providers/{providerId}/debug/workbench:
+    get:
+      tags: [debug]
+      summary: Render the thin read-only browser debug workbench
+      operationId: getProviderDebugWorkbench
+      parameters:
+        - $ref: '#/components/parameters/ProviderId'
+      responses:
+        '200':
+          description: HTML shell for the local provider debug workbench
+          content:
+            text/html:
+              schema:
+                type: string
   /v1/runtime/invoke:
     post:
       tags: [invocation]

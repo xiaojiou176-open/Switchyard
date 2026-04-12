@@ -52,6 +52,8 @@ test-results/
 .codex/
 .claude/
 .serena/
+.stitch/
+design-system/
 
 # Python / sidecar local noise
 __pycache__/
