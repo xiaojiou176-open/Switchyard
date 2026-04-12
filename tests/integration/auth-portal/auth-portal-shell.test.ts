@@ -92,6 +92,8 @@ describe('auth portal shell', () => {
     expect(html).toContain('The five provider verdicts that matter first');
     expect(html).toContain('Portal rules, workflows, and browser handoff model');
     expect(html).toContain('BYOK inventory and local key slots');
+    expect(html).toContain('Portal rules, workflows, and browser handoff model');
+    expect(html).toContain('BYOK inventory and local key slots');
     expect(html).toContain('Login');
     expect(html).toContain('Status');
     expect(html).toContain('Re-auth');
@@ -233,8 +235,11 @@ describe('auth portal shell', () => {
     expect(html).toContain('Re-authenticate');
     expect(html).toContain('Primary verdict');
     expect(html).toContain('Evidence and handoff details');
+    expect(html).toContain('This section now behaves like a triage wall');
+    expect(html).toContain('Account action required');
+    expect(html).toContain('Session incomplete');
     expect(html.indexOf('The five provider verdicts that matter first')).toBeLessThan(
-      html.indexOf('User signs in with a browser, OAuth flow, or subscription-backed web session.')
+      html.indexOf('Portal rules, workflows, and browser handoff model')
     );
   });
 });

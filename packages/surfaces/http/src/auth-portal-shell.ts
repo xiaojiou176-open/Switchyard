@@ -761,6 +761,70 @@ function renderSection(section: AuthPortalSection): string {
   </section>`;
 }
 
+function renderCardGroup(
+  title: string,
+  description: string,
+  cards: readonly AuthPortalCard[],
+  collapsed = false,
+): string {
+  if (cards.length === 0) {
+    return "";
+  }
+
+  if (!collapsed) {
+    return `<section class="card-group">
+      <header class="section-header">
+        <h3>${escapeHtml(title)}</h3>
+        <p>${escapeHtml(description)}</p>
+      </header>
+      <div class="card-grid">${cards.map((card) => renderCard(card)).join('')}</div>
+    </section>`;
+  }
+
+  return `<details class="card-group card-group-collapsed">
+    <summary>${escapeHtml(title)}</summary>
+    <div class="card-group-body">
+      <p>${escapeHtml(description)}</p>
+      <div class="card-grid">${cards.map((card) => renderCard(card)).join('')}</div>
+    </div>
+  </details>`;
+}
+
+function renderWebLoginSection(section: AuthPortalSection): string {
+  const accountActionCards = section.cards.filter(
+    (card) => getWebLoginPriorityBucket(card) === "account-action",
+  );
+  const sessionWorkCards = section.cards.filter(
+    (card) => getWebLoginPriorityBucket(card) === "session-work",
+  );
+  const readyCards = section.cards.filter((card) => getWebLoginPriorityBucket(card) === "ready");
+
+  return `<section class="section" id="section-${escapeHtml(section.id)}">
+    <header class="section-header">
+      <h2>${escapeHtml(section.title)}</h2>
+      <p>${escapeHtml(
+        "This section now behaves like a triage wall: blockers first, healthy providers second.",
+      )}</p>
+    </header>
+    ${renderCardGroup(
+      "Account action required",
+      "These providers are blocked on owner/manual account work before runtime use can continue.",
+      accountActionCards,
+    )}
+    ${renderCardGroup(
+      "Session incomplete",
+      "These providers still need the current browser session to reach a reusable workspace.",
+      sessionWorkCards,
+    )}
+    ${renderCardGroup(
+      `Ready providers (${readyCards.length})`,
+      "These providers are currently usable. Expand only when you need their evidence or actions.",
+      readyCards,
+      true,
+    )}
+  </section>`;
+}
+
 function renderCollapsedSection(
   section: AuthPortalSection,
   title: string,
@@ -1467,6 +1531,25 @@ export function renderAuthPortalShell(model: AuthPortalShellModel): string {
         margin-bottom: 1.25rem;
       }
 
+      .card-group {
+        margin-top: 1rem;
+      }
+
+      .card-group-collapsed {
+        border-top: 1px solid var(--line);
+        padding-top: 0.85rem;
+      }
+
+      .card-group-collapsed summary {
+        cursor: pointer;
+        color: var(--muted);
+        margin-bottom: 0.8rem;
+      }
+
+      .card-group-body p {
+        color: var(--muted);
+      }
+
       .card-grid {
         display: grid;
         grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
@@ -1903,7 +1986,7 @@ export function renderAuthPortalShell(model: AuthPortalShellModel): string {
                 "BYOK inventory and local key slots",
                 "Open this only when you need the local API-key inventory. Keep the Web/Login live wall above as the primary front-door truth.",
               )
-            : renderSection(section),
+            : renderWebLoginSection(section),
         )
         .join('')}
       ${renderSecondaryPortalContext(model)}
