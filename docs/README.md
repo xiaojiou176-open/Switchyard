@@ -19,6 +19,8 @@ The public front door is intentionally split so each page keeps one job:
   - proof-first explanation of what is really proved today
 - `docs/public-distribution-ledger.md`
   - package-ready vs listed-live truth
+- `docs/submission-packet-ledger.md`
+  - the exact heavy-lane submission packet and packet-scoped receipt boundary
 - `docs/README.md`
   - the full atlas, grouped by question
 
@@ -43,6 +45,8 @@ If you only need the first route, choose one:
   - [docs/public-proof-pack.md](./public-proof-pack.md)
 - I want the package/listing/public-distribution truth
   - [docs/public-distribution-ledger.md](./public-distribution-ledger.md)
+- I want the exact heavy-lane submission packet
+  - [docs/submission-packet-ledger.md](./submission-packet-ledger.md)
 - I want the full atlas on one page
   - [docs/index.html](./index.html)
 
@@ -86,6 +90,8 @@ The shortest truthful route is:
   - schema for the public surface catalog
 - [docs/public-distribution-ledger.md](./public-distribution-ledger.md)
   - package-ready, starter-pack-ready, and official-listing-not-claimed truth
+- [docs/submission-packet-ledger.md](./submission-packet-ledger.md)
+  - canonical repo-wide submission packet vs packet-scoped host receipts
 
 ### API and SDK
 
