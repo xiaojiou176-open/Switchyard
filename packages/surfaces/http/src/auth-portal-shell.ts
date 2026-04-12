@@ -647,7 +647,7 @@ function renderCard(card: AuthPortalCard): string {
         )}">${escapeHtml(truthFocus?.primaryLinkLabel ?? "Inspect current browser")}</a>`
       : "";
 
-  return `<article class="card">
+  return `<article class="card" id="provider-${escapeHtml(card.providerId)}">
     <header class="card-header">
       <div>
         <h3>${escapeHtml(card.providerDisplayName)}</h3>
@@ -674,12 +674,119 @@ function renderCard(card: AuthPortalCard): string {
 }
 
 function renderSection(section: AuthPortalSection): string {
-  return `<section class="section">
+  return `<section class="section" id="section-${escapeHtml(section.id)}">
     <header class="section-header">
       <h2>${escapeHtml(section.title)}</h2>
       <p>${escapeHtml(section.description)}</p>
     </header>
     <div class="card-grid">${section.cards.map((card) => renderCard(card)).join('')}</div>
+  </section>`;
+}
+
+function orderSectionsForDisplay(sections: readonly AuthPortalSection[]): AuthPortalSection[] {
+  return [...sections].sort((left, right) => {
+    if (left.id === right.id) {
+      return 0;
+    }
+
+    if (left.id === "web-login") {
+      return -1;
+    }
+
+    if (right.id === "web-login") {
+      return 1;
+    }
+
+    return 0;
+  });
+}
+
+function getWebLoginPriorityBucket(card: AuthPortalCard): "ready" | "account-action" | "session-work" {
+  const classification = card.session?.persistenceAudit?.workspaceClassification;
+
+  if (classification === "account-action-required") {
+    return "account-action";
+  }
+
+  if (
+    classification === "session-incomplete" ||
+    classification === "login-required" ||
+    classification === "provider-adjacent" ||
+    classification === "permission-gated" ||
+    classification === "human-verification-required"
+  ) {
+    return "session-work";
+  }
+
+  return "ready";
+}
+
+function renderPriorityMetric(
+  label: string,
+  value: number,
+  tone: "ok" | "warning" | "danger",
+): string {
+  return `<article class="priority-metric priority-metric-${tone}">
+    <p class="eyebrow eyebrow-compact">${escapeHtml(label)}</p>
+    <strong>${escapeHtml(`${value}`)}</strong>
+  </article>`;
+}
+
+function renderWebLoginPriorityRail(model: AuthPortalShellModel): string {
+  const webLoginSection = model.sections.find((section) => section.id === "web-login");
+  if (!webLoginSection) {
+    return "";
+  }
+
+  const orderedCards = [...webLoginSection.cards].sort((left, right) => {
+    const rank = {
+      "account-action": 0,
+      "session-work": 1,
+      ready: 2,
+    } as const;
+
+    return rank[getWebLoginPriorityBucket(left)] - rank[getWebLoginPriorityBucket(right)];
+  });
+
+  const readyCount = orderedCards.filter((card) => getWebLoginPriorityBucket(card) === "ready").length;
+  const accountActionCount = orderedCards.filter(
+    (card) => getWebLoginPriorityBucket(card) === "account-action",
+  ).length;
+  const sessionWorkCount = orderedCards.filter(
+    (card) => getWebLoginPriorityBucket(card) === "session-work",
+  ).length;
+
+  return `<section class="priority-rail" aria-label="Web/Login live readiness">
+    <header class="section-header">
+      <p class="eyebrow">Web/Login live readiness</p>
+      <h2>The five provider verdicts that matter first</h2>
+      <p>Think of this like the front desk arrivals board. Before you read policies, BYOK inventory, or long diagnostics, check who is already ready, who needs an account action, and who still needs the current browser session finished.</p>
+    </header>
+    <div class="priority-metrics-grid">
+      ${renderPriorityMetric("Ready now", readyCount, "ok")}
+      ${renderPriorityMetric("Account action", accountActionCount, "danger")}
+      ${renderPriorityMetric("Session work", sessionWorkCount, "warning")}
+    </div>
+    <div class="priority-card-grid">
+      ${orderedCards
+        .map((card) => {
+          const truthFocus = getVisibleTruthFocus(card);
+          const bucket = getWebLoginPriorityBucket(card);
+          const detail =
+            truthFocus?.nextStepLabel ??
+            (bucket === "ready" ? "Ready to use" : "Inspect the full card below");
+          const linkTarget = card.routes?.debugWorkbench ?? `#provider-${card.providerId}`;
+          return `<article class="priority-provider-card priority-provider-card-${bucket}">
+            <p class="eyebrow eyebrow-compact">${escapeHtml(card.providerDisplayName)}</p>
+            <h3>${escapeHtml(truthFocus?.title ?? card.stateLabel)}</h3>
+            <p>${escapeHtml(detail)}</p>
+            <a class="priority-provider-link" href="${escapeHtml(linkTarget)}">${escapeHtml(
+              truthFocus ? "Open current truth" : "Jump to provider card",
+            )}</a>
+          </article>`;
+        })
+        .join("")}
+    </div>
   </section>`;
 }
 
@@ -912,6 +1019,7 @@ document.addEventListener('click', async (event) => {
 }
 
 export function renderAuthPortalShell(model: AuthPortalShellModel): string {
+  const orderedSections = orderSectionsForDisplay(model.sections);
   return `<!doctype html>
 <html lang="en">
   <head>
@@ -982,6 +1090,7 @@ export function renderAuthPortalShell(model: AuthPortalShellModel): string {
       .section,
       .policy-list,
       .workflow-grid,
+      .priority-rail,
       .boundary-card,
       .mode-guide,
       .feedback {
@@ -1069,6 +1178,83 @@ export function renderAuthPortalShell(model: AuthPortalShellModel): string {
         border-radius: 18px;
         padding: 1rem;
         background: var(--panel-raised);
+      }
+
+      .priority-rail {
+        padding: 1.2rem;
+        margin-bottom: 1rem;
+      }
+
+      .priority-metrics-grid {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 0.85rem;
+        margin: 1rem 0;
+      }
+
+      .priority-metric {
+        border: 1px solid var(--line);
+        border-radius: 18px;
+        padding: 0.9rem 1rem;
+        background: var(--panel-raised);
+      }
+
+      .priority-metric strong {
+        font-size: 2rem;
+        line-height: 1;
+      }
+
+      .priority-metric-ok {
+        border-color: rgba(76, 188, 118, 0.28);
+      }
+
+      .priority-metric-warning {
+        border-color: rgba(199, 139, 44, 0.3);
+      }
+
+      .priority-metric-danger {
+        border-color: rgba(201, 90, 90, 0.34);
+      }
+
+      .priority-card-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+        gap: 0.85rem;
+      }
+
+      .priority-provider-card {
+        border: 1px solid var(--line);
+        border-radius: 18px;
+        padding: 1rem;
+        background: var(--panel-raised);
+      }
+
+      .priority-provider-card h3 {
+        margin: 0 0 0.45rem;
+      }
+
+      .priority-provider-card p:last-of-type {
+        color: var(--muted);
+      }
+
+      .priority-provider-card-ready {
+        border-color: rgba(76, 188, 118, 0.28);
+      }
+
+      .priority-provider-card-account-action {
+        border-color: rgba(201, 90, 90, 0.34);
+      }
+
+      .priority-provider-card-session-work {
+        border-color: rgba(199, 139, 44, 0.3);
+      }
+
+      .priority-provider-link {
+        display: inline-flex;
+        margin-top: 0.4rem;
+        color: var(--ink);
+        text-decoration: none;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.28);
       }
 
       .policy-list {
@@ -1475,9 +1661,14 @@ export function renderAuthPortalShell(model: AuthPortalShellModel): string {
         .hero,
         .section,
         .workflow-grid,
+        .priority-rail,
         .mode-guide {
           padding: 1.1rem;
           border-radius: 18px;
+        }
+
+        .priority-metrics-grid {
+          grid-template-columns: 1fr;
         }
 
         .hero {
@@ -1516,6 +1707,7 @@ export function renderAuthPortalShell(model: AuthPortalShellModel): string {
           </article>
         </div>
       </section>
+      ${renderWebLoginPriorityRail(model)}
       ${renderBoundaryRail(model)}
       <section class="policy-list" aria-label="Supported policies">
         ${model.supportedPolicies
@@ -1526,7 +1718,7 @@ export function renderAuthPortalShell(model: AuthPortalShellModel): string {
         ${model.workflows.map((workflow) => renderWorkflowSummary(workflow)).join('')}
       </section>
       <section id="auth-portal-feedback" class="feedback" role="status" aria-live="polite" aria-atomic="true" tabindex="-1" hidden></section>
-      ${model.sections.map((section) => renderSection(section)).join('')}
+      ${orderedSections.map((section) => renderSection(section)).join('')}
       ${renderModeGuide()}
     </main>
     ${renderRouteCatalog(model.routeCatalog)}

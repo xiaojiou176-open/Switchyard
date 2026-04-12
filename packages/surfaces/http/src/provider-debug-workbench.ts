@@ -119,6 +119,34 @@ function renderSummaryCard(title: string, status: string, summary: string, meta:
   </article>`;
 }
 
+function renderPrimaryVerdict(
+  debug: ServiceProviderDebugSupportView,
+  truthFocus: DebugTruthFocus,
+): string {
+  return `<section class="verdict-strip" aria-label="Primary verdict">
+    <div class="verdict-copy">
+      <p class="eyebrow">Primary verdict</p>
+      <h2>${escapeHtml(truthFocus.eyebrow)}</h2>
+      <p>${escapeHtml(truthFocus.summary)}</p>
+      <p class="verdict-note">${escapeHtml(truthFocus.detail)}</p>
+    </div>
+    <div class="verdict-facts">
+      <article class="verdict-fact">
+        <p class="eyebrow eyebrow-compact">Stored material</p>
+        <strong>${escapeHtml(debug.storeReadiness.credentialState)}</strong>
+      </article>
+      <article class="verdict-fact">
+        <p class="eyebrow eyebrow-compact">Current browser</p>
+        <strong>${escapeHtml(debug.liveReadiness.status)}</strong>
+      </article>
+      <article class="verdict-fact">
+        <p class="eyebrow eyebrow-compact">Runtime path</p>
+        <strong>${escapeHtml(debug.runtime.runtimeReadiness)}</strong>
+      </article>
+    </div>
+  </section>`;
+}
+
 function renderConsoleEntries(currentConsole: ServiceProviderCurrentConsoleView): string {
   if (currentConsole.entries.length === 0) {
     return `<p class="empty-copy">No fresh console entries were captured during this inspection window.</p>`;
@@ -344,12 +372,49 @@ export function renderProviderDebugWorkbench(
       }
 
       .hero-meta-card,
+      .verdict-strip,
       .summary-card,
       .section-card {
         border: 1px solid var(--line);
         border-radius: 18px;
         padding: 1rem;
         background: var(--panel-raised);
+      }
+
+      .verdict-strip {
+        display: grid;
+        grid-template-columns: minmax(0, 1.5fr) minmax(320px, 1fr);
+        gap: 1rem;
+        padding: 1.2rem;
+        margin-bottom: 1rem;
+        border-color: rgba(201, 90, 90, 0.34);
+      }
+
+      .verdict-copy h2 {
+        margin: 0 0 0.45rem;
+        font-size: clamp(2rem, 3.8vw, 3.3rem);
+        line-height: 0.98;
+      }
+
+      .verdict-note {
+        color: var(--muted);
+      }
+
+      .verdict-facts {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 0.8rem;
+      }
+
+      .verdict-fact {
+        border: 1px solid var(--line);
+        border-radius: 18px;
+        padding: 0.9rem 1rem;
+        background: rgba(255, 255, 255, 0.03);
+      }
+
+      .verdict-fact strong {
+        font-size: 1.1rem;
       }
 
       .summary-grid {
@@ -479,6 +544,11 @@ export function renderProviderDebugWorkbench(
           grid-template-columns: 1fr;
         }
 
+        .verdict-strip,
+        .verdict-facts {
+          grid-template-columns: 1fr;
+        }
+
         main {
           width: min(100vw - 1rem, 1220px);
           padding: 1rem 0 2rem;
@@ -516,6 +586,8 @@ export function renderProviderDebugWorkbench(
           </article>
         </div>
       </section>
+
+      ${truthFocus ? renderPrimaryVerdict(debug, truthFocus) : ""}
 
       <section class="summary-grid" aria-label="Provider readiness summary">
         ${renderSummaryCard(

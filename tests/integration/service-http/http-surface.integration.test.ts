@@ -812,6 +812,8 @@ describe("Switchyard HTTP surface", () => {
     const authPortalHtml = await authPortalResponse.text();
 
     expect(authPortalResponse.status).toBe(200);
+    expect(authPortalHtml).toContain("Web/Login live readiness");
+    expect(authPortalHtml).toContain("The five provider verdicts that matter first");
     expect(authPortalHtml).toContain("Account action required");
     expect(authPortalHtml).toContain("Review current blocker");
     expect(authPortalHtml).toContain("Session incomplete");
@@ -825,6 +827,7 @@ describe("Switchyard HTTP surface", () => {
     const workbenchHtml = await workbenchResponse.text();
 
     expect(workbenchResponse.status).toBe(200);
+    expect(workbenchHtml).toContain("Primary verdict");
     expect(workbenchHtml).toContain("Owner action first");
     expect(workbenchHtml).toContain(
       "Restore Claude subscription access before rerunning the live gate.",

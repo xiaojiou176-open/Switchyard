@@ -88,6 +88,8 @@ describe('auth portal shell', () => {
     expect(html).toContain('No shared credential pool');
     expect(html).toContain('Skip to main content');
     expect(html).toContain('Inspect current browser');
+    expect(html).toContain('Web/Login live readiness');
+    expect(html).toContain('The five provider verdicts that matter first');
     expect(html).toContain('Login');
     expect(html).toContain('Status');
     expect(html).toContain('Re-auth');
@@ -227,5 +229,8 @@ describe('auth portal shell', () => {
     expect(html).toContain('Session incomplete');
     expect(html).toContain('Inspect current browser first');
     expect(html).toContain('Re-authenticate');
+    expect(html.indexOf('The five provider verdicts that matter first')).toBeLessThan(
+      html.indexOf('User signs in with a browser, OAuth flow, or subscription-backed web session.')
+    );
   });
 });
