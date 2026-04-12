@@ -628,6 +628,95 @@ function renderHandoff(card: AuthPortalCard): string {
   </section>`;
 }
 
+function getCardVerdictTitle(card: AuthPortalCard): string {
+  const truthFocus = getVisibleTruthFocus(card);
+  return truthFocus?.title ?? card.stateLabel;
+}
+
+function getCardVerdictTone(card: AuthPortalCard): "ok" | "warning" | "danger" {
+  if (card.authModeId === "web-login") {
+    const bucket = getWebLoginPriorityBucket(card);
+    if (bucket === "account-action") {
+      return "danger";
+    }
+    if (bucket === "session-work") {
+      return "warning";
+    }
+    return "ok";
+  }
+
+  if (card.state === "ready") {
+    return "ok";
+  }
+  if (card.state === "user-action-required" || card.state === "expired" || card.state === "missing") {
+    return "danger";
+  }
+
+  return "warning";
+}
+
+function getCardVerdictSummary(card: AuthPortalCard): string {
+  const truthFocus = getVisibleTruthFocus(card);
+
+  if (truthFocus) {
+    return truthFocus.nextStepDescription;
+  }
+
+  if (card.state === "ready") {
+    return "Ready to use. Open the current truth only if you need evidence or diagnostics.";
+  }
+
+  return card.statusSummary;
+}
+
+function getCardVerdictNextStep(card: AuthPortalCard): string {
+  const truthFocus = getVisibleTruthFocus(card);
+  if (truthFocus) {
+    return truthFocus.nextStepLabel;
+  }
+
+  if (card.state === "ready") {
+    return "Ready to use";
+  }
+
+  return "Review current status";
+}
+
+function renderCardVerdict(card: AuthPortalCard): string {
+  const tone = getCardVerdictTone(card);
+
+  return `<section class="card-verdict card-verdict-${tone}">
+    <p class="eyebrow eyebrow-compact">Primary verdict</p>
+    <h4>${escapeHtml(getCardVerdictTitle(card))}</h4>
+    <p>${escapeHtml(getCardVerdictSummary(card))}</p>
+    <p class="card-verdict-next">${escapeHtml(getCardVerdictNextStep(card))}</p>
+  </section>`;
+}
+
+function renderCardDetails(card: AuthPortalCard): string {
+  const detailsLabel =
+    card.authModeId === "web-login" ? "Evidence and handoff details" : "More local details";
+
+  return `<details class="card-details">
+    <summary>${escapeHtml(detailsLabel)}</summary>
+    <div class="card-details-body">
+      <p class="workflow"><strong>Current lane step</strong>: ${escapeHtml(card.workflowLabel)}.</p>
+      <p class="status">${escapeHtml(card.workflowDescription)}</p>
+      ${
+        card.modeLabel
+          ? `<p class="ownership"><strong>Current browser handoff</strong>: ${escapeHtml(card.modeLabel)}</p>`
+          : ""
+      }
+      ${renderMaterialSnapshot(card)}
+      ${renderBrowserCheckpoint(card)}
+      <p class="ownership">${escapeHtml(card.ownership.summary)}</p>
+      ${renderHandoff(card)}
+      ${renderAcquisitionModes(card)}
+      ${renderRouteLinks(card)}
+    </div>
+  </details>`;
+}
+
 function renderCard(card: AuthPortalCard): string {
   const truthFocus = getVisibleTruthFocus(card);
   const diagnosticHtml = card.diagnostic
@@ -653,22 +742,11 @@ function renderCard(card: AuthPortalCard): string {
         <h3>${escapeHtml(card.providerDisplayName)}</h3>
         <p>${escapeHtml(card.authModeLabel)}</p>
       </div>
-      <span class="state state-${escapeHtml(card.state)}">${escapeHtml(card.stateLabel)}</span>
+      <span class="state state-${escapeHtml(card.state)}">${escapeHtml(getCardVerdictTitle(card))}</span>
     </header>
-    <p class="workflow"><strong>Current lane step</strong>: ${escapeHtml(card.workflowLabel)}.</p>
-    <p class="status">${escapeHtml(card.workflowDescription)}</p>
-    ${
-      card.modeLabel
-        ? `<p class="ownership"><strong>Current browser handoff</strong>: ${escapeHtml(card.modeLabel)}</p>`
-        : ""
-    }
-    ${renderMaterialSnapshot(card)}
-    ${renderBrowserCheckpoint(card)}
-    <p class="ownership">${escapeHtml(card.ownership.summary)}</p>
+    ${renderCardVerdict(card)}
     ${diagnosticHtml}
-    ${renderHandoff(card)}
-    ${renderAcquisitionModes(card)}
-    ${renderRouteLinks(card)}
+    ${renderCardDetails(card)}
     <div class="actions">${debugLink}${card.actions.map((action) => renderAction(card, action)).join('')}</div>
   </article>`;
 }
@@ -763,9 +841,9 @@ function renderWebLoginPriorityRail(model: AuthPortalShellModel): string {
       <p>Think of this like the front desk arrivals board. Before you read policies, BYOK inventory, or long diagnostics, check who is already ready, who needs an account action, and who still needs the current browser session finished.</p>
     </header>
     <div class="priority-metrics-grid">
-      ${renderPriorityMetric("Ready now", readyCount, "ok")}
-      ${renderPriorityMetric("Account action", accountActionCount, "danger")}
-      ${renderPriorityMetric("Session work", sessionWorkCount, "warning")}
+      ${renderPriorityMetric("Ready", readyCount, "ok")}
+      ${renderPriorityMetric("Account action required", accountActionCount, "danger")}
+      ${renderPriorityMetric("Session incomplete", sessionWorkCount, "warning")}
     </div>
     <div class="priority-card-grid">
       ${orderedCards
@@ -1352,6 +1430,36 @@ export function renderAuthPortalShell(model: AuthPortalShellModel): string {
         background: var(--panel-raised);
       }
 
+      .card-verdict {
+        border: 1px solid var(--line);
+        border-radius: 18px;
+        padding: 0.95rem 1rem;
+        background: rgba(255, 255, 255, 0.03);
+        margin-bottom: 0.85rem;
+      }
+
+      .card-verdict h4 {
+        margin: 0 0 0.4rem;
+        font-size: 1.35rem;
+      }
+
+      .card-verdict-next {
+        color: var(--ink);
+        font-weight: 600;
+      }
+
+      .card-verdict-ok {
+        border-color: rgba(76, 188, 118, 0.3);
+      }
+
+      .card-verdict-warning {
+        border-color: rgba(199, 139, 44, 0.32);
+      }
+
+      .card-verdict-danger {
+        border-color: rgba(201, 90, 90, 0.34);
+      }
+
       .card-header {
         display: flex;
         gap: 1rem;
@@ -1516,6 +1624,21 @@ export function renderAuthPortalShell(model: AuthPortalShellModel): string {
         display: flex;
         flex-wrap: wrap;
         gap: 0.6rem;
+      }
+
+      .card-details {
+        margin: 0.85rem 0 0.95rem;
+        border-top: 1px solid var(--line);
+        padding-top: 0.8rem;
+      }
+
+      .card-details summary {
+        cursor: pointer;
+        color: var(--muted);
+      }
+
+      .card-details-body {
+        margin-top: 0.9rem;
       }
 
       .action {

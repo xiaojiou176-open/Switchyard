@@ -47,6 +47,11 @@ interface DebugTruthFocus {
   runtimeSummary: string;
 }
 
+interface SharedDiagnosticState {
+  repeatedRaw?: string;
+  condensedSummary?: string;
+}
+
 function getDebugTruthFocus(debug: ServiceProviderDebugSupportView): DebugTruthFocus | null {
   const classification = debug.currentPage.classification;
   const requiredUserAction = debug.auth.session?.requiredUserAction?.trim();
@@ -106,6 +111,62 @@ function getDebugTruthFocus(debug: ServiceProviderDebugSupportView): DebugTruthF
 
       return null;
   }
+}
+
+function normalizeDiagnosticText(value: string | undefined): string {
+  return `${value ?? ""}`.replace(/\s+/g, " ").trim();
+}
+
+function getSharedDiagnosticState(debug: ServiceProviderDebugSupportView): SharedDiagnosticState {
+  const diagnostics = [
+    debug.currentPage.diagnostic,
+    debug.currentConsole.diagnostic,
+    debug.currentNetwork.diagnostic,
+  ]
+    .map((value) => normalizeDiagnosticText(value))
+    .filter(Boolean);
+
+  const repeated = diagnostics.find(
+    (candidate, index) => diagnostics.indexOf(candidate) !== index,
+  );
+
+  if (!repeated) {
+    return {};
+  }
+
+  return {
+    repeatedRaw: repeated,
+    condensedSummary:
+      "The same browser-inspection failure is feeding multiple sections. Keep the primary verdict above, then use the detailed diagnostics tray below for the raw technical message.",
+  };
+}
+
+function getSectionDiagnosticText(
+  diagnostic: string,
+  sharedDiagnostic: SharedDiagnosticState,
+): string {
+  if (
+    sharedDiagnostic.repeatedRaw &&
+    normalizeDiagnosticText(diagnostic) === sharedDiagnostic.repeatedRaw
+  ) {
+    return "Same browser-inspection failure as above. Open detailed browser diagnostics below for the raw technical message.";
+  }
+
+  return diagnostic;
+}
+
+function renderDetailedBrowserDiagnostics(sharedDiagnostic: SharedDiagnosticState): string {
+  if (!sharedDiagnostic.repeatedRaw) {
+    return "";
+  }
+
+  return `<section class="section">
+    <header class="section-header">
+      <h2>Detailed browser diagnostics</h2>
+      <p>${escapeHtml(sharedDiagnostic.condensedSummary ?? "")}</p>
+    </header>
+    <pre>${escapeHtml(sharedDiagnostic.repeatedRaw)}</pre>
+  </section>`;
 }
 
 function renderSummaryCard(title: string, status: string, summary: string, meta: string): string {
@@ -206,6 +267,7 @@ export function renderProviderDebugWorkbench(
   authPortalRoute = "/v1/runtime/auth-portal",
 ): string {
   const truthFocus = getDebugTruthFocus(debug);
+  const sharedDiagnostic = getSharedDiagnosticState(debug);
   const storeMeta = [
     renderOptionalCode("validation", debug.storeReadiness.validationState),
     renderOptionalCode("account", debug.auth?.ownership?.accountLabel),
@@ -226,6 +288,20 @@ export function renderProviderDebugWorkbench(
   const nextStepSummary = truthFocus?.summary ?? nextAction?.summary ?? "No next step recorded.";
   const nextStepDetail = truthFocus?.detail;
   const runtimeSummary = truthFocus?.runtimeSummary ?? debug.auth.statusSummary;
+  const currentBrowserSummary =
+    sharedDiagnostic.repeatedRaw &&
+    normalizeDiagnosticText(debug.liveReadiness.diagnostic) === sharedDiagnostic.repeatedRaw
+      ? "Fresh browser inspection is currently unavailable. Use the detailed browser diagnostics tray below for the raw transport error."
+      : debug.liveReadiness.diagnostic;
+  const currentPageDiagnostic = getSectionDiagnosticText(debug.currentPage.diagnostic, sharedDiagnostic);
+  const currentConsoleDiagnostic = getSectionDiagnosticText(
+    debug.currentConsole.diagnostic,
+    sharedDiagnostic,
+  );
+  const currentNetworkDiagnostic = getSectionDiagnosticText(
+    debug.currentNetwork.diagnostic,
+    sharedDiagnostic,
+  );
 
   return `<!doctype html>
 <html lang="en">
@@ -526,6 +602,10 @@ export function renderProviderDebugWorkbench(
         text-decoration: none;
       }
 
+      .section pre {
+        margin-top: 0.85rem;
+      }
+
       :focus-visible {
         outline: 2px solid var(--accent);
         outline-offset: 2px;
@@ -588,6 +668,7 @@ export function renderProviderDebugWorkbench(
       </section>
 
       ${truthFocus ? renderPrimaryVerdict(debug, truthFocus) : ""}
+      ${renderDetailedBrowserDiagnostics(sharedDiagnostic)}
 
       <section class="summary-grid" aria-label="Provider readiness summary">
         ${renderSummaryCard(
@@ -599,7 +680,7 @@ export function renderProviderDebugWorkbench(
         ${renderSummaryCard(
           "Current browser",
           debug.liveReadiness.status,
-          debug.liveReadiness.diagnostic,
+          currentBrowserSummary,
           browserMeta,
         )}
         ${renderSummaryCard(
@@ -623,7 +704,7 @@ export function renderProviderDebugWorkbench(
         <div class="section-grid">
           <article class="section-card">
             <h3>Current page</h3>
-            <p>${escapeHtml(debug.currentPage.diagnostic)}</p>
+            <p>${escapeHtml(currentPageDiagnostic)}</p>
             <div class="meta-row">
               ${renderOptionalCode("classification", debug.currentPage.classification)}
               ${renderOptionalCode("url", debug.currentPage.url)}
@@ -650,12 +731,12 @@ export function renderProviderDebugWorkbench(
         <div class="section-grid">
           <article class="section-card">
             <h3>Current console</h3>
-            <p>${escapeHtml(debug.currentConsole.diagnostic)}</p>
+            <p>${escapeHtml(currentConsoleDiagnostic)}</p>
             ${renderConsoleEntries(debug.currentConsole)}
           </article>
           <article class="section-card">
             <h3>Current network</h3>
-            <p>${escapeHtml(debug.currentNetwork.diagnostic)}</p>
+            <p>${escapeHtml(currentNetworkDiagnostic)}</p>
             ${renderNetworkEntries(debug.currentNetwork)}
           </article>
         </div>

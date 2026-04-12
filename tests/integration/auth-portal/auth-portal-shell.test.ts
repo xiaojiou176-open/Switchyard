@@ -229,6 +229,8 @@ describe('auth portal shell', () => {
     expect(html).toContain('Session incomplete');
     expect(html).toContain('Inspect current browser first');
     expect(html).toContain('Re-authenticate');
+    expect(html).toContain('Primary verdict');
+    expect(html).toContain('Evidence and handoff details');
     expect(html.indexOf('The five provider verdicts that matter first')).toBeLessThan(
       html.indexOf('User signs in with a browser, OAuth flow, or subscription-backed web session.')
     );

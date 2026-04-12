@@ -838,6 +838,76 @@ describe("Switchyard HTTP surface", () => {
     );
   });
 
+  it("folds repeated browser-inspection failures into a detailed diagnostics tray", async () => {
+    const repeatedDiagnostic =
+      "Switchyard could not inspect the attached browser: browserType.connectOverCDP: connect ECONNREFUSED 127.0.0.1:9338";
+    const service = createTestService({
+      useLocalWebAuthStore: false,
+      debugSupportRunners: {
+        chatgpt: async (provider) => ({
+          providerId: provider.provider,
+          providerDisplayName: provider.displayName,
+          auth: buildServiceProviderAuthView(provider, "local-user"),
+          runtime: buildServiceProviderRuntimeView(provider),
+          storeReadiness: {
+            credentialState: provider.credentialState,
+            runtimeReadiness: provider.runtimeReadiness,
+            validationState: provider.session.validationState,
+            note: "Stored session materials look ready, but fresh browser inspection is unavailable.",
+          },
+          liveReadiness: {
+            status: "unknown",
+            diagnostic: repeatedDiagnostic,
+          },
+          attachTarget: {
+            label: "Isolated Chrome root",
+            source: "runtime-env",
+            available: true,
+            cdpUrl: "http://127.0.0.1:9338",
+            note: "ChatGPT is being inspected from the repo-owned isolated Chrome root.",
+          },
+          currentPage: {
+            status: "unavailable",
+            diagnostic: repeatedDiagnostic,
+          },
+          currentConsole: {
+            status: "unavailable",
+            entries: [],
+            diagnostic: repeatedDiagnostic,
+          },
+          currentNetwork: {
+            status: "unavailable",
+            entries: [],
+            diagnostic: repeatedDiagnostic,
+          },
+          diagnoseLadder: [
+            {
+              id: "check-store",
+              status: "completed",
+              summary: "Stored state = ready; runtime readiness = ready.",
+            },
+          ],
+          routes: buildServiceProviderRouteRefs(provider.provider),
+        }),
+      },
+    });
+
+    const workbenchResponse = await getSurface(
+      service,
+      "/v1/runtime/providers/chatgpt/debug/workbench",
+    );
+    const workbenchHtml = await workbenchResponse.text();
+
+    expect(workbenchResponse.status).toBe(200);
+    expect(workbenchHtml).toContain("Detailed browser diagnostics");
+    expect(workbenchHtml).toContain(
+      "Fresh browser inspection is currently unavailable. Use the detailed browser diagnostics tray below for the raw transport error.",
+    );
+    expect(workbenchHtml).toContain(
+      "Same browser-inspection failure as above. Open detailed browser diagnostics below for the raw technical message.",
+    );
+  });
+
   it("returns live-proof success through the probe route when a runner is injected", async () => {
     const service = createTestService({
       useLocalWebAuthStore: false,
