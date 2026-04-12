@@ -67,6 +67,17 @@ This page documents the current `service-first` HTTP surface.
 - `POST /v1/runtime/providers/{providerId}/acquisition/start`
 - `POST /v1/runtime/providers/{providerId}/acquisition/capture`
 
+### Provider debug and browser evidence
+
+- `GET /v1/runtime/providers/{providerId}/debug/current-page`
+- `GET /v1/runtime/providers/{providerId}/debug/current-console`
+- `GET /v1/runtime/providers/{providerId}/debug/current-network`
+- `GET /v1/runtime/providers/{providerId}/debug/support-bundle`
+- `GET /v1/runtime/providers/{providerId}/debug/workbench`
+
+`debug/workbench` is a thin local-first HTML shell over the same read-only debug
+truth surfaces. It is a diagnosis bench, not a control plane.
+
 ### Invocation
 
 - `POST /v1/runtime/invoke`
