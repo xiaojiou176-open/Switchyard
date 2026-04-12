@@ -659,11 +659,11 @@ function getCardVerdictSummary(card: AuthPortalCard): string {
   const truthFocus = getVisibleTruthFocus(card);
 
   if (truthFocus) {
-    return truthFocus.nextStepDescription;
+    return truthFocus.nextStepLabel;
   }
 
   if (card.state === "ready") {
-    return "Ready to use. Open the current truth only if you need evidence or diagnostics.";
+    return "Ready to use";
   }
 
   return card.statusSummary;
@@ -696,10 +696,21 @@ function renderCardVerdict(card: AuthPortalCard): string {
 function renderCardDetails(card: AuthPortalCard): string {
   const detailsLabel =
     card.authModeId === "web-login" ? "Evidence and handoff details" : "More local details";
+  const truthFocus = getVisibleTruthFocus(card);
+  const diagnosticHtml = card.diagnostic
+    ? `<div class="diagnostic diagnostic-${card.diagnostic.severity}">
+        <strong>${escapeHtml(truthFocus?.title ?? card.diagnostic.summary)}</strong>
+        <p>${escapeHtml(truthFocus?.detail ?? card.diagnostic.detail)}</p>
+        <p class="diagnostic-contract">Technical category: <code>${escapeHtml(
+          card.diagnostic.contractCategoryLabel
+        )}</code></p>
+      </div>`
+    : '<div class="diagnostic diagnostic-ok"><strong>No active blocker</strong><p>Switchyard does not currently see a local credential blocker for this provider slot.</p></div>';
 
   return `<details class="card-details">
     <summary>${escapeHtml(detailsLabel)}</summary>
     <div class="card-details-body">
+      ${diagnosticHtml}
       <p class="workflow"><strong>Current lane step</strong>: ${escapeHtml(card.workflowLabel)}.</p>
       <p class="status">${escapeHtml(card.workflowDescription)}</p>
       ${
@@ -719,16 +730,6 @@ function renderCardDetails(card: AuthPortalCard): string {
 
 function renderCard(card: AuthPortalCard): string {
   const truthFocus = getVisibleTruthFocus(card);
-  const diagnosticHtml = card.diagnostic
-    ? `<div class="diagnostic diagnostic-${card.diagnostic.severity}">
-        <strong>${escapeHtml(truthFocus?.title ?? card.diagnostic.summary)}</strong>
-        <p>${escapeHtml(truthFocus?.detail ?? card.diagnostic.detail)}</p>
-        <p class="diagnostic-contract">Technical category: <code>${escapeHtml(
-          card.diagnostic.contractCategoryLabel
-        )}</code></p>
-      </div>`
-    : '<div class="diagnostic diagnostic-ok"><strong>No active blocker</strong><p>Switchyard does not currently see a local credential blocker for this provider slot.</p></div>';
-
   const debugLink =
     card.authModeId === "web-login" && card.routes?.debugWorkbench
       ? `<a class="action action-${truthFocus ? "primary" : "secondary"} action-link" href="${escapeHtml(
@@ -740,12 +741,11 @@ function renderCard(card: AuthPortalCard): string {
     <header class="card-header">
       <div>
         <h3>${escapeHtml(card.providerDisplayName)}</h3>
-        <p>${escapeHtml(card.authModeLabel)}</p>
+        <p class="card-kicker">${escapeHtml(card.authModeLabel)}</p>
       </div>
       <span class="state state-${escapeHtml(card.state)}">${escapeHtml(getCardVerdictTitle(card))}</span>
     </header>
     ${renderCardVerdict(card)}
-    ${diagnosticHtml}
     ${renderCardDetails(card)}
     <div class="actions">${debugLink}${card.actions.map((action) => renderAction(card, action)).join('')}</div>
   </article>`;
@@ -1490,12 +1490,17 @@ export function renderAuthPortalShell(model: AuthPortalShellModel): string {
 
       .card-verdict h4 {
         margin: 0 0 0.4rem;
-        font-size: 1.35rem;
+        font-size: 1.45rem;
       }
 
       .card-verdict-next {
         color: var(--ink);
         font-weight: 600;
+        font-size: 0.95rem;
+      }
+
+      .card-verdict p:first-of-type {
+        color: var(--muted);
       }
 
       .card-verdict-ok {
@@ -1516,6 +1521,13 @@ export function renderAuthPortalShell(model: AuthPortalShellModel): string {
         align-items: start;
         justify-content: space-between;
         margin-bottom: 0.85rem;
+      }
+
+      .card-kicker {
+        color: var(--muted);
+        font-size: 0.8rem;
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
       }
 
       .state {
@@ -1685,6 +1697,7 @@ export function renderAuthPortalShell(model: AuthPortalShellModel): string {
       .card-details summary {
         cursor: pointer;
         color: var(--muted);
+        font-size: 0.92rem;
       }
 
       .card-details-body {
