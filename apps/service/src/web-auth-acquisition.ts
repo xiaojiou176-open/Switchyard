@@ -204,7 +204,12 @@ export interface WebAcquisitionStartResult {
 }
 
 export interface WebAcquisitionCaptureResult {
-  status: "success" | "user-action-required" | "external-blocker" | "fallback-only";
+  status:
+    | "success"
+    | "refreshable-but-degraded"
+    | "user-action-required"
+    | "external-blocker"
+    | "fallback-only";
   provider: WebProviderId;
   providerDisplayName: string;
   mode: WebAuthBrowserBootstrapMode;
@@ -1510,6 +1515,20 @@ function buildBlockedCaptureResult(args: {
   };
 }
 
+function mapCaptureCoherenceStatus(
+  status: "ready" | "refreshable-but-degraded" | "user-action-required",
+): WebAcquisitionCaptureResult["status"] {
+  if (status === "refreshable-but-degraded") {
+    return "refreshable-but-degraded";
+  }
+
+  if (status === "user-action-required") {
+    return "user-action-required";
+  }
+
+  return "success";
+}
+
 function buildBrowserUnavailableCaptureResult(args: {
   provider: AcquisitionProviderId;
   providerDisplayName: string;
@@ -1705,12 +1724,7 @@ async function captureChatgptAcquisition(
       );
 
       return {
-        status:
-          coherence.status === "user-action-required"
-            ? "user-action-required"
-            : coherence.status === "refreshable-but-degraded"
-              ? "success"
-              : "success",
+        status: mapCaptureCoherenceStatus(coherence.status),
         provider: "chatgpt",
         providerDisplayName,
         mode,
@@ -1843,7 +1857,7 @@ async function captureGeminiAcquisition(
       );
 
       return {
-        status: coherence.status === "user-action-required" ? "user-action-required" : "success",
+        status: mapCaptureCoherenceStatus(coherence.status),
         provider: "gemini",
         providerDisplayName,
         mode,
@@ -1992,7 +2006,7 @@ async function captureClaudeAcquisition(
       );
 
       return {
-        status: coherence.status === "user-action-required" ? "user-action-required" : "success",
+        status: mapCaptureCoherenceStatus(coherence.status),
         provider: "claude",
         providerDisplayName,
         mode,
@@ -2198,7 +2212,7 @@ async function captureGrokAcquisition(
       );
 
       return {
-        status: coherence.status === "user-action-required" ? "user-action-required" : "success",
+        status: mapCaptureCoherenceStatus(coherence.status),
         provider: "grok",
         providerDisplayName,
         mode,
@@ -2418,7 +2432,7 @@ async function captureQwenAcquisition(
       );
 
       return {
-        status: coherence.status === "user-action-required" ? "user-action-required" : "success",
+        status: mapCaptureCoherenceStatus(coherence.status),
         provider: "qwen",
         providerDisplayName,
         mode,

@@ -335,8 +335,8 @@ describe("Switchyard docs frontdoor contracts", () => {
 
     expect(readme).toContain("Live/browser outcomes are important");
     expect(readme).not.toContain("`Gemini / Grok`");
-    expect(proofPack).toContain("`Gemini / Grok`");
-    expect(v1Plan).toContain("`Gemini / Grok`");
+    expect(proofPack).toContain("`Claude / Grok`");
+    expect(v1Plan).toContain("`Claude / Grok`");
     expect(v1Plan).toContain("live snapshot 继续放在 `docs/public-proof-pack.md`");
     expect(openapi).toContain("http://127.0.0.1:4010");
     expect(openapi).not.toContain("http://127.0.0.1:4317");

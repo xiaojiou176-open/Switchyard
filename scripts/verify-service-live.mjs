@@ -272,8 +272,31 @@ export function normalizeText(value) {
 
 export function mapServiceInvokeFailure(testCase, service, response, body) {
   const errorMessage = `${body?.error?.message ?? ""}`;
+  const claudeContextText = [
+    body?.error?.message,
+    body?.error?.suggestedAction,
+    body?.auth?.transportHint,
+    body?.auth?.session?.requiredUserAction,
+    body?.auth?.session?.degradedReason,
+    body?.auth?.reAuth?.reason,
+  ]
+    .filter(Boolean)
+    .join(" ")
+    .toLowerCase();
   const lowerMessage = errorMessage.toLowerCase();
   const errorType = `${body?.error?.type ?? ""}`.toLowerCase();
+  const isClaudeAccountActionRequiredMessage =
+    (
+      claudeContextText.includes("permission_error") ||
+      claudeContextText.includes("subscription")
+    ) &&
+    (
+      claudeContextText.includes("subscription_past_due") ||
+      claudeContextText.includes("past due") ||
+      claudeContextText.includes("overdue invoice") ||
+      claudeContextText.includes("overdue subscription payment") ||
+      claudeContextText.includes("restore access")
+    );
 
   if (response.status === 409 && errorType === "missing-credential") {
     return {
@@ -323,6 +346,28 @@ export function mapServiceInvokeFailure(testCase, service, response, body) {
       classification: "transport-instability",
       responseStatus: response.status,
       errorMessage,
+      ...buildProviderDiagnosisArtifacts(testCase.provider),
+      body,
+    };
+  }
+
+  if (
+    testCase.provider === "claude" &&
+    isClaudeAccountActionRequiredMessage &&
+    (
+      errorType === "provider-unavailable" ||
+      errorType === "user-action-required"
+    )
+  ) {
+    return {
+      status: "external-blocker",
+      provider: testCase.provider,
+      baseUrl: service.baseUrl,
+      blocker: "claude-account-action-required",
+      classification: "account-action-required",
+      responseStatus: response.status,
+      errorMessage,
+      rerunCommand: buildProviderLiveRerunCommand(testCase.provider),
       ...buildProviderDiagnosisArtifacts(testCase.provider),
       body,
     };

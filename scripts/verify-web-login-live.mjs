@@ -301,7 +301,7 @@ const PROVIDER_INVOKE_TIMEOUT_MS = {
 };
 const PROVIDER_ISOLATION_OVERHEAD_MS = 30_000;
 
-const browserBackedProviders = new Set(["chatgpt", "gemini", "grok", "qwen"]);
+const browserBackedProviders = new Set(["chatgpt", "gemini", "claude", "grok", "qwen"]);
 
 export function normalizeInvokeProofText(value) {
   return `${value ?? ""}`
@@ -1176,6 +1176,20 @@ function isClaudeProviderUnavailable(invokeResult) {
   );
 }
 
+function isClaudeAccountActionRequired(invokeResult) {
+  const lowerMessage = `${invokeResult?.message ?? ""}`.toLowerCase();
+
+  return (
+    lowerMessage.includes("permission_error") &&
+    (
+      lowerMessage.includes("subscription_past_due") ||
+      lowerMessage.includes("past due") ||
+      lowerMessage.includes("overdue invoice") ||
+      lowerMessage.includes("restore access")
+    )
+  );
+}
+
 export function detectSoftInvokeFailure({ proof, liveProofResult, invokeResult }) {
   const outputText = `${invokeResult.outputText ?? ""}`.toLowerCase();
 
@@ -1492,6 +1506,24 @@ export function mapInvokeFailureResult({ proof, liveProofResult, invokeResult, e
       diagnostic: invokeResult.message,
       summary:
         "Claude proved the stored browser session, but the live completion endpoint is currently rate limited upstream. Retry the Claude-only live gate later without changing the local credential.",
+    };
+  }
+
+  if (proof.provider === "claude" && isClaudeAccountActionRequired(invokeResult)) {
+    return {
+      status: "external-blocker",
+      provider: proof.provider,
+      blocker: "claude-account-action-required",
+      classification: "account-action-required",
+      probeUrl: liveProofResult.probeUrl,
+      finalUrl: liveProofResult.finalUrl,
+      responseStatus: liveProofResult.responseStatus,
+      envStatus: liveProofResult.envStatus,
+      rerunCommand: buildProviderRerunCommand("claude"),
+      ...buildProviderDiagnosisArtifacts("claude"),
+      diagnostic: invokeResult.message,
+      summary:
+        "Claude proved the stored browser session, but the account behind this browser session is currently blocked by an overdue subscription payment. Restore the provider account first, then rerun the Claude-only live gate.",
     };
   }
 
@@ -1817,6 +1849,7 @@ function persistBrowserBackedResultVerdict(args) {
         break;
       case "session-incomplete":
       case "human-verification-required":
+      case "account-action-required":
       case "user-action-required":
         nextState = "user-action-required";
         break;

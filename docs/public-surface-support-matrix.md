@@ -20,7 +20,7 @@ The current public story is:
 
 | Surface | Status | Truthful meaning | Source anchors |
 | --- | --- | --- | --- |
-| `HTTP/API` | `supported now` | Durable runtime discovery, auth, remediation, acquisition, and invoke HTTP routes are public and repo-backed today. | `docs/api/openapi.yaml`, `docs/api/service-http-reference.md`, `packages/surfaces/http/src/http-surface.ts`, `packages/surfaces/http/src/service-language.ts` |
+| `HTTP/API` | `supported now` | Durable runtime discovery, auth, remediation, acquisition, invoke, and read-only browser-debug workbench routes are public and repo-backed today. | `docs/api/openapi.yaml`, `docs/api/service-http-reference.md`, `packages/surfaces/http/src/http-surface.ts`, `packages/surfaces/http/src/service-language.ts` |
 | `SDK/client` | `partial` | BYOK SDK, service client, and web helper exist, but they do not replace the service/runtime substrate as the primary public front door. | `docs/api/sdk-quickstart.md`, `packages/sdk/src/index.ts`, `packages/surfaces/sdk-client/src/service-client.ts` |
 | `CLI` | `partial` | The read-only builder/runtime helper is landed. It is not an execution brain or a publication claim. | `scripts/switchyard-cli.mjs`, `tests/unit/web/switchyard-cli.test.ts`, `docs/blueprints/wave6-outward-packaging-threshold.md` |
 | `MCP` | `partial` | A read-only stdio MCP server/tool surface is landed on main and delegates to the same runtime inspection substrate. It is not an execution brain or full consumer parity. | `docs/mcp.md`, `packages/surfaces/mcp/src/index.ts`, `scripts/switchyard-mcp.mjs`, `tests/unit/mcp/switchyard-mcp.test.ts` |

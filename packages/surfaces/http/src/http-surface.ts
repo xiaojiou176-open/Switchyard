@@ -12,6 +12,7 @@ import {
   buildAuthPortalShellModel,
   renderAuthPortalShell,
 } from "./auth-portal-shell.js";
+import { renderProviderDebugWorkbench } from "./provider-debug-workbench.js";
 import type {
   ProviderStatusView,
   RuntimeInvocationFailure,
@@ -233,7 +234,12 @@ function normalizeProviderDebugPath(
   pathname: string,
 ): {
   provider?: WebProviderId;
-  action?: "current-page" | "current-console" | "current-network" | "support-bundle";
+  action?:
+    | "current-page"
+    | "current-console"
+    | "current-network"
+    | "support-bundle"
+    | "workbench";
 } {
   const parts = pathname.split("/").filter(Boolean);
 
@@ -243,11 +249,16 @@ function normalizeProviderDebugPath(
     parts[1] === "runtime" &&
     parts[2] === "providers" &&
     parts[4] === "debug" &&
-    ["current-page", "current-console", "current-network", "support-bundle"].includes(parts[5] ?? "")
+    ["current-page", "current-console", "current-network", "support-bundle", "workbench"].includes(parts[5] ?? "")
   ) {
     return {
       provider: parts[3] as WebProviderId,
-      action: parts[5] as "current-page" | "current-console" | "current-network" | "support-bundle",
+      action: parts[5] as
+        | "current-page"
+        | "current-console"
+        | "current-network"
+        | "support-bundle"
+        | "workbench",
     };
   }
 
@@ -579,6 +590,8 @@ export class SwitchyardHttpSurface {
           buildServiceRouteCatalog().providerAcquisitionStartTemplate,
         providerAcquisitionCaptureTemplate:
           buildServiceRouteCatalog().providerAcquisitionCaptureTemplate,
+        providerDebugWorkbenchTemplate:
+          buildServiceRouteCatalog().providerDebugWorkbenchTemplate,
       },
     });
     const byokSection = defaultModel.sections.find((section) => section.id === "byok");
@@ -819,6 +832,13 @@ export class SwitchyardHttpSurface {
           surface: SERVICE_SURFACE_METADATA,
           debug: debugSupport.currentNetwork,
         });
+      }
+
+      if (providerDebugPath.action === "workbench") {
+        return htmlResponse(
+          200,
+          renderProviderDebugWorkbench(debugSupport, buildServiceRouteCatalog().authPortal),
+        );
       }
 
       return jsonResponse(200, {
