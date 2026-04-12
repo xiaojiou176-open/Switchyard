@@ -54,8 +54,24 @@ It does **not** mean:
 - [README.md](README.md)
 - [INTEGRATIONS.md](INTEGRATIONS.md)
 - [docs/public-distribution-ledger.md](docs/public-distribution-ledger.md)
+- [docs/submission-packet-ledger.md](docs/submission-packet-ledger.md)
 - [docs/plugin-skill-starter-kits.md](docs/plugin-skill-starter-kits.md)
 - [docs/starter-pack-chooser.md](docs/starter-pack-chooser.md)
+
+## Canonical Submission Packet
+
+If you need the shortest "what exactly goes into the box" answer before an
+Official MCP Registry or host-native submission pass, use
+[docs/submission-packet-ledger.md](docs/submission-packet-ledger.md).
+
+That page keeps three boxes separate:
+
+- the repo-wide front door
+- the read-only MCP registry packet
+- the host-native runtime-diagnostics packet
+
+This matters because a packet-scoped host receipt still does **not** upgrade
+Switchyard-wide npm, Official MCP Registry, or hosted-runtime truth.
 
 ## Minimal Human Action Packs
 
