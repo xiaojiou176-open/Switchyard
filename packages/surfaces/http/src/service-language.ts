@@ -51,6 +51,7 @@ export interface ServiceRuntimeRouteCatalog {
   providerDebugCurrentConsoleTemplate: string;
   providerDebugCurrentNetworkTemplate: string;
   providerDebugSupportBundleTemplate: string;
+  providerDebugWorkbenchTemplate: string;
 }
 
 export interface ServiceProviderRouteRefs {
@@ -63,6 +64,7 @@ export interface ServiceProviderRouteRefs {
   debugCurrentConsole: string;
   debugCurrentNetwork: string;
   debugSupportBundle: string;
+  debugWorkbench: string;
 }
 
 export interface ServiceDiscoveryView {
@@ -154,6 +156,8 @@ export interface ServiceProviderCurrentPageView {
   classification?:
     | "workspace-ready"
     | "session-incomplete"
+    | "login-required"
+    | "provider-adjacent"
     | "provider-unavailable"
     | "human-verification-required"
     | "account-action-required"
@@ -299,7 +303,8 @@ export const SERVICE_RUNTIME_ROUTE_TEMPLATES: ServiceRuntimeRouteCatalog = {
   providerDebugCurrentPageTemplate: '/v1/runtime/providers/{providerId}/debug/current-page',
   providerDebugCurrentConsoleTemplate: '/v1/runtime/providers/{providerId}/debug/current-console',
   providerDebugCurrentNetworkTemplate: '/v1/runtime/providers/{providerId}/debug/current-network',
-  providerDebugSupportBundleTemplate: '/v1/runtime/providers/{providerId}/debug/support-bundle'
+  providerDebugSupportBundleTemplate: '/v1/runtime/providers/{providerId}/debug/support-bundle',
+  providerDebugWorkbenchTemplate: '/v1/runtime/providers/{providerId}/debug/workbench'
 };
 
 const WEB_ACQUISITION_MODES = [
@@ -391,6 +396,10 @@ export function buildServiceRouteCatalog(baseUrl?: string): ServiceRuntimeRouteC
     providerDebugSupportBundleTemplate: withBaseUrl(
       SERVICE_RUNTIME_ROUTE_TEMPLATES.providerDebugSupportBundleTemplate,
       baseUrl
+    ),
+    providerDebugWorkbenchTemplate: withBaseUrl(
+      SERVICE_RUNTIME_ROUTE_TEMPLATES.providerDebugWorkbenchTemplate,
+      baseUrl
     )
   };
 }
@@ -416,6 +425,10 @@ export function buildServiceProviderRouteRefs(
     ),
     debugSupportBundle: withBaseUrl(
       `/v1/runtime/providers/${providerId}/debug/support-bundle`,
+      baseUrl
+    ),
+    debugWorkbench: withBaseUrl(
+      `/v1/runtime/providers/${providerId}/debug/workbench`,
       baseUrl
     ),
   };

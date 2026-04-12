@@ -444,6 +444,40 @@ describe("Reality closeout script helpers", () => {
     );
   });
 
+  it("classifies Claude overdue subscription gates as account-action-required external blockers", async () => {
+    const { mapInvokeFailureResult } = await import("../../../scripts/verify-web-login-live.mjs");
+
+    const mapped = mapInvokeFailureResult({
+      proof: {
+        provider: "claude",
+      },
+      liveProofResult: {
+        status: "success",
+        provider: "claude",
+        probeUrl: "https://claude.ai/api/organizations",
+        finalUrl: "https://claude.ai/api/organizations",
+        responseStatus: 200,
+        envStatus: [],
+      },
+      invokeResult: {
+        errorCategory: "provider-unavailable",
+        failureStage: "invoke",
+        message:
+          "Claude completion request failed with HTTP 403: {\"type\":\"error\",\"error\":{\"type\":\"permission_error\",\"message\":\"Your subscription payment is past due. Please pay your overdue invoice to restore access.\",\"details\":{\"error_code\":\"subscription_past_due\"}}}",
+      },
+      env: {},
+    });
+
+    expect(mapped).toEqual(
+      expect.objectContaining({
+        status: "external-blocker",
+        provider: "claude",
+        blocker: "claude-account-action-required",
+        classification: "account-action-required",
+      }),
+    );
+  });
+
   it("classifies Grok browser account gates as user-action-required external blockers", async () => {
     const { mapGrokLiveProofFailureResult } = await import("../../../scripts/verify-web-login-live.mjs");
 

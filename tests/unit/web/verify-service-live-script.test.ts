@@ -269,6 +269,159 @@ describe("verify-service-live script", () => {
     );
   });
 
+  it("maps Claude overdue 409 user-action-required responses into account-action-required external blockers", async () => {
+    const { mapServiceInvokeFailure } = await import(
+      "../../../scripts/verify-service-live.mjs"
+    );
+
+    const mapped = mapServiceInvokeFailure(
+      {
+        provider: "claude",
+        requiresManagedBrowser: false,
+      },
+      {
+        baseUrl: "http://127.0.0.1:57061",
+      },
+      {
+        status: 409,
+      },
+      {
+        error: {
+          type: "user-action-required",
+          message:
+            "Claude Web needs explicit user action before Web/Login traffic can continue.",
+          suggestedAction:
+            "Claude proved the stored browser session, but the account behind this browser session is currently blocked by an overdue subscription payment. Restore the provider account first, then rerun the Claude-only live gate.",
+        },
+      },
+    );
+
+    expect(mapped).toEqual(
+      expect.objectContaining({
+        status: "external-blocker",
+        provider: "claude",
+        blocker: "claude-account-action-required",
+        classification: "account-action-required",
+        responseStatus: 409,
+      }),
+    );
+  });
+
+  it("returns a top-level external-blocker when Claude reports an overdue account action requirement", async () => {
+    const outDir = mkdtempSync(join(tmpdir(), "switchyard-service-live-"));
+    const spawnSync = vi.fn((command: string, args: string[]) => {
+      if (
+        command === "pnpm" &&
+        args.includes("apps/service/tsconfig.json")
+      ) {
+        const outDirIndex = args.indexOf("--outDir");
+        createCompiledServiceModule(args[outDirIndex + 1]);
+      }
+
+      return {
+        status: 0,
+      };
+    });
+    const runWebLoginLiveVerification = vi.fn(async () => []);
+    const fetchMock = vi.fn(async (_url: string, init?: RequestInit) => {
+      const rawBody = `${init?.body ?? ""}`;
+      const parsed = JSON.parse(rawBody);
+
+      if (parsed.provider === "claude") {
+        return new Response(
+          JSON.stringify({
+            error: {
+              type: "user-action-required",
+              message:
+                "Claude Web needs explicit user action before Web/Login traffic can continue.",
+              suggestedAction:
+                "Claude proved the stored browser session, but the account behind this browser session is currently blocked by an overdue subscription payment. Restore the provider account first, then rerun the Claude-only live gate.",
+            },
+            auth: {
+              transportHint:
+                "Claude proved the stored browser session, but the account behind this browser session is currently blocked by an overdue subscription payment. Restore the provider account first, then rerun the Claude-only live gate.",
+              session: {
+                requiredUserAction:
+                  "Claude proved the stored browser session, but the account behind this browser session is currently blocked by an overdue subscription payment. Restore the provider account first, then rerun the Claude-only live gate.",
+              },
+            },
+          }),
+          {
+            status: 409,
+            headers: {
+              "content-type": "application/json",
+            },
+          },
+        );
+      }
+
+      return new Response(
+        JSON.stringify({
+          outputText: extractExpectedToken(init),
+          providerMessageId: `msg-${parsed.provider}`,
+        }),
+        {
+          status: 200,
+          headers: {
+            "content-type": "application/json",
+          },
+        },
+      );
+    });
+
+    vi.doMock("node:child_process", () => ({ spawnSync }));
+    vi.doMock("../../../scripts/verify-web-login-live.mjs", () => ({
+      runWebLoginLiveVerification,
+    }));
+    vi.doMock("../../../scripts/browser-debug-support.mjs", () => ({
+      captureBrowserDebugContext: vi.fn(async () => ({
+        attachStatus: "attached",
+        currentPage: {
+          url: "https://claude.ai/chats",
+          title: "Claude",
+        },
+        currentConsole: [],
+        currentNetwork: [],
+        supportBundle: {
+          command:
+            "pnpm exec node scripts/capture-web-debug-bundle.mjs --provider claude",
+        },
+      })),
+    }));
+    vi.stubGlobal("fetch", fetchMock);
+
+    try {
+      const { runServiceLiveVerification } = await import(
+        "../../../scripts/verify-service-live.mjs"
+      );
+      const result = await runServiceLiveVerification({
+        outDir,
+      });
+
+      expect(result).toEqual(
+        expect.objectContaining({
+          status: "external-blocker",
+          provider: "claude",
+          blocker: "claude-account-action-required",
+          classification: "account-action-required",
+          responseStatus: 409,
+          debug: expect.objectContaining({
+            attachStatus: "attached",
+            currentPage: expect.objectContaining({
+              url: "https://claude.ai/chats",
+            }),
+          }),
+        }),
+      );
+      expect(runWebLoginLiveVerification).not.toHaveBeenCalled();
+    } finally {
+      rmSync(outDir, {
+        recursive: true,
+        force: true,
+      });
+    }
+  });
+
   it("fails closed when managed-browser bootstrap cannot attach to the isolated chrome root", async () => {
     const outDir = mkdtempSync(join(tmpdir(), "switchyard-service-live-"));
     const spawnSync = vi.fn((command: string, args: string[]) => {

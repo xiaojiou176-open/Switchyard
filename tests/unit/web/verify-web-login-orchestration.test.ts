@@ -1278,6 +1278,101 @@ describe("verify-web-login orchestration", () => {
     });
   });
 
+  it("writes claude overdue subscription blockers back into the local auth store", async () => {
+    const outDir = createTempOutDir();
+    const env = createTestEnv("claude");
+    const storePath = env.SWITCHYARD_LOCAL_WEB_AUTH_STORE_PATH;
+    writeFileSync(
+      storePath,
+      `${JSON.stringify(
+        {
+          version: 1,
+          providers: {
+            claude: {
+              providerId: "claude",
+              state: "ready",
+              acquisitionMode: "isolated-chrome-root",
+              artifactStates: {
+                "claude-session-key": "present",
+                "organization-id": "present",
+              },
+              runtimeEnv: buildStoredRuntimeEnv("claude"),
+              persistenceAudit: {
+                pageUrl: "https://claude.ai/new",
+                pageTitle: "Claude",
+                workspaceClassification: "workspace-ready",
+                workspaceReady: true,
+              },
+              updatedAt: "2026-04-05T00:00:00.000Z",
+            },
+          },
+        },
+        null,
+        2,
+      )}\n`,
+      "utf8",
+    );
+
+    const spawnSync = createSpawnSyncMock({});
+
+    vi.doMock("node:child_process", () => ({ spawnSync }));
+    vi.stubGlobal("fetch", vi.fn<typeof fetch>());
+    setState({
+      storedRuntimeEnv: buildStoredRuntimeEnv("claude"),
+      storedSessions: {
+        claude: {
+          state: "ready",
+          accountLabel: "claude:test",
+        },
+      },
+      liveProofs: {
+        claude: async () => ({
+          status: "success",
+          provider: "claude",
+          probeUrl: "https://claude.ai/api/organizations",
+          finalUrl: "https://claude.ai/api/organizations",
+          responseStatus: 200,
+          envStatus: [],
+        }),
+      },
+      invokes: {
+        claude: async () => ({
+          ok: false,
+          errorCategory: "provider-unavailable",
+          failureStage: "invoke",
+          message:
+            "Claude completion request failed with HTTP 403: {\"type\":\"error\",\"error\":{\"type\":\"permission_error\",\"message\":\"Your subscription payment is past due. Please pay your overdue invoice to restore access.\",\"details\":{\"error_code\":\"subscription_past_due\"}}}",
+          suggestedAction:
+            "Restore the Claude subscription, then rerun the Claude-only live gate.",
+        }),
+      },
+    });
+
+    const { runWebLoginLiveVerification } = await import(
+      "../../../scripts/verify-web-login-live.mjs"
+    );
+    const [result] = await runWebLoginLiveVerification({
+      env,
+      providers: ["claude"],
+      outDir,
+    });
+
+    expect(result).toEqual(
+      expect.objectContaining({
+        status: "external-blocker",
+        blocker: "claude-account-action-required",
+        classification: "account-action-required",
+      }),
+    );
+
+    const persisted = JSON.parse(readFileSync(storePath, "utf8"));
+    expect(persisted.providers.claude.state).toBe("user-action-required");
+    expect(persisted.providers.claude.requiredUserAction).toContain("overdue subscription payment");
+    expect(persisted.providers.claude.persistenceAudit.workspaceClassification).toBe(
+      "account-action-required",
+    );
+  });
+
   it("retries ChatGPT after a managed-browser bootstrap when the first invoke hits a closed page", async () => {
     const outDir = createTempOutDir();
     const spawnSync = createSpawnSyncMock({

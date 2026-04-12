@@ -15,6 +15,10 @@ import {
   type AuthRuntimeView,
   type AuthWorkflowSummary
 } from '../../../diagnostics/src/index.js';
+import type {
+  ServiceProviderAuthView,
+  ServiceRuntimeRouteCatalog,
+} from "./service-language.js";
 
 export interface AuthPortalShellOptions {
   owner?: CredentialOwner;
@@ -38,17 +42,19 @@ export interface AuthPortalAcquisitionModeView {
   default: boolean;
 }
 
-export type AuthPortalCard = AuthRuntimeView & {
-  availableModes?: readonly AuthPortalAcquisitionModeView[];
-  mode?: string;
-  modeLabel?: string;
-  browserTarget?: {
-    kind: string;
-    label: string;
-    summary: string;
-  };
-  captureRequest?: Record<string, unknown>;
-};
+export type AuthPortalCard = AuthRuntimeView &
+  Partial<
+    Pick<
+      ServiceProviderAuthView,
+      | "availableModes"
+      | "browserTarget"
+      | "mode"
+      | "modeLabel"
+      | "routes"
+      | "session"
+      | "transportHint"
+    >
+  >;
 export type AuthPortalActionView = AuthPortalCard['actions'][number];
 
 export interface AuthPortalSection {
@@ -69,12 +75,14 @@ export interface AuthPortalShellModel {
   routeCatalog?: AuthPortalRouteCatalog;
 }
 
-export interface AuthPortalRouteCatalog {
-  authPortal: string;
-  providerStatusTemplate: string;
-  providerAcquisitionStartTemplate: string;
-  providerAcquisitionCaptureTemplate: string;
-}
+export type AuthPortalRouteCatalog = Pick<
+  ServiceRuntimeRouteCatalog,
+  | "authPortal"
+  | "providerStatusTemplate"
+  | "providerAcquisitionStartTemplate"
+  | "providerAcquisitionCaptureTemplate"
+  | "providerDebugWorkbenchTemplate"
+>;
 
 const DEFAULT_WEB_ACQUISITION_MODES: readonly AuthPortalAcquisitionModeView[] = [
   {
@@ -199,7 +207,149 @@ function escapeHtml(value: string): string {
     .replaceAll("'", '&#39;');
 }
 
+interface AuthPortalVisibleTruthFocus {
+  title: string;
+  detail: string;
+  nextStepLabel: string;
+  nextStepDescription: string;
+  primaryActionLabel: string;
+}
+
+function getVisibleTruthDetail(
+  card: AuthPortalCard,
+  fallback: string,
+  source: 'required-user-action-first' | 'browser-checkpoint-first' = 'required-user-action-first'
+): string {
+  const requiredUserAction = card.session?.requiredUserAction?.trim();
+  const browserSummary = card.session?.persistenceAudit?.summary?.trim();
+  const transportHint = card.transportHint?.trim();
+
+  if (source === 'browser-checkpoint-first') {
+    return browserSummary || requiredUserAction || transportHint || fallback;
+  }
+
+  return requiredUserAction || browserSummary || transportHint || fallback;
+}
+
+function getVisibleTruthFocus(card: AuthPortalCard): AuthPortalVisibleTruthFocus | null {
+  if (card.authModeId !== 'web-login') {
+    return null;
+  }
+
+  const classification = card.session?.persistenceAudit?.workspaceClassification;
+
+  switch (classification) {
+    case 'account-action-required':
+      return {
+        title: 'Account action required',
+        detail: getVisibleTruthDetail(
+          card,
+          'The current browser is blocked on an owner/manual account step. Resolve that first before treating re-authentication as the main path.'
+        ),
+        nextStepLabel: 'Resolve account access',
+        nextStepDescription:
+          'Stay in the current browser and finish the owner/manual account step first. Use a fresh login flow only after access is restored.',
+        primaryActionLabel: 'Resolve account access'
+      };
+    case 'human-verification-required':
+      return {
+        title: 'Human verification required',
+        detail: getVisibleTruthDetail(
+          card,
+          'The current browser hit a verification wall that still needs an end-user step before Switchyard can trust the session again.'
+        ),
+        nextStepLabel: 'Complete verification',
+        nextStepDescription:
+          'Finish the human verification step in the current browser first. Start a new login flow only if that browser seat cannot recover.',
+        primaryActionLabel: 'Complete verification'
+      };
+    case 'session-incomplete':
+      return {
+        title: 'Session incomplete',
+        detail: getVisibleTruthDetail(
+          card,
+          'The current browser is not on a reusable workspace yet, so Switchyard cannot treat this slot as live-ready.',
+          'browser-checkpoint-first'
+        ),
+        nextStepLabel: 'Finish browser session',
+        nextStepDescription:
+          'Use the current browser path until this provider reaches a real workspace. Start a fresh login only if the current seat cannot recover.',
+        primaryActionLabel: 'Finish browser session'
+      };
+    case 'login-required':
+      return {
+        title: 'Login still required',
+        detail: getVisibleTruthDetail(
+          card,
+          'The current browser is still on a login or verification page, so the session is not reusable yet.',
+          'browser-checkpoint-first'
+        ),
+        nextStepLabel: 'Continue browser login',
+        nextStepDescription:
+          'Finish the login flow in the current browser first. Treat re-authentication as the fallback, not the default explanation.',
+        primaryActionLabel: 'Continue browser login'
+      };
+    case 'permission-gated':
+      return {
+        title: 'Permission gate still blocking',
+        detail: getVisibleTruthDetail(
+          card,
+          'The browser reached a permission gate that still needs an end-user choice before the workspace becomes reusable.',
+          'browser-checkpoint-first'
+        ),
+        nextStepLabel: 'Clear permission gate',
+        nextStepDescription:
+          'Resolve the permission gate in the current browser first, then rerun the live check after the workspace is actually reusable.',
+        primaryActionLabel: 'Clear permission gate'
+      };
+    case 'provider-adjacent':
+      return {
+        title: 'Workspace handoff incomplete',
+        detail: getVisibleTruthDetail(
+          card,
+          'The browser is nearby, but Switchyard still does not see a reusable workspace in the current seat.',
+          'browser-checkpoint-first'
+        ),
+        nextStepLabel: 'Finish browser session',
+        nextStepDescription:
+          'Use the current browser seat until it reaches the real provider workspace. Only then should Switchyard rerun the live proof.',
+        primaryActionLabel: 'Finish browser session'
+      };
+    default:
+      if (card.state === 'user-action-required' && card.session?.requiredUserAction) {
+        return {
+          title: 'User action required',
+          detail: getVisibleTruthDetail(
+            card,
+            'The runtime still needs an explicit end-user action before this slot can be treated as healthy.'
+          ),
+          nextStepLabel: 'Continue required action',
+          nextStepDescription:
+            'Finish the currently required end-user step first, then rerun the live check only after the blocker is cleared.',
+          primaryActionLabel: 'Continue required action'
+        };
+      }
+
+      return null;
+  }
+}
+
+function getActionLabel(card: AuthPortalCard, action: AuthPortalCard['actions'][number]): string {
+  const truthFocus = getVisibleTruthFocus(card);
+
+  if (
+    truthFocus &&
+    card.authModeId === 'web-login' &&
+    (action.id === 'start-web-login' || action.id === 'reauthenticate')
+  ) {
+    return truthFocus.primaryActionLabel;
+  }
+
+  return action.label;
+}
+
 function renderAction(card: AuthPortalCard, action: AuthPortalCard['actions'][number]): string {
+  const actionLabel = getActionLabel(card, action);
   const baseButton = `<button class="action action-${action.emphasis}" data-action-key="${escapeHtml(
     action.actionKey
   )}" data-action-id="${escapeHtml(action.id)}" data-provider-id="${escapeHtml(
@@ -211,7 +361,7 @@ function renderAction(card: AuthPortalCard, action: AuthPortalCard['actions'][nu
       (action.id === "start-web-login" || action.id === "reauthenticate")
       ? "isolated-chrome-root"
       : ""
-  )}" type="button">${escapeHtml(action.label)}</button>`;
+  )}" type="button">${escapeHtml(actionLabel)}</button>`;
 
   if (
     card.authModeId !== "web-login" ||
@@ -255,7 +405,7 @@ function renderAcquisitionModes(card: AuthPortalCard): string {
   const modes = card.availableModes ?? DEFAULT_WEB_ACQUISITION_MODES;
 
   return `<div class="acquisition-modes">
-    <p class="handoff-caption"><strong>Login Paths</strong></p>
+    <p class="handoff-caption"><strong>Login paths</strong></p>
     <ul class="handoff-artifact-list">
       ${modes
         .map(
@@ -263,12 +413,150 @@ function renderAcquisitionModes(card: AuthPortalCard): string {
             `<li>
               <strong>${escapeHtml(mode.label)}</strong>
               <span>${escapeHtml(mode.description)}</span>
-              <span>${mode.default ? "Default path" : "Advanced path"}</span>
+              <span>${mode.default ? "Recommended first path" : "Use only when you already know why"}</span>
             </li>`,
         )
         .join("")}
     </ul>
   </div>`;
+}
+
+function mapWorkspaceClassificationLabel(classification: string | undefined): string {
+  switch (classification) {
+    case "workspace-ready":
+      return "Browser checkpoint looks reusable";
+    case "session-incomplete":
+      return "Browser still needs a real workspace";
+    case "permission-gated":
+      return "Browser reached a permission gate";
+    case "human-verification-required":
+      return "Browser hit a human verification gate";
+    case "account-action-required":
+      return "Browser needs an account action";
+    case "provider-unavailable":
+      return "Provider-side blocker is showing in the browser";
+    case "login-required":
+      return "Browser is still on a login or verification page";
+    case "provider-adjacent":
+      return "Browser is nearby, but not on a usable workspace yet";
+    default:
+      return "No fresh browser checkpoint yet";
+  }
+}
+
+function mapWorkspaceTone(classification: string | undefined): "ok" | "warning" | "danger" {
+  switch (classification) {
+    case "workspace-ready":
+      return "ok";
+    case "provider-adjacent":
+    case "session-incomplete":
+    case "login-required":
+      return "warning";
+    case "permission-gated":
+    case "human-verification-required":
+    case "account-action-required":
+    case "provider-unavailable":
+      return "danger";
+    default:
+      return "warning";
+  }
+}
+
+function renderMaterialSnapshot(card: AuthPortalCard): string {
+  if (!card.session) {
+    return "";
+  }
+
+  const lastValidatedAt = card.session.lastValidatedAt
+    ? `<span><strong>Last checked</strong> <code>${escapeHtml(card.session.lastValidatedAt)}</code></span>`
+    : "";
+  const validationState = card.session.validationState
+    ? `<span><strong>Validation</strong> <code>${escapeHtml(card.session.validationState)}</code></span>`
+    : "";
+  const sessionSource = card.session.sessionSource
+    ? `<span><strong>Source</strong> <code>${escapeHtml(card.session.sessionSource)}</code></span>`
+    : "";
+
+  return `<section class="snapshot">
+    <p class="snapshot-label">Local materials</p>
+    <div class="snapshot-row">
+      <strong>${escapeHtml(card.stateLabel)}</strong>
+      <span>${escapeHtml(card.statusSummary)}</span>
+    </div>
+    <div class="snapshot-meta">
+      ${validationState}
+      ${sessionSource}
+      ${lastValidatedAt}
+    </div>
+  </section>`;
+}
+
+function renderBrowserCheckpoint(card: AuthPortalCard): string {
+  if (card.authModeId !== "web-login") {
+    return "";
+  }
+
+  const audit = card.session?.persistenceAudit;
+  const classification = audit?.workspaceClassification;
+  const tone = mapWorkspaceTone(classification);
+  const url = audit?.pageUrl
+    ? `<span><strong>Last page</strong> <code>${escapeHtml(audit.pageUrl)}</code></span>`
+    : "";
+  const title = audit?.pageTitle
+    ? `<span><strong>Title</strong> ${escapeHtml(audit.pageTitle)}</span>`
+    : "";
+  const summary = audit?.summary ?? card.transportHint ?? "Open the debug workbench to compare store-ready against the currently attached browser.";
+
+  return `<section class="snapshot snapshot-${tone}">
+    <p class="snapshot-label">Current browser checkpoint</p>
+    <div class="snapshot-row">
+      <strong>${escapeHtml(mapWorkspaceClassificationLabel(classification))}</strong>
+      <span>${escapeHtml(summary)}</span>
+    </div>
+    <div class="snapshot-meta">
+      ${title}
+      ${url}
+    </div>
+  </section>`;
+}
+
+function renderRouteLinks(card: AuthPortalCard): string {
+  if (!card.routes) {
+    return "";
+  }
+
+  const links = [
+    ["Status JSON", card.routes.status],
+    ["Probe JSON", card.routes.probe],
+    ["Remediation JSON", card.routes.remediation],
+    ["Current page", card.routes.debugCurrentPage],
+    ["Current console", card.routes.debugCurrentConsole],
+    ["Current network", card.routes.debugCurrentNetwork],
+    ["Support bundle", card.routes.debugSupportBundle],
+  ].filter(([, href]) => Boolean(href));
+
+  if (links.length === 0) {
+    return "";
+  }
+
+  return `<details class="technical-panel">
+    <summary>Technical links</summary>
+    <div class="technical-link-grid">
+      ${links
+        .map(
+          ([label, href]) =>
+            `<a href="${escapeHtml(href ?? "")}" target="_blank" rel="noopener">${escapeHtml(label)}</a>`,
+        )
+        .join("")}
+    </div>
+    ${
+      card.diagnostic
+        ? `<p class="technical-note"><strong>Technical category</strong> <code>${escapeHtml(
+            card.diagnostic.contractCategoryLabel,
+          )}</code></p>`
+        : ""
+    }
+  </details>`;
 }
 
 function renderWorkflowSummary(workflow: AuthWorkflowSummary): string {
@@ -321,6 +609,10 @@ function renderCaptureRequest(card: AuthPortalCard): string {
 }
 
 function renderHandoff(card: AuthPortalCard): string {
+  const truthFocus = getVisibleTruthFocus(card);
+  const nextStepLabel = truthFocus?.nextStepLabel ?? card.handoff.nextStep.label;
+  const nextStepDescription = truthFocus?.nextStepDescription ?? card.handoff.nextStep.description;
+
   return `<section class="handoff">
     <header class="handoff-header">
       <div>
@@ -331,11 +623,11 @@ function renderHandoff(card: AuthPortalCard): string {
     </header>
     ${renderCaptureRequest(card)}
     <p class="handoff-step">
-      <strong>Next step</strong>: ${escapeHtml(card.handoff.nextStep.label)} by ${escapeHtml(
+      <strong>Next step</strong>: ${escapeHtml(nextStepLabel)} by ${escapeHtml(
         card.handoff.nextStep.actorLabel
       )}.
     </p>
-    <p class="handoff-copy">${escapeHtml(card.handoff.nextStep.description)}</p>
+    <p class="handoff-copy">${escapeHtml(nextStepDescription)}</p>
     ${
       card.handoff.fallbackStep
         ? `<p class="handoff-fallback"><strong>Fallback</strong>: ${escapeHtml(
@@ -347,15 +639,23 @@ function renderHandoff(card: AuthPortalCard): string {
 }
 
 function renderCard(card: AuthPortalCard): string {
+  const truthFocus = getVisibleTruthFocus(card);
   const diagnosticHtml = card.diagnostic
     ? `<div class="diagnostic diagnostic-${card.diagnostic.severity}">
-        <strong>${escapeHtml(card.diagnostic.summary)}</strong>
-        <p>${escapeHtml(card.diagnostic.detail)}</p>
-        <p class="diagnostic-contract">Contract label: ${escapeHtml(
+        <strong>${escapeHtml(truthFocus?.title ?? card.diagnostic.summary)}</strong>
+        <p>${escapeHtml(truthFocus?.detail ?? card.diagnostic.detail)}</p>
+        <p class="diagnostic-contract">Technical category: <code>${escapeHtml(
           card.diagnostic.contractCategoryLabel
-        )}</p>
+        )}</code></p>
       </div>`
-    : '<div class="diagnostic diagnostic-ok"><strong>No active diagnostic</strong><p>The current local state is healthy enough for the auth shell.</p></div>';
+    : '<div class="diagnostic diagnostic-ok"><strong>No active blocker</strong><p>Switchyard does not currently see a local credential blocker for this provider slot.</p></div>';
+
+  const debugLink =
+    card.authModeId === "web-login" && card.routes?.debugWorkbench
+      ? `<a class="action action-secondary action-link" href="${escapeHtml(
+          card.routes.debugWorkbench,
+        )}">Inspect current browser</a>`
+      : "";
 
   return `<article class="card">
     <header class="card-header">
@@ -365,20 +665,21 @@ function renderCard(card: AuthPortalCard): string {
       </div>
       <span class="state state-${escapeHtml(card.state)}">${escapeHtml(card.stateLabel)}</span>
     </header>
-    <p class="workflow"><strong>${escapeHtml(card.workflowLabel)}</strong>: ${escapeHtml(
-      card.workflowDescription
-    )}</p>
-    <p class="status">${escapeHtml(card.statusSummary)}</p>
+    <p class="workflow"><strong>Current lane step</strong>: ${escapeHtml(card.workflowLabel)}.</p>
+    <p class="status">${escapeHtml(card.workflowDescription)}</p>
     ${
       card.modeLabel
-        ? `<p class="ownership"><strong>Current login path</strong>: ${escapeHtml(card.modeLabel)}</p>`
+        ? `<p class="ownership"><strong>Current browser handoff</strong>: ${escapeHtml(card.modeLabel)}</p>`
         : ""
     }
+    ${renderMaterialSnapshot(card)}
+    ${renderBrowserCheckpoint(card)}
     <p class="ownership">${escapeHtml(card.ownership.summary)}</p>
     ${diagnosticHtml}
     ${renderHandoff(card)}
     ${renderAcquisitionModes(card)}
-    <div class="actions">${card.actions.map((action) => renderAction(card, action)).join('')}</div>
+    ${renderRouteLinks(card)}
+    <div class="actions">${debugLink}${card.actions.map((action) => renderAction(card, action)).join('')}</div>
   </article>`;
 }
 
@@ -389,6 +690,44 @@ function renderSection(section: AuthPortalSection): string {
       <p>${escapeHtml(section.description)}</p>
     </header>
     <div class="card-grid">${section.cards.map((card) => renderCard(card)).join('')}</div>
+  </section>`;
+}
+
+function renderBoundaryRail(model: AuthPortalShellModel): string {
+  return `<section class="boundary-grid" aria-label="Portal boundary">
+    <article class="boundary-card">
+      <p class="eyebrow eyebrow-compact">What this page does</p>
+      <h2>Track your local provider access</h2>
+      <p>Use this portal to compare <strong>what Switchyard already holds locally</strong> against <strong>what the currently attached browser can actually reuse right now</strong>.</p>
+    </article>
+    <article class="boundary-card">
+      <p class="eyebrow eyebrow-compact">What this page does not do</p>
+      <h2>Not a control plane</h2>
+      <p>${escapeHtml(model.trustBoundary)}</p>
+    </article>
+  </section>`;
+}
+
+function renderModeGuide(): string {
+  return `<section class="mode-guide">
+    <header class="section-header">
+      <h2>Choose the right browser handoff</h2>
+      <p>Think of these like three ways to hand the same keyring to the same local runtime. The difference is where Switchyard picks it up, not who owns the account.</p>
+    </header>
+    <div class="mode-guide-grid">
+      <article class="mode-guide-card">
+        <h3>Repo browser workspace</h3>
+        <p>Reuse Switchyard&apos;s dedicated Chrome workspace for this repo. This is the steady-state path when you already live inside the repo-owned browser seat.</p>
+      </article>
+      <article class="mode-guide-card">
+        <h3>Managed fallback browser</h3>
+        <p>Let Switchyard open or reattach its simpler fallback browser for onboarding. Use this when the main workspace is not ready yet.</p>
+      </article>
+      <article class="mode-guide-card">
+        <h3>Attach an existing session</h3>
+        <p>Use this only when you already have a reusable browser session URL and you know it belongs to this repo-owned runtime path.</p>
+      </article>
+    </div>
   </section>`;
 }
 
@@ -418,14 +757,22 @@ function replaceProvider(template, providerId) {
   return template.replace('{providerId}', providerId);
 }
 
-function setFeedback(title, summary, raw, actionHtml = '') {
+function setActionBusy(button, busy) {
+  if (!button) return;
+  button.disabled = busy;
+  button.setAttribute('aria-busy', busy ? 'true' : 'false');
+}
+
+function setFeedback(title, summary, raw, actionHtml = '', state = 'working') {
   if (!feedback) return;
   feedback.hidden = false;
+  feedback.dataset.state = state;
   feedback.innerHTML = \`
     <h2>\${title}</h2>
     <p>\${summary}</p>
     \${raw ? \`<pre>\${raw}</pre>\` : ''}
     \${actionHtml}\`;
+  feedback.focus();
 }
 
 async function callJson(url, body = {}) {
@@ -467,6 +814,8 @@ document.addEventListener('click', async (event) => {
 
   try {
     if (actionId === 'start-web-login' || actionId === 'reauthenticate') {
+      setActionBusy(button, true);
+      setFeedback('Preparing browser handoff', 'Switchyard is lining up the local browser workspace and checking whether a capture path is available.', '', '', 'working');
       const acquisitionMode = button.dataset.acquisitionMode ?? 'isolated-chrome-root';
       const { payload } = await callJson(
         replaceProvider(routeCatalog.providerAcquisitionStartTemplate, providerId),
@@ -483,6 +832,10 @@ document.addEventListener('click', async (event) => {
       const captureButton = captureUrl
         ? \`<button class="action action-primary" data-capture-url="\${captureUrl}" data-capture-body="\${captureBody}" type="button">Capture Session</button>\`
         : '';
+      const inspectButton =
+        routeCatalog.providerDebugWorkbenchTemplate
+          ? \`<a class="action action-secondary action-link" href="\${replaceProvider(routeCatalog.providerDebugWorkbenchTemplate, providerId)}">Inspect current browser</a>\`
+          : '';
       if (acquisition.loginUrl && !browser?.loginOpened) {
         window.open(acquisition.loginUrl, '_blank', 'noopener');
       }
@@ -496,27 +849,39 @@ document.addEventListener('click', async (event) => {
         acquisition.status === 'ready-for-user-login' ? 'Acquisition started' : 'Acquisition blocked',
         acquisition.summary ?? 'Browser login flow started.',
         details,
-        captureButton
+        \`\${captureButton}\${inspectButton}\`,
+        acquisition.status === 'ready-for-user-login' ? 'success' : 'warning'
       );
+      setActionBusy(button, false);
       return;
     }
 
     if (actionId === 'retry-refresh') {
+      setActionBusy(button, true);
+      setFeedback('Capturing current session', 'Switchyard is reading the current browser state and writing the local handoff record.', '', '', 'working');
       const { payload } = await callJson(
         replaceProvider(routeCatalog.providerAcquisitionCaptureTemplate, providerId)
       );
+      const acquisitionStatus = payload.acquisition?.status;
       setFeedback(
-        'Acquisition capture',
+        acquisitionStatus === 'refreshable-but-degraded'
+          ? 'Capture stored with follow-up needed'
+          : 'Acquisition capture',
         payload.acquisition?.summary ?? 'Acquisition capture finished.',
-        payload.acquisition?.storePath ?? ''
+        payload.acquisition?.storePath ?? '',
+        '',
+        acquisitionStatus === 'refreshable-but-degraded' ? 'warning' : 'success'
       );
-      if (payload.acquisition?.status === 'success') {
+      if (acquisitionStatus === 'success' || acquisitionStatus === 'refreshable-but-degraded') {
         window.setTimeout(() => window.location.reload(), 500);
       }
+      setActionBusy(button, false);
       return;
     }
   } catch (error) {
-    setFeedback('Action failed', error instanceof Error ? error.message : 'Unknown auth portal failure.');
+    setFeedback('Action failed', error instanceof Error ? error.message : 'Unknown auth portal failure.', '', '', 'danger');
+  } finally {
+    setActionBusy(button, false);
   }
 });
 
@@ -528,20 +893,29 @@ document.addEventListener('click', async (event) => {
   }
 
   try {
+    setActionBusy(button, true);
+    setFeedback('Capturing current session', 'Switchyard is writing the current browser state into the local store and then refreshing the portal.', '', '', 'working');
     const captureBody = button.dataset.captureBody
       ? JSON.parse(decodeURIComponent(button.dataset.captureBody))
       : {};
     const { payload } = await callJson(button.dataset.captureUrl, captureBody);
+    const acquisitionStatus = payload.acquisition?.status;
     setFeedback(
-      'Acquisition capture',
+      acquisitionStatus === 'refreshable-but-degraded'
+        ? 'Capture stored with follow-up needed'
+        : 'Acquisition capture',
       payload.acquisition?.summary ?? 'Acquisition capture finished.',
-      payload.acquisition?.storePath ?? ''
+      payload.acquisition?.storePath ?? '',
+      '',
+      acquisitionStatus === 'refreshable-but-degraded' ? 'warning' : 'success'
     );
-    if (payload.acquisition?.status === 'success') {
+    if (acquisitionStatus === 'success' || acquisitionStatus === 'refreshable-but-degraded') {
       window.setTimeout(() => window.location.reload(), 500);
     }
   } catch (error) {
-    setFeedback('Capture failed', error instanceof Error ? error.message : 'Unknown capture failure.');
+    setFeedback('Capture failed', error instanceof Error ? error.message : 'Unknown capture failure.', '', '', 'danger');
+  } finally {
+    setActionBusy(button, false);
   }
 });
 </script>`;
@@ -554,55 +928,85 @@ export function renderAuthPortalShell(model: AuthPortalShellModel): string {
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>${escapeHtml(model.title)}</title>
+    <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 120 120'%3E%3Crect width='120' height='120' rx='28' fill='%23111816'/%3E%3Cpath d='M30 34h60v12H30zm0 20h60v12H30zm0 20h32v12H30z' fill='%233fa56b'/%3E%3C/svg%3E" />
     <style>
       :root {
-        color-scheme: light;
-        --bg: #f6f3ec;
-        --panel: rgba(255, 255, 255, 0.88);
-        --ink: #1f1b18;
-        --muted: #6f665f;
-        --line: rgba(31, 27, 24, 0.12);
-        --accent: #136f63;
-        --warning: #b45309;
-        --danger: #b42318;
-        --ok: #1d6f42;
-        --shadow: 0 18px 50px rgba(31, 27, 24, 0.1);
+        color-scheme: dark;
+        --bg: #0f1412;
+        --panel: #151c19;
+        --panel-raised: #1b2420;
+        --ink: #e8f1ec;
+        --muted: #a9b7b0;
+        --line: #2a3631;
+        --accent: #3fa56b;
+        --warning: #c78b2c;
+        --danger: #c95a5a;
+        --ok: #4cbc76;
+        --shadow: 0 18px 48px rgba(0, 0, 0, 0.32);
       }
 
       * {
         box-sizing: border-box;
       }
 
+      html {
+        scroll-behavior: smooth;
+      }
+
       body {
         margin: 0;
         background:
-          radial-gradient(circle at top left, rgba(19, 111, 99, 0.14), transparent 24rem),
-          radial-gradient(circle at bottom right, rgba(180, 83, 9, 0.15), transparent 22rem),
+          radial-gradient(circle at top left, rgba(63, 165, 107, 0.18), transparent 24rem),
+          radial-gradient(circle at bottom right, rgba(199, 139, 44, 0.12), transparent 18rem),
           var(--bg);
         color: var(--ink);
-        font-family: "Avenir Next", "Segoe UI", sans-serif;
+        font-family: "IBM Plex Sans", "Fira Sans", "Segoe UI", sans-serif;
       }
 
       main {
-        width: min(1120px, calc(100vw - 2rem));
+        width: min(1200px, calc(100vw - 2rem));
         margin: 0 auto;
         padding: 2rem 0 3rem;
+      }
+
+      .skip-link {
+        position: absolute;
+        left: 1rem;
+        top: 1rem;
+        transform: translateY(-240%);
+        padding: 0.75rem 1rem;
+        border-radius: 999px;
+        background: var(--accent);
+        color: #08100b;
+        font-weight: 700;
+        text-decoration: none;
+        transition: transform 140ms ease;
+        z-index: 20;
+      }
+
+      .skip-link:focus-visible {
+        transform: translateY(0);
       }
 
       .hero,
       .section,
       .policy-list,
-      .workflow-grid {
+      .workflow-grid,
+      .boundary-card,
+      .mode-guide,
+      .feedback {
         background: var(--panel);
-        backdrop-filter: blur(10px);
         border: 1px solid var(--line);
         border-radius: 24px;
         box-shadow: var(--shadow);
       }
 
       .hero {
-        padding: 2rem;
-        margin-bottom: 1.5rem;
+        display: grid;
+        grid-template-columns: minmax(0, 2.2fr) minmax(280px, 1fr);
+        gap: 1rem;
+        padding: 1.75rem;
+        margin-bottom: 1rem;
       }
 
       .eyebrow {
@@ -611,6 +1015,11 @@ export function renderAuthPortalShell(model: AuthPortalShellModel): string {
         font-size: 0.9rem;
         letter-spacing: 0.12em;
         text-transform: uppercase;
+        font-family: "JetBrains Mono", "Fira Code", monospace;
+      }
+
+      .eyebrow-compact {
+        font-size: 0.78rem;
       }
 
       h1,
@@ -620,11 +1029,56 @@ export function renderAuthPortalShell(model: AuthPortalShellModel): string {
         margin-top: 0;
       }
 
+      h1,
+      h2,
+      h3,
+      h4,
+      summary,
+      button,
+      a {
+        letter-spacing: -0.02em;
+      }
+
+      code,
+      pre,
+      .mono,
+      .workflow-count,
+      .state,
+      .snapshot-meta span,
+      .policy-pill {
+        font-family: "JetBrains Mono", "Fira Code", monospace;
+      }
+
       .hero p:last-child,
       .section-header p:last-child,
       .diagnostic p:last-child,
-      .card p:last-child {
+      .card p:last-child,
+      .boundary-card p:last-child {
         margin-bottom: 0;
+      }
+
+      .hero-copy h1 {
+        max-width: 16ch;
+        font-size: clamp(2.1rem, 4vw, 3.5rem);
+        line-height: 1.02;
+        margin-bottom: 0.85rem;
+      }
+
+      .hero-copy p {
+        max-width: 64ch;
+        color: var(--muted);
+      }
+
+      .hero-meta {
+        display: grid;
+        gap: 0.8rem;
+      }
+
+      .hero-meta-card {
+        border: 1px solid var(--line);
+        border-radius: 18px;
+        padding: 1rem;
+        background: var(--panel-raised);
       }
 
       .policy-list {
@@ -632,7 +1086,18 @@ export function renderAuthPortalShell(model: AuthPortalShellModel): string {
         flex-wrap: wrap;
         gap: 0.75rem;
         padding: 1rem;
-        margin-bottom: 1.5rem;
+        margin-bottom: 1rem;
+      }
+
+      .boundary-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+        gap: 1rem;
+        margin-bottom: 1rem;
+      }
+
+      .boundary-card {
+        padding: 1.1rem 1.15rem;
       }
 
       .workflow-grid {
@@ -640,14 +1105,14 @@ export function renderAuthPortalShell(model: AuthPortalShellModel): string {
         grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
         gap: 1rem;
         padding: 1rem;
-        margin-bottom: 1.5rem;
+        margin-bottom: 1rem;
       }
 
       .workflow-card {
         border: 1px solid var(--line);
         border-radius: 20px;
         padding: 1rem;
-        background: rgba(255, 255, 255, 0.72);
+        background: var(--panel-raised);
       }
 
       .workflow-header {
@@ -688,7 +1153,7 @@ export function renderAuthPortalShell(model: AuthPortalShellModel): string {
       .policy-pill {
         padding: 0.5rem 0.85rem;
         border-radius: 999px;
-        background: rgba(19, 111, 99, 0.1);
+        background: rgba(63, 165, 107, 0.12);
         color: var(--accent);
         font-size: 0.92rem;
       }
@@ -708,7 +1173,7 @@ export function renderAuthPortalShell(model: AuthPortalShellModel): string {
         border: 1px solid var(--line);
         border-radius: 20px;
         padding: 1rem;
-        background: rgba(255, 255, 255, 0.78);
+        background: var(--panel-raised);
       }
 
       .card-header {
@@ -725,26 +1190,28 @@ export function renderAuthPortalShell(model: AuthPortalShellModel): string {
         border-radius: 999px;
         padding: 0.35rem 0.7rem;
         font-size: 0.84rem;
-        background: rgba(31, 27, 24, 0.08);
+        background: #25302b;
+        border: 1px solid rgba(255, 255, 255, 0.08);
+        color: #dbe8e1;
       }
 
       .state-ready {
-        background: rgba(29, 111, 66, 0.12);
-        color: var(--ok);
+        background: #17452d;
+        color: #e6fff0;
       }
 
       .state-expiring,
       .state-refreshable-but-degraded,
       .state-provider-unavailable {
-        background: rgba(180, 83, 9, 0.12);
-        color: var(--warning);
+        background: #4a3310;
+        color: #ffe6ad;
       }
 
       .state-expired,
       .state-missing,
       .state-user-action-required {
-        background: rgba(180, 35, 24, 0.12);
-        color: var(--danger);
+        background: #4a1c1c;
+        color: #ffe3e3;
       }
 
       .status,
@@ -755,9 +1222,52 @@ export function renderAuthPortalShell(model: AuthPortalShellModel): string {
       .handoff-step,
       .handoff-fallback,
       .handoff-artifact-list,
-      .handoff-header p {
+      .handoff-header p,
+      .boundary-card p,
+      .snapshot-row span,
+      .technical-note {
         color: var(--muted);
         font-size: 0.95rem;
+      }
+
+      .snapshot {
+        margin: 0.8rem 0;
+        padding: 0.85rem 0.9rem;
+        border: 1px solid var(--line);
+        border-radius: 18px;
+        background: rgba(255, 255, 255, 0.02);
+      }
+
+      .snapshot-warning {
+        border-color: rgba(199, 139, 44, 0.35);
+      }
+
+      .snapshot-danger {
+        border-color: rgba(201, 90, 90, 0.35);
+      }
+
+      .snapshot-ok {
+        border-color: rgba(76, 188, 118, 0.32);
+      }
+
+      .snapshot-label {
+        margin-bottom: 0.45rem;
+        color: var(--muted);
+        font-size: 0.84rem;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+      }
+
+      .snapshot-row {
+        display: grid;
+        gap: 0.35rem;
+      }
+
+      .snapshot-meta {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.65rem;
+        margin-top: 0.75rem;
       }
 
       .diagnostic {
@@ -770,8 +1280,8 @@ export function renderAuthPortalShell(model: AuthPortalShellModel): string {
         border-radius: 16px;
         padding: 0.85rem;
         margin: 0.85rem 0;
-        background: rgba(19, 111, 99, 0.08);
-        border: 1px solid rgba(19, 111, 99, 0.18);
+        background: rgba(63, 165, 107, 0.08);
+        border: 1px solid rgba(63, 165, 107, 0.18);
       }
 
       .handoff-header {
@@ -792,8 +1302,8 @@ export function renderAuthPortalShell(model: AuthPortalShellModel): string {
         align-items: center;
         border-radius: 999px;
         padding: 0.3rem 0.65rem;
-        background: rgba(19, 111, 99, 0.14);
-        color: var(--accent);
+        background: #1f5138;
+        color: #ebfff3;
         font-size: 0.82rem;
         white-space: nowrap;
       }
@@ -811,7 +1321,7 @@ export function renderAuthPortalShell(model: AuthPortalShellModel): string {
         gap: 0.15rem;
         padding: 0.65rem 0.75rem;
         border-radius: 14px;
-        background: rgba(255, 255, 255, 0.78);
+        background: rgba(255, 255, 255, 0.04);
       }
 
       .diagnostic-warning {
@@ -838,39 +1348,132 @@ export function renderAuthPortalShell(model: AuthPortalShellModel): string {
         padding: 0.65rem 1rem;
         font: inherit;
         cursor: pointer;
+        text-decoration: none;
+        transition:
+          transform 140ms ease,
+          border-color 140ms ease,
+          background-color 140ms ease,
+          opacity 140ms ease;
+      }
+
+      .action:hover {
+        transform: translateY(-1px);
+      }
+
+      .action[disabled],
+      .action[aria-busy="true"] {
+        cursor: progress;
+        opacity: 0.72;
       }
 
       .action-primary {
         background: var(--accent);
-        color: white;
+        color: #08100b;
+        font-weight: 600;
       }
 
       .action-secondary {
-        background: rgba(31, 27, 24, 0.08);
+        background: rgba(255, 255, 255, 0.04);
+        border: 1px solid var(--line);
         color: var(--ink);
       }
 
       .action-warning {
-        background: rgba(180, 83, 9, 0.16);
-        color: #7a2f0b;
+        background: rgba(199, 139, 44, 0.16);
+        color: #f0c46d;
       }
 
       .feedback {
         padding: 1rem;
-        margin-bottom: 1.5rem;
-        border: 1px solid var(--line);
-        border-radius: 20px;
-        background: rgba(255, 255, 255, 0.82);
-        box-shadow: var(--shadow);
+        margin-bottom: 1rem;
+      }
+
+      .feedback[data-state="working"] {
+        border-color: rgba(199, 139, 44, 0.38);
+      }
+
+      .feedback[data-state="success"] {
+        border-color: rgba(76, 188, 118, 0.38);
+      }
+
+      .feedback[data-state="warning"] {
+        border-color: rgba(199, 139, 44, 0.38);
+      }
+
+      .feedback[data-state="danger"] {
+        border-color: rgba(201, 90, 90, 0.4);
       }
 
       .feedback pre {
         white-space: pre-wrap;
         word-break: break-word;
         color: var(--muted);
-        background: rgba(31, 27, 24, 0.05);
+        background: rgba(255, 255, 255, 0.04);
         border-radius: 14px;
         padding: 0.8rem;
+      }
+
+      .technical-panel {
+        margin: 0.85rem 0;
+        border-top: 1px solid var(--line);
+        padding-top: 0.8rem;
+      }
+
+      .technical-panel summary {
+        cursor: pointer;
+        color: var(--muted);
+      }
+
+      .technical-link-grid {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.6rem;
+        margin-top: 0.8rem;
+      }
+
+      .technical-link-grid a {
+        color: var(--ink);
+        text-decoration: none;
+        border: 1px solid var(--line);
+        border-radius: 999px;
+        padding: 0.45rem 0.75rem;
+      }
+
+      .mode-guide {
+        padding: 1.2rem;
+        margin-bottom: 1rem;
+      }
+
+      .mode-guide-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+        gap: 1rem;
+      }
+
+      .mode-guide-card {
+        border: 1px solid var(--line);
+        border-radius: 18px;
+        padding: 1rem;
+        background: var(--panel-raised);
+      }
+
+      :focus-visible {
+        outline: 2px solid var(--accent);
+        outline-offset: 2px;
+      }
+
+      @media (prefers-reduced-motion: reduce) {
+        html {
+          scroll-behavior: auto;
+        }
+
+        *,
+        *::before,
+        *::after {
+          animation-duration: 0.01ms !important;
+          animation-iteration-count: 1 !important;
+          transition-duration: 0.01ms !important;
+        }
       }
 
       @media (max-width: 720px) {
@@ -881,9 +1484,14 @@ export function renderAuthPortalShell(model: AuthPortalShellModel): string {
 
         .hero,
         .section,
-        .workflow-grid {
+        .workflow-grid,
+        .mode-guide {
           padding: 1.1rem;
           border-radius: 18px;
+        }
+
+        .hero {
+          grid-template-columns: 1fr;
         }
 
         .card-header {
@@ -899,13 +1507,26 @@ export function renderAuthPortalShell(model: AuthPortalShellModel): string {
     </style>
   </head>
   <body>
-    <main>
+    <a class="skip-link" href="#auth-portal-main">Skip to main content</a>
+    <main id="auth-portal-main">
       <section class="hero">
-        <p class="eyebrow">${escapeHtml(model.mode)}</p>
-        <h1>${escapeHtml(model.title)}</h1>
-        <p>${escapeHtml(model.trustBoundary)}</p>
-        <p>Generated at ${escapeHtml(model.generatedAt)}</p>
+        <div class="hero-copy">
+          <p class="eyebrow">Local-first provider access</p>
+          <h1>${escapeHtml(model.title)}</h1>
+          <p>Use this machine-local front desk to compare <strong>what Switchyard already holds</strong> with <strong>what the currently attached browser can actually reuse right now</strong>.</p>
+        </div>
+        <div class="hero-meta">
+          <article class="hero-meta-card">
+            <p class="eyebrow eyebrow-compact">Current stance</p>
+            <p>${escapeHtml(model.trustBoundary)}</p>
+          </article>
+          <article class="hero-meta-card">
+            <p class="eyebrow eyebrow-compact">Generated</p>
+            <p class="mono">${escapeHtml(model.generatedAt)}</p>
+          </article>
+        </div>
       </section>
+      ${renderBoundaryRail(model)}
       <section class="policy-list" aria-label="Supported policies">
         ${model.supportedPolicies
           .map((policy) => `<span class="policy-pill">${escapeHtml(policy)}</span>`)
@@ -914,8 +1535,9 @@ export function renderAuthPortalShell(model: AuthPortalShellModel): string {
       <section class="workflow-grid" aria-label="Auth workflows">
         ${model.workflows.map((workflow) => renderWorkflowSummary(workflow)).join('')}
       </section>
-      <section id="auth-portal-feedback" class="feedback" hidden></section>
+      <section id="auth-portal-feedback" class="feedback" role="status" aria-live="polite" aria-atomic="true" tabindex="-1" hidden></section>
       ${model.sections.map((section) => renderSection(section)).join('')}
+      ${renderModeGuide()}
     </main>
     ${renderRouteCatalog(model.routeCatalog)}
     ${renderPortalScript(model.routeCatalog)}

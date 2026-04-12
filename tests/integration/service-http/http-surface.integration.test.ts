@@ -16,7 +16,12 @@ import {
   upsertStoredWebProviderSession,
 } from "../../../packages/credentials/src/index.js";
 import type { WebLoginLane } from "../../../packages/lanes/web/src/index.js";
-import { SwitchyardHttpSurface } from "../../../packages/surfaces/http/src/index.js";
+import {
+  buildServiceProviderAuthView,
+  buildServiceProviderRouteRefs,
+  buildServiceProviderRuntimeView,
+  SwitchyardHttpSurface,
+} from "../../../packages/surfaces/http/src/index.js";
 import {
   getInvokeProofExpectation,
   runWebLoginLiveVerification,
@@ -218,6 +223,7 @@ describe("Switchyard HTTP surface", () => {
             debugCurrentConsole: "/v1/runtime/providers/chatgpt/debug/current-console",
             debugCurrentNetwork: "/v1/runtime/providers/chatgpt/debug/current-network",
             debugSupportBundle: "/v1/runtime/providers/chatgpt/debug/support-bundle",
+            debugWorkbench: "/v1/runtime/providers/chatgpt/debug/workbench",
           },
         }),
       },
@@ -272,6 +278,18 @@ describe("Switchyard HTTP surface", () => {
     expect(currentConsoleResponse.status).toBe(200);
     expect(currentConsolePayload.debug.status).toBe("captured");
     expect(currentConsolePayload.debug.diagnostic).toContain("Observed");
+
+    const workbenchResponse = await getSurface(
+      service,
+      "/v1/runtime/providers/chatgpt/debug/workbench",
+    );
+    const workbenchHtml = await workbenchResponse.text();
+
+    expect(workbenchResponse.status).toBe(200);
+    expect(workbenchHtml).toContain("ChatGPT Web debug workbench");
+    expect(workbenchHtml).toContain("Read-only inspection surface");
+    expect(workbenchHtml).toContain("/v1/runtime/providers/chatgpt/debug/support-bundle");
+    expect(workbenchHtml).toContain("Current browser evidence");
   });
 
   it("falls back to the default fail-closed support bundle when no debug runner is registered", async () => {
@@ -681,6 +699,142 @@ describe("Switchyard HTTP surface", () => {
     );
   });
 
+  it("surfaces subtype-aware blocker wording in the auth portal and Claude debug workbench", async () => {
+    const service = createTestService({
+      useLocalWebAuthStore: false,
+      providerSessions: {
+        claude: {
+          state: "user-action-required",
+          accountLabel: "claude:billing",
+          acquisitionMode: "isolated-chrome-root",
+          requiredUserAction:
+            "Restore Claude subscription access before rerunning the live gate.",
+          persistenceAudit: {
+            workspaceClassification: "account-action-required",
+            summary: "Claude account access is blocked until the subscription is restored.",
+            pageUrl: "https://claude.ai/new",
+            pageTitle: "Claude",
+          },
+        },
+        grok: {
+          state: "user-action-required",
+          accountLabel: "grok:workspace",
+          acquisitionMode: "isolated-chrome-root",
+          requiredUserAction:
+            "Complete the Grok browser session until it reaches a reusable workspace.",
+          persistenceAudit: {
+            workspaceClassification: "session-incomplete",
+            summary: "The current Grok browser seat has not reached a reusable workspace yet.",
+            pageUrl: "https://grok.com/",
+            pageTitle: "Grok",
+          },
+        },
+      },
+      debugSupportRunners: {
+        claude: async (provider) => ({
+          providerId: provider.provider,
+          providerDisplayName: provider.displayName,
+          auth: buildServiceProviderAuthView(provider, "local-user"),
+          runtime: buildServiceProviderRuntimeView(provider),
+          storeReadiness: {
+            credentialState: provider.credentialState,
+            runtimeReadiness: provider.runtimeReadiness,
+            validationState: provider.session.validationState,
+            note: "Stored material still reflects a user-action-required Claude slot.",
+          },
+          liveReadiness: {
+            status: "live-ready",
+            diagnostic:
+              "The current Claude browser tab still looks reusable, but account access is blocked upstream.",
+          },
+          attachTarget: {
+            label: "Isolated Chrome root",
+            source: "runtime-env",
+            available: true,
+            cdpUrl: "http://127.0.0.1:9338",
+            note: "Claude is being inspected from the repo-owned isolated Chrome root.",
+          },
+          currentPage: {
+            status: "captured",
+            url: "https://claude.ai/new",
+            title: "Claude",
+            snippet: "Subscription past due",
+            hasComposerSurface: true,
+            classification: "account-action-required",
+            diagnostic:
+              "Claude billing state is still blocking access until the subscription is restored.",
+          },
+          currentConsole: {
+            status: "captured",
+            entries: [],
+            diagnostic: "No fresh console entries were captured during this inspection window.",
+          },
+          currentNetwork: {
+            status: "captured",
+            entries: [],
+            diagnostic: "No fresh network events were captured during this inspection window.",
+          },
+          diagnoseLadder: [
+            {
+              id: "check-store",
+              status: "completed",
+              summary: "Stored state = user-action-required; runtime readiness = blocked.",
+            },
+            {
+              id: "check-attach-target",
+              status: "completed",
+              summary: "Canonical attach target is Isolated Chrome root at http://127.0.0.1:9338.",
+            },
+            {
+              id: "inspect-current-page",
+              status: "completed",
+              summary:
+                "Claude browser evidence says the account is blocked until the subscription is restored.",
+            },
+            {
+              id: "inspect-console-network",
+              status: "completed",
+              summary: "No fresh console or network events were captured during this inspection window.",
+            },
+            {
+              id: "rerun-provider-live-proof",
+              status: "recommended",
+              summary: "Rerun the provider live gate after Claude account access is restored.",
+              command: "pnpm exec node scripts/verify-web-login-live.mjs --provider claude",
+            },
+          ],
+          routes: buildServiceProviderRouteRefs(provider.provider),
+        }),
+      },
+    });
+
+    const authPortalResponse = await getSurface(service, "/v1/runtime/auth-portal");
+    const authPortalHtml = await authPortalResponse.text();
+
+    expect(authPortalResponse.status).toBe(200);
+    expect(authPortalHtml).toContain("Account action required");
+    expect(authPortalHtml).toContain("Resolve account access");
+    expect(authPortalHtml).toContain("Session incomplete");
+    expect(authPortalHtml).toContain("Finish browser session");
+    expect(authPortalHtml).not.toContain(">Re-authenticate<");
+
+    const workbenchResponse = await getSurface(
+      service,
+      "/v1/runtime/providers/claude/debug/workbench",
+    );
+    const workbenchHtml = await workbenchResponse.text();
+
+    expect(workbenchResponse.status).toBe(200);
+    expect(workbenchHtml).toContain("Owner action first");
+    expect(workbenchHtml).toContain(
+      "Restore Claude subscription access before rerunning the live gate.",
+    );
+    expect(workbenchHtml).toContain("Current browser evidence can still look reusable.");
+    expect(workbenchHtml).toContain(
+      "A reusable-looking browser page does not clear this blocker by itself.",
+    );
+  });
+
   it("returns live-proof success through the probe route when a runner is injected", async () => {
     const service = createTestService({
       useLocalWebAuthStore: false,
@@ -951,6 +1105,8 @@ describe("Switchyard HTTP surface", () => {
     expect(portalResponse.status).toBe(200);
     expect(portalResponse.headers.get("content-type")).toContain("text/html");
     expect(portalHtml).toContain("Switchyard Auth Portal");
+    expect(portalHtml).toContain("Skip to main content");
+    expect(portalHtml).toContain("Inspect current browser");
     expect(portalHtml).toContain("/v1/runtime/providers/{providerId}/acquisition/start");
     expect(portalHtml).not.toContain("&quot;authPortal&quot;");
 
@@ -964,6 +1120,7 @@ describe("Switchyard HTTP surface", () => {
       providerStatusTemplate: "/v1/runtime/providers/{providerId}/status",
       providerAcquisitionStartTemplate: "/v1/runtime/providers/{providerId}/acquisition/start",
       providerAcquisitionCaptureTemplate: "/v1/runtime/providers/{providerId}/acquisition/capture",
+      providerDebugWorkbenchTemplate: "/v1/runtime/providers/{providerId}/debug/workbench",
     });
 
     const startResponse = await postSurface(

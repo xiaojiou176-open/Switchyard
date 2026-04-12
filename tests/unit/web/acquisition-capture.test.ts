@@ -176,9 +176,12 @@ describe("web acquisition capture", () => {
     );
     expect(result).toEqual(
       expect.objectContaining({
-        status: "success",
+        status: "refreshable-but-degraded",
         provider: "chatgpt",
         storePath: "/tmp/chatgpt-store.json",
+        session: expect.objectContaining({
+          state: "refreshable-but-degraded",
+        }),
       }),
     );
   });
@@ -1350,11 +1353,12 @@ describe("web acquisition capture", () => {
     );
     expect(result).toEqual(
       expect.objectContaining({
-        status: "success",
+        status: "refreshable-but-degraded",
         provider: "claude",
         storePath: "/tmp/claude-store.json",
         session: expect.objectContaining({
           acquisitionMode: "isolated-chrome-root",
+          state: "refreshable-but-degraded",
         }),
       }),
     );
