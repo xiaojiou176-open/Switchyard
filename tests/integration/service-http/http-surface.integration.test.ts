@@ -813,10 +813,10 @@ describe("Switchyard HTTP surface", () => {
 
     expect(authPortalResponse.status).toBe(200);
     expect(authPortalHtml).toContain("Account action required");
-    expect(authPortalHtml).toContain("Resolve account access");
+    expect(authPortalHtml).toContain("Review current blocker");
     expect(authPortalHtml).toContain("Session incomplete");
-    expect(authPortalHtml).toContain("Finish browser session");
-    expect(authPortalHtml).not.toContain(">Re-authenticate<");
+    expect(authPortalHtml).toContain("Inspect current browser first");
+    expect(authPortalHtml).toContain("Re-authenticate");
 
     const workbenchResponse = await getSurface(
       service,

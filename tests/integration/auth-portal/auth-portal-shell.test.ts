@@ -223,9 +223,9 @@ describe('auth portal shell', () => {
     });
 
     expect(html).toContain('Account action required');
-    expect(html).toContain('Resolve account access');
+    expect(html).toContain('Review current blocker');
     expect(html).toContain('Session incomplete');
-    expect(html).toContain('Finish browser session');
-    expect(html).not.toContain('>Re-authenticate<');
+    expect(html).toContain('Inspect current browser first');
+    expect(html).toContain('Re-authenticate');
   });
 });

@@ -212,7 +212,7 @@ interface AuthPortalVisibleTruthFocus {
   detail: string;
   nextStepLabel: string;
   nextStepDescription: string;
-  primaryActionLabel: string;
+  primaryLinkLabel: string;
 }
 
 function getVisibleTruthDetail(
@@ -249,7 +249,7 @@ function getVisibleTruthFocus(card: AuthPortalCard): AuthPortalVisibleTruthFocus
         nextStepLabel: 'Resolve account access',
         nextStepDescription:
           'Stay in the current browser and finish the owner/manual account step first. Use a fresh login flow only after access is restored.',
-        primaryActionLabel: 'Resolve account access'
+        primaryLinkLabel: 'Review current blocker'
       };
     case 'human-verification-required':
       return {
@@ -261,7 +261,7 @@ function getVisibleTruthFocus(card: AuthPortalCard): AuthPortalVisibleTruthFocus
         nextStepLabel: 'Complete verification',
         nextStepDescription:
           'Finish the human verification step in the current browser first. Start a new login flow only if that browser seat cannot recover.',
-        primaryActionLabel: 'Complete verification'
+        primaryLinkLabel: 'Inspect current browser first'
       };
     case 'session-incomplete':
       return {
@@ -274,7 +274,7 @@ function getVisibleTruthFocus(card: AuthPortalCard): AuthPortalVisibleTruthFocus
         nextStepLabel: 'Finish browser session',
         nextStepDescription:
           'Use the current browser path until this provider reaches a real workspace. Start a fresh login only if the current seat cannot recover.',
-        primaryActionLabel: 'Finish browser session'
+        primaryLinkLabel: 'Inspect current browser first'
       };
     case 'login-required':
       return {
@@ -287,7 +287,7 @@ function getVisibleTruthFocus(card: AuthPortalCard): AuthPortalVisibleTruthFocus
         nextStepLabel: 'Continue browser login',
         nextStepDescription:
           'Finish the login flow in the current browser first. Treat re-authentication as the fallback, not the default explanation.',
-        primaryActionLabel: 'Continue browser login'
+        primaryLinkLabel: 'Inspect current browser first'
       };
     case 'permission-gated':
       return {
@@ -300,7 +300,7 @@ function getVisibleTruthFocus(card: AuthPortalCard): AuthPortalVisibleTruthFocus
         nextStepLabel: 'Clear permission gate',
         nextStepDescription:
           'Resolve the permission gate in the current browser first, then rerun the live check after the workspace is actually reusable.',
-        primaryActionLabel: 'Clear permission gate'
+        primaryLinkLabel: 'Inspect current browser first'
       };
     case 'provider-adjacent':
       return {
@@ -313,7 +313,7 @@ function getVisibleTruthFocus(card: AuthPortalCard): AuthPortalVisibleTruthFocus
         nextStepLabel: 'Finish browser session',
         nextStepDescription:
           'Use the current browser seat until it reaches the real provider workspace. Only then should Switchyard rerun the live proof.',
-        primaryActionLabel: 'Finish browser session'
+        primaryLinkLabel: 'Inspect current browser first'
       };
     default:
       if (card.state === 'user-action-required' && card.session?.requiredUserAction) {
@@ -326,7 +326,7 @@ function getVisibleTruthFocus(card: AuthPortalCard): AuthPortalVisibleTruthFocus
           nextStepLabel: 'Continue required action',
           nextStepDescription:
             'Finish the currently required end-user step first, then rerun the live check only after the blocker is cleared.',
-          primaryActionLabel: 'Continue required action'
+          primaryLinkLabel: 'Review current blocker'
         };
       }
 
@@ -334,17 +334,7 @@ function getVisibleTruthFocus(card: AuthPortalCard): AuthPortalVisibleTruthFocus
   }
 }
 
-function getActionLabel(card: AuthPortalCard, action: AuthPortalCard['actions'][number]): string {
-  const truthFocus = getVisibleTruthFocus(card);
-
-  if (
-    truthFocus &&
-    card.authModeId === 'web-login' &&
-    (action.id === 'start-web-login' || action.id === 'reauthenticate')
-  ) {
-    return truthFocus.primaryActionLabel;
-  }
-
+function getActionLabel(_card: AuthPortalCard, action: AuthPortalCard['actions'][number]): string {
   return action.label;
 }
 
@@ -652,9 +642,9 @@ function renderCard(card: AuthPortalCard): string {
 
   const debugLink =
     card.authModeId === "web-login" && card.routes?.debugWorkbench
-      ? `<a class="action action-secondary action-link" href="${escapeHtml(
+      ? `<a class="action action-${truthFocus ? "primary" : "secondary"} action-link" href="${escapeHtml(
           card.routes.debugWorkbench,
-        )}">Inspect current browser</a>`
+        )}">${escapeHtml(truthFocus?.primaryLinkLabel ?? "Inspect current browser")}</a>`
       : "";
 
   return `<article class="card">
