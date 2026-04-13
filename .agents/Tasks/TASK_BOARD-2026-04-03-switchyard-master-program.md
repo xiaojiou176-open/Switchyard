@@ -3,6 +3,79 @@
 > 本文件是本轮 `Switchyard` master program 的唯一执行 SSOT。
 > 任何 fresh truth、SubAgent 回收、Git 变化、blocker 归类、阶段裁决，都先回写这里，再继续推进。
 
+## 2026-04-13 Final-Wave UIUX Refresh + Live-Reality Relock
+
+- this addendum supersedes older same-day UIUX/live wording below whenever they conflict
+- current repo-owned finish state after the final UIUX refresh wave:
+  - local branch remains `main`
+  - remote heads remain only `origin/main`
+  - open PR = `0`
+  - open code-scanning alerts = `0`
+  - docs count = `99`
+- current readiness vocabulary after fresh reruns:
+  - `repo-ready = yes`
+  - `submit-ready = yes`
+  - `platform-ready = no claim`
+  - `submission-done = no`
+  - `review-pending = no`
+  - `listed-live = out of scope`
+  - `product-surface-ready = yes`
+  - `docs-plane-ready = yes`
+  - `design-absorption-ready = yes`
+  - `quality-governance-ready = yes`
+  - `done-on-main = pending git closeout in this turn`
+- repo-owned surfaces refreshed in this turn:
+  - `auth-portal`
+    - first screen now behaves like a verdict-first arrivals board
+    - deeper provider evidence is demoted into an explicit second-layer shelf
+  - `provider-debug-workbench`
+    - shell is tighter and more cockpit-like
+    - summary/next-step utility chrome is stronger before raw diagnostics
+  - `docs/index.html`
+    - front door is more Mintlify-like and answer-first
+    - route hierarchy is clearer and more airy
+- blocker-only verdict pack for this turn:
+  - `l2-reviewer` = `no blocker`
+  - `l2-designer` = `non-blocker / no blocker`
+  - `l2-explorer`
+    - highlighted residual density tails
+    - no new acceptance blocker found inside the current active-scope surfaces
+- fresh quality receipts in this turn:
+  - `pnpm typecheck` = `0`
+  - `pnpm test` = `0`
+  - `pnpm build` = `0`
+  - `pnpm run test:docs-frontdoor` = `0`
+  - `pnpm run test:coverage` = `0`
+    - `Statements = 80.06%`
+    - `Lines = 80.18%`
+  - `pnpm run test:mutation:baseline` = `0`
+    - mutation score = `96.85`
+  - `pnpm run gate:pr` = `0`
+  - `pnpm run gate:nightly:expensive` = `0`
+- live/browser truth in this turn:
+  - first aggregate rerun exposed a repo-owned stale `9338` Chrome seat
+    - symptom = `/json/version` and `/json/list` were healthy
+    - failure = `playwright connectOverCDP` timed out after websocket connected
+  - repo-owned remediation completed in-turn:
+    - recycle the dedicated isolated Chrome root process on `9338`
+    - rerun `bootstrap:web-login-browser`
+    - rerun provider-scoped live gates
+    - rerun aggregate `verify:web-login-live`
+  - final aggregate truth after remediation:
+    - `ChatGPT = success`
+    - `Gemini = success`
+    - `Qwen = success`
+    - `Claude = external-only blocker / account-action-required`
+    - `Grok = external-only blocker / session-incomplete`
+- exact implication:
+  - the repo-owned red blocker in live verification was remediated inside this turn
+  - current aggregate live truth now converges back to the intended final-wave rule:
+    - repo-owned gate passes
+    - only `Claude / Grok` remain external-only
+  - next step after this addendum is only:
+    - write final receipt
+    - complete git clean closeout on `main`
+
 ## 2026-04-13 Final-Wave Closeout Addendum
 
 - this addendum supersedes older final-wave wording below whenever they conflict

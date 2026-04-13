@@ -925,30 +925,31 @@ function renderWebLoginSection(section: AuthPortalSection): string {
   );
   const readyCards = section.cards.filter((card) => getWebLoginPriorityBucket(card) === "ready");
 
-  return `<section class="section" id="section-${escapeHtml(section.id)}">
-    <header class="section-header">
-      <h2>${escapeHtml(section.title)}</h2>
-      <p>${escapeHtml(
-        "This section now behaves like a triage wall: blockers first, healthy providers second.",
-      )}</p>
-    </header>
-    ${renderCardGroup(
-      "Account action required",
-      "These providers are blocked on owner/manual account work before runtime use can continue.",
-      accountActionCards,
-    )}
-    ${renderCardGroup(
-      "Session incomplete",
-      "These providers still need the current browser session to reach a reusable workspace.",
-      sessionWorkCards,
-    )}
-    ${renderCardGroup(
-      `Ready providers (${readyCards.length})`,
-      "These providers are currently usable. Expand only when you need their evidence or actions.",
-      readyCards,
-      true,
-    )}
-  </section>`;
+  return `<details class="section web-login-detail-shelf provider-drawer" id="auth-portal-provider-drawers">
+    <summary>
+      <span class="eyebrow eyebrow-compact">Deeper layer</span>
+      <span class="detail-shelf-title">${escapeHtml(section.title)} details, evidence, and actions</span>
+      <span class="detail-shelf-copy">The arrivals board above already makes the first call. Open this only when you need raw evidence, capture steps, or the full handoff record.</span>
+    </summary>
+    <div class="detail-shelf-body provider-drawer-body">
+        ${renderCardGroup(
+          "Account action required",
+          "These providers are blocked on owner/manual account work before runtime use can continue.",
+          accountActionCards,
+        )}
+        ${renderCardGroup(
+          "Session incomplete",
+          "These providers still need the current browser session to reach a reusable workspace.",
+          sessionWorkCards,
+        )}
+        ${renderCardGroup(
+          `Ready providers (${readyCards.length})`,
+          "These providers are currently usable. Expand only when you need their evidence or actions.",
+          readyCards,
+          true,
+        )}
+      </div>
+  </details>`;
 }
 
 function renderCollapsedSection(
@@ -1048,7 +1049,7 @@ function renderWebLoginPriorityRail(model: AuthPortalShellModel): string {
     <header class="section-header">
       <p class="eyebrow">Web/Login live readiness</p>
       <h2>The five provider verdicts that matter first</h2>
-      <p>Think of this like the front desk arrivals board. Before you read policies, BYOK inventory, or long diagnostics, check who is already ready, who needs an account action, and who still needs the current browser session finished.</p>
+      <p>Think of this like the front desk arrivals board. Make the first call here, then open the deeper provider shelf only when you need evidence, capture steps, or the full action trail.</p>
     </header>
     <div class="priority-metrics-grid">
       ${renderPriorityMetric("Ready", readyCount, "ok")}
@@ -1062,7 +1063,7 @@ function renderWebLoginPriorityRail(model: AuthPortalShellModel): string {
           const bucket = getWebLoginPriorityBucket(card);
           const detail =
             truthFocus?.nextStepLabel ??
-            (bucket === "ready" ? "Ready to use" : "Inspect the full card below");
+            (bucket === "ready" ? "Ready to use" : "Open the deeper provider shelf");
           const linkTarget = card.routes?.debugWorkbench ?? `#provider-${card.providerId}`;
           return `<article class="priority-provider-card priority-provider-card-${bucket}">
             <p class="eyebrow eyebrow-compact">${escapeHtml(card.providerDisplayName)}</p>
@@ -1155,6 +1156,25 @@ function renderPortalScript(routeCatalog?: AuthPortalRouteCatalog): string {
 const routeCatalogEl = document.getElementById('auth-portal-route-catalog');
 const routeCatalog = routeCatalogEl ? JSON.parse(routeCatalogEl.textContent ?? '{}') : {};
 const feedback = document.getElementById('auth-portal-feedback');
+const providerDrawer = document.getElementById('auth-portal-provider-drawers');
+
+function syncProviderDrawerFromHash() {
+  if (!(providerDrawer instanceof HTMLDetailsElement)) {
+    return;
+  }
+
+  const hash = window.location.hash;
+  if (!hash) {
+    return;
+  }
+
+  if (hash === '#auth-portal-provider-drawers' || hash.startsWith('#provider-')) {
+    providerDrawer.open = true;
+  }
+}
+
+syncProviderDrawerFromHash();
+window.addEventListener('hashchange', syncProviderDrawerFromHash);
 
 function replaceProvider(template, providerId) {
   return template.replace('{providerId}', providerId);
@@ -1480,6 +1500,13 @@ export function renderAuthPortalShell(model: AuthPortalShellModel): string {
         color: var(--muted);
       }
 
+      .hero-actions {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.65rem;
+        margin-top: 1rem;
+      }
+
       .hero-meta {
         display: grid;
         gap: 0.8rem;
@@ -1495,6 +1522,10 @@ export function renderAuthPortalShell(model: AuthPortalShellModel): string {
       .priority-rail {
         padding: 1.2rem;
         margin-bottom: 1rem;
+      }
+
+      .priority-rail .section-header {
+        max-width: 68ch;
       }
 
       .priority-metrics-grid {
@@ -1537,8 +1568,11 @@ export function renderAuthPortalShell(model: AuthPortalShellModel): string {
       .priority-provider-card {
         border: 1px solid var(--line);
         border-radius: 18px;
-        padding: 1rem;
+        padding: 0.95rem;
         background: var(--panel-raised);
+        box-shadow:
+          0 0 0 1px rgba(255, 255, 255, 0.05),
+          inset 0 1px 0 rgba(255, 255, 255, 0.04);
       }
 
       .priority-provider-card h3 {
@@ -1567,6 +1601,41 @@ export function renderAuthPortalShell(model: AuthPortalShellModel): string {
         color: var(--ink);
         text-decoration: none;
         border-bottom: 1px solid rgba(255, 255, 255, 0.28);
+      }
+
+      .provider-drawer {
+        padding: 0;
+        overflow: hidden;
+      }
+
+      .provider-drawer summary {
+        list-style: none;
+        cursor: pointer;
+        display: grid;
+        gap: 0.3rem;
+        padding: 1.2rem 1.35rem;
+        background:
+          linear-gradient(180deg, rgba(255, 255, 255, 0.035), rgba(255, 255, 255, 0.015)),
+          var(--panel);
+      }
+
+      .provider-drawer summary::-webkit-details-marker {
+        display: none;
+      }
+
+      .detail-shelf-title {
+        font-size: 1.2rem;
+        font-weight: 600;
+      }
+
+      .detail-shelf-copy {
+        max-width: 72ch;
+        color: var(--muted);
+      }
+
+      .provider-drawer-body {
+        padding: 0 1.35rem 1.35rem;
+        border-top: 1px solid var(--line);
       }
 
       .secondary-context-stack {
@@ -1961,6 +2030,12 @@ export function renderAuthPortalShell(model: AuthPortalShellModel): string {
         color: var(--ink);
       }
 
+      .action-ghost {
+        background: transparent;
+        border: 1px solid rgba(255, 255, 255, 0.08);
+        color: var(--muted);
+      }
+
       .action-warning {
         background: rgba(199, 139, 44, 0.16);
         color: #f0c46d;
@@ -2082,6 +2157,10 @@ export function renderAuthPortalShell(model: AuthPortalShellModel): string {
           grid-template-columns: 1fr;
         }
 
+        .hero-actions {
+          flex-direction: column;
+        }
+
         .card-header {
           flex-direction: column;
         }
@@ -2101,7 +2180,11 @@ export function renderAuthPortalShell(model: AuthPortalShellModel): string {
         <div class="hero-copy">
           <p class="eyebrow">Local-first provider access</p>
           <h1>${escapeHtml(model.title)}</h1>
-          <p>Use this machine-local front desk to compare <strong>what Switchyard already holds</strong> with <strong>what the currently attached browser can actually reuse right now</strong>.</p>
+          <p>Use this machine-local front desk to make one call first: <strong>who is ready now</strong>, <strong>who needs owner action</strong>, and <strong>who still needs the current browser seat finished</strong>.</p>
+          <div class="hero-actions">
+            <a class="action action-primary action-link" href="#auth-portal-provider-drawers">Open deeper provider shelf</a>
+            <a class="action action-ghost action-link" href="#section-byok">Review BYOK inventory</a>
+          </div>
         </div>
         <div class="hero-meta">
           <article class="hero-meta-card">

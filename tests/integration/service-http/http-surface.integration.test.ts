@@ -872,7 +872,9 @@ describe("Switchyard HTTP surface", () => {
     expect(authPortalResponse.status).toBe(200);
     expect(authPortalHtml).toContain("Web/Login live readiness");
     expect(authPortalHtml).toContain("The five provider verdicts that matter first");
-    expect(authPortalHtml).toContain("This section now behaves like a triage wall");
+    expect(authPortalHtml).toContain("Open deeper provider shelf");
+    expect(authPortalHtml).toContain("Web/Login details, evidence, and actions");
+    expect(authPortalHtml).not.toContain("This section now behaves like a triage wall");
     expect(authPortalHtml).toContain("Account action required");
     expect(authPortalHtml).toContain("Review current blocker");
     expect(authPortalHtml).toContain("Session incomplete");
