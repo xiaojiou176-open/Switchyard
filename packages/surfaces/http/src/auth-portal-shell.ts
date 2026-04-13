@@ -1532,6 +1532,7 @@ export function renderAuthPortalShell(model: AuthPortalShellModel): string {
       .hero-meta {
         display: grid;
         gap: 0.8rem;
+        align-content: start;
       }
 
       .hero-meta-card {
@@ -1542,19 +1543,23 @@ export function renderAuthPortalShell(model: AuthPortalShellModel): string {
       }
 
       .hero-meta-card-quiet {
-        padding: 0.85rem 0.95rem;
-        background: rgba(255, 255, 255, 0.022);
-        border-color: rgba(255, 255, 255, 0.05);
-        box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.03);
+        padding: 0.78rem 0.86rem;
+        background: rgba(255, 255, 255, 0.016);
+        border-color: rgba(255, 255, 255, 0.04);
+        box-shadow:
+          inset 0 1px 0 rgba(255, 255, 255, 0.025),
+          0 10px 24px rgba(0, 0, 0, 0.08);
+        opacity: 0.88;
       }
 
       .hero-meta-card-quiet p {
         color: rgba(229, 232, 233, 0.82);
-        font-size: 0.95rem;
+        font-size: 0.9rem;
+        line-height: 1.45;
       }
 
       .hero-meta-card-quiet .eyebrow {
-        color: rgba(114, 190, 148, 0.88);
+        color: #7cd6a1;
       }
 
       .priority-rail {
@@ -1587,23 +1592,26 @@ export function renderAuthPortalShell(model: AuthPortalShellModel): string {
 
       .priority-metric-ok {
         border-color: rgba(76, 188, 118, 0.28);
-        background: rgba(255, 255, 255, 0.02);
+        background: rgba(255, 255, 255, 0.015);
       }
 
       .priority-metric-warning {
         border-color: rgba(199, 139, 44, 0.3);
         background:
-          linear-gradient(180deg, rgba(199, 139, 44, 0.14), rgba(199, 139, 44, 0.05)),
+          linear-gradient(180deg, rgba(199, 139, 44, 0.18), rgba(199, 139, 44, 0.06)),
           var(--panel-raised);
+        box-shadow:
+          0 0 0 1px rgba(199, 139, 44, 0.08),
+          inset 0 1px 0 rgba(255, 255, 255, 0.04);
       }
 
       .priority-metric-danger {
         border-color: rgba(201, 90, 90, 0.34);
         background:
-          linear-gradient(180deg, rgba(201, 90, 90, 0.16), rgba(201, 90, 90, 0.06)),
+          linear-gradient(180deg, rgba(201, 90, 90, 0.22), rgba(201, 90, 90, 0.07)),
           var(--panel-raised);
         box-shadow:
-          0 0 0 1px rgba(201, 90, 90, 0.12),
+          0 0 0 1px rgba(201, 90, 90, 0.16),
           inset 0 1px 0 rgba(255, 255, 255, 0.04);
       }
 
@@ -1633,21 +1641,32 @@ export function renderAuthPortalShell(model: AuthPortalShellModel): string {
 
       .priority-provider-card-ready {
         border-color: rgba(76, 188, 118, 0.28);
-        background: rgba(255, 255, 255, 0.022);
+        background: rgba(255, 255, 255, 0.016);
+      }
+
+      .priority-metric-ok .eyebrow,
+      .priority-provider-card-ready .eyebrow {
+        color: #79d19d;
       }
 
       .priority-provider-card-account-action {
         border-color: rgba(201, 90, 90, 0.34);
         background:
-          linear-gradient(180deg, rgba(201, 90, 90, 0.16), rgba(201, 90, 90, 0.05)),
+          linear-gradient(180deg, rgba(201, 90, 90, 0.2), rgba(201, 90, 90, 0.06)),
           var(--panel-raised);
+        box-shadow:
+          0 0 0 1px rgba(201, 90, 90, 0.14),
+          inset 0 1px 0 rgba(255, 255, 255, 0.04);
       }
 
       .priority-provider-card-session-work {
         border-color: rgba(199, 139, 44, 0.3);
         background:
-          linear-gradient(180deg, rgba(199, 139, 44, 0.14), rgba(199, 139, 44, 0.05)),
+          linear-gradient(180deg, rgba(199, 139, 44, 0.18), rgba(199, 139, 44, 0.06)),
           var(--panel-raised);
+        box-shadow:
+          0 0 0 1px rgba(199, 139, 44, 0.1),
+          inset 0 1px 0 rgba(255, 255, 255, 0.04);
       }
 
       .priority-provider-link {
