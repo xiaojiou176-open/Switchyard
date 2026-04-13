@@ -88,6 +88,12 @@ describe('auth portal shell', () => {
     expect(html).toContain('No shared credential pool');
     expect(html).toContain('Skip to main content');
     expect(html).toContain('Inspect current browser');
+    expect(html).toContain('Web/Login live readiness');
+    expect(html).toContain('The five provider verdicts that matter first');
+    expect(html).toContain('Portal rules, workflows, and browser handoff model');
+    expect(html).toContain('BYOK inventory and local key slots');
+    expect(html).toContain('Portal rules, workflows, and browser handoff model');
+    expect(html).toContain('BYOK inventory and local key slots');
     expect(html).toContain('Login');
     expect(html).toContain('Status');
     expect(html).toContain('Re-auth');
@@ -227,5 +233,77 @@ describe('auth portal shell', () => {
     expect(html).toContain('Session incomplete');
     expect(html).toContain('Inspect current browser first');
     expect(html).toContain('Re-authenticate');
+    expect(html).toContain('Primary verdict');
+    expect(html).toContain('Evidence and handoff details');
+    expect(html).toContain('This section now behaves like a triage wall');
+    expect(html).toContain('Account action required');
+    expect(html).toContain('Session incomplete');
+    expect(html.indexOf('The five provider verdicts that matter first')).toBeLessThan(
+      html.indexOf('Portal rules, workflows, and browser handoff model')
+    );
+  });
+
+  it('keeps attach-failed web-login cards out of the ready bucket', () => {
+    const owner = createCredentialOwner('terry-local');
+    const defaultModel = buildAuthPortalShellModel({
+      owner,
+      routeCatalog: {
+        authPortal: '/v1/runtime/auth-portal',
+        providerStatusTemplate: '/v1/runtime/providers/{providerId}/status',
+        providerAcquisitionStartTemplate: '/v1/runtime/providers/{providerId}/acquisition/start',
+        providerAcquisitionCaptureTemplate: '/v1/runtime/providers/{providerId}/acquisition/capture',
+        providerDebugWorkbenchTemplate: '/v1/runtime/providers/{providerId}/debug/workbench'
+      }
+    });
+    const byokSection = defaultModel.sections[0];
+    const chatgptBase = buildAuthRuntimeView(
+      createCredentialRecord({
+        userId: owner.userId,
+        providerId: 'chatgpt',
+        authModeId: 'web-login',
+        accountId: 'chatgpt-browser',
+        accountLabel: 'ChatGPT browser session',
+        lifecycleStage: 're-auth',
+        status: {
+          hasMaterial: true,
+          userActionRequired: true
+        }
+      })
+    );
+    const chatgptCard: AuthPortalCard = {
+      ...chatgptBase,
+      mode: 'isolated-chrome-root',
+      modeLabel: 'Use Isolated Chrome Root',
+      routes: buildRouteRefs('chatgpt'),
+      transportHint: 'Restore the ChatGPT attach target before rerunning the live gate.',
+      session: {
+        state: 'user-action-required',
+        accountLabel: 'ChatGPT browser session',
+        requiredUserAction: 'Restore the ChatGPT attach target before rerunning the live gate.',
+        persistenceAudit: {
+          workspaceClassification: 'attach-failed',
+          summary: 'Switchyard could not attach to the current ChatGPT browser seat.',
+          pageUrl: 'https://chatgpt.com/',
+          pageTitle: 'ChatGPT'
+        }
+      } as AuthPortalCard['session']
+    };
+
+    const html = renderAuthPortalShell({
+      ...defaultModel,
+      sections: [
+        ...(byokSection ? [byokSection] : []),
+        {
+          id: 'web-login',
+          title: 'Web/Login',
+          description: 'User signs in with a browser, OAuth flow, or subscription-backed web session.',
+          cards: [chatgptCard]
+        }
+      ]
+    });
+
+    expect(html).toContain('Session incomplete');
+    expect(html).toContain('User action required');
+    expect(html).not.toContain('Ready providers (1)');
   });
 });

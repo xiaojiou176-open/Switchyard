@@ -47,6 +47,11 @@ interface DebugTruthFocus {
   runtimeSummary: string;
 }
 
+interface SharedDiagnosticState {
+  repeatedRaw?: string;
+  condensedSummary?: string;
+}
+
 function getDebugTruthFocus(debug: ServiceProviderDebugSupportView): DebugTruthFocus | null {
   const classification = debug.currentPage.classification;
   const requiredUserAction = debug.auth.session?.requiredUserAction?.trim();
@@ -108,6 +113,146 @@ function getDebugTruthFocus(debug: ServiceProviderDebugSupportView): DebugTruthF
   }
 }
 
+function normalizeDiagnosticText(value: string | undefined): string {
+  return `${value ?? ""}`.replace(/\s+/g, " ").trim();
+}
+
+function getSharedDiagnosticState(debug: ServiceProviderDebugSupportView): SharedDiagnosticState {
+  const diagnostics = [
+    debug.currentPage.diagnostic,
+    debug.currentConsole.diagnostic,
+    debug.currentNetwork.diagnostic,
+  ]
+    .map((value) => normalizeDiagnosticText(value))
+    .filter(Boolean);
+
+  const repeated = diagnostics.find(
+    (candidate, index) => diagnostics.indexOf(candidate) !== index,
+  );
+
+  if (!repeated) {
+    return {};
+  }
+
+  return {
+    repeatedRaw: repeated,
+    condensedSummary:
+      "The same browser-inspection failure is feeding multiple sections. Keep the primary verdict above, then use the detailed diagnostics tray below for the raw technical message.",
+  };
+}
+
+function getSectionDiagnosticText(
+  diagnostic: string,
+  sharedDiagnostic: SharedDiagnosticState,
+): string {
+  if (
+    sharedDiagnostic.repeatedRaw &&
+    normalizeDiagnosticText(diagnostic) === sharedDiagnostic.repeatedRaw
+  ) {
+    return "Same browser-inspection failure as above. Open detailed browser diagnostics below for the raw technical message.";
+  }
+
+  return diagnostic;
+}
+
+function renderDetailedBrowserDiagnostics(sharedDiagnostic: SharedDiagnosticState): string {
+  if (!sharedDiagnostic.repeatedRaw) {
+    return "";
+  }
+
+  return `<section class="section">
+    <header class="section-header">
+      <h2>Detailed browser diagnostics</h2>
+      <p>${escapeHtml(sharedDiagnostic.condensedSummary ?? "")}</p>
+    </header>
+    <pre>${escapeHtml(sharedDiagnostic.repeatedRaw)}</pre>
+  </section>`;
+}
+
+function renderEvidenceStack(
+  debug: ServiceProviderDebugSupportView,
+  currentPageDiagnostic: string,
+  currentConsoleDiagnostic: string,
+  currentNetworkDiagnostic: string,
+): string {
+  return `<details class="evidence-stack">
+    <summary>Evidence stack, repair ladder, and raw JSON surfaces</summary>
+    <div class="evidence-stack-body">
+      <section class="section">
+        <header class="section-header">
+          <h2>Current browser evidence</h2>
+          <p>The safest way to reason about a web-login provider is: first what Switchyard stored, then what the current browser page actually shows, then what console and network saw during the same inspection window.</p>
+        </header>
+        <div class="section-grid">
+          <article class="section-card">
+            <h3>Current page</h3>
+            <p>${escapeHtml(currentPageDiagnostic)}</p>
+            <div class="meta-row">
+              ${renderOptionalCode("classification", debug.currentPage.classification)}
+              ${renderOptionalCode("url", debug.currentPage.url)}
+              ${renderOptionalCode("title", debug.currentPage.title)}
+            </div>
+          </article>
+          <article class="section-card">
+            <h3>Capture provenance</h3>
+            <div class="meta-row">
+              ${renderOptionalCode("browser mode", debug.captureProvenance?.browserMode)}
+              ${renderOptionalCode("captured", debug.captureProvenance?.capturedAt)}
+              ${renderOptionalCode("profile", debug.captureProvenance?.profileName)}
+            </div>
+            <p>${escapeHtml(debug.persistenceAudit?.summary ?? "No persistence audit summary is currently available.")}</p>
+          </article>
+        </div>
+      </section>
+
+      <section class="section">
+        <header class="section-header">
+          <h2>Current console and network</h2>
+          <p>These are evidence surfaces, not vanity metrics. Empty entries mean Switchyard did not see fresh events during this inspection window, not that the provider is automatically healthy.</p>
+        </header>
+        <div class="section-grid">
+          <article class="section-card">
+            <h3>Current console</h3>
+            <p>${escapeHtml(currentConsoleDiagnostic)}</p>
+            ${renderConsoleEntries(debug.currentConsole)}
+          </article>
+          <article class="section-card">
+            <h3>Current network</h3>
+            <p>${escapeHtml(currentNetworkDiagnostic)}</p>
+            ${renderNetworkEntries(debug.currentNetwork)}
+          </article>
+        </div>
+      </section>
+
+      <section class="section">
+        <header class="section-header">
+          <h2>Diagnose ladder</h2>
+          <p>Walk this in order. It is the repair ladder for this provider on this machine, not a product KPI wall.</p>
+        </header>
+        <ol class="ladder">
+          ${debug.diagnoseLadder.map((step) => renderDiagnoseStep(step)).join("")}
+        </ol>
+      </section>
+
+      <section class="section">
+        <header class="section-header">
+          <h2>JSON truth surfaces</h2>
+          <p>Use these routes when you want the raw evidence that backs this page. They stay read-only on purpose.</p>
+        </header>
+        <div class="json-link-grid">
+          <a href="${escapeHtml(debug.routes.status)}" target="_blank" rel="noopener">Status JSON</a>
+          <a href="${escapeHtml(debug.routes.probe)}" target="_blank" rel="noopener">Probe JSON</a>
+          <a href="${escapeHtml(debug.routes.remediation)}" target="_blank" rel="noopener">Remediation JSON</a>
+          <a href="${escapeHtml(debug.routes.debugCurrentPage)}" target="_blank" rel="noopener">Current page JSON</a>
+          <a href="${escapeHtml(debug.routes.debugCurrentConsole)}" target="_blank" rel="noopener">Current console JSON</a>
+          <a href="${escapeHtml(debug.routes.debugCurrentNetwork)}" target="_blank" rel="noopener">Current network JSON</a>
+          <a href="${escapeHtml(debug.routes.debugSupportBundle)}" target="_blank" rel="noopener">Support bundle JSON</a>
+        </div>
+      </section>
+    </div>
+  </details>`;
+}
+
 function renderSummaryCard(title: string, status: string, summary: string, meta: string): string {
   const tone = mapTone(status);
 
@@ -117,6 +262,34 @@ function renderSummaryCard(title: string, status: string, summary: string, meta:
     <p>${escapeHtml(summary)}</p>
     ${meta ? `<div class="meta-row">${meta}</div>` : ""}
   </article>`;
+}
+
+function renderPrimaryVerdict(
+  debug: ServiceProviderDebugSupportView,
+  truthFocus: DebugTruthFocus,
+): string {
+  return `<section class="verdict-strip" aria-label="Primary verdict">
+    <div class="verdict-copy">
+      <p class="eyebrow">Primary verdict</p>
+      <h2>${escapeHtml(truthFocus.eyebrow)}</h2>
+      <p>${escapeHtml(truthFocus.summary)}</p>
+      <p class="verdict-note">${escapeHtml(truthFocus.detail)}</p>
+    </div>
+    <div class="verdict-facts">
+      <article class="verdict-fact">
+        <p class="eyebrow eyebrow-compact">Stored material</p>
+        <strong>${escapeHtml(debug.storeReadiness.credentialState)}</strong>
+      </article>
+      <article class="verdict-fact">
+        <p class="eyebrow eyebrow-compact">Current browser</p>
+        <strong>${escapeHtml(debug.liveReadiness.status)}</strong>
+      </article>
+      <article class="verdict-fact">
+        <p class="eyebrow eyebrow-compact">Runtime path</p>
+        <strong>${escapeHtml(debug.runtime.runtimeReadiness)}</strong>
+      </article>
+    </div>
+  </section>`;
 }
 
 function renderConsoleEntries(currentConsole: ServiceProviderCurrentConsoleView): string {
@@ -178,6 +351,7 @@ export function renderProviderDebugWorkbench(
   authPortalRoute = "/v1/runtime/auth-portal",
 ): string {
   const truthFocus = getDebugTruthFocus(debug);
+  const sharedDiagnostic = getSharedDiagnosticState(debug);
   const storeMeta = [
     renderOptionalCode("validation", debug.storeReadiness.validationState),
     renderOptionalCode("account", debug.auth?.ownership?.accountLabel),
@@ -198,6 +372,20 @@ export function renderProviderDebugWorkbench(
   const nextStepSummary = truthFocus?.summary ?? nextAction?.summary ?? "No next step recorded.";
   const nextStepDetail = truthFocus?.detail;
   const runtimeSummary = truthFocus?.runtimeSummary ?? debug.auth.statusSummary;
+  const currentBrowserSummary =
+    sharedDiagnostic.repeatedRaw &&
+    normalizeDiagnosticText(debug.liveReadiness.diagnostic) === sharedDiagnostic.repeatedRaw
+      ? "Fresh browser inspection is currently unavailable. Use the detailed browser diagnostics tray below for the raw transport error."
+      : debug.liveReadiness.diagnostic;
+  const currentPageDiagnostic = getSectionDiagnosticText(debug.currentPage.diagnostic, sharedDiagnostic);
+  const currentConsoleDiagnostic = getSectionDiagnosticText(
+    debug.currentConsole.diagnostic,
+    sharedDiagnostic,
+  );
+  const currentNetworkDiagnostic = getSectionDiagnosticText(
+    debug.currentNetwork.diagnostic,
+    sharedDiagnostic,
+  );
 
   return `<!doctype html>
 <html lang="en">
@@ -344,12 +532,49 @@ export function renderProviderDebugWorkbench(
       }
 
       .hero-meta-card,
+      .verdict-strip,
       .summary-card,
       .section-card {
         border: 1px solid var(--line);
         border-radius: 18px;
         padding: 1rem;
         background: var(--panel-raised);
+      }
+
+      .verdict-strip {
+        display: grid;
+        grid-template-columns: minmax(0, 1.5fr) minmax(320px, 1fr);
+        gap: 1rem;
+        padding: 1.2rem;
+        margin-bottom: 1rem;
+        border-color: rgba(201, 90, 90, 0.34);
+      }
+
+      .verdict-copy h2 {
+        margin: 0 0 0.45rem;
+        font-size: clamp(2rem, 3.8vw, 3.3rem);
+        line-height: 0.98;
+      }
+
+      .verdict-note {
+        color: var(--muted);
+      }
+
+      .verdict-facts {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 0.8rem;
+      }
+
+      .verdict-fact {
+        border: 1px solid var(--line);
+        border-radius: 18px;
+        padding: 0.9rem 1rem;
+        background: rgba(255, 255, 255, 0.03);
+      }
+
+      .verdict-fact strong {
+        font-size: 1.1rem;
       }
 
       .summary-grid {
@@ -461,6 +686,28 @@ export function renderProviderDebugWorkbench(
         text-decoration: none;
       }
 
+      .section pre {
+        margin-top: 0.85rem;
+      }
+
+      .evidence-stack {
+        margin-bottom: 1rem;
+        border: 1px solid var(--line);
+        border-radius: 20px;
+        background: var(--panel);
+        box-shadow: var(--shadow);
+      }
+
+      .evidence-stack summary {
+        cursor: pointer;
+        padding: 1rem 1.15rem;
+        color: var(--muted);
+      }
+
+      .evidence-stack-body {
+        padding: 0 1rem 1rem;
+      }
+
       :focus-visible {
         outline: 2px solid var(--accent);
         outline-offset: 2px;
@@ -476,6 +723,11 @@ export function renderProviderDebugWorkbench(
 
       @media (max-width: 760px) {
         .hero {
+          grid-template-columns: 1fr;
+        }
+
+        .verdict-strip,
+        .verdict-facts {
           grid-template-columns: 1fr;
         }
 
@@ -517,6 +769,9 @@ export function renderProviderDebugWorkbench(
         </div>
       </section>
 
+      ${truthFocus ? renderPrimaryVerdict(debug, truthFocus) : ""}
+      ${renderDetailedBrowserDiagnostics(sharedDiagnostic)}
+
       <section class="summary-grid" aria-label="Provider readiness summary">
         ${renderSummaryCard(
           "Stored material",
@@ -527,7 +782,7 @@ export function renderProviderDebugWorkbench(
         ${renderSummaryCard(
           "Current browser",
           debug.liveReadiness.status,
-          debug.liveReadiness.diagnostic,
+          currentBrowserSummary,
           browserMeta,
         )}
         ${renderSummaryCard(
@@ -542,78 +797,12 @@ export function renderProviderDebugWorkbench(
             .join(""),
         )}
       </section>
-
-      <section class="section">
-        <header class="section-header">
-          <h2>Current browser evidence</h2>
-          <p>The safest way to reason about a web-login provider is: first what Switchyard stored, then what the current browser page actually shows, then what console and network saw during the same inspection window.</p>
-        </header>
-        <div class="section-grid">
-          <article class="section-card">
-            <h3>Current page</h3>
-            <p>${escapeHtml(debug.currentPage.diagnostic)}</p>
-            <div class="meta-row">
-              ${renderOptionalCode("classification", debug.currentPage.classification)}
-              ${renderOptionalCode("url", debug.currentPage.url)}
-              ${renderOptionalCode("title", debug.currentPage.title)}
-            </div>
-          </article>
-          <article class="section-card">
-            <h3>Capture provenance</h3>
-            <div class="meta-row">
-              ${renderOptionalCode("browser mode", debug.captureProvenance?.browserMode)}
-              ${renderOptionalCode("captured", debug.captureProvenance?.capturedAt)}
-              ${renderOptionalCode("profile", debug.captureProvenance?.profileName)}
-            </div>
-            <p>${escapeHtml(debug.persistenceAudit?.summary ?? "No persistence audit summary is currently available.")}</p>
-          </article>
-        </div>
-      </section>
-
-      <section class="section">
-        <header class="section-header">
-          <h2>Current console and network</h2>
-          <p>These are evidence surfaces, not vanity metrics. Empty entries mean Switchyard did not see fresh events during this inspection window, not that the provider is automatically healthy.</p>
-        </header>
-        <div class="section-grid">
-          <article class="section-card">
-            <h3>Current console</h3>
-            <p>${escapeHtml(debug.currentConsole.diagnostic)}</p>
-            ${renderConsoleEntries(debug.currentConsole)}
-          </article>
-          <article class="section-card">
-            <h3>Current network</h3>
-            <p>${escapeHtml(debug.currentNetwork.diagnostic)}</p>
-            ${renderNetworkEntries(debug.currentNetwork)}
-          </article>
-        </div>
-      </section>
-
-      <section class="section">
-        <header class="section-header">
-          <h2>Diagnose ladder</h2>
-          <p>Walk this in order. It is the repair ladder for this provider on this machine, not a product KPI wall.</p>
-        </header>
-        <ol class="ladder">
-          ${debug.diagnoseLadder.map((step) => renderDiagnoseStep(step)).join("")}
-        </ol>
-      </section>
-
-      <section class="section">
-        <header class="section-header">
-          <h2>JSON truth surfaces</h2>
-          <p>Use these routes when you want the raw evidence that backs this page. They stay read-only on purpose.</p>
-        </header>
-        <div class="json-link-grid">
-          <a href="${escapeHtml(debug.routes.status)}" target="_blank" rel="noopener">Status JSON</a>
-          <a href="${escapeHtml(debug.routes.probe)}" target="_blank" rel="noopener">Probe JSON</a>
-          <a href="${escapeHtml(debug.routes.remediation)}" target="_blank" rel="noopener">Remediation JSON</a>
-          <a href="${escapeHtml(debug.routes.debugCurrentPage)}" target="_blank" rel="noopener">Current page JSON</a>
-          <a href="${escapeHtml(debug.routes.debugCurrentConsole)}" target="_blank" rel="noopener">Current console JSON</a>
-          <a href="${escapeHtml(debug.routes.debugCurrentNetwork)}" target="_blank" rel="noopener">Current network JSON</a>
-          <a href="${escapeHtml(debug.routes.debugSupportBundle)}" target="_blank" rel="noopener">Support bundle JSON</a>
-        </div>
-      </section>
+      ${renderEvidenceStack(
+        debug,
+        currentPageDiagnostic,
+        currentConsoleDiagnostic,
+        currentNetworkDiagnostic,
+      )}
     </main>
   </body>
 </html>`;
