@@ -105,6 +105,15 @@ In plain English:
 - a different machine, cookie bundle, or browser user agent may change the
   outcome
 
+When you read `pnpm run reality:gate`, split it into two ledgers instead of
+flattening it into one score:
+
+- `overallStatus = external-blocker` and `exitCode = 2` mean the current
+  workstation still stops at an external/browser/user-action blocker
+- `repoOwnedGate.verdict = pass` means the repo-owned gate still passed and this
+  checkpoint should not be narrated as an internal repo or milestone failure
+- only `repoOwnedGate.verdict = fail` should be read as repo-owned failure
+
 ## Minimal Proof Bundle
 
 If you want the fastest "I believe this is real" route, run these in order:
