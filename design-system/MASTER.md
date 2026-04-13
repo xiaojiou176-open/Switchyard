@@ -57,7 +57,7 @@ column, it is out of bounds.
 | Debug cockpit shell and evidence flow | `design-system/switchyard-debug-cockpit/MASTER.md` | `Linear` | `Raycast` utility chrome only | no `Mintlify` shell, no desktop-launcher personality |
 | Debug cockpit embedded help/reference blocks | `design-system/switchyard-debug-cockpit/MASTER.md` | `Linear` shell remains primary | `Mintlify` readability only inside subordinate help content | help must not outrank evidence or verdicts |
 | Command palette / quick action overlays | future local utility layer | `Raycast` | `Linear` shell tone | must stay transient, never become the app identity |
-| README / docs front door / public help/reference | outside this wave | `Mintlify` | `Linear` restraint for proof cards | not a target for the current implementation slice |
+| README / docs front door / public help/reference | `design-system/MASTER.md` until a narrower page master exists | `Mintlify` | `Linear` restraint for proof cards and trust-boundary chips | no authenticated runtime shell, no Raycast launcher personality, no file-cabinet-first IA |
 
 ## [Confirmed] Forbidden Inheritances
 
@@ -89,6 +89,38 @@ The following are frozen out even if they look visually attractive:
   `Raycast` only as a secondary chrome language.
 - Changing donor choice requires a contract update, not a new prompt, screenshot,
   or taste argument.
+
+## [Current Default] Docs/Public Operational Contract
+
+`README`, `docs front door`, and public help/reference shelves are now governed
+surfaces, not "outside this wave" leftovers.
+
+Their rules are intentionally narrow:
+
+- `Mintlify` owns public docs hierarchy, editorial reading rhythm, and
+  answer-first routing.
+- `Linear` may appear only as restraint:
+  - proof cards
+  - trust-boundary badges
+  - calm evidence framing
+- `Raycast` does not lead any docs/public shell.
+
+Typography and accessibility for these surfaces are also fixed:
+
+- `Inter` is allowed only on `Mintlify`-governed docs/public surfaces.
+- `IBM Plex Sans + JetBrains Mono` remains the default for runtime/operator
+  surfaces and any mixed surface that still reads as a shell.
+- Public docs routers may omit a visible skip link only while they remain
+  compact, shallow, and `main` is reachable within the first tab cycle.
+- Once docs/public navigation becomes nav-heavy, a visible
+  `Skip to main content` link becomes mandatory again.
+
+If a docs/public surface needs tighter page-level rules later, create a
+dedicated page master. Until then, this section is the operational contract.
+
+Historical drift anchor retained on purpose:
+
+| README / docs front door / public help/reference | outside this wave | `Mintlify` | `Linear` restraint for proof cards | not a target for the current implementation slice |
 
 ## [Current Default] Runtime Tokens
 
