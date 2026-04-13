@@ -3,6 +3,41 @@
 > 本文件是本轮 `Switchyard` master program 的唯一执行 SSOT。
 > 任何 fresh truth、SubAgent 回收、Git 变化、blocker 归类、阶段裁决，都先回写这里，再继续推进。
 
+## 2026-04-13 Final-Wave Closeout Addendum
+
+- this addendum supersedes older final-wave wording below whenever they conflict
+- current repo-owned finish state on `main`:
+  - local only `main`
+  - remote only `main`
+  - open PR = `0`
+  - open code-scanning alerts = `0`
+  - docs count = `99`
+- final repo-owned verdict:
+  - `repo-ready = yes`
+  - `submit-ready = yes`
+  - `platform-ready = no claim`
+  - `submission-done = no`
+  - `review-pending = no`
+  - `listed-live = out of scope`
+  - `product-surface-ready = yes`
+  - `docs-plane-ready = yes`
+  - `design-absorption-ready = yes`
+  - `quality-governance-ready = yes`
+  - `done-on-main = yes`
+- final repo-owned closures landed in this turn:
+  - workbench truth mapping now fail-closes across classification and
+    `user-action-required` fallback paths
+  - docs front door atlas is narrower and answer-first
+  - docs/public donor contract is operationalized
+  - `submission-packet-ledger` is relocated to
+    `.agents/internal-docs/distribution/submission-packet-ledger.md`
+  - nightly mutation hygiene ignores volatile `.runtime-cache/**` artifacts
+- final external-only pack:
+  - `Claude = account-action-required`
+  - `Grok = session-incomplete`
+- final receipts live in:
+  - `.agents/ledgers/FINAL_WAVE_2026-04-13_RECEIPT.md`
+
 Last updated: 2026-04-12 13:36:00 PDT (residual-tail closeout truth reset in progress)
 Owner: Codex Program L1 / Master Integrator / Final Closeout Commander
 Status: RESIDUAL-TAIL CLOSEOUT IN PROGRESS - repo-side green, external blockers = `Claude / Grok`, internal absorb/closeout tails still active
