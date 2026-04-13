@@ -15,7 +15,8 @@ If you are choosing your first page, stay on the short public path first:
 - `docs/api/service-http-reference.md`
 
 Contract shelves, blueprints, and packet/accounting pages still matter, but
-they are not the first stop for a new reader.
+they are not the first stop for a new reader. The old Wave 1 working packs also
+now live outside the public docs plane under `.agents/internal-docs/wave1/`.
 
 ## One-Line Verdict
 
@@ -93,9 +94,9 @@ Use these pages:
 - [docs/public-distribution-ledger.md](./public-distribution-ledger.md)
 - [docs/compat/README.md](./compat/README.md)
 
-Do **not** treat [docs/submission-packet-ledger.md](./submission-packet-ledger.md)
-as a first-row landing page. It is a heavier packet/reference shelf for later
-distribution work.
+Do **not** treat packet/accounting pages or Wave 1 working packs as first-row
+landing pages. Packet accounting is a deeper public shelf, while the Wave 1
+contract/evidence packs now live under `.agents/internal-docs/wave1/`.
 
 ## Current Live Truth For This Workspace
 

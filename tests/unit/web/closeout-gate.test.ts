@@ -988,6 +988,47 @@ describe("Reality closeout script helpers", () => {
     );
   });
 
+  it("counts permission-gated external blockers as workspace-scoped blockers without flipping repo-owned failure", async () => {
+    const { buildRealityGateReport } = await import("../../../scripts/run-reality-gate.mjs");
+
+    const report = buildRealityGateReport({
+      internalGate: [
+        { name: "typecheck", exitCode: 0 },
+        { name: "test", exitCode: 0 },
+        { name: "build", exitCode: 0 },
+      ],
+      geminiByok: {
+        status: "success",
+      },
+      webLogin: [
+        {
+          status: "external-blocker",
+          provider: "claude",
+          blocker: "claude-account-action-required",
+          classification: "permission-gated",
+        },
+      ],
+    });
+
+    expect(report.overallStatus).toBe("external-blocker");
+    expect(report.repoOwnedGate).toEqual({
+      passed: true,
+      verdict: "pass",
+      status: "pass-with-external-blockers",
+    });
+    expect(report.liveGate.summary.workspaceClassificationCounts).toEqual({
+      "permission-gated": 1,
+    });
+    expect(report.externalBlockers).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({
+          provider: "claude",
+          workspaceClassification: "permission-gated",
+        }),
+      ]),
+    );
+  });
+
   it("uses unique provider-scoped invoke proof tokens to avoid stale lucky passes", async () => {
     const { createInvokeProofExpectation } = await import("../../../scripts/verify-web-login-live.mjs");
 

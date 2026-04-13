@@ -1,6 +1,23 @@
 # Switchyard Canonical Design Mother Strategy
 
-## Product Truth
+## [Confirmed] Contract Role
+
+This file operationalizes
+`docs/contracts/design-mother-strategy.md` for repo-local design assets.
+
+Authority order for design assets is fixed:
+
+1. `docs/contracts/design-mother-strategy.md`
+2. `design-system/MASTER.md`
+3. `design-system/switchyard-auth-portal/MASTER.md`
+4. `design-system/switchyard-debug-cockpit/MASTER.md`
+5. `.stitch/DESIGN.md`
+6. generated screen specs or future implementation notes
+
+Page masters may tighten or specialize a rule. They may not reopen donor
+selection or widen the borrow boundary.
+
+## [Confirmed] Product Truth
 
 Switchyard is a builder-facing shared provider runtime for AI apps.
 
@@ -20,58 +37,60 @@ The design system must reinforce:
 - progressive disclosure
 - truthful docs
 
-## Donor Boundary
+## [Confirmed] Donor Contribution Freeze
 
-### Primary donor
+| Donor | Frozen contribution | Frozen non-contribution |
+| --- | --- | --- |
+| `Linear` | authenticated shell posture, dense-but-calm hierarchy, border-led grouping, long-session readability, evidence/panel/list discipline | issue-tracker worldview, project-management nouns, decorative indigo branding, product-category inheritance |
+| `Raycast` | command palettes, quick actions, launcher/search affordances, transient utility overlays, keyboard-first assistive chrome | launcher worldview as the whole app, floating desktop-tool personality across primary shells, red/blue brand carry-over |
+| `Mintlify` | docs/public information hierarchy, reading rhythm, help/reference clarity, public knowledge structure | light docs shell inside authenticated runtime surfaces, airy docs-marketing hero language in operator pages, docs-product worldview |
 
-- `Linear`
-  - use for authenticated app/runtime/workbench surfaces
-  - absorb:
-    - dense but calm operational hierarchy
-    - dark native shell
-    - fine border layering
-    - long-session readability
-    - issue/panel/table style information density
+If a proposed borrowing is not explicitly listed in the `Frozen contribution`
+column, it is out of bounds.
 
-### Secondary donor
+## [Confirmed] Surface-to-Donor Freeze
 
-- `Raycast`
-  - utility chrome only
-  - absorb only for:
-    - command palette
-    - quick actions
-    - launcher/search affordances
-    - transient utility overlays
+| Surface | Governing asset | Primary donor | Allowed secondary donor | Explicit freeze |
+| --- | --- | --- | --- | --- |
+| Auth portal shell and first screen | `design-system/switchyard-auth-portal/MASTER.md` | `Linear` | `Raycast` utility chrome only | no `Mintlify` shell, no Raycast-as-shell |
+| Auth portal embedded help/reference blocks | `design-system/switchyard-auth-portal/MASTER.md` | `Linear` shell remains primary | `Mintlify` readability only inside subordinate help content | help must not flip the page into docs-first framing |
+| Debug cockpit shell and evidence flow | `design-system/switchyard-debug-cockpit/MASTER.md` | `Linear` | `Raycast` utility chrome only | no `Mintlify` shell, no desktop-launcher personality |
+| Debug cockpit embedded help/reference blocks | `design-system/switchyard-debug-cockpit/MASTER.md` | `Linear` shell remains primary | `Mintlify` readability only inside subordinate help content | help must not outrank evidence or verdicts |
+| Command palette / quick action overlays | future local utility layer | `Raycast` | `Linear` shell tone | must stay transient, never become the app identity |
+| README / docs front door / public help/reference | outside this wave | `Mintlify` | `Linear` restraint for proof cards | not a target for the current implementation slice |
 
-### Docs/public donor
+## [Confirmed] Forbidden Inheritances
 
-- `Mintlify`
-  - docs/public knowledge surfaces only
-  - absorb only for:
-    - README and docs front door
-    - help/reference layouts
-    - reading rhythm
-    - public information hierarchy
+The following are frozen out even if they look visually attractive:
 
-## Hard Rules
+- hosted SaaS theater
+  - `Workspace`, `Billing`, `Seats`, `Users`, `Invite teammates`, or other
+    multi-tenant admin nouns
+- consumer-chat worldview
+  - chat composer as the page hero
+  - assistant persona as the product narrator
+  - conversation timeline as the home surface
+- donor category drag
+  - `Linear` issue-tracker semantics
+  - `Raycast` launcher product identity
+  - `Mintlify` docs-product identity inside runtime shells
+- proof inflation
+  - fake KPI cards
+  - fake observability walls
+  - performance or success counters without runtime evidence
 
-1. Do not use `Raycast` as the primary application shell.
-2. Do not use `Mintlify` as the primary runtime/workbench shell.
-3. Do not turn runtime surfaces into consumer marketing pages.
-4. Do not inherit donor product identity, runtime worldview, or category language.
-5. When a page mixes shell and docs concerns, the authenticated shell still
-   follows `Linear`, while embedded docs/help sections may borrow `Mintlify`
-   readability rules.
+## [Current Default] Enforcement
 
-## Page Mapping
+- Use `design-system/DONOR_ABSORPTION_LEDGER.md` as the operational checklist
+  before changing any governed surface.
+- If a page mixes shell and docs concerns, the authenticated shell still follows
+  `Linear`, while embedded docs/help may borrow `Mintlify` readability.
+- If a local utility layer appears inside a `Linear` shell, it may borrow
+  `Raycast` only as a secondary chrome language.
+- Changing donor choice requires a contract update, not a new prompt, screenshot,
+  or taste argument.
 
-| Surface family | Primary donor | Allowed secondary donor | Forbidden primary donor |
-| --- | --- | --- | --- |
-| Authenticated app/runtime/workbench | `Linear` | `Raycast` utility chrome | `Mintlify` |
-| Command palette / quick actions / launcher overlays | `Raycast` | `Linear` shell tone | `Mintlify` |
-| README / docs front door / public help/reference | `Mintlify` | `Linear` restraint for proof cards | `Raycast` |
-
-## Runtime Tokens
+## [Current Default] Runtime Tokens
 
 Use the repo runtime shell defaults from `.stitch/DESIGN.md`:
 
@@ -80,10 +99,3 @@ Use the repo runtime shell defaults from `.stitch/DESIGN.md`:
 - muted technical metadata
 - monospaced runtime identifiers
 - no neon glow, no fake KPI cards, no "Contact Sales" primary CTA
-
-## Relationship To Page Masters
-
-The page-level master files under `design-system/` are allowed only as surface
-overrides.
-
-If a page-level file conflicts with this file, this file wins.
