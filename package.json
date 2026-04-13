@@ -37,6 +37,7 @@
     "test:integration": "pnpm --filter @switchyard/auth-portal --filter @switchyard/surface-http -r test:integration && pnpm run test:examples && pnpm run test:starter-packs",
     "test:e2e": "pnpm --filter @switchyard/app-service test:e2e",
     "test:docs-frontdoor": "pnpm exec vitest run --config vitest.config.ts --project docs-frontdoor",
+    "test:quality-governance": "pnpm exec vitest run tests/unit/web/closeout-gate.test.ts tests/unit/web/reality-gate-script.test.ts tests/unit/web/reality-gate-governance.test.ts tests/integration/docs/governance-drift.test.ts --config vitest.config.ts",
     "test": "pnpm run test:unit && pnpm run test:integration && pnpm run test:e2e && pnpm run test:docs-frontdoor",
     "test:coverage:raw": "pnpm exec vitest --clearCache && rm -rf coverage && mkdir -p coverage/.tmp && pnpm exec vitest run tests/unit tests/integration tests/e2e --cache=false --no-file-parallelism --maxWorkers=1 --config vitest.config.ts --coverage.enabled true --coverage.clean=false --coverage.processingConcurrency=1 --coverage.reporter=text-summary --coverage.reporter=json-summary --coverage.reportsDirectory=coverage",
     "test:coverage": "pnpm exec node scripts/run-test-coverage.mjs",

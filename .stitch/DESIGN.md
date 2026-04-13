@@ -42,6 +42,48 @@ Absorption is visual and structural only.
 Do **not** inherit donor product identity, product category, or runtime
 worldview.
 
+## 1.2 Operational Donor Contribution Freeze
+
+This file is the implementation-facing summary of the donor freeze.
+
+| Donor | May contribute | Must not contribute |
+| --- | --- | --- |
+| `Linear` | authenticated shell posture, dense-but-calm hierarchy, evidence panels, long-session runtime readability | issue-tracker worldview, project-management nouns, decorative brand indigo, product-category inheritance |
+| `Raycast` | command palette grammar, quick actions, keyboard-first utility affordances, transient overlays | launcher worldview as the whole app, floating desktop-tool personality across the full shell, red/blue brand carry-over |
+| `Mintlify` | docs readability, help/reference information hierarchy, public knowledge rhythm | light docs shell inside authenticated runtime surfaces, airy marketing gradients inside operator pages, docs-product worldview |
+
+If a desired borrowing is not explicitly allowed above, treat it as forbidden.
+
+## 1.3 Surface Contract Hierarchy
+
+Switchyard now has a fixed design contract stack:
+
+1. `docs/contracts/design-mother-strategy.md` defines the canonical donor boundary.
+2. `design-system/MASTER.md` is the root operational master for repo design
+   assets.
+3. `design-system/switchyard-auth-portal/MASTER.md` and
+   `design-system/switchyard-debug-cockpit/MASTER.md` are page-level overrides
+   that may tighten but not widen the donor boundary.
+4. `design-system/DONOR_ABSORPTION_LEDGER.md` is the anti-drift ledger for
+   surface-by-surface checks.
+5. Generated `.stitch` assets follow the layers above rather than inventing a
+   new donor mix.
+
+Current operational mapping:
+
+- `auth-portal`
+  - shell, lane split, verdict strip, provider cards = `Linear`
+  - quick actions or command-like overlays = `Raycast` utility chrome only
+  - embedded help readability = `Mintlify` only when treated as docs content
+- `debug workbench`
+  - shell, summary row, evidence stacks, ladders = `Linear`
+  - quick actions or overlays = `Raycast` utility chrome only
+  - embedded help/reference readability = `Mintlify` only when clearly
+    subordinate to the runtime shell
+
+Do not reopen donor selection through prompt wording or local taste edits. The
+only legal path is to change the canonical contract first.
+
 ## 2. Visual Theme & Atmosphere
 
 The atmosphere is "machine room front desk".
@@ -329,3 +371,4 @@ Every design asset should answer:
 2. which truths it must expose
 3. which anti-patterns are forbidden
 4. how success, loading, empty, and blocked states should look
+5. which row in `design-system/DONOR_ABSORPTION_LEDGER.md` it still satisfies

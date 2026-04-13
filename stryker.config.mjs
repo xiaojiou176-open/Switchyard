@@ -9,6 +9,8 @@ export default {
   ],
   testFiles: [
     "tests/unit/web/closeout-gate.test.ts",
+    "tests/unit/web/reality-gate-governance.test.ts",
+    "tests/unit/web/reality-gate-script.test.ts",
   ],
   vitest: {
     configFile: "vitest.config.ts",

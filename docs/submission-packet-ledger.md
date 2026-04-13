@@ -58,8 +58,8 @@ It is useful for host ecosystems that want a self-contained folder, but it is
 still a **secondary packet lane**.
 
 If you need the current outer-lane verdicts for Cline, owner-manual forms,
-Smithery, or HiMarket, open
-[`docs/mcp-listings-cockpit.md`](./mcp-listings-cockpit.md).
+Smithery, or HiMarket, open the internal listings cockpit:
+[`../.agents/internal-docs/mcp/mcp-listings-cockpit.md`](../.agents/internal-docs/mcp/mcp-listings-cockpit.md).
 
 Use these files together:
 

@@ -21,6 +21,8 @@ if ((coverageCommand.status ?? 1) !== 0) {
   process.exit(coverageCommand.status ?? 1);
 }
 
+// Exit code alone is not trusted; the gate also requires a real summary artifact
+// and floor checks so a lucky reporter run cannot masquerade as coverage green.
 if (!existsSync(coverageSummaryPath)) {
   console.error(
     `Switchyard coverage gate expected ${coverageSummaryPath}, but the summary artifact was not created.`,

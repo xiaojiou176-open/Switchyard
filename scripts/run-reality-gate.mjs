@@ -15,11 +15,11 @@ import { runWebLoginLiveVerification } from "./verify-web-login-live.mjs";
 
 const scriptDir = dirname(fileURLToPath(import.meta.url));
 const repoRoot = resolve(scriptDir, "..");
-const INTERNAL_GATE_STEPS = [
-  ["typecheck", "pnpm", ["typecheck"]],
-  ["test", "pnpm", ["test"]],
-  ["build", "pnpm", ["build"]],
-];
+export const INTERNAL_GATE_STEPS = Object.freeze([
+  Object.freeze(["typecheck", "pnpm", Object.freeze(["typecheck"])]),
+  Object.freeze(["test", "pnpm", Object.freeze(["test"])]),
+  Object.freeze(["build", "pnpm", Object.freeze(["build"])]),
+]);
 function run(command, args) {
   const result = spawnSync(command, args, {
     cwd: repoRoot,
@@ -34,26 +34,27 @@ function run(command, args) {
   return result.status ?? 1;
 }
 
-function summarizeLiveStatuses(geminiByok, webLogin) {
+export function resolveWorkspaceClassification(result) {
+  if (result?.persistenceAudit?.workspaceClassification) {
+    return result.persistenceAudit.workspaceClassification;
+  }
+
+  const classification = `${result?.classification ?? ""}`.toLowerCase();
+
+  if (
+    classification === "session-incomplete" ||
+    classification === "human-verification-required" ||
+    classification === "account-action-required" ||
+    classification === "permission-gated"
+  ) {
+    return classification;
+  }
+
+  return undefined;
+}
+
+export function summarizeLiveStatuses(geminiByok, webLogin) {
   const allResults = [geminiByok, ...webLogin].filter(Boolean);
-  const resolveWorkspaceClassification = (result) => {
-    if (result?.persistenceAudit?.workspaceClassification) {
-      return result.persistenceAudit.workspaceClassification;
-    }
-
-    const classification = `${result?.classification ?? ""}`.toLowerCase();
-
-    if (
-      classification === "session-incomplete" ||
-      classification === "human-verification-required" ||
-      classification === "account-action-required" ||
-      classification === "permission-gated"
-    ) {
-      return classification;
-    }
-
-    return undefined;
-  };
   const classificationCounts = allResults.reduce((counts, result) => {
     if (!result.classification) {
       return counts;
@@ -108,10 +109,14 @@ function summarizeLiveStatuses(geminiByok, webLogin) {
   };
 }
 
-async function runWebLoginReality() {
+export async function runWebLoginReality({
+  env = process.env,
+  runWebLoginLiveVerificationFn = runWebLoginLiveVerification,
+  logProgress = (message) => console.error(message),
+} = {}) {
   try {
-    return await runWebLoginLiveVerification({
-      env: process.env,
+    return await runWebLoginLiveVerificationFn({
+      env,
       onProgress(event) {
         if (!event?.stage) {
           return;
@@ -119,7 +124,7 @@ async function runWebLoginReality() {
 
         const providerLabel = event.provider ? `[${event.provider}] ` : "";
         const summaryLabel = event.summary ? ` -> ${event.summary}` : "";
-        console.error(
+        logProgress(
           `[reality:gate] [web-login] ${providerLabel}${event.stage}${summaryLabel}`,
         );
       },
@@ -223,7 +228,9 @@ async function main() {
 
   if (internalGate.every((step) => step.exitCode === 0)) {
     geminiByok = await runGeminiLiveVerification();
-    webLogin = (await runWebLoginReality()).filter(Boolean);
+    webLogin = (await runWebLoginReality({
+      env: process.env,
+    })).filter(Boolean);
   }
 
   const report = buildRealityGateReport({

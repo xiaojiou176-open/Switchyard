@@ -243,6 +243,90 @@ describe('auth portal shell', () => {
     );
   });
 
+  it('prefers live current-browser truth over stale stored browser audits on web-login cards', () => {
+    const owner = createCredentialOwner('terry-local');
+    const defaultModel = buildAuthPortalShellModel({
+      owner,
+      routeCatalog: {
+        authPortal: '/v1/runtime/auth-portal',
+        providerStatusTemplate: '/v1/runtime/providers/{providerId}/status',
+        providerAcquisitionStartTemplate: '/v1/runtime/providers/{providerId}/acquisition/start',
+        providerAcquisitionCaptureTemplate: '/v1/runtime/providers/{providerId}/acquisition/capture',
+        providerDebugWorkbenchTemplate: '/v1/runtime/providers/{providerId}/debug/workbench'
+      }
+    });
+    const byokSection = defaultModel.sections[0];
+    const webSection = defaultModel.sections[1];
+    const claudeBase = buildAuthRuntimeView(
+      createCredentialRecord({
+        userId: owner.userId,
+        providerId: 'claude',
+        authModeId: 'web-login',
+        accountId: 'claude-browser',
+        accountLabel: 'Claude browser session',
+        lifecycleStage: 're-auth',
+        status: {
+          hasMaterial: true,
+          userActionRequired: true
+        }
+      })
+    );
+    const claudeCard: AuthPortalCard = {
+      ...claudeBase,
+      mode: 'isolated-chrome-root',
+      modeLabel: 'Use Isolated Chrome Root',
+      routes: buildRouteRefs('claude'),
+      transportHint: 'Restore Claude subscription access before rerunning the live gate.',
+      session: {
+        state: 'user-action-required',
+        accountLabel: 'Claude browser session',
+        requiredUserAction: 'Restore Claude subscription access before rerunning the live gate.',
+        persistenceAudit: {
+          workspaceClassification: 'provider-adjacent',
+          summary: 'Stored audit is stale and still points at another browser seat.',
+          pageUrl: 'https://chatgpt.com/c/stale-seat',
+          pageTitle: 'ChatGPT'
+        }
+      } as AuthPortalCard['session'],
+      currentBrowser: {
+        source: 'live-browser-inspection',
+        status: 'captured',
+        liveStatus: 'live-ready',
+        classification: 'workspace-ready',
+        summary: 'Claude browser tab looks reusable, but account access is blocked upstream.',
+        title: 'Claude',
+        url: 'https://claude.ai/new',
+        attachTargetLabel: 'Isolated Chrome root'
+      }
+    };
+
+    const html = renderAuthPortalShell({
+      ...defaultModel,
+      sections: [
+        ...(byokSection ? [byokSection] : []),
+        webSection
+          ? {
+              ...webSection,
+              cards: [claudeCard]
+            }
+          : {
+              id: 'web-login',
+              title: 'Web/Login',
+              description: 'User signs in with a browser, OAuth flow, or subscription-backed web session.',
+              cards: [claudeCard]
+            }
+      ]
+    });
+
+    expect(html).toContain('Current browser truth');
+    expect(html).toContain('Account action required');
+    expect(html).toContain('Review current blocker');
+    expect(html).toContain('Title</strong> Claude');
+    expect(html).toContain('https://claude.ai/new');
+    expect(html).not.toContain('https://chatgpt.com/c/stale-seat');
+    expect(html).not.toContain('Title</strong> ChatGPT');
+  });
+
   it('keeps attach-failed web-login cards out of the ready bucket', () => {
     const owner = createCredentialOwner('terry-local');
     const defaultModel = buildAuthPortalShellModel({
@@ -305,5 +389,6 @@ describe('auth portal shell', () => {
     expect(html).toContain('Session incomplete');
     expect(html).toContain('User action required');
     expect(html).not.toContain('Ready providers (1)');
+    expect(html).toContain('BYOK providers keep local API key management on this surface.');
   });
 });

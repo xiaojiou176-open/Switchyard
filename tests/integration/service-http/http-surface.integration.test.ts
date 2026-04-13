@@ -710,10 +710,10 @@ describe("Switchyard HTTP surface", () => {
           requiredUserAction:
             "Restore Claude subscription access before rerunning the live gate.",
           persistenceAudit: {
-            workspaceClassification: "account-action-required",
-            summary: "Claude account access is blocked until the subscription is restored.",
-            pageUrl: "https://claude.ai/new",
-            pageTitle: "Claude",
+            workspaceClassification: "session-incomplete",
+            summary: "Stored audit still reflects a generic reusable browser seat.",
+            pageUrl: "https://chatgpt.com/",
+            pageTitle: "ChatGPT",
           },
         },
         grok: {
@@ -821,6 +821,13 @@ describe("Switchyard HTTP surface", () => {
     expect(authPortalHtml).toContain("Inspect current browser first");
     expect(authPortalHtml).toContain("Re-authenticate");
     expect(authPortalHtml).not.toContain("Ready providers (");
+    expect(authPortalHtml).toContain("Current browser truth");
+    expect(authPortalHtml).toContain(
+      "Claude billing state is still blocking access until the subscription is restored.",
+    );
+    expect(authPortalHtml).toContain("https://claude.ai/new");
+    expect(authPortalHtml).not.toContain("https://chatgpt.com/");
+    expect(authPortalHtml).not.toContain("<span><strong>Title</strong> ChatGPT</span>");
 
     const workbenchResponse = await getSurface(
       service,
@@ -838,6 +845,9 @@ describe("Switchyard HTTP surface", () => {
     expect(workbenchHtml).toContain(
       "A reusable-looking browser page does not clear this blocker by itself.",
     );
+    expect(workbenchHtml).toContain("Browser looks reusable");
+    expect(workbenchHtml).toContain("technical status");
+    expect(workbenchHtml).toContain("live-ready");
   });
 
   it("folds repeated browser-inspection failures into a detailed diagnostics tray", async () => {
@@ -929,6 +939,61 @@ describe("Switchyard HTTP surface", () => {
           },
         },
       },
+      debugSupportRunners: {
+        chatgpt: async (provider) => ({
+          providerId: provider.provider,
+          providerDisplayName: provider.displayName,
+          auth: buildServiceProviderAuthView(provider, "local-user"),
+          runtime: buildServiceProviderRuntimeView(provider),
+          storeReadiness: {
+            credentialState: provider.credentialState,
+            runtimeReadiness: provider.runtimeReadiness,
+            validationState: provider.session.validationState,
+            note: "Stored material says user action is still required.",
+          },
+          liveReadiness: {
+            status: "unknown",
+            diagnostic:
+              "No fresh browser inspection is available for this provider during the current test window.",
+          },
+          attachTarget: {
+            label: "Isolated Chrome root",
+            source: "runtime-env",
+            available: false,
+            cdpUrl: undefined,
+            note: "No attach target was available during this test window.",
+          },
+          currentPage: {
+            status: "unavailable",
+            classification: undefined,
+            diagnostic:
+              "Switchyard could not inspect the current ChatGPT browser seat during this test window.",
+          },
+          currentConsole: {
+            status: "unavailable",
+            entries: [],
+            diagnostic: "No console evidence is available without a fresh browser inspection.",
+          },
+          currentNetwork: {
+            status: "unavailable",
+            entries: [],
+            diagnostic: "No network evidence is available without a fresh browser inspection.",
+          },
+          diagnoseLadder: [
+            {
+              id: "check-store",
+              status: "completed",
+              summary: "Stored state still says user action is required.",
+            },
+            {
+              id: "inspect-current-page",
+              status: "blocked",
+              summary: "No fresh browser inspection is available yet.",
+            },
+          ],
+          routes: buildServiceProviderRouteRefs(provider.provider),
+        }),
+      },
     });
 
     const authPortalResponse = await getSurface(service, "/v1/runtime/auth-portal");
@@ -937,6 +1002,7 @@ describe("Switchyard HTTP surface", () => {
     expect(authPortalResponse.status).toBe(200);
     expect(authPortalHtml).toContain("Session incomplete");
     expect(authPortalHtml).toContain("User action required");
+    expect(authPortalHtml).toContain("Last stored browser checkpoint");
     expect(authPortalHtml).not.toContain("Ready providers (1)");
   });
 

@@ -26,6 +26,61 @@ function createRepoScopedArtifactDir(prefix: string) {
 }
 
 describe("run-reality-gate script", () => {
+  it("does not auto-run when imported as a helper module", async () => {
+    const scriptPath = fileURLToPath(
+      new URL("../../../scripts/run-reality-gate.mjs", import.meta.url),
+    );
+    const spawnSync = vi.fn();
+    const runGeminiLiveVerification = vi.fn();
+    const runWebLoginLiveVerification = vi.fn();
+
+    vi.doMock("node:child_process", () => ({ spawnSync }));
+    vi.doMock("../../../scripts/verify-gemini-live.mjs", () => ({
+      runGeminiLiveVerification,
+    }));
+    vi.doMock("../../../scripts/verify-web-login-live.mjs", () => ({
+      runWebLoginLiveVerification,
+    }));
+
+    const originalArgv = [...process.argv];
+    process.argv[1] = join(process.cwd(), "tests", "helper-import.mjs");
+
+    try {
+      await import(pathToFileURL(scriptPath).href);
+    } finally {
+      process.argv = originalArgv;
+    }
+
+    expect(spawnSync).not.toHaveBeenCalled();
+    expect(runGeminiLiveVerification).not.toHaveBeenCalled();
+    expect(runWebLoginLiveVerification).not.toHaveBeenCalled();
+  });
+
+  it("fails closed inside CI before touching repo-owned commands", async () => {
+    const scriptPath = fileURLToPath(
+      new URL("../../../scripts/run-reality-gate.mjs", import.meta.url),
+    );
+    const spawnSync = vi.fn();
+
+    vi.doMock("node:child_process", () => ({ spawnSync }));
+
+    const originalArgv = [...process.argv];
+    const originalCi = process.env.CI;
+    process.argv[1] = scriptPath;
+    process.env.CI = "true";
+
+    try {
+      await expect(import(pathToFileURL(scriptPath).href)).rejects.toThrow(
+        "credentialed-workstation only",
+      );
+    } finally {
+      process.argv = originalArgv;
+      restoreOptionalEnv("CI", originalCi);
+    }
+
+    expect(spawnSync).not.toHaveBeenCalled();
+  });
+
   it("skips live verification when an internal gate step already failed", async () => {
     const scriptPath = fileURLToPath(
       new URL("../../../scripts/run-reality-gate.mjs", import.meta.url),
@@ -209,5 +264,67 @@ describe("run-reality-gate script", () => {
       "0\n",
       "utf8",
     );
+  });
+
+  it("logs progress only for staged events and returns real web-login results", async () => {
+    const { runWebLoginReality } = await import("../../../scripts/run-reality-gate.mjs");
+    const logProgress = vi.fn();
+    const runWebLoginLiveVerificationFn = vi.fn(async ({ onProgress }) => {
+      onProgress({
+        provider: "chatgpt",
+      });
+      onProgress({
+        provider: "chatgpt",
+        stage: "invoke-proof",
+        summary: "assistant token observed",
+      });
+
+      return [
+        {
+          status: "success",
+          provider: "chatgpt",
+        },
+      ];
+    });
+
+    const result = await runWebLoginReality({
+      env: {},
+      logProgress,
+      runWebLoginLiveVerificationFn,
+    });
+
+    expect(runWebLoginLiveVerificationFn).toHaveBeenCalledTimes(1);
+    expect(logProgress).toHaveBeenCalledTimes(1);
+    expect(logProgress).toHaveBeenCalledWith(
+      "[reality:gate] [web-login] [chatgpt] invoke-proof -> assistant token observed",
+    );
+    expect(result).toEqual([
+      {
+        status: "success",
+        provider: "chatgpt",
+      },
+    ]);
+  });
+
+  it("maps aggregate web-login crashes into a fail-closed blocker-shaped result", async () => {
+    const { runWebLoginReality } = await import("../../../scripts/run-reality-gate.mjs");
+
+    const result = await runWebLoginReality({
+      env: {},
+      runWebLoginLiveVerificationFn: vi.fn(async () => {
+        throw new Error("aggregate crash");
+      }),
+    });
+
+    expect(result).toEqual([
+      {
+        status: "failure",
+        provider: "web-login-aggregate",
+        reason: "probe-request-failed",
+        classification: "transport-instability",
+        diagnostic: "aggregate crash",
+        summary: "web-login aggregate reality rerun failed before producing a stable result.",
+      },
+    ]);
   });
 });

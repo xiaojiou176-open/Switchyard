@@ -111,6 +111,7 @@ export default defineConfig({
       ]),
       createProject('docs-frontdoor', [
         'tests/integration/docs/frontdoor-docs.test.ts',
+        'tests/integration/docs/governance-drift.test.ts',
         'tests/integration/docs/package-ready-distribution.test.ts',
         'tests/integration/docs/sensitive-surface-hygiene.test.ts'
       ]),
