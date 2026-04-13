@@ -120,26 +120,43 @@
       }
 
       .top-links {
+        display: grid;
+        gap: 8px;
+        justify-items: end;
+      }
+
+      .top-links-label {
+        font-size: 0.72rem;
+        font-weight: 700;
+        letter-spacing: 0.12em;
+        text-transform: uppercase;
+        color: rgba(22, 50, 38, 0.52);
+      }
+
+      .top-links-primary,
+      .top-links-secondary {
         display: flex;
         flex-wrap: wrap;
-        gap: 10px;
+        gap: 8px;
+        justify-content: flex-end;
       }
 
       .pill {
         display: inline-flex;
         align-items: center;
         gap: 8px;
-        padding: 10px 14px;
+        padding: 9px 13px;
         border-radius: 999px;
         border: 1px solid rgba(22, 50, 38, 0.08);
-        background: rgba(255, 255, 255, 0.76);
+        background: rgba(255, 255, 255, 0.68);
         color: var(--ink);
-        font-size: 0.9rem;
+        font-size: 0.84rem;
         font-weight: 600;
         transition:
           transform 180ms ease,
           border-color 180ms ease,
-          background 180ms ease;
+          background 180ms ease,
+          color 180ms ease;
       }
 
       .pill:hover {
@@ -148,10 +165,36 @@
         background: rgba(255, 255, 255, 0.96);
       }
 
+      .pill-primary {
+        background: rgba(255, 255, 255, 0.82);
+        border-color: rgba(22, 50, 38, 0.1);
+      }
+
+      .pill[aria-current="page"] {
+        background: rgba(24, 226, 153, 0.12);
+        border-color: rgba(24, 226, 153, 0.24);
+      }
+
+      .pill-quiet {
+        padding: 6px 2px;
+        border: 0;
+        border-radius: 0;
+        background: transparent;
+        color: rgba(22, 50, 38, 0.68);
+        font-size: 0.8rem;
+        font-weight: 560;
+      }
+
+      .pill-quiet:hover {
+        background: transparent;
+        border-color: transparent;
+        color: var(--accent-strong);
+      }
+
       .hero {
         display: grid;
-        grid-template-columns: minmax(0, 1.32fr) minmax(320px, 0.78fr);
-        gap: 24px;
+        grid-template-columns: minmax(0, 1.4fr) minmax(300px, 0.68fr);
+        gap: 20px;
         padding: 30px;
         margin-bottom: 28px;
         position: relative;
@@ -232,18 +275,34 @@
 
       .hero-proof {
         background:
-          linear-gradient(180deg, rgba(255, 255, 255, 0.82), rgba(243, 250, 245, 0.72)),
+          linear-gradient(180deg, rgba(255, 255, 255, 0.78), rgba(243, 250, 245, 0.64)),
           var(--panel-tint);
         border: 1px solid rgba(22, 50, 38, 0.07);
         box-shadow:
-          0 16px 36px rgba(27, 63, 45, 0.06),
+          0 12px 28px rgba(27, 63, 45, 0.05),
           inset 0 1px 0 rgba(255, 255, 255, 0.9);
       }
 
       .hero-proof strong {
         display: block;
         margin-bottom: 10px;
-        font-size: 1.05rem;
+        font-size: 0.98rem;
+      }
+
+      .hero-proof ol {
+        margin: 0 0 0 1.15rem;
+        color: var(--muted);
+        font-size: 0.95rem;
+        line-height: 1.55;
+      }
+
+      .hero-proof li + li {
+        margin-top: 0.42rem;
+      }
+
+      .hero-proof .quiet {
+        font-size: 0.9rem;
+        line-height: 1.58;
       }
 
       .signal-row {
@@ -353,6 +412,8 @@
       .card p {
         margin: 0;
         color: var(--muted);
+        font-size: 0.95rem;
+        max-width: 31ch;
       }
 
       .route-card ul,
@@ -462,6 +523,13 @@
           grid-template-columns: 1fr;
         }
 
+        .top-links,
+        .top-links-primary,
+        .top-links-secondary {
+          justify-items: start;
+          justify-content: flex-start;
+        }
+
         .route-card,
         .route-card-primary {
           grid-column: auto;
@@ -491,13 +559,18 @@
             a giant file cabinet.
           </span>
         </div>
-        <div class="top-links">
-          <a class="pill" href="./index.html" aria-current="page">Front door</a>
-          <a class="pill" href="./media/30-second-overview.md">30-second overview</a>
-          <a class="pill" href="./first-success.md">First success</a>
-          <a class="pill" href="./public-proof-pack.md">Proof pack</a>
-          <a class="pill" href="./public-distribution-ledger.md">Distribution ledger</a>
-          <a class="pill" href="./api/service-http-reference.md">API reference</a>
+        <div class="top-links" aria-label="Topbar quick shortcuts">
+          <span class="top-links-label">Quick shortcuts</span>
+          <div class="top-links-primary">
+            <a class="pill pill-primary" href="./index.html" aria-current="page">Front door</a>
+            <a class="pill pill-primary" href="./first-success.md">First success</a>
+            <a class="pill pill-primary" href="./api/service-http-reference.md">API reference</a>
+          </div>
+          <div class="top-links-secondary" aria-label="More front-row routes">
+            <a class="pill pill-quiet" href="./media/30-second-overview.md">30-second overview</a>
+            <a class="pill pill-quiet" href="./public-proof-pack.md">Proof pack</a>
+            <a class="pill pill-quiet" href="./public-distribution-ledger.md">Distribution ledger</a>
+          </div>
         </div>
       </section>
 
