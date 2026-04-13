@@ -90,6 +90,9 @@ describe('auth portal shell', () => {
     expect(html).toContain('Inspect current browser');
     expect(html).toContain('Web/Login live readiness');
     expect(html).toContain('The five provider verdicts that matter first');
+    expect(html).toContain('Open deeper provider shelf');
+    expect(html).toContain('Web/Login details, evidence, and actions');
+    expect(html).toContain('The arrivals board above already makes the first call.');
     expect(html).toContain('Portal rules, workflows, and browser handoff model');
     expect(html).toContain('BYOK inventory and local key slots');
     expect(html).toContain('Portal rules, workflows, and browser handoff model');
@@ -119,6 +122,8 @@ describe('auth portal shell', () => {
     expect(html).toContain('auth-portal-feedback');
     expect(html).not.toContain('&quot;authPortal&quot;');
     expect(html).toContain('payload.acquisition ?? {}');
+    expect(html).toContain('syncProviderDrawerFromHash');
+    expect(html).toContain('providerDrawer instanceof HTMLDetailsElement');
     expect(html).toContain('!browser?.loginOpened');
     expect(html).toContain('data-capture-body');
     expect(html).toContain('aria-live="polite"');
@@ -235,7 +240,8 @@ describe('auth portal shell', () => {
     expect(html).toContain('Re-authenticate');
     expect(html).toContain('Primary verdict');
     expect(html).toContain('Evidence and handoff details');
-    expect(html).toContain('This section now behaves like a triage wall');
+    expect(html).toContain('The arrivals board above already makes the first call.');
+    expect(html).not.toContain('This section now behaves like a triage wall');
     expect(html).toContain('Account action required');
     expect(html).toContain('Session incomplete');
     expect(html.indexOf('The five provider verdicts that matter first')).toBeLessThan(
