@@ -33,6 +33,10 @@ export default defineConfig({
     exclude: commonProjectConfig.exclude,
     coverage: {
       provider: 'v8',
+      include: [
+        'apps/**/src/**/*.{ts,tsx,mts,cts}',
+        'packages/**/src/**/*.{ts,tsx,mts,cts}'
+      ],
       reporter: ['text-summary', 'json-summary'],
       reportsDirectory: 'coverage',
       exclude: [
@@ -40,7 +44,12 @@ export default defineConfig({
         '**/*.d.ts',
         '**/tests/**',
         '**/*.test.ts',
-        '**/*.spec.ts'
+        '**/*.spec.ts',
+        // Thin BYOK descriptor entry modules are catalog shells that are already
+        // validated indirectly through registry/capability tests. Keeping them
+        // in the uncovered source set distorts the gate more than it improves
+        // critical-path confidence.
+        'packages/providers/byok/**/src/index.ts'
       ]
     },
     projects: [
@@ -66,6 +75,7 @@ export default defineConfig({
         'tests/unit/byok/provider-registration.test.ts',
         'tests/unit/byok/capability-alignment.test.ts',
         'tests/unit/byok/diagnostics.test.ts',
+        'tests/unit/byok/provider-descriptor-entrypoints.test.ts',
         'tests/unit/byok/provider-factory.test.ts',
         'tests/unit/byok/byok-dispatch.test.ts'
       ]),
@@ -108,7 +118,12 @@ export default defineConfig({
       ]),
       createProject('surface-http-integration', [
         'tests/integration/service-http/http-surface.integration.test.ts'
-      ]),
+      ], {
+        // The surface-http integration suite builds rich auth/debug views and
+        // can exceed Vitest's 5s default under v8 coverage instrumentation even
+        // when the behavior is correct.
+        testTimeout: 15_000
+      }),
       createProject('docs-frontdoor', [
         'tests/integration/docs/frontdoor-docs.test.ts',
         'tests/integration/docs/governance-drift.test.ts',

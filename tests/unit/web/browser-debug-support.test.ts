@@ -46,6 +46,8 @@ describe("browser debug support", () => {
   it("captures current page, console, network, and support bundle paths from the attached browser", async () => {
     const screenshot = vi.fn(async () => undefined);
     const title = vi.fn(async () => "ChatGPT Workspace");
+    const tracingStart = vi.fn(async () => undefined);
+    const tracingStop = vi.fn(async () => undefined);
     const listeners = new Map<string, (value: any) => void>();
     const failedRequest = {
       method: () => "GET",
@@ -77,6 +79,10 @@ describe("browser debug support", () => {
       contexts: () => [
         {
           pages: () => [page],
+          tracing: {
+            start: tracingStart,
+            stop: tracingStop,
+          },
         },
       ],
       close: vi.fn(async () => undefined),
@@ -138,10 +144,24 @@ describe("browser debug support", () => {
         supportBundle: expect.objectContaining({
           command:
             "pnpm exec node scripts/capture-web-debug-bundle.mjs --provider chatgpt",
+          tracePath: expect.stringContaining("trace.zip"),
+          traceMode: "playwright-core-browser-ops",
         }),
       }),
     );
     expect(debug.diagnoseLadder.join(" ")).toContain("session-incomplete");
+    expect(tracingStart).toHaveBeenCalledWith(
+      expect.objectContaining({
+        screenshots: true,
+        snapshots: true,
+        title: "Switchyard chatgpt browser debug support",
+      }),
+    );
+    expect(tracingStop).toHaveBeenCalledWith(
+      expect.objectContaining({
+        path: expect.stringContaining("trace.zip"),
+      }),
+    );
     expect(screenshot).toHaveBeenCalled();
   });
 

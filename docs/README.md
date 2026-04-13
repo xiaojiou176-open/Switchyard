@@ -21,6 +21,8 @@ The public front door is intentionally split so each page keeps one job:
   - package-ready vs listed-live truth
 - `docs/README.md`
   - the full atlas, grouped by question
+- `docs/runbooks/dev-bootstrap.md`
+  - public bootstrap and workstation-reality runbook, kept visible but demoted
 
 Heavy-lane packet/accounting pages still exist, but they belong to deeper
 reference shelves rather than the public front row.
@@ -46,12 +48,30 @@ If you only need the first route, choose one:
   - [docs/public-proof-pack.md](./public-proof-pack.md)
 - I want the package/listing/public-distribution truth
   - [docs/public-distribution-ledger.md](./public-distribution-ledger.md)
+- I need local bootstrap or workstation-bound reality
+  - [docs/runbooks/dev-bootstrap.md](./runbooks/dev-bootstrap.md)
 - I want the full atlas on one page
   - [docs/index.html](./index.html)
 
 The old Wave 1 working packs were relocated out of the public docs plane. The
 legacy `docs/blueprints/wave1/*` paths now act only as relocation notes, while
 the working copies live under `.agents/internal-docs/wave1/`.
+
+The public first row stays intentionally narrow:
+
+- `README.md`
+- `docs/index.html`
+- `docs/media/30-second-overview.md`
+- `docs/first-success.md`
+- `docs/public-proof-pack.md`
+- `docs/public-distribution-ledger.md`
+- `docs/api/service-http-reference.md`
+
+Keep these public, but demoted one shelf deeper:
+
+- `docs/public-surface-support-matrix.md`
+- `docs/runbooks/dev-bootstrap.md`
+- builder routes, catalogs, and packet/accounting pages
 
 ## Default First Success
 
@@ -67,195 +87,89 @@ The shortest truthful route is:
 
 ## Start Here
 
-### Product sentence, scope, and identity
+### Product sentence, proof, and first action
 
 - [docs/media/30-second-overview.md](./media/30-second-overview.md)
-  - the fastest product sentence, current proved facts, and non-goals
-- [docs/shared-provider-runtime.md](./shared-provider-runtime.md)
-  - why Switchyard exists as a shared runtime layer
-- [docs/product/scope-and-nongoals.md](./product/scope-and-nongoals.md)
-  - what the project intentionally does not claim
-
-### First success, proof, and public truth
-
+  - the fastest product sentence and non-goals
 - [docs/first-success.md](./first-success.md)
-  - the default first-success route
+  - the shortest runnable first-success route
 - [docs/public-proof-pack.md](./public-proof-pack.md)
-  - the shortest proof pack, smallest smoke, allowed claims, and forbidden
-    overclaims
-- [docs/public-surface-support-matrix.md](./public-surface-support-matrix.md)
-  - the current public surface truth table
-- [docs/public-surface-catalog.md](./public-surface-catalog.md)
-  - the outward catalog of public surfaces
-- [docs/public-surface-catalog.schema.json](./public-surface-catalog.schema.json)
-  - schema for the public surface catalog
+  - the current proof ceiling and forbidden overclaims
 - [docs/public-distribution-ledger.md](./public-distribution-ledger.md)
-  - package-ready, starter-pack-ready, and official-listing-not-claimed truth
-
-### API and SDK
-
+  - package-ready versus listed-live truth
 - [docs/api/service-http-reference.md](./api/service-http-reference.md)
+  - the primary runtime/API front door
+
+### If the question is local browser or session realism
+
+- [docs/runbooks/dev-bootstrap.md](./runbooks/dev-bootstrap.md)
+  - the workstation bootstrap and repair ladder
+- [docs/public-proof-pack.md](./public-proof-pack.md)
+  - the current blocker wording and claim ceiling
+- [docs/api/web-login-acquisition.md](./api/web-login-acquisition.md)
+  - the lane-specific acquisition reference
+
+### Core API and runtime shelves
+
 - [docs/api/openapi.yaml](./api/openapi.yaml)
 - [docs/api/sdk-quickstart.md](./api/sdk-quickstart.md)
 - [docs/api/mcp-readonly-server.md](./api/mcp-readonly-server.md)
 - [docs/api/error-diagnostics-reference.md](./api/error-diagnostics-reference.md)
-- [docs/api/web-login-acquisition.md](./api/web-login-acquisition.md)
 
-## Builders, Starter Packs, and Host Routes
+### Builder and host shelves
 
-These pages stay public, but they are builder shelves, not first-row product
-answers:
-
-- [docs/plugin-skill-starter-kits.md](./plugin-skill-starter-kits.md)
-  - starter-kit explanation page for plugin/skills builders
-- [docs/starter-manifest-templates.md](./starter-manifest-templates.md)
-  - starter manifest templates
-- [docs/starter-manifest-templates.schema.json](./starter-manifest-templates.schema.json)
-  - schema for starter manifest templates
-- [docs/starter-manifest-examples.md](./starter-manifest-examples.md)
-  - starter manifest examples
-- [docs/starter-manifest-examples.schema.json](./starter-manifest-examples.schema.json)
-  - schema for starter manifest examples
 - [docs/starter-pack-chooser.md](./starter-pack-chooser.md)
-  - choose the right starter pack
-- [docs/starter-pack-index.md](./starter-pack-index.md)
-  - starter pack directory
-- [docs/starter-pack-comparison.md](./starter-pack-comparison.md)
-  - compare starter packs side by side
 - [docs/builder-journeys.md](./builder-journeys.md)
-  - choose a full builder journey
-- [docs/builder-intent-router.md](./builder-intent-router.md)
-  - route a builder question to the right first page
-- [docs/builder-intent-router.json](./builder-intent-router.json)
-  - machine-readable builder intent router
-- [docs/builder-intent-router.schema.json](./builder-intent-router.schema.json)
-  - schema for the builder intent router
 - [docs/host-integration-playbooks.md](./host-integration-playbooks.md)
-  - host integration route map
 - [docs/host-integration-examples.md](./host-integration-examples.md)
-  - host-local example configs
 - [starter-packs/README.md](../starter-packs/README.md)
-  - copy-ready starter packs
 - [examples/README.md](../examples/README.md)
-  - runnable examples across runtime and host paths
 
-## Public Reference Shelves
-
-These pages are still public and useful, but they are not the first route for a
-new reader.
-
-### Capability and machine-readable reference
-
-- [docs/public-surface-support-matrix.md](./public-surface-support-matrix.md)
-  - the signboard version of the public truth
-- [docs/public-surface-catalog.md](./public-surface-catalog.md)
-  - the outward catalog of public surfaces
-- [docs/public-surface-catalog.schema.json](./public-surface-catalog.schema.json)
-  - schema for the public surface catalog
-- [docs/api/mcp-readonly-server.md](./api/mcp-readonly-server.md)
-  - read-only MCP capability reference
-- [docs/api/web-login-acquisition.md](./api/web-login-acquisition.md)
-  - web-login acquisition route reference
-- [docs/testing-pyramid.md](./testing-pyramid.md)
-  - testing and gate reference
-
-### Distribution and packet reference
-
-- [docs/public-distribution-ledger.md](./public-distribution-ledger.md)
-  - public distribution truth
-- [docs/submission-packet-ledger.md](./submission-packet-ledger.md)
-  - heavy-lane packet/accounting reference for later-lane work, not a first
-    stop
-
-### Product and explanation shelf
-
-- [docs/shared-provider-runtime.md](./shared-provider-runtime.md)
-  - why the shared runtime exists
-- [docs/product/v1-brief.md](./product/v1-brief.md)
-  - current V1 shape for readers who need the deeper product brief
-
-## Internal Truth Shelves (SSOT / Reference)
-
-These pages should remain in the repo and remain readable, but they are not
-front-row public landing surfaces.
-
-### Contracts
-
-- [docs/contracts/design-mother-strategy.md](./contracts/design-mother-strategy.md)
-- [docs/contracts/provider-runtime-contract.md](./contracts/provider-runtime-contract.md)
-- [docs/contracts/service-and-sdk-surfaces.md](./contracts/service-and-sdk-surfaces.md)
-- [docs/contracts/auth-accounts-and-credentials.md](./contracts/auth-accounts-and-credentials.md)
-
-### Program and blueprint truth
-
-These pages remain readable, but they are reference shelves for reviewers who
-already know why they are here:
-
-- [docs/blueprints/m2-kernel-beta-verdict.md](./blueprints/m2-kernel-beta-verdict.md)
-  - current `M2 / Kernel Beta` verdict
-- [docs/blueprints/m3-first-party-integration-readiness.md](./blueprints/m3-first-party-integration-readiness.md)
-  - current `M3` readiness package
-- [docs/blueprints/wave3-consumer-seam-matrix.md](./blueprints/wave3-consumer-seam-matrix.md)
-  - consumer seam matrix
-- [docs/blueprints/wave4-consumer-contract-freeze.md](./blueprints/wave4-consumer-contract-freeze.md)
-  - thin compat contract freeze
-- [docs/blueprints/wave5-thin-compat-starter.md](./blueprints/wave5-thin-compat-starter.md)
-  - relocation note for the internal thin compat starter boundary
-- [docs/blueprints/wave6-outward-packaging-threshold.md](./blueprints/wave6-outward-packaging-threshold.md)
-  - outward packaging threshold
-- [docs/blueprints/openclaw-zero-token-adoption-ledger.md](./blueprints/openclaw-zero-token-adoption-ledger.md)
-  - upstream adoption ledger
-- `docs/blueprints/wave1/*`
-  - legacy public paths now point to `.agents/internal-docs/wave1/` relocation
-    notes
-
-Additional internal packs that now live under `.agents/internal-docs/`:
-
-- `wave5/wave5-thin-compat-starter.md`
-  - internal starter-boundary contract for thin compat
-- `mcp/mcp-listings-cockpit.md`
-  - owner-manual listing cockpit and packet/accounting workbench
-
-## Explanations and catalogs
-
-These remain public, but they are "come here on purpose" shelves:
-
-- [docs/shared-provider-runtime.md](./shared-provider-runtime.md)
-- [docs/public-proof-pack.md](./public-proof-pack.md)
-- [docs/public-surface-support-matrix.md](./public-surface-support-matrix.md)
-- [docs/public-surface-catalog.md](./public-surface-catalog.md)
-- [docs/provider-runtime-catalog.md](./provider-runtime-catalog.md)
-- [docs/provider-runtime-catalog.json](./provider-runtime-catalog.json)
-- [docs/provider-runtime-catalog.schema.json](./provider-runtime-catalog.schema.json)
-- [docs/compat-target-catalog.md](./compat-target-catalog.md)
-- [docs/compat-target-catalog.json](./compat-target-catalog.json)
-- [docs/compat-target-catalog.schema.json](./compat-target-catalog.schema.json)
-- [docs/builder-kit-catalog.md](./builder-kit-catalog.md)
-- [docs/builder-kit-catalog.json](./builder-kit-catalog.json)
-- [docs/builder-kit-catalog.schema.json](./builder-kit-catalog.schema.json)
-- [docs/skill-pack-catalog.md](./skill-pack-catalog.md)
-- [docs/skill-pack-catalog.json](./skill-pack-catalog.json)
-- [docs/skill-pack-catalog.schema.json](./skill-pack-catalog.schema.json)
-- [docs/mcp-tool-catalog.md](./mcp-tool-catalog.md)
-- [docs/mcp-tool-catalog.json](./mcp-tool-catalog.json)
-- [docs/mcp-tool-catalog.schema.json](./mcp-tool-catalog.schema.json)
-
-## Compatibility
+### Compat and comparison shelves
 
 - [docs/compat/README.md](./compat/README.md)
 - [docs/compat/codex.md](./compat/codex.md)
 - [docs/compat/claude-code.md](./compat/claude-code.md)
 - [docs/compat/openclaw.md](./compat/openclaw.md)
+- [docs/compare/byok-vs-web-login.md](./compare/byok-vs-web-login.md)
 - [docs/compare/switchyard-vs-codex.md](./compare/switchyard-vs-codex.md)
 - [docs/compare/switchyard-vs-claude-code.md](./compare/switchyard-vs-claude-code.md)
 - [docs/compare/switchyard-vs-openclaw.md](./compare/switchyard-vs-openclaw.md)
-- [packages/consumers/codex/README.md](../packages/consumers/codex/README.md)
-- [packages/consumers/claude-code/README.md](../packages/consumers/claude-code/README.md)
-- [packages/consumers/openclaw/README.md](../packages/consumers/openclaw/README.md)
-- [packages/surfaces/mcp/README.md](../packages/surfaces/mcp/README.md)
 
-If you need a full file-by-file crawl beyond this point, use the repo tree
-instead of turning this page back into a warehouse list.
+### Public reference shelves
+
+- [docs/public-surface-support-matrix.md](./public-surface-support-matrix.md)
+- [docs/public-surface-catalog.md](./public-surface-catalog.md)
+- [docs/shared-provider-runtime.md](./shared-provider-runtime.md)
+- [docs/product/v1-brief.md](./product/v1-brief.md)
+- [docs/product/scope-and-nongoals.md](./product/scope-and-nongoals.md)
+- [docs/mcp.md](./mcp.md)
+- [docs/faq.md](./faq.md)
+- [docs/glossary.md](./glossary.md)
+- [docs/i18n.md](./i18n.md)
+
+Machine-readable JSON and schema companions still live next to these human
+pages, but they are deeper-shelf reference surfaces, not first-row routes.
+
+### Internal truth shelves
+
+These remain part of the repo's truth system, but they are not first-row public
+landing pages:
+
+- `docs/contracts/*`
+- `docs/blueprints/*`
+- [docs/testing-pyramid.md](./testing-pyramid.md)
+- packet/accounting pages such as `submission-packet-ledger`
+
+Current working packs that already moved out of the public docs plane now live
+under `.agents/internal-docs/`, including:
+
+- `.agents/internal-docs/wave1/*`
+- `.agents/internal-docs/wave5/wave5-thin-compat-starter.md`
+- `.agents/internal-docs/mcp/mcp-listings-cockpit.md`
+
+If you need every catalog, schema, or machine-readable companion, use the repo
+tree or CLI surfaces instead of turning this atlas back into a warehouse list.
 
 ## MCP and AI Tooling
 

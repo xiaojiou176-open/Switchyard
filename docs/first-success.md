@@ -22,6 +22,10 @@ The public front row is intentionally small:
 - `docs/public-distribution-ledger.md`
 - `docs/api/service-http-reference.md`
 
+The bootstrap runbook stays public, but demoted:
+
+- `docs/runbooks/dev-bootstrap.md`
+
 The old Wave 1 working packs now live under `.agents/internal-docs/wave1/` and
 are not part of this route.
 

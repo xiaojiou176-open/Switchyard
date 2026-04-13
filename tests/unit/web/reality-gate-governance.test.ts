@@ -14,6 +14,7 @@ describe("reality gate governance helpers", () => {
   it("maps supported workspace classifications without inventing unsupported ones", async () => {
     const { resolveWorkspaceClassification } = await import("../../../scripts/run-reality-gate.mjs");
 
+    expect(resolveWorkspaceClassification(undefined)).toBeUndefined();
     expect(
       resolveWorkspaceClassification({
         persistenceAudit: {
@@ -27,6 +28,21 @@ describe("reality gate governance helpers", () => {
         classification: "permission-gated",
       }),
     ).toBe("permission-gated");
+    expect(
+      resolveWorkspaceClassification({
+        classification: "session-incomplete",
+      }),
+    ).toBe("session-incomplete");
+    expect(
+      resolveWorkspaceClassification({
+        classification: "human-verification-required",
+      }),
+    ).toBe("human-verification-required");
+    expect(
+      resolveWorkspaceClassification({
+        classification: "account-action-required",
+      }),
+    ).toBe("account-action-required");
     expect(
       resolveWorkspaceClassification({
         classification: "session-material-missing",
@@ -119,6 +135,53 @@ describe("reality gate governance helpers", () => {
         summary: "web invoke failed after probe success",
       },
     ]);
+  });
+
+  it("filters falsy live results before building the summary", async () => {
+    const { summarizeLiveStatuses } = await import("../../../scripts/run-reality-gate.mjs");
+
+    const summarized = summarizeLiveStatuses(
+      {
+        status: "success",
+        provider: "gemini",
+      },
+      [
+        undefined,
+        {
+          status: "external-blocker",
+          provider: "claude",
+          blocker: "claude-account-action-required",
+          classification: "account-action-required",
+          summary: "manual account action is still required",
+        },
+      ],
+    );
+
+    expect(summarized.summary).toEqual({
+      successCount: 1,
+      externalBlockerCount: 1,
+      failureCount: 0,
+      classificationCounts: {
+        "account-action-required": 1,
+      },
+      workspaceClassificationCounts: {
+        "account-action-required": 1,
+      },
+    });
+    expect(summarized.externalBlockers).toEqual([
+      {
+        provider: "claude",
+        blocker: "claude-account-action-required",
+        classification: "account-action-required",
+        workspaceClassification: "account-action-required",
+        missingEnvNames: [],
+        probeUrl: undefined,
+        cdpUrl: undefined,
+        rerunCommand: undefined,
+        summary: "manual account action is still required",
+      },
+    ]);
+    expect(summarized.failures).toEqual([]);
   });
 
   it("reports a fully green reality gate as success", async () => {
