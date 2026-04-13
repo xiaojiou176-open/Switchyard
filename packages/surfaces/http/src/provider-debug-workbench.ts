@@ -542,7 +542,7 @@ export function renderProviderDebugWorkbench(
       main {
         width: min(1220px, calc(100vw - 2rem));
         margin: 0 auto;
-        padding: 2rem 0 3rem;
+        padding: 1.4rem 0 2.6rem;
       }
 
       a {
@@ -583,21 +583,41 @@ export function renderProviderDebugWorkbench(
         background: var(--panel);
         border: 1px solid var(--line);
         border-radius: 24px;
-        box-shadow: var(--shadow);
+        box-shadow:
+          0 0 0 1px rgba(255, 255, 255, 0.03) inset,
+          0 24px 54px rgba(0, 0, 0, 0.36);
       }
 
       .hero {
         display: grid;
-        grid-template-columns: minmax(0, 2fr) minmax(260px, 1fr);
-        gap: 1rem;
-        padding: 1.5rem;
+        grid-template-columns: minmax(0, 1.65fr) minmax(320px, 0.95fr);
+        gap: 0.9rem;
+        padding: 1.15rem;
         margin-bottom: 1rem;
+        background:
+          linear-gradient(180deg, rgba(255, 255, 255, 0.028), rgba(255, 255, 255, 0.015)),
+          var(--panel);
+      }
+
+      .hero-copy {
+        display: grid;
+        gap: 0.75rem;
+        align-content: start;
+      }
+
+      .hero-topline {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        gap: 0.55rem;
       }
 
       .hero-copy h1 {
-        margin: 0 0 0.75rem;
-        font-size: clamp(2rem, 4vw, 3.2rem);
-        line-height: 1.04;
+        margin: 0;
+        max-width: 10.5ch;
+        font-size: clamp(1.85rem, 3.4vw, 2.95rem);
+        line-height: 0.98;
+        letter-spacing: -0.045em;
       }
 
       .eyebrow {
@@ -612,6 +632,26 @@ export function renderProviderDebugWorkbench(
         font-size: 0.75rem;
       }
 
+      .hero-chip {
+        display: inline-flex;
+        align-items: center;
+        padding: 0.32rem 0.65rem;
+        border-radius: 999px;
+        border: 1px solid rgba(255, 255, 255, 0.08);
+        background: rgba(255, 255, 255, 0.04);
+        color: var(--muted);
+        font-size: 0.74rem;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+      }
+
+      .hero-intro {
+        margin: 0;
+        max-width: 56ch;
+        font-size: 1rem;
+        line-height: 1.52;
+      }
+
       .hero-copy p,
       .section p,
       .empty-copy {
@@ -621,30 +661,47 @@ export function renderProviderDebugWorkbench(
       .hero-actions {
         display: flex;
         flex-wrap: wrap;
-        gap: 0.65rem;
-        margin-top: 1rem;
+        gap: 0.55rem;
       }
 
       .pill-link {
         display: inline-flex;
         align-items: center;
         justify-content: center;
-        padding: 0.65rem 0.95rem;
+        padding: 0.58rem 0.92rem;
         border-radius: 999px;
         border: 1px solid var(--line);
-        background: rgba(255, 255, 255, 0.04);
+        background: rgba(255, 255, 255, 0.035);
         text-decoration: none;
+        box-shadow:
+          rgba(27, 28, 30, 0.95) 0 0 0 1px,
+          rgba(7, 8, 10, 0.9) 0 0 0 1px inset,
+          rgba(255, 255, 255, 0.06) 0 1px 0 0 inset;
+        transition:
+          opacity 160ms ease,
+          border-color 160ms ease,
+          transform 160ms ease;
+      }
+
+      .pill-link:hover {
+        opacity: 0.9;
+        border-color: rgba(255, 255, 255, 0.12);
+        transform: translateY(-1px);
       }
 
       .pill-link-primary {
         background: var(--accent);
         color: #08100b;
         border-color: transparent;
+        box-shadow:
+          0 12px 24px rgba(63, 165, 107, 0.2),
+          rgba(255, 255, 255, 0.18) 0 1px 0 0 inset;
       }
 
       .hero-meta {
         display: grid;
-        gap: 0.85rem;
+        gap: 0.72rem;
+        align-content: start;
       }
 
       .hero-meta-card,
@@ -653,57 +710,102 @@ export function renderProviderDebugWorkbench(
       .section-card {
         border: 1px solid var(--line);
         border-radius: 18px;
-        padding: 1rem;
-        background: var(--panel-raised);
+        padding: 0.95rem 1rem;
+        background:
+          linear-gradient(180deg, rgba(255, 255, 255, 0.038), rgba(255, 255, 255, 0.022)),
+          var(--panel-raised);
+        box-shadow:
+          rgba(27, 28, 30, 0.95) 0 0 0 1px,
+          rgba(7, 8, 10, 0.9) 0 0 0 1px inset,
+          rgba(255, 255, 255, 0.04) 0 1px 0 0 inset;
+      }
+
+      .hero-meta-card {
+        display: grid;
+        gap: 0.6rem;
+      }
+
+      .hero-meta-card p {
+        margin: 0;
+      }
+
+      .hero-meta-card pre {
+        margin-top: 0;
       }
 
       .verdict-strip {
         display: grid;
-        grid-template-columns: minmax(0, 1.5fr) minmax(320px, 1fr);
-        gap: 1rem;
-        padding: 1.2rem;
+        grid-template-columns: minmax(0, 1.58fr) minmax(320px, 1fr);
+        gap: 0.9rem;
+        padding: 1rem;
         margin-bottom: 1rem;
         border-color: rgba(201, 90, 90, 0.34);
       }
 
       .verdict-copy h2 {
-        margin: 0 0 0.45rem;
-        font-size: clamp(2rem, 3.8vw, 3.3rem);
-        line-height: 0.98;
+        margin: 0 0 0.35rem;
+        font-size: clamp(1.72rem, 3.4vw, 2.6rem);
+        line-height: 0.96;
+        letter-spacing: -0.04em;
+      }
+
+      .verdict-copy p {
+        margin: 0;
       }
 
       .verdict-note {
         color: var(--muted);
+        max-width: 60ch;
       }
 
       .verdict-facts {
         display: grid;
         grid-template-columns: repeat(3, minmax(0, 1fr));
-        gap: 0.8rem;
+        gap: 0.65rem;
+        align-self: stretch;
       }
 
       .verdict-fact {
-        border: 1px solid var(--line);
-        border-radius: 18px;
-        padding: 0.9rem 1rem;
-        background: rgba(255, 255, 255, 0.03);
+        border: 1px solid rgba(255, 255, 255, 0.06);
+        border-radius: 16px;
+        padding: 0.82rem 0.9rem;
+        background: rgba(255, 255, 255, 0.028);
+        box-shadow:
+          rgba(255, 255, 255, 0.035) 0 1px 0 0 inset,
+          rgba(0, 0, 0, 0.16) 0 10px 18px -14px;
       }
 
       .verdict-fact strong {
-        font-size: 1.1rem;
+        display: block;
+        font-size: 1.03rem;
+        line-height: 1.24;
       }
 
       .summary-grid {
         display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-        gap: 1rem;
-        padding: 1rem;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 0.72rem;
+        padding: 0.72rem;
         margin-bottom: 1rem;
+        background:
+          linear-gradient(180deg, rgba(255, 255, 255, 0.02), rgba(255, 255, 255, 0.01)),
+          var(--panel);
       }
 
       .summary-card h2 {
-        margin: 0 0 0.35rem;
-        font-size: 1.2rem;
+        margin: 0;
+        font-size: 1.08rem;
+        line-height: 1.18;
+      }
+
+      .summary-card p {
+        margin: 0;
+      }
+
+      .summary-card {
+        display: grid;
+        gap: 0.52rem;
+        min-height: 100%;
       }
 
       .summary-card-ok {
@@ -721,7 +823,7 @@ export function renderProviderDebugWorkbench(
       .meta-row {
         display: flex;
         flex-wrap: wrap;
-        gap: 0.6rem;
+        gap: 0.45rem 0.6rem;
       }
 
       .meta-row span {
@@ -730,18 +832,30 @@ export function renderProviderDebugWorkbench(
       }
 
       .section {
-        padding: 1.2rem;
+        padding: 1rem;
         margin-bottom: 1rem;
+      }
+
+      .section-header {
+        display: grid;
+        gap: 0.35rem;
+        margin-bottom: 0.85rem;
+      }
+
+      .section-header h2,
+      .section-header p {
+        margin: 0;
       }
 
       .section-grid {
         display: grid;
         grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-        gap: 1rem;
+        gap: 0.82rem;
       }
 
       .section-card h3 {
         margin-top: 0;
+        margin-bottom: 0.45rem;
       }
 
       .evidence-list,
@@ -800,6 +914,16 @@ export function renderProviderDebugWorkbench(
         border-radius: 999px;
         padding: 0.45rem 0.8rem;
         text-decoration: none;
+        transition:
+          opacity 160ms ease,
+          border-color 160ms ease,
+          transform 160ms ease;
+      }
+
+      .json-link-grid a:hover {
+        opacity: 0.92;
+        border-color: rgba(255, 255, 255, 0.12);
+        transform: translateY(-1px);
       }
 
       .section pre {
@@ -810,18 +934,30 @@ export function renderProviderDebugWorkbench(
         margin-bottom: 1rem;
         border: 1px solid var(--line);
         border-radius: 20px;
-        background: var(--panel);
-        box-shadow: var(--shadow);
+        background:
+          linear-gradient(180deg, rgba(255, 255, 255, 0.022), rgba(255, 255, 255, 0.01)),
+          var(--panel);
+        box-shadow:
+          0 0 0 1px rgba(255, 255, 255, 0.03) inset,
+          0 18px 44px rgba(0, 0, 0, 0.3);
       }
 
       .evidence-stack summary {
         cursor: pointer;
-        padding: 1rem 1.15rem;
+        padding: 0.9rem 1rem;
         color: var(--muted);
+        transition:
+          opacity 160ms ease,
+          color 160ms ease;
+      }
+
+      .evidence-stack summary:hover {
+        color: var(--ink);
+        opacity: 0.96;
       }
 
       .evidence-stack-body {
-        padding: 0 1rem 1rem;
+        padding: 0 0.95rem 0.95rem;
       }
 
       :focus-visible {
@@ -842,6 +978,7 @@ export function renderProviderDebugWorkbench(
           grid-template-columns: 1fr;
         }
 
+        .summary-grid,
         .verdict-strip,
         .verdict-facts {
           grid-template-columns: 1fr;
@@ -859,9 +996,12 @@ export function renderProviderDebugWorkbench(
     <main id="debug-workbench-main">
       <section class="hero">
         <div class="hero-copy">
-          <p class="eyebrow">Read-only inspection surface</p>
+          <div class="hero-topline">
+            <p class="eyebrow">Read-only inspection surface</p>
+            <span class="hero-chip">Truth-first diagnosis cockpit</span>
+          </div>
           <h1>${escapeHtml(debug.providerDisplayName)} debug workbench</h1>
-          <p>This page compares <strong>stored material truth</strong> against <strong>the currently attached browser reality</strong>. It is a diagnosis bench, not a control plane, and it never invents green lights from missing evidence.</p>
+          <p class="hero-intro">This page compares <strong>stored material truth</strong> against <strong>the currently attached browser reality</strong>. It is a diagnosis bench, not a control plane, and it never invents green lights from missing evidence.</p>
           <div class="hero-actions">
             <a class="pill-link pill-link-primary" href="${escapeHtml(authPortalRoute)}">Back to auth portal</a>
             <a class="pill-link" href="${escapeHtml(debug.routes.debugSupportBundle)}" target="_blank" rel="noopener">Open support bundle JSON</a>
