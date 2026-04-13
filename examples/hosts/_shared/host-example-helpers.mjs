@@ -81,10 +81,14 @@ export async function runMcpStyleHostExample(moduleUrl) {
   try {
     await client.connect(transport);
     const tools = await client.listTools();
-    const toolResult = await client.callTool({
+    const toolCall = {
       name: config.firstToolCall.name,
-      arguments: config.firstToolCall.arguments,
-    });
+      ...(config.firstToolCall.arguments &&
+      Object.keys(config.firstToolCall.arguments).length > 0
+        ? { arguments: config.firstToolCall.arguments }
+        : {}),
+    };
+    const toolResult = await client.callTool(toolCall);
 
     printJson({
       starter: "host-example-mcp",
@@ -96,7 +100,7 @@ export async function runMcpStyleHostExample(moduleUrl) {
       startupCommand: config.startupCommand,
       safeClaims: meta.safeClaims,
       availableTools: tools.tools.map((tool) => tool.name),
-      toolResult: toolResult.structuredContent,
+      toolResult: toolResult.structuredContent ?? toolResult,
     });
   } finally {
     await client.close().catch(() => undefined);
