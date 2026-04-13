@@ -22,10 +22,8 @@ The public front door is intentionally split so each page keeps one job:
 - `docs/README.md`
   - the full atlas, grouped by question
 
-The heavy-lane packet still exists, but it belongs to a deeper reference shelf:
-
-- `docs/submission-packet-ledger.md`
-  - the exact heavy-lane submission packet and packet-scoped receipt boundary
+Heavy-lane packet/accounting pages still exist, but they belong to deeper
+reference shelves rather than the public front row.
 
 ## Public Language Policy
 
@@ -50,6 +48,10 @@ If you only need the first route, choose one:
   - [docs/public-distribution-ledger.md](./public-distribution-ledger.md)
 - I want the full atlas on one page
   - [docs/index.html](./index.html)
+
+The old Wave 1 working packs were relocated out of the public docs plane. The
+legacy `docs/blueprints/wave1/*` paths now act only as relocation notes, while
+the working copies live under `.agents/internal-docs/wave1/`.
 
 ## Default First Success
 
@@ -101,24 +103,23 @@ The shortest truthful route is:
 
 ## Builders, Starter Packs, and Host Routes
 
+These pages stay public, but they are builder shelves, not first-row product
+answers:
+
 - [docs/plugin-skill-starter-kits.md](./plugin-skill-starter-kits.md)
-  - the starter-kit explanation page for plugin/skills builders
+  - starter-kit explanation page for plugin/skills builders
 - [docs/starter-manifest-templates.md](./starter-manifest-templates.md)
-  - copy-paste starter manifest templates
+  - starter manifest templates
 - [docs/starter-manifest-templates.schema.json](./starter-manifest-templates.schema.json)
   - schema for starter manifest templates
 - [docs/starter-manifest-examples.md](./starter-manifest-examples.md)
-  - runnable starter manifest examples
+  - starter manifest examples
 - [docs/starter-manifest-examples.schema.json](./starter-manifest-examples.schema.json)
   - schema for starter manifest examples
-- [examples/README.md](../examples/README.md)
-  - runnable examples across runtime and host paths
-- [starter-packs/README.md](../starter-packs/README.md)
-  - copy-ready starter packs
-- [docs/starter-pack-index.md](./starter-pack-index.md)
-  - starter pack directory
 - [docs/starter-pack-chooser.md](./starter-pack-chooser.md)
   - choose the right starter pack
+- [docs/starter-pack-index.md](./starter-pack-index.md)
+  - starter pack directory
 - [docs/starter-pack-comparison.md](./starter-pack-comparison.md)
   - compare starter packs side by side
 - [docs/builder-journeys.md](./builder-journeys.md)
@@ -126,13 +127,17 @@ The shortest truthful route is:
 - [docs/builder-intent-router.md](./builder-intent-router.md)
   - route a builder question to the right first page
 - [docs/builder-intent-router.json](./builder-intent-router.json)
-  - machine-readable source for the intent router
+  - machine-readable builder intent router
 - [docs/builder-intent-router.schema.json](./builder-intent-router.schema.json)
-  - schema for the intent router
+  - schema for the builder intent router
 - [docs/host-integration-playbooks.md](./host-integration-playbooks.md)
   - host integration route map
 - [docs/host-integration-examples.md](./host-integration-examples.md)
   - host-local example configs
+- [starter-packs/README.md](../starter-packs/README.md)
+  - copy-ready starter packs
+- [examples/README.md](../examples/README.md)
+  - runnable examples across runtime and host paths
 
 ## Public Reference Shelves
 
@@ -144,7 +149,7 @@ new reader.
 - [docs/public-surface-support-matrix.md](./public-surface-support-matrix.md)
   - the signboard version of the public truth
 - [docs/public-surface-catalog.md](./public-surface-catalog.md)
-  - human-readable public surface catalog
+  - the outward catalog of public surfaces
 - [docs/public-surface-catalog.schema.json](./public-surface-catalog.schema.json)
   - schema for the public surface catalog
 - [docs/api/mcp-readonly-server.md](./api/mcp-readonly-server.md)
@@ -159,7 +164,8 @@ new reader.
 - [docs/public-distribution-ledger.md](./public-distribution-ledger.md)
   - public distribution truth
 - [docs/submission-packet-ledger.md](./submission-packet-ledger.md)
-  - heavy-lane packet/accounting reference
+  - heavy-lane packet/accounting reference for later-lane work, not a first
+    stop
 
 ### Product and explanation shelf
 
@@ -182,67 +188,57 @@ front-row public landing surfaces.
 
 ### Program and blueprint truth
 
+These pages remain readable, but they are reference shelves for reviewers who
+already know why they are here:
+
 - [docs/blueprints/m2-kernel-beta-verdict.md](./blueprints/m2-kernel-beta-verdict.md)
   - current `M2 / Kernel Beta` verdict
 - [docs/blueprints/m3-first-party-integration-readiness.md](./blueprints/m3-first-party-integration-readiness.md)
   - current `M3` readiness package
 - [docs/blueprints/wave3-consumer-seam-matrix.md](./blueprints/wave3-consumer-seam-matrix.md)
-  - the consumer seam matrix
+  - consumer seam matrix
 - [docs/blueprints/wave4-consumer-contract-freeze.md](./blueprints/wave4-consumer-contract-freeze.md)
   - thin compat contract freeze
 - [docs/blueprints/wave5-thin-compat-starter.md](./blueprints/wave5-thin-compat-starter.md)
-  - thin compat starter boundary
+  - relocation note for the internal thin compat starter boundary
 - [docs/blueprints/wave6-outward-packaging-threshold.md](./blueprints/wave6-outward-packaging-threshold.md)
   - outward packaging threshold
 - [docs/blueprints/openclaw-zero-token-adoption-ledger.md](./blueprints/openclaw-zero-token-adoption-ledger.md)
   - upstream adoption ledger
+- `docs/blueprints/wave1/*`
+  - legacy public paths now point to `.agents/internal-docs/wave1/` relocation
+    notes
 
-## Explanations
+Additional internal packs that now live under `.agents/internal-docs/`:
+
+- `wave5/wave5-thin-compat-starter.md`
+  - internal starter-boundary contract for thin compat
+- `mcp/mcp-listings-cockpit.md`
+  - owner-manual listing cockpit and packet/accounting workbench
+
+## Explanations and catalogs
+
+These remain public, but they are "come here on purpose" shelves:
 
 - [docs/shared-provider-runtime.md](./shared-provider-runtime.md)
-  - why the shared runtime exists
 - [docs/public-proof-pack.md](./public-proof-pack.md)
-  - current proof, smallest smoke, and claim boundaries
 - [docs/public-surface-support-matrix.md](./public-surface-support-matrix.md)
-  - current support matrix
 - [docs/public-surface-catalog.md](./public-surface-catalog.md)
-  - human-readable public surface catalog
-- [docs/public-surface-catalog.schema.json](./public-surface-catalog.schema.json)
-  - schema for the public surface catalog
-- [docs/public-distribution-ledger.md](./public-distribution-ledger.md)
-  - public distribution ledger
-- [docs/plugin-skill-starter-kits.md](./plugin-skill-starter-kits.md)
-  - how starter kits fit the builder story
 - [docs/provider-runtime-catalog.md](./provider-runtime-catalog.md)
-  - provider/lane/authMode/stability catalog
 - [docs/provider-runtime-catalog.json](./provider-runtime-catalog.json)
-  - machine-readable provider catalog
 - [docs/provider-runtime-catalog.schema.json](./provider-runtime-catalog.schema.json)
-  - provider catalog schema
 - [docs/compat-target-catalog.md](./compat-target-catalog.md)
-  - compatibility target catalog
 - [docs/compat-target-catalog.json](./compat-target-catalog.json)
-  - machine-readable compatibility target catalog
 - [docs/compat-target-catalog.schema.json](./compat-target-catalog.schema.json)
-  - compatibility target catalog schema
 - [docs/builder-kit-catalog.md](./builder-kit-catalog.md)
-  - builder kit catalog
 - [docs/builder-kit-catalog.json](./builder-kit-catalog.json)
-  - machine-readable builder kit catalog
 - [docs/builder-kit-catalog.schema.json](./builder-kit-catalog.schema.json)
-  - builder kit catalog schema
 - [docs/skill-pack-catalog.md](./skill-pack-catalog.md)
-  - skill pack catalog
 - [docs/skill-pack-catalog.json](./skill-pack-catalog.json)
-  - machine-readable skill pack catalog
 - [docs/skill-pack-catalog.schema.json](./skill-pack-catalog.schema.json)
-  - skill pack catalog schema
 - [docs/mcp-tool-catalog.md](./mcp-tool-catalog.md)
-  - read-only MCP tool inventory
 - [docs/mcp-tool-catalog.json](./mcp-tool-catalog.json)
-  - machine-readable MCP tool catalog
 - [docs/mcp-tool-catalog.schema.json](./mcp-tool-catalog.schema.json)
-  - MCP tool catalog schema
 
 ## Compatibility
 
@@ -257,6 +253,9 @@ front-row public landing surfaces.
 - [packages/consumers/claude-code/README.md](../packages/consumers/claude-code/README.md)
 - [packages/consumers/openclaw/README.md](../packages/consumers/openclaw/README.md)
 - [packages/surfaces/mcp/README.md](../packages/surfaces/mcp/README.md)
+
+If you need a full file-by-file crawl beyond this point, use the repo tree
+instead of turning this page back into a warehouse list.
 
 ## MCP and AI Tooling
 

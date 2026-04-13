@@ -27,6 +27,9 @@ Think of this page as a listing-status board:
   `package-ready / starter-pack-ready / docs-frontdoor-ready`, not
   `officially listed`
 
+This page is one of the few first-row public truth pages. Packet/accounting
+pages and internal Wave 1 working packs belong on deeper shelves.
+
 ## Machine-Readable Source
 
 - [docs/public-distribution-ledger.json](./public-distribution-ledger.json)
@@ -185,12 +188,9 @@ And **not**:
 - `full parity`
 - `production launch complete`
 
-## Fastest Frontdoors
+## First-Row Neighbors
 
-- [docs/public-surface-catalog.md](./public-surface-catalog.md)
-- [docs/plugin-skill-starter-kits.md](./plugin-skill-starter-kits.md)
-- [docs/starter-pack-chooser.md](./starter-pack-chooser.md)
-- [docs/discoverability-keyword-truth.md](./discoverability-keyword-truth.md)
-- [docs/compat/codex.md](./compat/codex.md)
-- [docs/compat/claude-code.md](./compat/claude-code.md)
-- [docs/compat/openclaw.md](./compat/openclaw.md)
+- [README.md](../README.md)
+- [docs/first-success.md](./first-success.md)
+- [docs/public-proof-pack.md](./public-proof-pack.md)
+- [docs/api/service-http-reference.md](./api/service-http-reference.md)

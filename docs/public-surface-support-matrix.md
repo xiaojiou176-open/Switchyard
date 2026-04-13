@@ -11,9 +11,15 @@ It is a **reference signboard**, not the first route for a brand-new reader.
 If someone is opening Switchyard for the first time, send them through:
 
 - `README.md`
+- `docs/index.html`
 - `docs/first-success.md`
 - `docs/public-proof-pack.md`
+- `docs/public-distribution-ledger.md`
 - `docs/api/service-http-reference.md`
+
+Wave 1 working packs no longer belong in the public docs plane. They now live
+under `.agents/internal-docs/wave1/`, and the old public paths only act as
+relocation notes.
 
 ## Current Rule
 

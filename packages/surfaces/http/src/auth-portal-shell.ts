@@ -54,8 +54,32 @@ export type AuthPortalCard = AuthRuntimeView &
       | "session"
       | "transportHint"
     >
-  >;
+  > & {
+    currentBrowser?: AuthPortalCurrentBrowserView;
+  };
 export type AuthPortalActionView = AuthPortalCard['actions'][number];
+
+export interface AuthPortalCurrentBrowserView {
+  source: 'live-browser-inspection' | 'stored-browser-audit';
+  status?: 'captured' | 'unavailable';
+  liveStatus?: 'live-ready' | 'live-blocked' | 'unknown';
+  classification?:
+    | 'workspace-ready'
+    | 'session-incomplete'
+    | 'login-required'
+    | 'provider-adjacent'
+    | 'provider-unavailable'
+    | 'missing-page'
+    | 'attach-failed'
+    | 'human-verification-required'
+    | 'account-action-required'
+    | 'permission-gated'
+    | 'unknown';
+  summary: string;
+  title?: string;
+  url?: string;
+  attachTargetLabel?: string;
+}
 
 export interface AuthPortalSection {
   id: AuthModeId;
@@ -221,7 +245,7 @@ function getVisibleTruthDetail(
   source: 'required-user-action-first' | 'browser-checkpoint-first' = 'required-user-action-first'
 ): string {
   const requiredUserAction = card.session?.requiredUserAction?.trim();
-  const browserSummary = card.session?.persistenceAudit?.summary?.trim();
+  const browserSummary = getBrowserCheckpoint(card)?.summary?.trim();
   const transportHint = card.transportHint?.trim();
 
   if (source === 'browser-checkpoint-first') {
@@ -231,12 +255,87 @@ function getVisibleTruthDetail(
   return requiredUserAction || browserSummary || transportHint || fallback;
 }
 
+function getBrowserCheckpoint(card: AuthPortalCard): AuthPortalCurrentBrowserView | null {
+  if (card.currentBrowser) {
+    return card.currentBrowser;
+  }
+
+  const audit = card.session?.persistenceAudit;
+
+  if (!audit) {
+    return null;
+  }
+
+  return {
+    source: 'stored-browser-audit',
+    classification: audit.workspaceClassification,
+    summary:
+      audit.summary ??
+      card.transportHint ??
+      'Open the debug workbench to compare stored material truth against the current browser.',
+    title: audit.pageTitle,
+    url: audit.pageUrl
+  };
+}
+
+function inferRequiredActionClassification(
+  card: AuthPortalCard,
+): AuthPortalCurrentBrowserView["classification"] | undefined {
+  if (card.state !== "user-action-required") {
+    return undefined;
+  }
+
+  const text = `${card.session?.requiredUserAction ?? ""}\n${card.transportHint ?? ""}`.toLowerCase();
+
+  if (
+    text.includes("subscription") ||
+    text.includes("payment") ||
+    text.includes("invoice") ||
+    text.includes("billing") ||
+    text.includes("account step")
+  ) {
+    return "account-action-required";
+  }
+
+  if (
+    text.includes("verification") ||
+    text.includes("verify") ||
+    text.includes("captcha")
+  ) {
+    return "human-verification-required";
+  }
+
+  return undefined;
+}
+
+function getEffectiveWorkspaceClassification(
+  card: AuthPortalCard,
+): AuthPortalCurrentBrowserView["classification"] | undefined {
+  const browserClassification = getBrowserCheckpoint(card)?.classification;
+  const requiredActionClassification = inferRequiredActionClassification(card);
+
+  if (
+    requiredActionClassification &&
+    (!browserClassification ||
+      browserClassification === "workspace-ready" ||
+      browserClassification === "provider-adjacent")
+  ) {
+    return requiredActionClassification;
+  }
+
+  if (browserClassification) {
+    return browserClassification;
+  }
+
+  return requiredActionClassification;
+}
+
 function getVisibleTruthFocus(card: AuthPortalCard): AuthPortalVisibleTruthFocus | null {
   if (card.authModeId !== 'web-login') {
     return null;
   }
 
-  const classification = card.session?.persistenceAudit?.workspaceClassification;
+  const classification = getEffectiveWorkspaceClassification(card);
 
   switch (classification) {
     case 'account-action-required':
@@ -486,24 +585,51 @@ function renderBrowserCheckpoint(card: AuthPortalCard): string {
     return "";
   }
 
-  const audit = card.session?.persistenceAudit;
-  const classification = audit?.workspaceClassification;
+  const browserCheckpoint = getBrowserCheckpoint(card);
+  const classification = getEffectiveWorkspaceClassification(card);
   const tone = mapWorkspaceTone(classification);
-  const url = audit?.pageUrl
-    ? `<span><strong>Last page</strong> <code>${escapeHtml(audit.pageUrl)}</code></span>`
+  const sourceLabel =
+    browserCheckpoint?.source === "live-browser-inspection"
+      ? "Current browser truth"
+      : "Last stored browser checkpoint";
+  const url = browserCheckpoint?.url
+    ? `<span><strong>${escapeHtml(
+        browserCheckpoint.source === "live-browser-inspection"
+          ? "Current page"
+          : "Last stored page"
+      )}</strong> <code>${escapeHtml(browserCheckpoint.url)}</code></span>`
     : "";
-  const title = audit?.pageTitle
-    ? `<span><strong>Title</strong> ${escapeHtml(audit.pageTitle)}</span>`
+  const title = browserCheckpoint?.title
+    ? `<span><strong>Title</strong> ${escapeHtml(browserCheckpoint.title)}</span>`
     : "";
-  const summary = audit?.summary ?? card.transportHint ?? "Open the debug workbench to compare store-ready against the currently attached browser.";
+  const source = browserCheckpoint
+    ? `<span><strong>Source</strong> ${escapeHtml(
+        browserCheckpoint.source === "live-browser-inspection"
+          ? "Live browser inspection"
+          : "Stored browser audit",
+      )}</span>`
+    : "";
+  const liveStatus = browserCheckpoint?.liveStatus
+    ? `<span><strong>Live state</strong> <code>${escapeHtml(browserCheckpoint.liveStatus)}</code></span>`
+    : "";
+  const attachTarget = browserCheckpoint?.attachTargetLabel
+    ? `<span><strong>Attach target</strong> ${escapeHtml(browserCheckpoint.attachTargetLabel)}</span>`
+    : "";
+  const summary =
+    browserCheckpoint?.summary ??
+    card.transportHint ??
+    "Open the debug workbench to compare stored material truth against the currently attached browser.";
 
   return `<section class="snapshot snapshot-${tone}">
-    <p class="snapshot-label">Current browser checkpoint</p>
+    <p class="snapshot-label">${escapeHtml(sourceLabel)}</p>
     <div class="snapshot-row">
       <strong>${escapeHtml(mapWorkspaceClassificationLabel(classification))}</strong>
       <span>${escapeHtml(summary)}</span>
     </div>
     <div class="snapshot-meta">
+      ${source}
+      ${liveStatus}
+      ${attachTarget}
       ${title}
       ${url}
     </div>
@@ -858,7 +984,7 @@ function orderSectionsForDisplay(sections: readonly AuthPortalSection[]): AuthPo
 }
 
 function getWebLoginPriorityBucket(card: AuthPortalCard): "ready" | "account-action" | "session-work" {
-  const classification = card.session?.persistenceAudit?.workspaceClassification;
+  const classification = getEffectiveWorkspaceClassification(card);
 
   if (classification === "account-action-required") {
     return "account-action";
@@ -869,6 +995,10 @@ function getWebLoginPriorityBucket(card: AuthPortalCard): "ready" | "account-act
   }
 
   if (classification) {
+    return "session-work";
+  }
+
+  if (card.session?.state === "user-action-required" || card.state === "user-action-required") {
     return "session-work";
   }
 
@@ -1081,7 +1211,10 @@ document.addEventListener('click', async (event) => {
   }
 
   if (authModeId !== 'web-login') {
-    setFeedback('BYOK action', 'BYOK 仍然保持本地 key 管理路径，不通过网页登录 acquisition。');
+    setFeedback(
+      'BYOK stays local',
+      'BYOK providers keep local API key management on this surface. Browser acquisition is only for Web/Login providers.'
+    );
     return;
   }
 
@@ -1119,8 +1252,11 @@ document.addEventListener('click', async (event) => {
         acquisition.instructions,
       ].filter(Boolean).join('\\n\\n');
       setFeedback(
-        acquisition.status === 'ready-for-user-login' ? 'Acquisition started' : 'Acquisition blocked',
-        acquisition.summary ?? 'Browser login flow started.',
+        acquisition.status === 'ready-for-user-login'
+          ? 'Browser handoff ready'
+          : 'Browser handoff needs attention',
+        acquisition.summary ??
+          'Finish the provider login in the selected browser seat, then capture the session back into Switchyard.',
         details,
         \`\${captureButton}\${inspectButton}\`,
         acquisition.status === 'ready-for-user-login' ? 'success' : 'warning'
@@ -1138,9 +1274,9 @@ document.addEventListener('click', async (event) => {
       const acquisitionStatus = payload.acquisition?.status;
       setFeedback(
         acquisitionStatus === 'refreshable-but-degraded'
-          ? 'Capture stored with follow-up needed'
-          : 'Acquisition capture',
-        payload.acquisition?.summary ?? 'Acquisition capture finished.',
+          ? 'Browser capture stored with follow-up'
+          : 'Current browser captured',
+        payload.acquisition?.summary ?? 'Switchyard stored the current browser handoff record.',
         payload.acquisition?.storePath ?? '',
         '',
         acquisitionStatus === 'refreshable-but-degraded' ? 'warning' : 'success'
@@ -1152,7 +1288,7 @@ document.addEventListener('click', async (event) => {
       return;
     }
   } catch (error) {
-    setFeedback('Action failed', error instanceof Error ? error.message : 'Unknown auth portal failure.', '', '', 'danger');
+    setFeedback('Action could not finish', error instanceof Error ? error.message : 'Unknown auth portal failure.', '', '', 'danger');
   } finally {
     setActionBusy(button, false);
   }
@@ -1175,9 +1311,9 @@ document.addEventListener('click', async (event) => {
     const acquisitionStatus = payload.acquisition?.status;
     setFeedback(
       acquisitionStatus === 'refreshable-but-degraded'
-        ? 'Capture stored with follow-up needed'
-        : 'Acquisition capture',
-      payload.acquisition?.summary ?? 'Acquisition capture finished.',
+        ? 'Browser capture stored with follow-up'
+        : 'Current browser captured',
+      payload.acquisition?.summary ?? 'Switchyard stored the current browser handoff record.',
       payload.acquisition?.storePath ?? '',
       '',
       acquisitionStatus === 'refreshable-but-degraded' ? 'warning' : 'success'
@@ -1186,7 +1322,7 @@ document.addEventListener('click', async (event) => {
       window.setTimeout(() => window.location.reload(), 500);
     }
   } catch (error) {
-    setFeedback('Capture failed', error instanceof Error ? error.message : 'Unknown capture failure.', '', '', 'danger');
+    setFeedback('Browser capture could not finish', error instanceof Error ? error.message : 'Unknown capture failure.', '', '', 'danger');
   } finally {
     setActionBusy(button, false);
   }

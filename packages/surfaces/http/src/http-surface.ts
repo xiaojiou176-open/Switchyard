@@ -9,6 +9,7 @@ import type {
   ServiceSurfaceResponse,
 } from "./service-invoke-contract.js";
 import {
+  type AuthPortalCard,
   buildAuthPortalShellModel,
   renderAuthPortalShell,
 } from "./auth-portal-shell.js";
@@ -597,6 +598,40 @@ export class SwitchyardHttpSurface {
     const byokSection = defaultModel.sections.find((section) => section.id === "byok");
     const webSection = defaultModel.sections.find((section) => section.id === "web-login");
     const webAuth = buildServiceAuthStatusView(providers, this.ownerUserId);
+    const webCards = await Promise.all(
+      webAuth.providers.map(async (card): Promise<AuthPortalCard> => {
+        const provider = providers.find((entry) => entry.provider === card.providerId);
+        const debugRunner = provider ? this.debugSupportRunners[provider.provider] : undefined;
+
+        if (!provider || !debugRunner) {
+          return card;
+        }
+
+        try {
+          const debugSupport = await debugRunner(provider);
+
+          if (debugSupport.currentPage.status !== "captured") {
+            return card;
+          }
+
+          return {
+            ...card,
+            currentBrowser: {
+              source: "live-browser-inspection",
+              status: debugSupport.currentPage.status,
+              liveStatus: debugSupport.liveReadiness.status,
+              classification: debugSupport.currentPage.classification,
+              summary: debugSupport.currentPage.diagnostic,
+              title: debugSupport.currentPage.title,
+              url: debugSupport.currentPage.url,
+              attachTargetLabel: debugSupport.attachTarget.label,
+            },
+          };
+        } catch {
+          return card;
+        }
+      }),
+    );
 
     return renderAuthPortalShell({
       ...defaultModel,
@@ -608,7 +643,7 @@ export class SwitchyardHttpSurface {
           description:
             webSection?.description ??
             "User signs in with a browser, OAuth flow, or subscription-backed web session.",
-          cards: webAuth.providers,
+          cards: webCards,
         },
       ],
     });

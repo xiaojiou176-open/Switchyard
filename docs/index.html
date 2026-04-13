@@ -3,10 +3,10 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Switchyard Docs Atlas</title>
+    <title>Switchyard Docs Front Door</title>
     <meta
       name="description"
-      content="Docs atlas for Switchyard: choose the shortest route for first success, proof, builder adoption, and public distribution without overclaiming live publication."
+      content="Answer-first docs front door for Switchyard: identity, 30-second overview, first success, proof, public distribution, and core API reference without warehouse-style routing."
     />
     <style>
       :root {
@@ -326,32 +326,33 @@
         </div>
         <div class="top-links">
           <a class="pill" href="../index.html">Front door</a>
-          <a class="pill" href="./README.html">Full docs atlas</a>
+          <a class="pill" href="./media/30-second-overview.html">30-second overview</a>
+          <a class="pill" href="./first-success.html">First success</a>
           <a class="pill" href="./public-proof-pack.html">Proof pack</a>
           <a class="pill" href="./public-distribution-ledger.html">Distribution ledger</a>
-          <a class="pill" href="https://github.com/xiaojiou176-open/Switchyard">GitHub repo</a>
+          <a class="pill" href="./api/service-http-reference.html">API reference</a>
         </div>
       </section>
 
       <section class="hero">
         <div class="hero-note">
-          <span class="eyebrow">Developer front door</span>
-          <h1>Choose the shortest truthful route before you read the whole atlas.</h1>
+          <span class="eyebrow">Answer-first front door</span>
+          <h1>Choose the shortest truthful route: identity, first success, proof, or API.</h1>
           <p class="lede">
             Switchyard is not a chat product and not a hosted magic shell. This
-            docs front door works best when it behaves like an adoption map:
+            docs front door works best when it behaves like a reviewer map:
             first understand the runtime identity, then the first-success path,
-            then the builder or listing lane you actually need.
+            then the proof, distribution, or API lane you actually need.
           </p>
           <div class="signal-row" aria-label="Front-door signals">
             <span class="signal-pill">Shared provider runtime first</span>
             <span class="signal-pill">BYOK + Web/Login only</span>
-            <span class="signal-pill">Builder packs stay fail-closed</span>
+            <span class="signal-pill">Core API stays first-row</span>
             <span class="signal-pill">Artifact-ready is not listed-live</span>
           </div>
           <div class="cta-row">
             <a class="cta-primary" href="./first-success.html">Open first success</a>
-            <a class="cta-secondary" href="./README.html">Open full docs atlas</a>
+            <a class="cta-secondary" href="./api/service-http-reference.html">Open API reference</a>
           </div>
           <p class="quiet">
             Current rule of thumb: repo-side green and proof-pack green still do
@@ -365,7 +366,7 @@
             <li>30-second overview when you need the product sentence fast.</li>
             <li>First success when you want one bounded route that actually runs.</li>
             <li>Public proof pack when the question becomes “what is really proved”.</li>
-            <li>Builder routes only after the runtime identity already feels stable.</li>
+            <li>Service HTTP reference when the question becomes “what can I call”.</li>
           </ol>
           <p class="quiet">
             This page is intentionally still docs-first. It is here to route a
@@ -399,27 +400,40 @@
             </ul>
           </article>
           <article class="route-card">
-            <strong>I want one builder path to first success.</strong>
+            <strong>I want the shortest runnable first success.</strong>
             <p>
               Use this when you are not browsing theory. You want one bounded
-              route from runtime identity to a real starter or host example.
+              route from runtime identity to a runnable path without opening
+              the full builder warehouse first.
             </p>
             <ul>
               <li><a href="./first-success.html">First success</a></li>
-              <li><a href="./starter-pack-chooser.html">Starter-pack chooser</a></li>
-              <li><a href="./builder-journeys.html">Builder journeys</a></li>
+              <li><a href="./public-proof-pack.html">Public proof pack</a></li>
+              <li><a href="./api/service-http-reference.html">Service HTTP reference</a></li>
             </ul>
           </article>
           <article class="route-card">
-            <strong>I need proof, listing truth, or adoption boundaries.</strong>
+            <strong>I need proof or public-distribution truth.</strong>
             <p>
-              Open these shelves when the question becomes packaging, public
-              claims, official listings, or what is still later-lane only.
+              Open these shelves when the question becomes public claims,
+              official-listing boundaries, or what is still later-lane only.
             </p>
             <ul>
               <li><a href="./public-proof-pack.html">Public proof pack</a></li>
               <li><a href="./public-distribution-ledger.html">Distribution ledger</a></li>
-              <li><a href="./public-surface-catalog.html">Public surface catalog</a></li>
+              <li><a href="./public-surface-support-matrix.html">Support matrix</a></li>
+            </ul>
+          </article>
+          <article class="route-card">
+            <strong>I need the core API front door.</strong>
+            <p>
+              Use this when the question becomes routes, request shapes,
+              diagnostics, or what the runtime substrate actually exposes.
+            </p>
+            <ul>
+              <li><a href="./api/service-http-reference.html">Service HTTP reference</a></li>
+              <li><a href="./api/openapi.yaml">OpenAPI contract</a></li>
+              <li><a href="./api/error-diagnostics-reference.html">Error diagnostics</a></li>
             </ul>
           </article>
         </div>
@@ -431,16 +445,16 @@
           <p>30-second overview, V1 brief, scope, and runtime identity.</p>
         </article>
         <article class="strip-card">
-          <strong>Execution shelf</strong>
-          <p>First success, host playbooks, host examples, and MCP docs.</p>
+          <strong>First-success shelf</strong>
+          <p>One bounded route, one invoke path, and the shortest next proof.</p>
         </article>
         <article class="strip-card">
-          <strong>Adoption shelf</strong>
-          <p>Starter chooser, comparison, journeys, and compat surfaces.</p>
+          <strong>Proof shelf</strong>
+          <p>Proof pack, support matrix, and package-ready versus listed-live truth.</p>
         </article>
         <article class="strip-card">
-          <strong>Trust shelf</strong>
-          <p>Proof pack, distribution ledger, keyword truth, and testing pyramid.</p>
+          <strong>API shelf</strong>
+          <p>Service HTTP reference, OpenAPI, diagnostics, and web-login routes.</p>
         </article>
       </section>
 
@@ -462,16 +476,16 @@
             <p>Use the 30-second overview, V1 brief, and non-goals pages when you need the product sentence to stay honest.</p>
           </article>
           <article class="atlas-card">
-            <strong>First success and host wiring</strong>
-            <p>Use first-success, host playbooks, and host examples when you want a runnable builder path instead of a broad architecture read.</p>
+            <strong>First success and proof</strong>
+            <p>Use first-success, proof pack, and the support matrix when you want one bounded route plus the current claim ceiling.</p>
           </article>
           <article class="atlas-card">
-            <strong>Builder selection and comparison</strong>
-            <p>Use chooser, comparison, and journeys when you are deciding which starter or host contract to begin with.</p>
+            <strong>Core API substrate</strong>
+            <p>Use the service HTTP reference, OpenAPI, diagnostics, and web-login docs when the question becomes runtime contract, not marketing copy.</p>
           </article>
           <article class="atlas-card">
-            <strong>Proof and listing boundaries</strong>
-            <p>Use proof pack, distribution ledger, and public surface catalog when you are checking what is package-ready, listed-live, or still later.</p>
+            <strong>Builder and deeper shelves</strong>
+            <p>Use chooser, journeys, compat, catalogs, and packet/accounting pages only after the front-row product questions are already answered.</p>
           </article>
         </div>
       </section>

@@ -13,6 +13,18 @@ If this route works, then open the deeper shelves.
 If it does not work yet, do **not** jump straight into packet/accounting pages,
 contracts, or program blueprints. Fix the bounded first success first.
 
+The public front row is intentionally small:
+
+- `README.md`
+- `docs/media/30-second-overview.md`
+- this page
+- `docs/public-proof-pack.md`
+- `docs/public-distribution-ledger.md`
+- `docs/api/service-http-reference.md`
+
+The old Wave 1 working packs now live under `.agents/internal-docs/wave1/` and
+are not part of this route.
+
 In plain English:
 
 - start the Switchyard service runtime
