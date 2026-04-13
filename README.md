@@ -70,7 +70,7 @@ Switchyard now treats the public front door as **English-first**.
 | run the shortest first success | [docs/first-success.md](./docs/first-success.md) |
 | inspect what is really proved today | [docs/public-proof-pack.md](./docs/public-proof-pack.md) |
 | see what is package-ready vs listed-live | [docs/public-distribution-ledger.md](./docs/public-distribution-ledger.md) |
-| browse the full docs atlas | [docs/index.html](./docs/index.html) and [docs/README.md](./docs/README.md) |
+| browse the public docs front row | [docs/index.html](./docs/index.html) and [docs/README.md](./docs/README.md) |
 
 If you are touching Switchyard for the first time, stop there.
 
@@ -80,6 +80,10 @@ The heavier shelves still exist, but they are not first-row front door pages:
 - submission-packet accounting
 - builder catalog internals
 - testing/governance reference pages
+
+The old Wave 1 working packs were relocated out of the public docs plane. The
+legacy `docs/blueprints/wave1/*` paths now act only as relocation notes, while
+the real working copies live under `.agents/internal-docs/wave1/`.
 
 ## 30-Second Version
 
@@ -266,103 +270,82 @@ See:
 - [INTEGRATIONS.md](./INTEGRATIONS.md)
 - [docs/public-distribution-ledger.md](./docs/public-distribution-ledger.md)
 
-If you need the exact heavy-lane packet, open it as a deeper reference page, not
-as the default first stop:
-
-- [docs/submission-packet-ledger.md](./docs/submission-packet-ledger.md)
+If you need the exact heavy-lane packet or older staging material, treat them as
+deeper shelves rather than the default first stop.
 
 ## Docs Atlas
 
-### Product and first route
+### First-row public routes
 
 - [docs/index.html](./docs/index.html)
 - [docs/README.md](./docs/README.md)
 - [docs/media/30-second-overview.md](./docs/media/30-second-overview.md)
 - [docs/first-success.md](./docs/first-success.md)
 - [docs/public-proof-pack.md](./docs/public-proof-pack.md)
-- [docs/shared-provider-runtime.md](./docs/shared-provider-runtime.md)
-- [docs/product/v1-brief.md](./docs/product/v1-brief.md)
-- [docs/product/scope-and-nongoals.md](./docs/product/scope-and-nongoals.md)
-
-### API and runtime surfaces
-
+- [docs/public-distribution-ledger.md](./docs/public-distribution-ledger.md)
 - [docs/api/service-http-reference.md](./docs/api/service-http-reference.md)
 - [docs/api/openapi.yaml](./docs/api/openapi.yaml)
-- [docs/api/sdk-quickstart.md](./docs/api/sdk-quickstart.md)
-- [docs/api/mcp-readonly-server.md](./docs/api/mcp-readonly-server.md)
-- [docs/api/error-diagnostics-reference.md](./docs/api/error-diagnostics-reference.md)
-- [docs/api/web-login-acquisition.md](./docs/api/web-login-acquisition.md)
-- [docs/mcp.md](./docs/mcp.md)
 
-### Public truth and distribution surfaces
+### Deeper public shelves
 
-- [docs/public-surface-support-matrix.md](./docs/public-surface-support-matrix.md)
-- [docs/public-surface-catalog.md](./docs/public-surface-catalog.md)
-- [docs/public-surface-catalog.schema.json](./docs/public-surface-catalog.schema.json)
-- [docs/public-distribution-ledger.md](./docs/public-distribution-ledger.md)
-- [docs/discoverability-keyword-truth.md](./docs/discoverability-keyword-truth.md)
-- [docs/discoverability-keyword-truth.json](./docs/discoverability-keyword-truth.json)
-- [docs/discoverability-keyword-truth.schema.json](./docs/discoverability-keyword-truth.schema.json)
+- Product and scope
+  - [docs/shared-provider-runtime.md](./docs/shared-provider-runtime.md)
+  - [docs/product/v1-brief.md](./docs/product/v1-brief.md)
+  - [docs/product/scope-and-nongoals.md](./docs/product/scope-and-nongoals.md)
+- API and diagnostics
+  - [docs/api/sdk-quickstart.md](./docs/api/sdk-quickstart.md)
+  - [docs/api/mcp-readonly-server.md](./docs/api/mcp-readonly-server.md)
+  - [docs/api/error-diagnostics-reference.md](./docs/api/error-diagnostics-reference.md)
+  - [docs/api/web-login-acquisition.md](./docs/api/web-login-acquisition.md)
+- Builder adoption
+  - [examples/README.md](./examples/README.md)
+  - [starter-packs/README.md](./starter-packs/README.md)
+  - [docs/starter-pack-index.md](./docs/starter-pack-index.md)
+  - [docs/plugin-skill-starter-kits.md](./docs/plugin-skill-starter-kits.md)
+  - [docs/starter-manifest-templates.md](./docs/starter-manifest-templates.md)
+  - [docs/starter-manifest-templates.schema.json](./docs/starter-manifest-templates.schema.json)
+  - [docs/starter-manifest-examples.md](./docs/starter-manifest-examples.md)
+  - [docs/starter-manifest-examples.schema.json](./docs/starter-manifest-examples.schema.json)
+  - [docs/starter-pack-chooser.md](./docs/starter-pack-chooser.md)
+  - [docs/starter-pack-comparison.md](./docs/starter-pack-comparison.md)
+  - [docs/builder-journeys.md](./docs/builder-journeys.md)
+  - [docs/builder-intent-router.md](./docs/builder-intent-router.md)
+  - [docs/host-integration-playbooks.md](./docs/host-integration-playbooks.md)
+  - [docs/host-integration-examples.md](./docs/host-integration-examples.md)
+- Public reference and catalogs
+  - [docs/public-surface-support-matrix.md](./docs/public-surface-support-matrix.md)
+  - [docs/public-surface-catalog.md](./docs/public-surface-catalog.md)
+  - [docs/public-surface-catalog.schema.json](./docs/public-surface-catalog.schema.json)
+  - [docs/compat/README.md](./docs/compat/README.md)
+  - [docs/mcp.md](./docs/mcp.md)
+  - [docs/blueprints/m2-kernel-beta-verdict.md](./docs/blueprints/m2-kernel-beta-verdict.md)
+  - [docs/blueprints/m3-first-party-integration-readiness.md](./docs/blueprints/m3-first-party-integration-readiness.md)
+  - [docs/blueprints/openclaw-zero-token-adoption-ledger.md](./docs/blueprints/openclaw-zero-token-adoption-ledger.md)
+  - [docs/provider-runtime-catalog.md](./docs/provider-runtime-catalog.md)
+  - [docs/provider-runtime-catalog.json](./docs/provider-runtime-catalog.json)
+  - [docs/provider-runtime-catalog.schema.json](./docs/provider-runtime-catalog.schema.json)
+  - [docs/compat-target-catalog.md](./docs/compat-target-catalog.md)
+  - [docs/compat-target-catalog.json](./docs/compat-target-catalog.json)
+  - [docs/compat-target-catalog.schema.json](./docs/compat-target-catalog.schema.json)
+  - [docs/builder-kit-catalog.md](./docs/builder-kit-catalog.md)
+  - [docs/builder-kit-catalog.json](./docs/builder-kit-catalog.json)
+  - [docs/builder-kit-catalog.schema.json](./docs/builder-kit-catalog.schema.json)
+  - [docs/skill-pack-catalog.md](./docs/skill-pack-catalog.md)
+  - [docs/skill-pack-catalog.json](./docs/skill-pack-catalog.json)
+  - [docs/skill-pack-catalog.schema.json](./docs/skill-pack-catalog.schema.json)
+  - [docs/discoverability-keyword-truth.json](./docs/discoverability-keyword-truth.json)
+  - [docs/discoverability-keyword-truth.schema.json](./docs/discoverability-keyword-truth.schema.json)
+- Support surfaces
+  - [docs/faq.md](./docs/faq.md)
+  - [docs/glossary.md](./docs/glossary.md)
+  - [docs/i18n.md](./docs/i18n.md)
+  - [docs/testing-pyramid.md](./docs/testing-pyramid.md)
 
-### Builders, starter packs, and host routes
+### Internal-only working packs
 
-- [docs/plugin-skill-starter-kits.md](./docs/plugin-skill-starter-kits.md)
-- [docs/starter-pack-index.md](./docs/starter-pack-index.md)
-- [docs/starter-pack-chooser.md](./docs/starter-pack-chooser.md)
-- [docs/starter-pack-comparison.md](./docs/starter-pack-comparison.md)
-- [docs/builder-journeys.md](./docs/builder-journeys.md)
-- [docs/builder-intent-router.md](./docs/builder-intent-router.md)
-- [docs/host-integration-playbooks.md](./docs/host-integration-playbooks.md)
-- [docs/host-integration-examples.md](./docs/host-integration-examples.md)
-- [docs/starter-manifest-templates.md](./docs/starter-manifest-templates.md)
-- [docs/starter-manifest-templates.schema.json](./docs/starter-manifest-templates.schema.json)
-- [docs/starter-manifest-examples.md](./docs/starter-manifest-examples.md)
-- [docs/starter-manifest-examples.schema.json](./docs/starter-manifest-examples.schema.json)
-- [examples/README.md](./examples/README.md)
-- [starter-packs/README.md](./starter-packs/README.md)
-
-### Compatibility and comparisons
-
-- [docs/compat/README.md](./docs/compat/README.md)
-- [docs/compat/codex.md](./docs/compat/codex.md)
-- [docs/compat/claude-code.md](./docs/compat/claude-code.md)
-- [docs/compat/openclaw.md](./docs/compat/openclaw.md)
-- [docs/compare/byok-vs-web-login.md](./docs/compare/byok-vs-web-login.md)
-- [docs/compare/switchyard-vs-codex.md](./docs/compare/switchyard-vs-codex.md)
-- [docs/compare/switchyard-vs-claude-code.md](./docs/compare/switchyard-vs-claude-code.md)
-- [docs/compare/switchyard-vs-openclaw.md](./docs/compare/switchyard-vs-openclaw.md)
-
-### Machine-readable catalogs
-
-- [docs/provider-runtime-catalog.md](./docs/provider-runtime-catalog.md)
-- [docs/provider-runtime-catalog.json](./docs/provider-runtime-catalog.json)
-- [docs/provider-runtime-catalog.schema.json](./docs/provider-runtime-catalog.schema.json)
-- [docs/compat-target-catalog.md](./docs/compat-target-catalog.md)
-- [docs/compat-target-catalog.json](./docs/compat-target-catalog.json)
-- [docs/compat-target-catalog.schema.json](./docs/compat-target-catalog.schema.json)
-- [docs/builder-kit-catalog.md](./docs/builder-kit-catalog.md)
-- [docs/builder-kit-catalog.json](./docs/builder-kit-catalog.json)
-- [docs/builder-kit-catalog.schema.json](./docs/builder-kit-catalog.schema.json)
-- [docs/skill-pack-catalog.md](./docs/skill-pack-catalog.md)
-- [docs/skill-pack-catalog.json](./docs/skill-pack-catalog.json)
-- [docs/skill-pack-catalog.schema.json](./docs/skill-pack-catalog.schema.json)
-- [docs/mcp-tool-catalog.md](./docs/mcp-tool-catalog.md)
-- [docs/mcp-tool-catalog.json](./docs/mcp-tool-catalog.json)
-- [docs/mcp-tool-catalog.schema.json](./docs/mcp-tool-catalog.schema.json)
-
-### Program and blueprint truth
-
-- [docs/blueprints/m2-kernel-beta-verdict.md](./docs/blueprints/m2-kernel-beta-verdict.md)
-- [docs/blueprints/m3-first-party-integration-readiness.md](./docs/blueprints/m3-first-party-integration-readiness.md)
-- [docs/blueprints/openclaw-zero-token-adoption-ledger.md](./docs/blueprints/openclaw-zero-token-adoption-ledger.md)
-- [docs/blueprints/v1-delivery-plan.md](./docs/blueprints/v1-delivery-plan.md)
-
-### Support surfaces
-
-- [docs/faq.md](./docs/faq.md)
-- [docs/glossary.md](./docs/glossary.md)
-- [docs/i18n.md](./docs/i18n.md)
-- [docs/testing-pyramid.md](./docs/testing-pyramid.md)
+- Wave 1 contract/evidence packs now live under `.agents/internal-docs/wave1/`.
+- The old `docs/blueprints/wave1/*` locations remain only as relocation notes so
+  older links do not break.
 
 ## Truth Rules
 

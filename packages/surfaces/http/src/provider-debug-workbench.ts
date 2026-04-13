@@ -255,13 +255,72 @@ function renderEvidenceStack(
 
 function renderSummaryCard(title: string, status: string, summary: string, meta: string): string {
   const tone = mapTone(status);
+  const cardMeta = [renderOptionalCode("technical status", status), meta]
+    .filter(Boolean)
+    .join("");
 
   return `<article class="summary-card summary-card-${tone}">
     <p class="eyebrow eyebrow-compact">${escapeHtml(title)}</p>
-    <h2>${escapeHtml(status)}</h2>
+    <h2>${escapeHtml(getHumanStatusLabel(status, title))}</h2>
     <p>${escapeHtml(summary)}</p>
-    ${meta ? `<div class="meta-row">${meta}</div>` : ""}
+    ${cardMeta ? `<div class="meta-row">${cardMeta}</div>` : ""}
   </article>`;
+}
+
+function getHumanStatusLabel(status: string, title: string): string {
+  if (title === "Current browser") {
+    switch (status) {
+      case "live-ready":
+        return "Browser looks reusable";
+      case "live-blocked":
+        return "Browser still blocked";
+      case "unknown":
+        return "No fresh browser read";
+      default:
+        break;
+    }
+  }
+
+  if (title === "Runtime path") {
+    switch (status) {
+      case "ready":
+        return "Runtime can invoke";
+      case "blocked":
+        return "Runtime still blocked";
+      case "refreshable-but-degraded":
+        return "Runtime is degraded";
+      default:
+        break;
+    }
+  }
+
+  switch (status) {
+    case "ready":
+    case "workspace-ready":
+      return "Ready to use";
+    case "captured":
+      return "Captured";
+    case "validated":
+      return "Validated";
+    case "missing":
+      return "No stored material";
+    case "expired":
+      return "Stored but expired";
+    case "user-action-required":
+      return "User action required";
+    case "session-incomplete":
+      return "Session incomplete";
+    case "account-action-required":
+      return "Account action required";
+    case "login-required":
+      return "Login still required";
+    default:
+      return status
+        .split(/[-_]/g)
+        .filter(Boolean)
+        .map((part) => part.charAt(0).toUpperCase() + part.slice(1))
+        .join(" ");
+  }
 }
 
 function renderPrimaryVerdict(
