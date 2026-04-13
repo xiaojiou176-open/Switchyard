@@ -219,6 +219,30 @@ function renderDetailedBrowserDiagnostics(sharedDiagnostic: SharedDiagnosticStat
   </section>`;
 }
 
+function renderDiagnosticTray(
+  title: string,
+  description: string,
+  body: string,
+  options?: {
+    open?: boolean;
+    badge?: string;
+  },
+): string {
+  return `<details class="diagnostic-tray"${options?.open ? " open" : ""}>
+    <summary>
+      <span class="diagnostic-tray-copy">
+        ${options?.badge ? `<span class="diagnostic-tray-badge">${escapeHtml(options.badge)}</span>` : ""}
+        <span class="diagnostic-tray-title">${escapeHtml(title)}</span>
+        <span class="diagnostic-tray-description">${escapeHtml(description)}</span>
+      </span>
+      <span class="diagnostic-tray-toggle">Details</span>
+    </summary>
+    <div class="diagnostic-tray-body">
+      ${body}
+    </div>
+  </details>`;
+}
+
 function renderEvidenceStack(
   debug: ServiceProviderDebugSupportView,
   currentPageDiagnostic: string,
@@ -228,77 +252,109 @@ function renderEvidenceStack(
   return `<details class="evidence-stack">
     <summary>Evidence stack, repair ladder, and raw JSON surfaces</summary>
     <div class="evidence-stack-body">
-      <section class="section">
-        <header class="section-header">
-          <h2>Current browser evidence</h2>
-          <p>The safest way to reason about a web-login provider is: first what Switchyard stored, then what the current browser page actually shows, then what console and network saw during the same inspection window.</p>
-        </header>
-        <div class="section-grid">
-          <article class="section-card">
-            <h3>Current page</h3>
-            <p>${escapeHtml(currentPageDiagnostic)}</p>
-            <div class="meta-row">
-              ${renderOptionalCode("classification", debug.currentPage.classification)}
-              ${renderOptionalCode("url", debug.currentPage.url)}
-              ${renderOptionalCode("title", debug.currentPage.title)}
+      <div class="evidence-stack-intro">
+        <p class="eyebrow eyebrow-compact">Progressive disclosure</p>
+        <p>Open the tray you need right now. The workbench keeps current browser proof, repair order, and raw routes separated so one click does not dump every diagnostic layer at once.</p>
+      </div>
+      <div class="diagnostic-tray-stack">
+        ${renderDiagnosticTray(
+          "Current browser evidence",
+          "Start with what the current page and stored capture history say.",
+          `<section class="section">
+            <header class="section-header">
+              <h2>Current browser evidence</h2>
+              <p>The safest way to reason about a web-login provider is: first what Switchyard stored, then what the current browser page actually shows.</p>
+            </header>
+            <div class="section-grid">
+              <article class="section-card">
+                <h3>Current page</h3>
+                <p>${escapeHtml(currentPageDiagnostic)}</p>
+                <div class="meta-row">
+                  ${renderOptionalCode("classification", debug.currentPage.classification)}
+                  ${renderOptionalCode("url", debug.currentPage.url)}
+                  ${renderOptionalCode("title", debug.currentPage.title)}
+                </div>
+              </article>
+              <article class="section-card">
+                <h3>Capture provenance</h3>
+                <div class="meta-row">
+                  ${renderOptionalCode("browser mode", debug.captureProvenance?.browserMode)}
+                  ${renderOptionalCode("captured", debug.captureProvenance?.capturedAt)}
+                  ${renderOptionalCode("profile", debug.captureProvenance?.profileName)}
+                </div>
+                <p>${escapeHtml(debug.persistenceAudit?.summary ?? "No persistence audit summary is currently available.")}</p>
+              </article>
             </div>
-          </article>
-          <article class="section-card">
-            <h3>Capture provenance</h3>
-            <div class="meta-row">
-              ${renderOptionalCode("browser mode", debug.captureProvenance?.browserMode)}
-              ${renderOptionalCode("captured", debug.captureProvenance?.capturedAt)}
-              ${renderOptionalCode("profile", debug.captureProvenance?.profileName)}
+          </section>`,
+          {
+            open: true,
+            badge: "Primary tray",
+          },
+        )}
+        ${renderDiagnosticTray(
+          "Current console and network",
+          "Open this only when you need the current console or network observation window.",
+          `<section class="section">
+            <header class="section-header">
+              <h2>Current console and network</h2>
+              <p>These are evidence surfaces, not vanity metrics. Empty entries mean Switchyard did not see fresh events during this inspection window, not that the provider is automatically healthy.</p>
+            </header>
+            <div class="section-grid">
+              <article class="section-card">
+                <h3>Current console</h3>
+                <p>${escapeHtml(currentConsoleDiagnostic)}</p>
+                ${renderConsoleEntries(debug.currentConsole)}
+              </article>
+              <article class="section-card">
+                <h3>Current network</h3>
+                <p>${escapeHtml(currentNetworkDiagnostic)}</p>
+                ${renderNetworkEntries(debug.currentNetwork)}
+              </article>
             </div>
-            <p>${escapeHtml(debug.persistenceAudit?.summary ?? "No persistence audit summary is currently available.")}</p>
-          </article>
-        </div>
-      </section>
-
-      <section class="section">
-        <header class="section-header">
-          <h2>Current console and network</h2>
-          <p>These are evidence surfaces, not vanity metrics. Empty entries mean Switchyard did not see fresh events during this inspection window, not that the provider is automatically healthy.</p>
-        </header>
-        <div class="section-grid">
-          <article class="section-card">
-            <h3>Current console</h3>
-            <p>${escapeHtml(currentConsoleDiagnostic)}</p>
-            ${renderConsoleEntries(debug.currentConsole)}
-          </article>
-          <article class="section-card">
-            <h3>Current network</h3>
-            <p>${escapeHtml(currentNetworkDiagnostic)}</p>
-            ${renderNetworkEntries(debug.currentNetwork)}
-          </article>
-        </div>
-      </section>
-
-      <section class="section">
-        <header class="section-header">
-          <h2>Diagnose ladder</h2>
-          <p>Walk this in order. It is the repair ladder for this provider on this machine, not a product KPI wall.</p>
-        </header>
-        <ol class="ladder">
-          ${debug.diagnoseLadder.map((step) => renderDiagnoseStep(step)).join("")}
-        </ol>
-      </section>
-
-      <section class="section">
-        <header class="section-header">
-          <h2>JSON truth surfaces</h2>
-          <p>Use these routes when you want the raw evidence that backs this page. They stay read-only on purpose.</p>
-        </header>
-        <div class="json-link-grid">
-          <a href="${escapeHtml(debug.routes.status)}" target="_blank" rel="noopener">Status JSON</a>
-          <a href="${escapeHtml(debug.routes.probe)}" target="_blank" rel="noopener">Probe JSON</a>
-          <a href="${escapeHtml(debug.routes.remediation)}" target="_blank" rel="noopener">Remediation JSON</a>
-          <a href="${escapeHtml(debug.routes.debugCurrentPage)}" target="_blank" rel="noopener">Current page JSON</a>
-          <a href="${escapeHtml(debug.routes.debugCurrentConsole)}" target="_blank" rel="noopener">Current console JSON</a>
-          <a href="${escapeHtml(debug.routes.debugCurrentNetwork)}" target="_blank" rel="noopener">Current network JSON</a>
-          <a href="${escapeHtml(debug.routes.debugSupportBundle)}" target="_blank" rel="noopener">Support bundle JSON</a>
-        </div>
-      </section>
+          </section>`,
+          {
+            badge: "Supporting evidence",
+          },
+        )}
+        ${renderDiagnosticTray(
+          "Diagnose ladder",
+          "Keep this tray for the ordered repair sequence on this machine.",
+          `<section class="section">
+            <header class="section-header">
+              <h2>Diagnose ladder</h2>
+              <p>Walk this in order. It is the repair ladder for this provider on this machine, not a product KPI wall.</p>
+            </header>
+            <ol class="ladder">
+              ${debug.diagnoseLadder.map((step) => renderDiagnoseStep(step)).join("")}
+            </ol>
+          </section>`,
+          {
+            badge: "Repair order",
+          },
+        )}
+        ${renderDiagnosticTray(
+          "JSON truth surfaces",
+          "Use this tray only when you want the raw routes that back the page.",
+          `<section class="section">
+            <header class="section-header">
+              <h2>JSON truth surfaces</h2>
+              <p>Use these routes when you want the raw evidence that backs this page. They stay read-only on purpose.</p>
+            </header>
+            <div class="json-link-grid">
+              <a href="${escapeHtml(debug.routes.status)}" target="_blank" rel="noopener">Status JSON</a>
+              <a href="${escapeHtml(debug.routes.probe)}" target="_blank" rel="noopener">Probe JSON</a>
+              <a href="${escapeHtml(debug.routes.remediation)}" target="_blank" rel="noopener">Remediation JSON</a>
+              <a href="${escapeHtml(debug.routes.debugCurrentPage)}" target="_blank" rel="noopener">Current page JSON</a>
+              <a href="${escapeHtml(debug.routes.debugCurrentConsole)}" target="_blank" rel="noopener">Current console JSON</a>
+              <a href="${escapeHtml(debug.routes.debugCurrentNetwork)}" target="_blank" rel="noopener">Current network JSON</a>
+              <a href="${escapeHtml(debug.routes.debugSupportBundle)}" target="_blank" rel="noopener">Support bundle JSON</a>
+            </div>
+          </section>`,
+          {
+            badge: "Raw routes",
+          },
+        )}
+      </div>
     </div>
   </details>`;
 }
@@ -725,12 +781,46 @@ export function renderProviderDebugWorkbench(
         gap: 0.6rem;
       }
 
+      .hero-meta-card-quiet {
+        padding: 0.82rem 0.9rem;
+        background: rgba(255, 255, 255, 0.02);
+        border-color: rgba(255, 255, 255, 0.05);
+        box-shadow:
+          rgba(27, 28, 30, 0.95) 0 0 0 1px,
+          rgba(7, 8, 10, 0.86) 0 0 0 1px inset;
+      }
+
+      .hero-meta-card-next {
+        border-color: rgba(63, 165, 107, 0.24);
+        background:
+          linear-gradient(180deg, rgba(63, 165, 107, 0.12), rgba(63, 165, 107, 0.04)),
+          var(--panel-raised);
+        box-shadow:
+          0 16px 30px rgba(63, 165, 107, 0.08),
+          rgba(27, 28, 30, 0.95) 0 0 0 1px,
+          rgba(7, 8, 10, 0.88) 0 0 0 1px inset,
+          rgba(255, 255, 255, 0.05) 0 1px 0 0 inset;
+      }
+
       .hero-meta-card p {
         margin: 0;
       }
 
       .hero-meta-card pre {
         margin-top: 0;
+      }
+
+      .hero-meta-card-next pre {
+        padding: 0.9rem;
+        border-radius: 16px;
+        background: rgba(10, 15, 12, 0.56);
+        font-size: 0.98rem;
+      }
+
+      .hero-meta-card-quiet p:last-of-type {
+        color: rgba(234, 238, 239, 0.74);
+        font-size: 0.93rem;
+        line-height: 1.45;
       }
 
       .verdict-strip {
@@ -960,6 +1050,90 @@ export function renderProviderDebugWorkbench(
         padding: 0 0.95rem 0.95rem;
       }
 
+      .evidence-stack-intro {
+        padding: 0.95rem 0.05rem 0.35rem;
+      }
+
+      .evidence-stack-intro p {
+        margin: 0;
+      }
+
+      .diagnostic-tray-stack {
+        display: grid;
+        gap: 0.78rem;
+      }
+
+      .diagnostic-tray {
+        border: 1px solid rgba(255, 255, 255, 0.06);
+        border-radius: 18px;
+        background:
+          linear-gradient(180deg, rgba(255, 255, 255, 0.028), rgba(255, 255, 255, 0.015)),
+          var(--panel-raised);
+        box-shadow:
+          rgba(27, 28, 30, 0.95) 0 0 0 1px,
+          rgba(7, 8, 10, 0.88) 0 0 0 1px inset,
+          rgba(255, 255, 255, 0.035) 0 1px 0 0 inset;
+      }
+
+      .diagnostic-tray summary {
+        list-style: none;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 0.9rem;
+        cursor: pointer;
+        padding: 0.9rem 1rem;
+      }
+
+      .diagnostic-tray summary::-webkit-details-marker {
+        display: none;
+      }
+
+      .diagnostic-tray-copy {
+        display: grid;
+        gap: 0.2rem;
+      }
+
+      .diagnostic-tray-badge,
+      .diagnostic-tray-toggle {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        padding: 0.25rem 0.56rem;
+        border-radius: 999px;
+        border: 1px solid rgba(255, 255, 255, 0.08);
+        background: rgba(255, 255, 255, 0.04);
+        color: var(--muted);
+        font-size: 0.74rem;
+        letter-spacing: 0.06em;
+        text-transform: uppercase;
+      }
+
+      .diagnostic-tray-title {
+        font-size: 1rem;
+        font-weight: 700;
+        color: var(--ink);
+      }
+
+      .diagnostic-tray-description {
+        color: var(--muted);
+        font-size: 0.93rem;
+        line-height: 1.45;
+      }
+
+      .diagnostic-tray[open] .diagnostic-tray-toggle {
+        color: var(--ink);
+        border-color: rgba(255, 255, 255, 0.14);
+      }
+
+      .diagnostic-tray-body {
+        padding: 0 0.9rem 0.9rem;
+      }
+
+      .diagnostic-tray-body .section {
+        margin-bottom: 0;
+      }
+
       :focus-visible {
         outline: 2px solid var(--accent);
         outline-offset: 2px;
@@ -1008,19 +1182,19 @@ export function renderProviderDebugWorkbench(
           </div>
         </div>
         <div class="hero-meta">
-          <article class="hero-meta-card">
+          <article class="hero-meta-card hero-meta-card-next">
+            <p class="eyebrow eyebrow-compact">${escapeHtml(nextStepEyebrow)}</p>
+            <p>${escapeHtml(nextStepSummary)}</p>
+            ${nextStepDetail ? `<p>${escapeHtml(nextStepDetail)}</p>` : ""}
+            ${truthFocus ? "" : nextAction?.command ? `<pre>${escapeHtml(nextAction.command)}</pre>` : ""}
+          </article>
+          <article class="hero-meta-card hero-meta-card-quiet">
             <p class="eyebrow eyebrow-compact">Current attach target</p>
             <p>${escapeHtml(debug.attachTarget.note)}</p>
             <div class="meta-row">
               ${renderOptionalCode("source", debug.attachTarget.source)}
               ${renderOptionalCode("cdp", debug.attachTarget.cdpUrl)}
             </div>
-          </article>
-          <article class="hero-meta-card">
-            <p class="eyebrow eyebrow-compact">${escapeHtml(nextStepEyebrow)}</p>
-            <p>${escapeHtml(nextStepSummary)}</p>
-            ${nextStepDetail ? `<p>${escapeHtml(nextStepDetail)}</p>` : ""}
-            ${truthFocus ? "" : nextAction?.command ? `<pre>${escapeHtml(nextAction.command)}</pre>` : ""}
           </article>
         </div>
       </section>

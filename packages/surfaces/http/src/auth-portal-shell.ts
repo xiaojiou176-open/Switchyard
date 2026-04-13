@@ -492,21 +492,43 @@ function renderAcquisitionModes(card: AuthPortalCard): string {
   }
 
   const modes = card.availableModes ?? DEFAULT_WEB_ACQUISITION_MODES;
+  const recommendedMode = modes.find((mode) => mode.default) ?? modes[0];
+  const secondaryModes = modes.filter((mode) => mode !== recommendedMode);
+  const renderModeList = (modeList: readonly AuthPortalAcquisitionModeView[]) =>
+    modeList
+      .map(
+        (mode) =>
+          `<li>
+            <strong>${escapeHtml(mode.label)}</strong>
+            <span>${escapeHtml(mode.description)}</span>
+            <span>${mode.default ? "Recommended first path" : "Use only when you already know why"}</span>
+          </li>`,
+      )
+      .join("");
 
   return `<div class="acquisition-modes">
     <p class="handoff-caption"><strong>Login paths</strong></p>
-    <ul class="handoff-artifact-list">
-      ${modes
-        .map(
-          (mode) =>
-            `<li>
-              <strong>${escapeHtml(mode.label)}</strong>
-              <span>${escapeHtml(mode.description)}</span>
-              <span>${mode.default ? "Recommended first path" : "Use only when you already know why"}</span>
-            </li>`,
-        )
-        .join("")}
-    </ul>
+    ${
+      recommendedMode
+        ? `<div class="acquisition-modes-primary">
+            <strong>${escapeHtml(recommendedMode.label)}</strong>
+            <span>${escapeHtml(recommendedMode.description)}</span>
+            <span>Recommended first path</span>
+          </div>`
+        : ""
+    }
+    ${
+      secondaryModes.length > 0
+        ? `<details class="acquisition-modes-details">
+            <summary>Review alternate login paths</summary>
+            <ul class="handoff-artifact-list">
+              ${renderModeList(secondaryModes)}
+            </ul>
+          </details>`
+        : `<ul class="handoff-artifact-list">
+            ${renderModeList(modes)}
+          </ul>`
+    }
   </div>`;
 }
 
@@ -1519,6 +1541,22 @@ export function renderAuthPortalShell(model: AuthPortalShellModel): string {
         background: var(--panel-raised);
       }
 
+      .hero-meta-card-quiet {
+        padding: 0.85rem 0.95rem;
+        background: rgba(255, 255, 255, 0.022);
+        border-color: rgba(255, 255, 255, 0.05);
+        box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.03);
+      }
+
+      .hero-meta-card-quiet p {
+        color: rgba(229, 232, 233, 0.82);
+        font-size: 0.95rem;
+      }
+
+      .hero-meta-card-quiet .eyebrow {
+        color: rgba(114, 190, 148, 0.88);
+      }
+
       .priority-rail {
         padding: 1.2rem;
         margin-bottom: 1rem;
@@ -1549,14 +1587,24 @@ export function renderAuthPortalShell(model: AuthPortalShellModel): string {
 
       .priority-metric-ok {
         border-color: rgba(76, 188, 118, 0.28);
+        background: rgba(255, 255, 255, 0.02);
       }
 
       .priority-metric-warning {
         border-color: rgba(199, 139, 44, 0.3);
+        background:
+          linear-gradient(180deg, rgba(199, 139, 44, 0.14), rgba(199, 139, 44, 0.05)),
+          var(--panel-raised);
       }
 
       .priority-metric-danger {
         border-color: rgba(201, 90, 90, 0.34);
+        background:
+          linear-gradient(180deg, rgba(201, 90, 90, 0.16), rgba(201, 90, 90, 0.06)),
+          var(--panel-raised);
+        box-shadow:
+          0 0 0 1px rgba(201, 90, 90, 0.12),
+          inset 0 1px 0 rgba(255, 255, 255, 0.04);
       }
 
       .priority-card-grid {
@@ -1585,14 +1633,21 @@ export function renderAuthPortalShell(model: AuthPortalShellModel): string {
 
       .priority-provider-card-ready {
         border-color: rgba(76, 188, 118, 0.28);
+        background: rgba(255, 255, 255, 0.022);
       }
 
       .priority-provider-card-account-action {
         border-color: rgba(201, 90, 90, 0.34);
+        background:
+          linear-gradient(180deg, rgba(201, 90, 90, 0.16), rgba(201, 90, 90, 0.05)),
+          var(--panel-raised);
       }
 
       .priority-provider-card-session-work {
         border-color: rgba(199, 139, 44, 0.3);
+        background:
+          linear-gradient(180deg, rgba(199, 139, 44, 0.14), rgba(199, 139, 44, 0.05)),
+          var(--panel-raised);
       }
 
       .priority-provider-link {
@@ -1960,6 +2015,36 @@ export function renderAuthPortalShell(model: AuthPortalShellModel): string {
         background: rgba(255, 255, 255, 0.04);
       }
 
+      .acquisition-modes {
+        display: grid;
+        gap: 0.7rem;
+      }
+
+      .acquisition-modes-primary {
+        display: grid;
+        gap: 0.2rem;
+        padding: 0.7rem 0.8rem;
+        border: 1px solid rgba(255, 255, 255, 0.08);
+        border-radius: 14px;
+        background: rgba(255, 255, 255, 0.03);
+      }
+
+      .acquisition-modes-primary span {
+        color: var(--muted);
+        font-size: 0.92rem;
+      }
+
+      .acquisition-modes-details {
+        border-top: 1px solid rgba(255, 255, 255, 0.08);
+        padding-top: 0.7rem;
+      }
+
+      .acquisition-modes-details summary {
+        cursor: pointer;
+        color: var(--muted);
+        font-size: 0.92rem;
+      }
+
       .diagnostic-warning {
         background: rgba(180, 83, 9, 0.1);
       }
@@ -2187,11 +2272,11 @@ export function renderAuthPortalShell(model: AuthPortalShellModel): string {
           </div>
         </div>
         <div class="hero-meta">
-          <article class="hero-meta-card">
+          <article class="hero-meta-card hero-meta-card-quiet">
             <p class="eyebrow eyebrow-compact">Current stance</p>
             <p>${escapeHtml(model.trustBoundary)}</p>
           </article>
-          <article class="hero-meta-card">
+          <article class="hero-meta-card hero-meta-card-quiet">
             <p class="eyebrow eyebrow-compact">Generated</p>
             <p class="mono">${escapeHtml(model.generatedAt)}</p>
           </article>
