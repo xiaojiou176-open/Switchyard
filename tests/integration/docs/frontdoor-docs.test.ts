@@ -16,12 +16,11 @@ describe("Switchyard docs frontdoor contracts", () => {
   it("keeps the docs frontdoor focused on first-row routes while demoting deeper shelves", () => {
     const docsReadme = read("docs/README.md");
 
+    expect(docsReadme).toContain("This is the public docs atlas for Switchyard.");
+    expect(docsReadme).toContain("Treat it like an adoption desk, not a warehouse list");
+    expect(docsReadme).toContain("The public first row stays intentionally narrow");
     expect(docsReadme).toContain("docs/api/service-http-reference.md");
-    expect(docsReadme).toContain("docs/api/openapi.yaml");
-    expect(docsReadme).toContain("docs/api/sdk-quickstart.md");
-    expect(docsReadme).toContain("docs/api/mcp-readonly-server.md");
-    expect(docsReadme).toContain("docs/api/error-diagnostics-reference.md");
-    expect(docsReadme).toContain("docs/api/web-login-acquisition.md");
+    expect(docsReadme).toContain("docs/index.html");
     expect(docsReadme).toContain("docs/media/30-second-overview.md");
     expect(docsReadme).toContain("docs/first-success.md");
     expect(docsReadme).toContain("docs/public-proof-pack.md");
@@ -29,37 +28,30 @@ describe("Switchyard docs frontdoor contracts", () => {
     expect(docsReadme).toContain("docs/runbooks/dev-bootstrap.md");
     expect(docsReadme).toContain("examples/README.md");
     expect(docsReadme).toContain("starter-packs/README.md");
-    expect(docsReadme).toContain("docs/starter-pack-chooser.md");
-    expect(docsReadme).toContain("docs/builder-journeys.md");
-    expect(docsReadme).toContain("docs/host-integration-playbooks.md");
-    expect(docsReadme).toContain("docs/host-integration-examples.md");
     expect(docsReadme).toContain("docs/compat/README.md");
-    expect(docsReadme).toContain("docs/compat/codex.md");
-    expect(docsReadme).toContain("docs/compat/claude-code.md");
-    expect(docsReadme).toContain("docs/compat/openclaw.md");
-    expect(docsReadme).toContain("docs/compare/byok-vs-web-login.md");
-    expect(docsReadme).toContain("docs/compare/switchyard-vs-codex.md");
-    expect(docsReadme).toContain("docs/compare/switchyard-vs-claude-code.md");
-    expect(docsReadme).toContain("docs/compare/switchyard-vs-openclaw.md");
     expect(docsReadme).toContain("docs/public-surface-support-matrix.md");
-    expect(docsReadme).toContain("docs/public-surface-catalog.md");
-    expect(docsReadme).toContain("docs/shared-provider-runtime.md");
-    expect(docsReadme).toContain("docs/product/v1-brief.md");
-    expect(docsReadme).toContain("docs/product/scope-and-nongoals.md");
-    expect(docsReadme).toContain("docs/mcp.md");
-    expect(docsReadme).toContain("docs/i18n.md");
+    expect(docsReadme).toContain("Use the front row for");
+    expect(docsReadme).toContain("Do **not** use this page to flatten:");
     expect(docsReadme).toContain("docs/testing-pyramid.md");
     expect(docsReadme).toContain(".agents/internal-docs/");
-    expect(docsReadme).toContain("Machine-readable JSON and schema companions");
+    expect(docsReadme).toContain("If a new reader cannot decide where to go within a few seconds");
+    expect(docsReadme).toContain("use the repo");
+    expect(docsReadme).toContain("tree or CLI surfaces");
+    expect(docsReadme).not.toContain("docs/host-integration-examples.md");
+    expect(docsReadme).not.toContain("docs/compat/codex.md");
+    expect(docsReadme).not.toContain("docs/compat/claude-code.md");
+    expect(docsReadme).not.toContain("docs/compat/openclaw.md");
+    expect(docsReadme).not.toContain("docs/compare/byok-vs-web-login.md");
+    expect(docsReadme).not.toContain("docs/compare/switchyard-vs-codex.md");
+    expect(docsReadme).not.toContain("docs/compare/switchyard-vs-claude-code.md");
+    expect(docsReadme).not.toContain("docs/compare/switchyard-vs-openclaw.md");
+    expect(docsReadme).not.toContain("docs/public-surface-catalog.md");
     expect(docsReadme).not.toContain("docs/public-surface-catalog.schema.json");
     expect(docsReadme).not.toContain("docs/provider-runtime-catalog.json");
     expect(docsReadme).not.toContain("docs/compat-target-catalog.json");
     expect(docsReadme).not.toContain("docs/builder-kit-catalog.json");
     expect(docsReadme).not.toContain("docs/skill-pack-catalog.json");
     expect(docsReadme).not.toContain("docs/mcp-tool-catalog.json");
-    expect(docsReadme).not.toContain("docs/starter-manifest-templates.schema.json");
-    expect(docsReadme).not.toContain("docs/starter-manifest-examples.schema.json");
-    expect(docsReadme).not.toContain("docs/builder-intent-router.json");
   });
 
   it("keeps the primary public frontdoor English-first while allowing helper-page bilingual support", () => {
@@ -108,13 +100,15 @@ describe("Switchyard docs frontdoor contracts", () => {
 
     const docsIndex = read("docs/index.html");
     expect(docsIndex).toContain("Switchyard Docs Atlas");
-    expect(docsIndex).toContain("Choose the shortest truthful route");
+    expect(docsIndex).toContain("Choose the shortest truthful route before you open the fuller atlas.");
     expect(docsIndex).toContain("Open first success");
+    expect(docsIndex).toContain("Skip to main content");
     expect(docsIndex).toContain('href="./index.html"');
     expect(docsIndex).not.toContain('href="../index.html"');
     expect(docsIndex).toContain("public-proof-pack.md");
     expect(docsIndex).toContain("public-distribution-ledger.md");
     expect(docsIndex).toContain("service-http-reference.md");
+    expect(docsIndex).toContain("docs/README.md");
   });
 
   it("keeps the bootstrap runbook visible but demoted across the public front door", () => {
@@ -128,7 +122,7 @@ describe("Switchyard docs frontdoor contracts", () => {
 
     expect(readme).toContain("docs/runbooks/dev-bootstrap.md");
     expect(docsReadme).toContain("docs/runbooks/dev-bootstrap.md");
-    expect(docsReadme).toContain("Keep these public, but demoted one shelf deeper");
+    expect(docsReadme).toContain("Keep these public, but demoted one shelf deeper:");
     expect(docsIndex).toContain("dev bootstrap runbook");
     expect(docsIndex).toContain("public-but-demoted");
     expect(docsIndex).toContain("./first-success.md");

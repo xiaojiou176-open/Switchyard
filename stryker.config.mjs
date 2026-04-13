@@ -3,7 +3,9 @@ export default {
   testRunner: "vitest",
   packageManager: "pnpm",
   plugins: ["@stryker-mutator/vitest-runner"],
-  ignorePatterns: [".agents/**"],
+  // Runtime browser profiles and temp artifacts are not mutation inputs and can
+  // disappear mid-copy while Stryker prepares its sandbox.
+  ignorePatterns: [".agents/**", ".runtime-cache/**"],
   mutate: [
     "scripts/run-reality-gate.mjs",
   ],
