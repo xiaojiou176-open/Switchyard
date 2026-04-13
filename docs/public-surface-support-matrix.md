@@ -7,6 +7,14 @@ This page is the current truth table for the public front door.
 Treat it like the signboard outside a store: it tells you which counters are
 really open today and which ones are still under construction.
 
+It is a **reference signboard**, not the first route for a brand-new reader.
+If someone is opening Switchyard for the first time, send them through:
+
+- `README.md`
+- `docs/first-success.md`
+- `docs/public-proof-pack.md`
+- `docs/api/service-http-reference.md`
+
 ## Current Rule
 
 The current public story is:
@@ -49,6 +57,7 @@ The following claims are still dishonest today:
 - calling thin fail-closed adapters full parity
 - calling the read-only MCP surface a full execution or tool plane
 - rewriting `partial` into "fully supported"
+- treating packet/accounting pages as first-row front door pages
 
 ## Decision Summary
 

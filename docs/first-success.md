@@ -8,6 +8,11 @@ This page only does one job:
 > **Compress the shortest, most honest, most valuable first-success route into
 > one line.**
 
+If this route works, then open the deeper shelves.
+
+If it does not work yet, do **not** jump straight into packet/accounting pages,
+contracts, or program blueprints. Fix the bounded first success first.
+
 In plain English:
 
 - start the Switchyard service runtime
