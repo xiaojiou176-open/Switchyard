@@ -35,7 +35,7 @@ taste:
   - README
   - docs front door
   - help/reference pages
-  - public landing structure
+  - public knowledge structure
 
 Absorption is visual and structural only.
 
