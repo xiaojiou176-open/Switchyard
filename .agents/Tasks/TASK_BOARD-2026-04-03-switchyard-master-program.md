@@ -3,6 +3,70 @@
 > 本文件是本轮 `Switchyard` master program 的唯一执行 SSOT。
 > 任何 fresh truth、SubAgent 回收、Git 变化、blocker 归类、阶段裁决，都先回写这里，再继续推进。
 
+## 2026-04-13 Post-Closeout UIUX Extreme-Polish Addendum
+
+- this addendum supersedes older same-day UIUX polish wording below whenever they conflict
+- current scope of this follow-up pass:
+  - keep frozen donor boundary
+  - do not reopen runtime/product scope
+  - push only bounded high-ROI UI hierarchy and disclosure polish on:
+    - `auth-portal`
+    - `provider-debug-workbench`
+    - `docs/index.html`
+- current repo-owned polish verdict after fresh reruns:
+  - `product-surface-ready = yes`
+  - `docs-plane-ready = yes`
+  - `design-absorption-ready = yes`
+  - `quality-governance-ready = yes`
+  - `repo-ready = yes`
+  - `submit-ready = yes`
+  - `platform-ready = no claim`
+  - `submission-done = no`
+  - `review-pending = no`
+  - `listed-live = out of scope`
+- exact bounded UIUX gains landed in this pass:
+  - `auth-portal`
+    - `Login paths` now resolves as:
+      - recommended first path shown inline
+      - alternate paths demoted into secondary disclosure
+      - repeated recommended-path noise removed from the expanded list
+    - right-side hero metadata is quieter
+    - urgency hierarchy for `account-action-required / session-incomplete / ready`
+      is more explicit on the first screen
+  - `provider-debug-workbench`
+    - large evidence surface remains split into narrow trays
+    - `Current next step` now reads as the dominant hero-side action rail
+    - `Current attach target` is demoted into a quieter utility readout
+    - tray affordance label is neutralized to `Details`
+  - `docs/index.html`
+    - topbar remains a shortcut shelf rather than a first-row equal-weight nav
+    - hero right rail and route copy are lighter and less self-explanatory
+    - first screen is closer to a productized Mintlify-like docs foyer
+- fresh receipts for this pass:
+  - `pnpm exec vitest run tests/integration/auth-portal/auth-portal-shell.test.ts tests/unit/web/provider-debug-workbench-render.test.ts tests/integration/service-http/http-surface.integration.test.ts tests/integration/docs/frontdoor-docs.test.ts --config vitest.config.ts` = `0`
+    - `4 files / 41 tests passed`
+  - `pnpm typecheck` = `0`
+  - `qa-02-axe`
+    - `auth-portal` = `0 violations`
+    - `provider-debug-workbench` = `0 violations`
+    - `docs/index.html` = `0 violations`
+  - blocker-only verdict pack:
+    - `l2-designer` = `non-blocker`
+    - `l2-reviewer` = `no blocker`
+    - latest fresh designer judgment now says:
+      - no more meaningful high-ROI non-blocker headroom worth implementing immediately
+      - current working tree is `ready to finalize locally`
+- exact implication:
+  - this pass did not reopen the closeout contract
+  - this pass only pushed the existing finished surfaces deeper toward:
+    - minimal cognitive load
+    - beauty
+    - productization
+    - progressive disclosure
+  - remaining work after this addendum is only:
+    - mainline the current dirty working tree through branch / PR / merge
+    - return local and remote state to clean `main`
+
 ## 2026-04-13 Final-Wave UIUX Refresh + Live-Reality Relock
 
 - this addendum supersedes older same-day UIUX/live wording below whenever they conflict

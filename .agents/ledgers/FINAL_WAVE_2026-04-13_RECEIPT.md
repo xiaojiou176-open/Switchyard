@@ -1,5 +1,45 @@
 # Switchyard Final Wave Receipt — 2026-04-13
 
+## Post-Closeout UIUX Extreme-Polish Addendum
+
+- current fact:
+  - after the original final-wave closeout landed on `main`, one additional
+    bounded UIUX polish pass was executed locally on the same three visible
+    surfaces
+  - this pass stayed inside the frozen donor boundary and did not reopen
+    runtime scope, docs tree governance, or quality-gate policy
+- changed in this addendum pass:
+  - `auth-portal`
+    - `Login paths` now shows the recommended path inline and demotes the
+      remaining choices into a secondary disclosure
+    - repeated recommended-path noise is removed from the expanded list
+    - hero metadata is quieter and first-screen urgency is stronger
+  - `provider-debug-workbench`
+    - `Current next step` is now the dominant hero-side action rail
+    - `Current attach target` is quieter utility chrome
+    - evidence trays remain narrow and the tray affordance label is neutralized
+      to `Details`
+  - `docs/index.html`
+    - topbar remains hierarchical instead of equal-weight
+    - hero right rail and route copy are lighter
+    - first screen reads more like a productized docs foyer
+- fresh evidence for this pass:
+  - `pnpm exec vitest run tests/integration/auth-portal/auth-portal-shell.test.ts tests/unit/web/provider-debug-workbench-render.test.ts tests/integration/service-http/http-surface.integration.test.ts tests/integration/docs/frontdoor-docs.test.ts --config vitest.config.ts` = `0`
+    - `4 files / 41 tests passed`
+  - `pnpm typecheck` = `0`
+  - `qa-02-axe`
+    - auth portal = `0 violations`
+    - workbench = `0 violations`
+    - docs front door = `0 violations`
+  - latest blocker-only judgments:
+    - `l2-designer` = `non-blocker`
+    - `l2-reviewer` = `no blocker`
+- blocker type:
+  - none
+- next step:
+  - mainline these three dirty working-tree files and return repo state to
+    clean `main`
+
 ## Final State
 
 - `repo-ready = yes`
