@@ -70,8 +70,16 @@ Switchyard now treats the public front door as **English-first**.
 | run the shortest first success | [docs/first-success.md](./docs/first-success.md) |
 | inspect what is really proved today | [docs/public-proof-pack.md](./docs/public-proof-pack.md) |
 | see what is package-ready vs listed-live | [docs/public-distribution-ledger.md](./docs/public-distribution-ledger.md) |
-| see the exact heavy-lane submission packet | [docs/submission-packet-ledger.md](./docs/submission-packet-ledger.md) |
 | browse the full docs atlas | [docs/index.html](./docs/index.html) and [docs/README.md](./docs/README.md) |
+
+If you are touching Switchyard for the first time, stop there.
+
+The heavier shelves still exist, but they are not first-row front door pages:
+
+- contracts and blueprints
+- submission-packet accounting
+- builder catalog internals
+- testing/governance reference pages
 
 ## 30-Second Version
 
@@ -257,6 +265,11 @@ See:
 - [DISTRIBUTION.md](./DISTRIBUTION.md)
 - [INTEGRATIONS.md](./INTEGRATIONS.md)
 - [docs/public-distribution-ledger.md](./docs/public-distribution-ledger.md)
+
+If you need the exact heavy-lane packet, open it as a deeper reference page, not
+as the default first stop:
+
+- [docs/submission-packet-ledger.md](./docs/submission-packet-ledger.md)
 
 ## Docs Atlas
 
