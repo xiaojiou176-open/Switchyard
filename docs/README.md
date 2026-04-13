@@ -121,6 +121,7 @@ under `.agents/internal-docs/`, including:
 - `.agents/internal-docs/wave1/*`
 - `.agents/internal-docs/wave5/wave5-thin-compat-starter.md`
 - `.agents/internal-docs/mcp/mcp-listings-cockpit.md`
+- `.agents/internal-docs/distribution/submission-packet-ledger.md`
 
 ## Truthfulness Rules
 
