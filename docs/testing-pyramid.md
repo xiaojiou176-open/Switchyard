@@ -79,9 +79,7 @@
 这里要再加一条边界，不然很容易把它们误读成“云端 CI 也该跑”：
 
 - `Cloud-safe`
-  - `pnpm typecheck`
-  - `pnpm test`
-  - `pnpm build`
+  - `pnpm run gate:pr`
   - docs frontdoor / starter pack / catalog / MCP read-only contract tests
 - `Local credentialed only`
   - `pnpm run verify:gemini-live`
@@ -107,6 +105,12 @@
 
 ## Current Gate Meanings
 
+- `gate:pr`
+  - GitHub Hosted PR / push 必跑总闸
+  - 实际内容 = host-safety + typecheck + test + build
+- `gate:nightly`
+  - hosted-safe 的 nightly / manual expensive gate
+  - 实际内容 = typecheck + docs-frontdoor + coverage + build + mutation baseline
 - `typecheck`
   - 结构和类型合同没坏
 - `test`
@@ -130,6 +134,36 @@
 
 而不是假装还能在云端复现本地 credentialed 路径。
 
+当前正式入口现在也明确分层了：
+
+- PR / push hosted gate = `pnpm run gate:pr`
+- nightly / `workflow_dispatch` expensive gate = `pnpm run gate:nightly`
+- manual credentialed realism = `pnpm run verify:*` + `pnpm run reality:gate`
+- mutation baseline = `pnpm run test:mutation:baseline`
+
+这条 mutation baseline 现在已经正式接线，但 scope 故意保持很小。
+说得更直白一点，这不是“把全仓都塞进变异测试机器”，而是先拿最关键的 gate-contract 脚本做一轮夜间深检。
+
+当前 baseline 固定为：
+
+- tool = `StrykerJS`
+- runner = `@stryker-mutator/vitest-runner`
+- current mutate set:
+  - `scripts/run-reality-gate.mjs`
+- current test set:
+  - `tests/unit/web/closeout-gate.test.ts`
+- current score threshold:
+  - `break = 45`
+  - `low = 55`
+  - `high = 70`
+
+这意味着：
+
+- mutation 已经不是口号
+- 但它也还不是“全仓 mutation 全覆盖”
+- 后续若继续扩 scope，要按模块一波一波加，而不是一次性把整仓 nightly 压爆
+- 当前 first baseline 先盯住 `reality:gate` 这个总闸语义，后续再把别的高价值脚本/模块一层层加进来
+
 ## 5-Layer Governance
 
 如果把这仓的验证链理解成 5 道安检门，当前 SSOT 是：
@@ -138,8 +172,8 @@
 | --- | --- | --- |
 | `pre-commit` | 最早拦截 secrets 与 focused hygiene drift | `pnpm run hook:pre-commit` |
 | `pre-push` | 本地提交前总闸 | `pnpm run hook:pre-push` |
-| `hosted` | GitHub Actions on `push/pull_request` | `ci.yml` / `security.yml` / `workflow-hygiene.yml` |
-| `nightly` | hosted-safe scheduled recheck | scheduled workflow + nightly-timed dependency automation |
+| `hosted` | GitHub Actions on `push/pull_request` | `pnpm run gate:pr` via `ci.yml` plus repo hygiene workflows |
+| `nightly` | hosted-safe scheduled recheck | `pnpm run gate:nightly` via `nightly.yml` |
 | `manual` | credentialed workstation realism | `verify:*` / `reality:gate` / browser diagnosis / runtime hygiene |
 
 说得更直白一点：
@@ -170,10 +204,15 @@
 
 - `pnpm run test:coverage`
 
+而 nightly 现在不再直接散写 coverage/build/typecheck 命令，而是通过：
+
+- `pnpm run gate:nightly`
+
 它会产出：
 
 - 终端 `text-summary`
 - `coverage/coverage-summary.json`
+- `.runtime-cache/mutation/mutation.json`
 
 如果你还需要本地 HTML 报告，走单独的辅助入口：
 
@@ -189,6 +228,11 @@
 
 > 一张 95% 的 coverage 报表，如果 live gate 全是假绿，意义不大。  
 > 一张稍低一点但结构 honest 的测试网，反而更值钱。
+
+同样地：
+
+> mutation 也不是越大越好。
+> 对当前仓，更诚实的做法是先把最关键的 gate-contract 模块接进 mutation baseline，再逐波扩面。
 
 所以这仓对 coverage 的态度是：
 

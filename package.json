@@ -27,6 +27,9 @@
     "build": "pnpm run build:root && pnpm -r build",
     "typecheck:root": "pnpm exec tsc -p tsconfig.json --pretty false",
     "typecheck": "pnpm run typecheck:root && pnpm -r typecheck",
+    "gate:pr": "pnpm run check:host-safety && pnpm run typecheck && pnpm run test && pnpm run build",
+    "gate:nightly:expensive": "pnpm run typecheck && pnpm run test:docs-frontdoor && pnpm run test:coverage && pnpm run build && pnpm run test:mutation:baseline",
+    "gate:nightly": "pnpm run gate:nightly:expensive",
     "test:unit": "pnpm exec vitest run --config vitest.config.ts --project contracts --project kernel --project credentials --project diagnostics --project lane-byok --project lanes-web --project sdk --project surface-sdk-client --project surface-mcp --project consumer-compat --project builder-starters --project starter-packs",
     "test:mcp:smoke": "pnpm exec vitest run --config vitest.config.ts --project surface-mcp",
     "test:examples": "pnpm exec vitest run --config vitest.config.ts --project builder-starters",
@@ -38,6 +41,7 @@
     "test:coverage:raw": "pnpm exec vitest --clearCache && rm -rf coverage && mkdir -p coverage/.tmp && pnpm exec vitest run tests/unit tests/integration tests/e2e --cache=false --no-file-parallelism --maxWorkers=1 --config vitest.config.ts --coverage.enabled true --coverage.clean=false --coverage.processingConcurrency=1 --coverage.reporter=text-summary --coverage.reporter=json-summary --coverage.reportsDirectory=coverage",
     "test:coverage": "pnpm exec node scripts/run-test-coverage.mjs",
     "test:coverage:html": "pnpm exec vitest --clearCache && rm -rf coverage && mkdir -p coverage/.tmp && pnpm exec vitest run tests/unit tests/integration tests/e2e --cache=false --no-file-parallelism --maxWorkers=1 --config vitest.config.ts --coverage.enabled true --coverage.clean=false --coverage.processingConcurrency=1 --coverage.reporter=html --coverage.reportsDirectory=coverage",
+    "test:mutation:baseline": "pnpm exec stryker run stryker.config.mjs",
     "hook:pre-commit": "node scripts/check-sensitive-material.mjs && pnpm exec vitest run tests/unit/web/runtime-request-url.test.ts tests/unit/web/url-hosts.test.ts tests/unit/web/browser-session-coherence.test.ts tests/integration/docs/sensitive-surface-hygiene.test.ts --config vitest.config.ts",
     "hook:pre-push": "pnpm exec node scripts/run-pre-push-gate.mjs",
     "seed:isolated-chrome-root": "pnpm exec node scripts/seed-isolated-chrome-root.mjs",
@@ -70,6 +74,8 @@
     "reality:gate": "pnpm exec node scripts/run-reality-gate.mjs"
   },
   "devDependencies": {
+    "@stryker-mutator/core": "^9.6.1",
+    "@stryker-mutator/vitest-runner": "^9.6.1",
     "@switchyard/consumer-claude-code": "workspace:*",
     "@switchyard/consumer-codex": "workspace:*",
     "@switchyard/consumer-compat-shared": "workspace:*",
