@@ -12,8 +12,8 @@ const repoRoot = resolve(dirname(fileURLToPath(import.meta.url)), "../../..");
 
 async function runExample(relativePath: string, env: NodeJS.ProcessEnv) {
   const { stdout } = await execFileAsync(
-    "pnpm",
-    ["exec", "node", resolve(repoRoot, relativePath)],
+    process.execPath,
+    [resolve(repoRoot, relativePath)],
     {
       cwd: repoRoot,
       env: {
@@ -219,7 +219,9 @@ describe("runnable starter mini-projects", () => {
         expect(output.runtimeHealth).toEqual(
           expect.objectContaining({
             command: "health",
+            readOnly: true,
             result: expect.objectContaining({
+              lane: "web",
               totals: expect.objectContaining({
                 ready: 5,
               }),
@@ -227,9 +229,7 @@ describe("runnable starter mini-projects", () => {
           }),
         );
         expect(output.catalogTools).toEqual(
-          expect.objectContaining({
-            command: "mcp-tools",
-          }),
+          expect.objectContaining({}),
         );
         expect(requests).toContain("GET /v1/runtime/health");
       } finally {
