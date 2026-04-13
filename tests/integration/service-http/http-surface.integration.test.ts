@@ -815,12 +815,12 @@ describe("Switchyard HTTP surface", () => {
     expect(authPortalHtml).toContain("Web/Login live readiness");
     expect(authPortalHtml).toContain("The five provider verdicts that matter first");
     expect(authPortalHtml).toContain("This section now behaves like a triage wall");
-    expect(authPortalHtml).toContain("Ready providers (");
     expect(authPortalHtml).toContain("Account action required");
     expect(authPortalHtml).toContain("Review current blocker");
     expect(authPortalHtml).toContain("Session incomplete");
     expect(authPortalHtml).toContain("Inspect current browser first");
     expect(authPortalHtml).toContain("Re-authenticate");
+    expect(authPortalHtml).not.toContain("Ready providers (");
 
     const workbenchResponse = await getSurface(
       service,
@@ -909,6 +909,35 @@ describe("Switchyard HTTP surface", () => {
     expect(workbenchHtml).toContain(
       "Same browser-inspection failure as above. Open detailed browser diagnostics below for the raw technical message.",
     );
+  });
+
+  it("keeps attach-failed browser seats out of the ready bucket on the auth portal", async () => {
+    const service = createTestService({
+      useLocalWebAuthStore: false,
+      providerSessions: {
+        chatgpt: {
+          state: "user-action-required",
+          accountLabel: "chatgpt:attach-failed",
+          acquisitionMode: "isolated-chrome-root",
+          requiredUserAction:
+            "Restore the ChatGPT attach target before rerunning the live gate.",
+          persistenceAudit: {
+            workspaceClassification: "attach-failed",
+            summary: "Switchyard could not attach to the current ChatGPT browser seat.",
+            pageUrl: "https://chatgpt.com/",
+            pageTitle: "ChatGPT",
+          },
+        },
+      },
+    });
+
+    const authPortalResponse = await getSurface(service, "/v1/runtime/auth-portal");
+    const authPortalHtml = await authPortalResponse.text();
+
+    expect(authPortalResponse.status).toBe(200);
+    expect(authPortalHtml).toContain("Session incomplete");
+    expect(authPortalHtml).toContain("User action required");
+    expect(authPortalHtml).not.toContain("Ready providers (1)");
   });
 
   it("returns live-proof success through the probe route when a runner is injected", async () => {

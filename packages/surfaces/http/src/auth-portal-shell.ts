@@ -864,17 +864,19 @@ function getWebLoginPriorityBucket(card: AuthPortalCard): "ready" | "account-act
     return "account-action";
   }
 
-  if (
-    classification === "session-incomplete" ||
-    classification === "login-required" ||
-    classification === "provider-adjacent" ||
-    classification === "permission-gated" ||
-    classification === "human-verification-required"
-  ) {
+  if (classification === "workspace-ready") {
+    return "ready";
+  }
+
+  if (classification) {
     return "session-work";
   }
 
-  return "ready";
+  if (card.state === "ready") {
+    return "ready";
+  }
+
+  return "session-work";
 }
 
 function renderPriorityMetric(
