@@ -628,7 +628,74 @@ function renderHandoff(card: AuthPortalCard): string {
   </section>`;
 }
 
-function renderCard(card: AuthPortalCard): string {
+function getCardVerdictTitle(card: AuthPortalCard): string {
+  const truthFocus = getVisibleTruthFocus(card);
+  return truthFocus?.title ?? card.stateLabel;
+}
+
+function getCardVerdictTone(card: AuthPortalCard): "ok" | "warning" | "danger" {
+  if (card.authModeId === "web-login") {
+    const bucket = getWebLoginPriorityBucket(card);
+    if (bucket === "account-action") {
+      return "danger";
+    }
+    if (bucket === "session-work") {
+      return "warning";
+    }
+    return "ok";
+  }
+
+  if (card.state === "ready") {
+    return "ok";
+  }
+  if (card.state === "user-action-required" || card.state === "expired" || card.state === "missing") {
+    return "danger";
+  }
+
+  return "warning";
+}
+
+function getCardVerdictSummary(card: AuthPortalCard): string {
+  const truthFocus = getVisibleTruthFocus(card);
+
+  if (truthFocus) {
+    return truthFocus.nextStepLabel;
+  }
+
+  if (card.state === "ready") {
+    return "Ready to use";
+  }
+
+  return card.statusSummary;
+}
+
+function getCardVerdictNextStep(card: AuthPortalCard): string {
+  const truthFocus = getVisibleTruthFocus(card);
+  if (truthFocus) {
+    return truthFocus.nextStepLabel;
+  }
+
+  if (card.state === "ready") {
+    return "Ready to use";
+  }
+
+  return "Review current status";
+}
+
+function renderCardVerdict(card: AuthPortalCard): string {
+  const tone = getCardVerdictTone(card);
+
+  return `<section class="card-verdict card-verdict-${tone}">
+    <p class="eyebrow eyebrow-compact">Primary verdict</p>
+    <h4>${escapeHtml(getCardVerdictTitle(card))}</h4>
+    <p>${escapeHtml(getCardVerdictSummary(card))}</p>
+    <p class="card-verdict-next">${escapeHtml(getCardVerdictNextStep(card))}</p>
+  </section>`;
+}
+
+function renderCardDetails(card: AuthPortalCard): string {
+  const detailsLabel =
+    card.authModeId === "web-login" ? "Evidence and handoff details" : "More local details";
   const truthFocus = getVisibleTruthFocus(card);
   const diagnosticHtml = card.diagnostic
     ? `<div class="diagnostic diagnostic-${card.diagnostic.severity}">
@@ -640,6 +707,29 @@ function renderCard(card: AuthPortalCard): string {
       </div>`
     : '<div class="diagnostic diagnostic-ok"><strong>No active blocker</strong><p>Switchyard does not currently see a local credential blocker for this provider slot.</p></div>';
 
+  return `<details class="card-details">
+    <summary>${escapeHtml(detailsLabel)}</summary>
+    <div class="card-details-body">
+      ${diagnosticHtml}
+      <p class="workflow"><strong>Current lane step</strong>: ${escapeHtml(card.workflowLabel)}.</p>
+      <p class="status">${escapeHtml(card.workflowDescription)}</p>
+      ${
+        card.modeLabel
+          ? `<p class="ownership"><strong>Current browser handoff</strong>: ${escapeHtml(card.modeLabel)}</p>`
+          : ""
+      }
+      ${renderMaterialSnapshot(card)}
+      ${renderBrowserCheckpoint(card)}
+      <p class="ownership">${escapeHtml(card.ownership.summary)}</p>
+      ${renderHandoff(card)}
+      ${renderAcquisitionModes(card)}
+      ${renderRouteLinks(card)}
+    </div>
+  </details>`;
+}
+
+function renderCard(card: AuthPortalCard): string {
+  const truthFocus = getVisibleTruthFocus(card);
   const debugLink =
     card.authModeId === "web-login" && card.routes?.debugWorkbench
       ? `<a class="action action-${truthFocus ? "primary" : "secondary"} action-link" href="${escapeHtml(
@@ -647,39 +737,214 @@ function renderCard(card: AuthPortalCard): string {
         )}">${escapeHtml(truthFocus?.primaryLinkLabel ?? "Inspect current browser")}</a>`
       : "";
 
-  return `<article class="card">
+  return `<article class="card" id="provider-${escapeHtml(card.providerId)}">
     <header class="card-header">
       <div>
         <h3>${escapeHtml(card.providerDisplayName)}</h3>
-        <p>${escapeHtml(card.authModeLabel)}</p>
+        <p class="card-kicker">${escapeHtml(card.authModeLabel)}</p>
       </div>
-      <span class="state state-${escapeHtml(card.state)}">${escapeHtml(card.stateLabel)}</span>
+      <span class="state state-${escapeHtml(card.state)}">${escapeHtml(getCardVerdictTitle(card))}</span>
     </header>
-    <p class="workflow"><strong>Current lane step</strong>: ${escapeHtml(card.workflowLabel)}.</p>
-    <p class="status">${escapeHtml(card.workflowDescription)}</p>
-    ${
-      card.modeLabel
-        ? `<p class="ownership"><strong>Current browser handoff</strong>: ${escapeHtml(card.modeLabel)}</p>`
-        : ""
-    }
-    ${renderMaterialSnapshot(card)}
-    ${renderBrowserCheckpoint(card)}
-    <p class="ownership">${escapeHtml(card.ownership.summary)}</p>
-    ${diagnosticHtml}
-    ${renderHandoff(card)}
-    ${renderAcquisitionModes(card)}
-    ${renderRouteLinks(card)}
+    ${renderCardVerdict(card)}
+    ${renderCardDetails(card)}
     <div class="actions">${debugLink}${card.actions.map((action) => renderAction(card, action)).join('')}</div>
   </article>`;
 }
 
 function renderSection(section: AuthPortalSection): string {
-  return `<section class="section">
+  return `<section class="section" id="section-${escapeHtml(section.id)}">
     <header class="section-header">
       <h2>${escapeHtml(section.title)}</h2>
       <p>${escapeHtml(section.description)}</p>
     </header>
     <div class="card-grid">${section.cards.map((card) => renderCard(card)).join('')}</div>
+  </section>`;
+}
+
+function renderCardGroup(
+  title: string,
+  description: string,
+  cards: readonly AuthPortalCard[],
+  collapsed = false,
+): string {
+  if (cards.length === 0) {
+    return "";
+  }
+
+  if (!collapsed) {
+    return `<section class="card-group">
+      <header class="section-header">
+        <h3>${escapeHtml(title)}</h3>
+        <p>${escapeHtml(description)}</p>
+      </header>
+      <div class="card-grid">${cards.map((card) => renderCard(card)).join('')}</div>
+    </section>`;
+  }
+
+  return `<details class="card-group card-group-collapsed">
+    <summary>${escapeHtml(title)}</summary>
+    <div class="card-group-body">
+      <p>${escapeHtml(description)}</p>
+      <div class="card-grid">${cards.map((card) => renderCard(card)).join('')}</div>
+    </div>
+  </details>`;
+}
+
+function renderWebLoginSection(section: AuthPortalSection): string {
+  const accountActionCards = section.cards.filter(
+    (card) => getWebLoginPriorityBucket(card) === "account-action",
+  );
+  const sessionWorkCards = section.cards.filter(
+    (card) => getWebLoginPriorityBucket(card) === "session-work",
+  );
+  const readyCards = section.cards.filter((card) => getWebLoginPriorityBucket(card) === "ready");
+
+  return `<section class="section" id="section-${escapeHtml(section.id)}">
+    <header class="section-header">
+      <h2>${escapeHtml(section.title)}</h2>
+      <p>${escapeHtml(
+        "This section now behaves like a triage wall: blockers first, healthy providers second.",
+      )}</p>
+    </header>
+    ${renderCardGroup(
+      "Account action required",
+      "These providers are blocked on owner/manual account work before runtime use can continue.",
+      accountActionCards,
+    )}
+    ${renderCardGroup(
+      "Session incomplete",
+      "These providers still need the current browser session to reach a reusable workspace.",
+      sessionWorkCards,
+    )}
+    ${renderCardGroup(
+      `Ready providers (${readyCards.length})`,
+      "These providers are currently usable. Expand only when you need their evidence or actions.",
+      readyCards,
+      true,
+    )}
+  </section>`;
+}
+
+function renderCollapsedSection(
+  section: AuthPortalSection,
+  title: string,
+  description: string,
+): string {
+  return `<details class="secondary-context-stack">
+    <summary>${escapeHtml(title)}</summary>
+    <div class="secondary-context-body">
+      <p>${escapeHtml(description)}</p>
+      ${renderSection(section)}
+    </div>
+  </details>`;
+}
+
+function orderSectionsForDisplay(sections: readonly AuthPortalSection[]): AuthPortalSection[] {
+  return [...sections].sort((left, right) => {
+    if (left.id === right.id) {
+      return 0;
+    }
+
+    if (left.id === "web-login") {
+      return -1;
+    }
+
+    if (right.id === "web-login") {
+      return 1;
+    }
+
+    return 0;
+  });
+}
+
+function getWebLoginPriorityBucket(card: AuthPortalCard): "ready" | "account-action" | "session-work" {
+  const classification = card.session?.persistenceAudit?.workspaceClassification;
+
+  if (classification === "account-action-required") {
+    return "account-action";
+  }
+
+  if (classification === "workspace-ready") {
+    return "ready";
+  }
+
+  if (classification) {
+    return "session-work";
+  }
+
+  if (card.state === "ready") {
+    return "ready";
+  }
+
+  return "session-work";
+}
+
+function renderPriorityMetric(
+  label: string,
+  value: number,
+  tone: "ok" | "warning" | "danger",
+): string {
+  return `<article class="priority-metric priority-metric-${tone}">
+    <p class="eyebrow eyebrow-compact">${escapeHtml(label)}</p>
+    <strong>${escapeHtml(`${value}`)}</strong>
+  </article>`;
+}
+
+function renderWebLoginPriorityRail(model: AuthPortalShellModel): string {
+  const webLoginSection = model.sections.find((section) => section.id === "web-login");
+  if (!webLoginSection) {
+    return "";
+  }
+
+  const orderedCards = [...webLoginSection.cards].sort((left, right) => {
+    const rank = {
+      "account-action": 0,
+      "session-work": 1,
+      ready: 2,
+    } as const;
+
+    return rank[getWebLoginPriorityBucket(left)] - rank[getWebLoginPriorityBucket(right)];
+  });
+
+  const readyCount = orderedCards.filter((card) => getWebLoginPriorityBucket(card) === "ready").length;
+  const accountActionCount = orderedCards.filter(
+    (card) => getWebLoginPriorityBucket(card) === "account-action",
+  ).length;
+  const sessionWorkCount = orderedCards.filter(
+    (card) => getWebLoginPriorityBucket(card) === "session-work",
+  ).length;
+
+  return `<section class="priority-rail" aria-label="Web/Login live readiness">
+    <header class="section-header">
+      <p class="eyebrow">Web/Login live readiness</p>
+      <h2>The five provider verdicts that matter first</h2>
+      <p>Think of this like the front desk arrivals board. Before you read policies, BYOK inventory, or long diagnostics, check who is already ready, who needs an account action, and who still needs the current browser session finished.</p>
+    </header>
+    <div class="priority-metrics-grid">
+      ${renderPriorityMetric("Ready", readyCount, "ok")}
+      ${renderPriorityMetric("Account action required", accountActionCount, "danger")}
+      ${renderPriorityMetric("Session incomplete", sessionWorkCount, "warning")}
+    </div>
+    <div class="priority-card-grid">
+      ${orderedCards
+        .map((card) => {
+          const truthFocus = getVisibleTruthFocus(card);
+          const bucket = getWebLoginPriorityBucket(card);
+          const detail =
+            truthFocus?.nextStepLabel ??
+            (bucket === "ready" ? "Ready to use" : "Inspect the full card below");
+          const linkTarget = card.routes?.debugWorkbench ?? `#provider-${card.providerId}`;
+          return `<article class="priority-provider-card priority-provider-card-${bucket}">
+            <p class="eyebrow eyebrow-compact">${escapeHtml(card.providerDisplayName)}</p>
+            <h3>${escapeHtml(truthFocus?.title ?? card.stateLabel)}</h3>
+            <p>${escapeHtml(detail)}</p>
+            <a class="priority-provider-link" href="${escapeHtml(linkTarget)}">${escapeHtml(
+              truthFocus ? "Open current truth" : "Jump to provider card",
+            )}</a>
+          </article>`;
+        })
+        .join("")}
+    </div>
   </section>`;
 }
 
@@ -696,6 +961,24 @@ function renderBoundaryRail(model: AuthPortalShellModel): string {
       <p>${escapeHtml(model.trustBoundary)}</p>
     </article>
   </section>`;
+}
+
+function renderSecondaryPortalContext(model: AuthPortalShellModel): string {
+  return `<details class="secondary-context-stack">
+    <summary>Portal rules, workflows, and browser handoff model</summary>
+    <div class="secondary-context-body">
+      ${renderBoundaryRail(model)}
+      <section class="policy-list" aria-label="Supported policies">
+        ${model.supportedPolicies
+          .map((policy) => `<span class="policy-pill">${escapeHtml(policy)}</span>`)
+          .join('')}
+      </section>
+      <section class="workflow-grid" aria-label="Auth workflows">
+        ${model.workflows.map((workflow) => renderWorkflowSummary(workflow)).join('')}
+      </section>
+      ${renderModeGuide()}
+    </div>
+  </details>`;
 }
 
 function renderModeGuide(): string {
@@ -912,6 +1195,7 @@ document.addEventListener('click', async (event) => {
 }
 
 export function renderAuthPortalShell(model: AuthPortalShellModel): string {
+  const orderedSections = orderSectionsForDisplay(model.sections);
   return `<!doctype html>
 <html lang="en">
   <head>
@@ -982,6 +1266,7 @@ export function renderAuthPortalShell(model: AuthPortalShellModel): string {
       .section,
       .policy-list,
       .workflow-grid,
+      .priority-rail,
       .boundary-card,
       .mode-guide,
       .feedback {
@@ -1071,6 +1356,101 @@ export function renderAuthPortalShell(model: AuthPortalShellModel): string {
         background: var(--panel-raised);
       }
 
+      .priority-rail {
+        padding: 1.2rem;
+        margin-bottom: 1rem;
+      }
+
+      .priority-metrics-grid {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 0.85rem;
+        margin: 1rem 0;
+      }
+
+      .priority-metric {
+        border: 1px solid var(--line);
+        border-radius: 18px;
+        padding: 0.9rem 1rem;
+        background: var(--panel-raised);
+      }
+
+      .priority-metric strong {
+        font-size: 2rem;
+        line-height: 1;
+      }
+
+      .priority-metric-ok {
+        border-color: rgba(76, 188, 118, 0.28);
+      }
+
+      .priority-metric-warning {
+        border-color: rgba(199, 139, 44, 0.3);
+      }
+
+      .priority-metric-danger {
+        border-color: rgba(201, 90, 90, 0.34);
+      }
+
+      .priority-card-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+        gap: 0.85rem;
+      }
+
+      .priority-provider-card {
+        border: 1px solid var(--line);
+        border-radius: 18px;
+        padding: 1rem;
+        background: var(--panel-raised);
+      }
+
+      .priority-provider-card h3 {
+        margin: 0 0 0.45rem;
+      }
+
+      .priority-provider-card p:last-of-type {
+        color: var(--muted);
+      }
+
+      .priority-provider-card-ready {
+        border-color: rgba(76, 188, 118, 0.28);
+      }
+
+      .priority-provider-card-account-action {
+        border-color: rgba(201, 90, 90, 0.34);
+      }
+
+      .priority-provider-card-session-work {
+        border-color: rgba(199, 139, 44, 0.3);
+      }
+
+      .priority-provider-link {
+        display: inline-flex;
+        margin-top: 0.4rem;
+        color: var(--ink);
+        text-decoration: none;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.28);
+      }
+
+      .secondary-context-stack {
+        margin-bottom: 1rem;
+        border: 1px solid var(--line);
+        border-radius: 20px;
+        background: var(--panel);
+        box-shadow: var(--shadow);
+      }
+
+      .secondary-context-stack summary {
+        cursor: pointer;
+        padding: 1rem 1.15rem;
+        color: var(--muted);
+      }
+
+      .secondary-context-body {
+        padding: 0 1rem 1rem;
+      }
+
       .policy-list {
         display: flex;
         flex-wrap: wrap;
@@ -1153,6 +1533,25 @@ export function renderAuthPortalShell(model: AuthPortalShellModel): string {
         margin-bottom: 1.25rem;
       }
 
+      .card-group {
+        margin-top: 1rem;
+      }
+
+      .card-group-collapsed {
+        border-top: 1px solid var(--line);
+        padding-top: 0.85rem;
+      }
+
+      .card-group-collapsed summary {
+        cursor: pointer;
+        color: var(--muted);
+        margin-bottom: 0.8rem;
+      }
+
+      .card-group-body p {
+        color: var(--muted);
+      }
+
       .card-grid {
         display: grid;
         grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
@@ -1166,12 +1565,54 @@ export function renderAuthPortalShell(model: AuthPortalShellModel): string {
         background: var(--panel-raised);
       }
 
+      .card-verdict {
+        border: 1px solid var(--line);
+        border-radius: 18px;
+        padding: 0.95rem 1rem;
+        background: rgba(255, 255, 255, 0.03);
+        margin-bottom: 0.85rem;
+      }
+
+      .card-verdict h4 {
+        margin: 0 0 0.4rem;
+        font-size: 1.45rem;
+      }
+
+      .card-verdict-next {
+        color: var(--ink);
+        font-weight: 600;
+        font-size: 0.95rem;
+      }
+
+      .card-verdict p:first-of-type {
+        color: var(--muted);
+      }
+
+      .card-verdict-ok {
+        border-color: rgba(76, 188, 118, 0.3);
+      }
+
+      .card-verdict-warning {
+        border-color: rgba(199, 139, 44, 0.32);
+      }
+
+      .card-verdict-danger {
+        border-color: rgba(201, 90, 90, 0.34);
+      }
+
       .card-header {
         display: flex;
         gap: 1rem;
         align-items: start;
         justify-content: space-between;
         margin-bottom: 0.85rem;
+      }
+
+      .card-kicker {
+        color: var(--muted);
+        font-size: 0.8rem;
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
       }
 
       .state {
@@ -1332,6 +1773,22 @@ export function renderAuthPortalShell(model: AuthPortalShellModel): string {
         gap: 0.6rem;
       }
 
+      .card-details {
+        margin: 0.85rem 0 0.95rem;
+        border-top: 1px solid var(--line);
+        padding-top: 0.8rem;
+      }
+
+      .card-details summary {
+        cursor: pointer;
+        color: var(--muted);
+        font-size: 0.92rem;
+      }
+
+      .card-details-body {
+        margin-top: 0.9rem;
+      }
+
       .action {
         border: none;
         border-radius: 999px;
@@ -1475,9 +1932,14 @@ export function renderAuthPortalShell(model: AuthPortalShellModel): string {
         .hero,
         .section,
         .workflow-grid,
+        .priority-rail,
         .mode-guide {
           padding: 1.1rem;
           border-radius: 18px;
+        }
+
+        .priority-metrics-grid {
+          grid-template-columns: 1fr;
         }
 
         .hero {
@@ -1516,18 +1978,20 @@ export function renderAuthPortalShell(model: AuthPortalShellModel): string {
           </article>
         </div>
       </section>
-      ${renderBoundaryRail(model)}
-      <section class="policy-list" aria-label="Supported policies">
-        ${model.supportedPolicies
-          .map((policy) => `<span class="policy-pill">${escapeHtml(policy)}</span>`)
-          .join('')}
-      </section>
-      <section class="workflow-grid" aria-label="Auth workflows">
-        ${model.workflows.map((workflow) => renderWorkflowSummary(workflow)).join('')}
-      </section>
       <section id="auth-portal-feedback" class="feedback" role="status" aria-live="polite" aria-atomic="true" tabindex="-1" hidden></section>
-      ${model.sections.map((section) => renderSection(section)).join('')}
-      ${renderModeGuide()}
+      ${renderWebLoginPriorityRail(model)}
+      ${orderedSections
+        .map((section) =>
+          section.id === "byok"
+            ? renderCollapsedSection(
+                section,
+                "BYOK inventory and local key slots",
+                "Open this only when you need the local API-key inventory. Keep the Web/Login live wall above as the primary front-door truth.",
+              )
+            : renderWebLoginSection(section),
+        )
+        .join('')}
+      ${renderSecondaryPortalContext(model)}
     </main>
     ${renderRouteCatalog(model.routeCatalog)}
     ${renderPortalScript(model.routeCatalog)}
