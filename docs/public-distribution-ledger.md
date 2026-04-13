@@ -30,6 +30,11 @@ Think of this page as a listing-status board:
 This page is one of the few first-row public truth pages. Packet/accounting
 pages and internal Wave 1 working packs belong on deeper shelves.
 
+Operational support shelves such as
+`docs/public-surface-support-matrix.md` and
+`docs/runbooks/dev-bootstrap.md` stay public, but they are not listing-status
+pages and should not be used as the repo's first product sentence.
+
 ## Machine-Readable Source
 
 - [docs/public-distribution-ledger.json](./public-distribution-ledger.json)

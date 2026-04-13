@@ -700,6 +700,52 @@ describe("Switchyard HTTP surface", () => {
   });
 
   it("surfaces subtype-aware blocker wording in the auth portal and Claude debug workbench", async () => {
+    const idleDebugSupportRunner = async (provider: any) => ({
+      providerId: provider.provider,
+      providerDisplayName: provider.displayName,
+      auth: buildServiceProviderAuthView(provider, "local-user"),
+      runtime: buildServiceProviderRuntimeView(provider),
+      storeReadiness: {
+        credentialState: provider.credentialState,
+        runtimeReadiness: provider.runtimeReadiness,
+        validationState: provider.session.validationState,
+        note: "No live browser inspection is attached for this provider in this test fixture.",
+      },
+      liveReadiness: {
+        status: "unknown",
+        diagnostic: "No live browser inspection is attached for this provider in this test fixture.",
+      },
+      attachTarget: {
+        label: "No attach target",
+        source: "missing",
+        available: false,
+        note: "This fixture intentionally does not attach a browser for non-target providers.",
+      },
+      currentPage: {
+        status: "unavailable",
+        hasComposerSurface: false,
+        diagnostic: "No live browser inspection is attached for this provider in this test fixture.",
+      },
+      currentConsole: {
+        status: "unavailable",
+        entries: [],
+        diagnostic: "No live browser inspection is attached for this provider in this test fixture.",
+      },
+      currentNetwork: {
+        status: "unavailable",
+        entries: [],
+        diagnostic: "No live browser inspection is attached for this provider in this test fixture.",
+      },
+      diagnoseLadder: [
+        {
+          id: "fixture-no-browser",
+          status: "completed",
+          summary: "This fixture keeps non-target providers on stored-session truth only.",
+        },
+      ],
+      routes: buildServiceProviderRouteRefs(provider.provider),
+    });
+
     const service = createTestService({
       useLocalWebAuthStore: false,
       providerSessions: {
@@ -731,6 +777,7 @@ describe("Switchyard HTTP surface", () => {
         },
       },
       debugSupportRunners: {
+        chatgpt: idleDebugSupportRunner,
         claude: async (provider) => ({
           providerId: provider.provider,
           providerDisplayName: provider.displayName,
@@ -805,6 +852,9 @@ describe("Switchyard HTTP surface", () => {
           ],
           routes: buildServiceProviderRouteRefs(provider.provider),
         }),
+        gemini: idleDebugSupportRunner,
+        grok: idleDebugSupportRunner,
+        qwen: idleDebugSupportRunner,
       },
     });
 

@@ -85,10 +85,11 @@ describe("run-reality-gate script", () => {
     const scriptPath = fileURLToPath(
       new URL("../../../scripts/run-reality-gate.mjs", import.meta.url),
     );
+    const runLightweightRuntimePrune = vi.fn();
     const spawnSync = vi
       .fn()
       .mockReturnValueOnce({ status: 0 })
-      .mockReturnValueOnce({ status: 1 })
+      .mockReturnValueOnce({ status: 2 })
       .mockReturnValueOnce({ status: 0 });
     const runGeminiLiveVerification = vi.fn(async () => ({ status: "success" }));
     const runWebLoginLiveVerification = vi.fn(async () => [
@@ -111,6 +112,9 @@ describe("run-reality-gate script", () => {
     }));
     vi.doMock("../../../scripts/verify-web-login-live.mjs", () => ({
       runWebLoginLiveVerification,
+    }));
+    vi.doMock("../../../scripts/runtime-cache-maintenance.mjs", () => ({
+      runLightweightRuntimePrune,
     }));
 
     const originalArgv = [...process.argv];
@@ -139,8 +143,33 @@ describe("run-reality-gate script", () => {
 
     expect(runGeminiLiveVerification).not.toHaveBeenCalled();
     expect(runWebLoginLiveVerification).not.toHaveBeenCalled();
+    expect(spawnSync).toHaveBeenNthCalledWith(
+      1,
+      "pnpm",
+      ["typecheck"],
+      expect.objectContaining({
+        cwd: expect.stringContaining("/Switchyard"),
+        env: process.env,
+        stdio: "inherit",
+      }),
+    );
+    expect(runLightweightRuntimePrune).toHaveBeenCalledWith(
+      expect.objectContaining({
+        repoRoot: expect.stringContaining("/Switchyard"),
+        env: process.env,
+      }),
+    );
     expect(consoleLog).toHaveBeenCalledWith(
       expect.stringContaining('"overallStatus": "failure"'),
+    );
+    expect(consoleLog).toHaveBeenCalledWith(
+      expect.stringContaining('"exitCode": 2'),
+    );
+    expect(consoleLog).toHaveBeenCalledWith(
+      expect.stringContaining('"reason": "internal-gate-failed"'),
+    );
+    expect(consoleLog).toHaveBeenCalledWith(
+      expect.stringContaining('"webLogin": []'),
     );
     expect(processExit).toHaveBeenCalledWith(1);
   });
@@ -149,6 +178,7 @@ describe("run-reality-gate script", () => {
     const scriptPath = fileURLToPath(
       new URL("../../../scripts/run-reality-gate.mjs", import.meta.url),
     );
+    const runLightweightRuntimePrune = vi.fn();
     const spawnSync = vi.fn(() => ({ status: 0 }));
     const runGeminiLiveVerification = vi.fn(async () => ({
       status: "external-blocker",
@@ -188,6 +218,9 @@ describe("run-reality-gate script", () => {
     vi.doMock("../../../scripts/verify-web-login-live.mjs", () => ({
       runWebLoginLiveVerification,
     }));
+    vi.doMock("../../../scripts/runtime-cache-maintenance.mjs", () => ({
+      runLightweightRuntimePrune,
+    }));
 
     const originalArgv = [...process.argv];
     const originalArtifactDir = process.env.SWITCHYARD_REALITY_GATE_ARTIFACT_DIR;
@@ -215,6 +248,20 @@ describe("run-reality-gate script", () => {
 
     expect(runGeminiLiveVerification).toHaveBeenCalledTimes(1);
     expect(runWebLoginLiveVerification).toHaveBeenCalledTimes(1);
+    expect(runLightweightRuntimePrune).toHaveBeenNthCalledWith(
+      1,
+      expect.objectContaining({
+        repoRoot: expect.stringContaining("/Switchyard"),
+        env: process.env,
+      }),
+    );
+    expect(runLightweightRuntimePrune).toHaveBeenNthCalledWith(
+      2,
+      expect.objectContaining({
+        repoRoot: expect.stringContaining("/Switchyard"),
+        env: process.env,
+      }),
+    );
     expect(consoleLog).toHaveBeenCalledWith(
       expect.stringContaining('"overallStatus": "external-blocker"'),
     );
@@ -306,6 +353,41 @@ describe("run-reality-gate script", () => {
     ]);
   });
 
+  it("logs staged events without inventing provider or summary labels", async () => {
+    const { runWebLoginReality } = await import("../../../scripts/run-reality-gate.mjs");
+    const logProgress = vi.fn();
+    const runWebLoginLiveVerificationFn = vi.fn(async ({ onProgress }) => {
+      onProgress({
+        stage: "provider-start",
+      });
+
+      return [
+        {
+          status: "success",
+          provider: "chatgpt",
+        },
+      ];
+    });
+
+    const result = await runWebLoginReality({
+      env: {},
+      logProgress,
+      runWebLoginLiveVerificationFn,
+    });
+
+    expect(runWebLoginLiveVerificationFn).toHaveBeenCalledTimes(1);
+    expect(logProgress).toHaveBeenCalledTimes(1);
+    expect(logProgress).toHaveBeenCalledWith(
+      "[reality:gate] [web-login] provider-start",
+    );
+    expect(result).toEqual([
+      {
+        status: "success",
+        provider: "chatgpt",
+      },
+    ]);
+  });
+
   it("maps aggregate web-login crashes into a fail-closed blocker-shaped result", async () => {
     const { runWebLoginReality } = await import("../../../scripts/run-reality-gate.mjs");
 
@@ -326,5 +408,66 @@ describe("run-reality-gate script", () => {
         summary: "web-login aggregate reality rerun failed before producing a stable result.",
       },
     ]);
+  });
+
+  it("falls back to the default diagnostic when the aggregate crash is not an Error instance", async () => {
+    const { runWebLoginReality } = await import("../../../scripts/run-reality-gate.mjs");
+
+    const result = await runWebLoginReality({
+      env: {},
+      runWebLoginLiveVerificationFn: vi.fn(async () => {
+        throw "aggregate crash";
+      }),
+    });
+
+    expect(result).toEqual([
+      {
+        status: "failure",
+        provider: "web-login-aggregate",
+        reason: "probe-request-failed",
+        classification: "transport-instability",
+        diagnostic: "web-login aggregate reality rerun threw an unknown error.",
+        summary: "web-login aggregate reality rerun failed before producing a stable result.",
+      },
+    ]);
+  });
+
+  it("throws child-process errors instead of swallowing them", async () => {
+    const scriptPath = fileURLToPath(
+      new URL("../../../scripts/run-reality-gate.mjs", import.meta.url),
+    );
+    const spawnSync = vi.fn(() => ({
+      status: 0,
+      error: new Error("spawn blew up"),
+    }));
+    const processExit = vi
+      .spyOn(process, "exit")
+      .mockImplementation(((code?: number) => {
+        throw new Error(`EXIT:${code}`);
+      }) as never);
+
+    vi.doMock("node:child_process", () => ({ spawnSync }));
+    vi.doMock("../../../scripts/runtime-cache-maintenance.mjs", () => ({
+      runLightweightRuntimePrune: vi.fn(),
+    }));
+
+    const originalArgv = [...process.argv];
+    const originalCi = process.env.CI;
+    const originalGithubActions = process.env.GITHUB_ACTIONS;
+    process.argv[1] = scriptPath;
+    delete process.env.CI;
+    delete process.env.GITHUB_ACTIONS;
+
+    try {
+      await expect(import(pathToFileURL(scriptPath).href)).rejects.toThrow(
+        "spawn blew up",
+      );
+    } finally {
+      process.argv = originalArgv;
+      restoreOptionalEnv("CI", originalCi);
+      restoreOptionalEnv("GITHUB_ACTIONS", originalGithubActions);
+    }
+
+    expect(processExit).not.toHaveBeenCalled();
   });
 });
