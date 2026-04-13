@@ -80,6 +80,12 @@ Current operational mapping:
   - quick actions or overlays = `Raycast` utility chrome only
   - embedded help/reference readability = `Mintlify` only when clearly
     subordinate to the runtime shell
+- `docs front door` and public help/reference
+  - answer-first routing, editorial reading rhythm, and docs hierarchy =
+    `Mintlify`
+  - proof cards, trust-boundary badges, and restraint around runtime claims =
+    `Linear` restraint only when subordinate to the docs shell
+  - launcher chrome or authenticated runtime shell grammar = forbidden
 
 Do not reopen donor selection through prompt wording or local taste edits. The
 only legal path is to change the canonical contract first.
@@ -146,7 +152,14 @@ Usage rules:
 - Provider ids, routes, timestamps, acquisition modes, payload labels, command
   names, status signatures: `JetBrains Mono`
 - Numbers tied to runtime artifacts must use mono
-- Do not use `Inter`
+- Do not use `Inter` on runtime/operator surfaces
+- `Inter` is allowed only on `Mintlify`-governed public docs surfaces:
+  - docs front door
+  - public help/reference pages
+  - README-like public reading surfaces when they stay editorial rather than
+    operational
+- If a surface mixes runtime shell and docs content, default back to
+  `IBM Plex Sans`
 - Do not use serif fonts
 - Do not overscale the top heading; hierarchy comes from layout and weight, not
   giant hero text
@@ -266,7 +279,16 @@ Type scale:
 
 These are required, not optional:
 
-- Provide a visible `Skip to main content` link on nav-heavy views
+- Provide a visible `Skip to main content` link on nav-heavy views and all
+  authenticated/runtime shells
+- `Mintlify`-governed public router surfaces may omit a visible skip link only
+  while all three conditions stay true:
+  - navigation remains compact rather than mega-nav or side-rail heavy
+  - the `main` landmark is reachable within the first tab cycle
+  - the page still behaves like a shallow answer-first router, not a deep docs
+    application shell
+- If the public docs shell grows beyond that compact-router profile, add the
+  visible skip link back immediately
 - Keyboard order must equal visual order
 - Main actions must be reachable and operable by keyboard
 - Feedback regions use `role="alert"` or `aria-live`
@@ -328,6 +350,21 @@ Important semantic rules:
 - a multi-tenant control plane
 - a KPI wall
 - a review shell for external stakeholders
+
+### Docs Front Door and Public Help must be
+
+- `Mintlify`-led public routing surfaces
+- answer-first rather than warehouse-first
+- editorial and lightweight before exhaustive
+- explicit about proof, support scope, and trust boundaries
+
+### Docs Front Door and Public Help must not be
+
+- authenticated runtime shells
+- launchy marketing theater
+- a repo file cabinet in disguise
+- a place where donor typography or a11y exceptions bleed back into runtime
+  surfaces
 
 ## 11. If React or shadcn Is Introduced Later
 
