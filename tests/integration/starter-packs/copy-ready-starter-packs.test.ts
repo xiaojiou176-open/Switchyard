@@ -13,7 +13,7 @@ const execFileAsync = promisify(execFile);
 const repoRoot = resolve(dirname(fileURLToPath(import.meta.url)), "../../..");
 
 async function runPack(relativePath: string, env: NodeJS.ProcessEnv = {}) {
-  const { stdout } = await execFileAsync("node", [resolve(repoRoot, relativePath)], {
+  const { stdout } = await execFileAsync(process.execPath, [resolve(repoRoot, relativePath)], {
     cwd: repoRoot,
     env: {
       ...process.env,

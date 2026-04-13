@@ -28,14 +28,5 @@ jobs:
       - name: Install
         run: pnpm install --frozen-lockfile
 
-      - name: Typecheck
-        run: pnpm typecheck
-
-      - name: Docs Frontdoor
-        run: pnpm run test:docs-frontdoor
-
-      - name: Coverage
-        run: pnpm run test:coverage
-
-      - name: Build
-        run: pnpm build
+      - name: Nightly expensive gate
+        run: pnpm run gate:nightly

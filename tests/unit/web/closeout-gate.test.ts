@@ -732,7 +732,12 @@ describe("Reality closeout script helpers", () => {
 
     expect(report.overallStatus).toBe("external-blocker");
     expect(report.exitCode).toBe(2);
-    expect(report.m1KernelAlphaRealityGate).toBe("fail");
+    expect(report.repoOwnedGate).toEqual({
+      passed: true,
+      verdict: "pass",
+      status: "pass-with-external-blockers",
+    });
+    expect(report.m1KernelAlphaRealityGate).toBe("pass");
     expect(report.internalGate.passed).toBe(true);
     expect(report.liveGate.summary).toEqual({
       successCount: 1,
@@ -941,6 +946,11 @@ describe("Reality closeout script helpers", () => {
 
     expect(report.overallStatus).toBe("failure");
     expect(report.exitCode).toBe(1);
+    expect(report.repoOwnedGate).toEqual({
+      passed: false,
+      verdict: "fail",
+      status: "failure",
+    });
     expect(report.internalGate.passed).toBe(false);
   });
 
@@ -963,6 +973,11 @@ describe("Reality closeout script helpers", () => {
 
     expect(report.overallStatus).toBe("failure");
     expect(report.exitCode).toBe(1);
+    expect(report.repoOwnedGate).toEqual({
+      passed: false,
+      verdict: "fail",
+      status: "failure",
+    });
     expect(report.failures).toEqual(
       expect.arrayContaining([
         expect.objectContaining({
