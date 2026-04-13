@@ -52,8 +52,14 @@ test-results/
 .codex/
 .claude/
 .serena/
-.stitch/
-design-system/
+.stitch/*
+!.stitch/DESIGN.md
+design-system/*
+!design-system/MASTER.md
+!design-system/switchyard-auth-portal/
+!design-system/switchyard-auth-portal/MASTER.md
+!design-system/switchyard-debug-cockpit/
+!design-system/switchyard-debug-cockpit/MASTER.md
 
 # Python / sidecar local noise
 __pycache__/

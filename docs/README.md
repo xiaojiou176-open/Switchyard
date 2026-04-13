@@ -19,10 +19,13 @@ The public front door is intentionally split so each page keeps one job:
   - proof-first explanation of what is really proved today
 - `docs/public-distribution-ledger.md`
   - package-ready vs listed-live truth
-- `docs/submission-packet-ledger.md`
-  - the exact heavy-lane submission packet and packet-scoped receipt boundary
 - `docs/README.md`
   - the full atlas, grouped by question
+
+The heavy-lane packet still exists, but it belongs to a deeper reference shelf:
+
+- `docs/submission-packet-ledger.md`
+  - the exact heavy-lane submission packet and packet-scoped receipt boundary
 
 ## Public Language Policy
 
@@ -45,8 +48,6 @@ If you only need the first route, choose one:
   - [docs/public-proof-pack.md](./public-proof-pack.md)
 - I want the package/listing/public-distribution truth
   - [docs/public-distribution-ledger.md](./public-distribution-ledger.md)
-- I want the exact heavy-lane submission packet
-  - [docs/submission-packet-ledger.md](./submission-packet-ledger.md)
 - I want the full atlas on one page
   - [docs/index.html](./index.html)
 
@@ -70,8 +71,6 @@ The shortest truthful route is:
   - the fastest product sentence, current proved facts, and non-goals
 - [docs/shared-provider-runtime.md](./shared-provider-runtime.md)
   - why Switchyard exists as a shared runtime layer
-- [docs/product/v1-brief.md](./product/v1-brief.md)
-  - current V1 shape
 - [docs/product/scope-and-nongoals.md](./product/scope-and-nongoals.md)
   - what the project intentionally does not claim
 
@@ -90,25 +89,8 @@ The shortest truthful route is:
   - schema for the public surface catalog
 - [docs/public-distribution-ledger.md](./public-distribution-ledger.md)
   - package-ready, starter-pack-ready, and official-listing-not-claimed truth
-- [docs/submission-packet-ledger.md](./submission-packet-ledger.md)
-  - canonical repo-wide submission packet vs packet-scoped host receipts
 
 ### API and SDK
-
-- [docs/api/service-http-reference.md](./api/service-http-reference.md)
-- [docs/api/openapi.yaml](./api/openapi.yaml)
-- [docs/api/sdk-quickstart.md](./api/sdk-quickstart.md)
-- [docs/api/mcp-readonly-server.md](./api/mcp-readonly-server.md)
-- [docs/api/error-diagnostics-reference.md](./api/error-diagnostics-reference.md)
-- [docs/api/web-login-acquisition.md](./api/web-login-acquisition.md)
-
-## Contracts
-
-- [docs/contracts/provider-runtime-contract.md](./contracts/provider-runtime-contract.md)
-- [docs/contracts/service-and-sdk-surfaces.md](./contracts/service-and-sdk-surfaces.md)
-- [docs/contracts/auth-accounts-and-credentials.md](./contracts/auth-accounts-and-credentials.md)
-
-## API and SDK
 
 - [docs/api/service-http-reference.md](./api/service-http-reference.md)
 - [docs/api/openapi.yaml](./api/openapi.yaml)
@@ -151,6 +133,69 @@ The shortest truthful route is:
   - host integration route map
 - [docs/host-integration-examples.md](./host-integration-examples.md)
   - host-local example configs
+
+## Public Reference Shelves
+
+These pages are still public and useful, but they are not the first route for a
+new reader.
+
+### Capability and machine-readable reference
+
+- [docs/public-surface-support-matrix.md](./public-surface-support-matrix.md)
+  - the signboard version of the public truth
+- [docs/public-surface-catalog.md](./public-surface-catalog.md)
+  - human-readable public surface catalog
+- [docs/public-surface-catalog.schema.json](./public-surface-catalog.schema.json)
+  - schema for the public surface catalog
+- [docs/api/mcp-readonly-server.md](./api/mcp-readonly-server.md)
+  - read-only MCP capability reference
+- [docs/api/web-login-acquisition.md](./api/web-login-acquisition.md)
+  - web-login acquisition route reference
+- [docs/testing-pyramid.md](./testing-pyramid.md)
+  - testing and gate reference
+
+### Distribution and packet reference
+
+- [docs/public-distribution-ledger.md](./public-distribution-ledger.md)
+  - public distribution truth
+- [docs/submission-packet-ledger.md](./submission-packet-ledger.md)
+  - heavy-lane packet/accounting reference
+
+### Product and explanation shelf
+
+- [docs/shared-provider-runtime.md](./shared-provider-runtime.md)
+  - why the shared runtime exists
+- [docs/product/v1-brief.md](./product/v1-brief.md)
+  - current V1 shape for readers who need the deeper product brief
+
+## Internal Truth Shelves (SSOT / Reference)
+
+These pages should remain in the repo and remain readable, but they are not
+front-row public landing surfaces.
+
+### Contracts
+
+- [docs/contracts/design-mother-strategy.md](./contracts/design-mother-strategy.md)
+- [docs/contracts/provider-runtime-contract.md](./contracts/provider-runtime-contract.md)
+- [docs/contracts/service-and-sdk-surfaces.md](./contracts/service-and-sdk-surfaces.md)
+- [docs/contracts/auth-accounts-and-credentials.md](./contracts/auth-accounts-and-credentials.md)
+
+### Program and blueprint truth
+
+- [docs/blueprints/m2-kernel-beta-verdict.md](./blueprints/m2-kernel-beta-verdict.md)
+  - current `M2 / Kernel Beta` verdict
+- [docs/blueprints/m3-first-party-integration-readiness.md](./blueprints/m3-first-party-integration-readiness.md)
+  - current `M3` readiness package
+- [docs/blueprints/wave3-consumer-seam-matrix.md](./blueprints/wave3-consumer-seam-matrix.md)
+  - the consumer seam matrix
+- [docs/blueprints/wave4-consumer-contract-freeze.md](./blueprints/wave4-consumer-contract-freeze.md)
+  - thin compat contract freeze
+- [docs/blueprints/wave5-thin-compat-starter.md](./blueprints/wave5-thin-compat-starter.md)
+  - thin compat starter boundary
+- [docs/blueprints/wave6-outward-packaging-threshold.md](./blueprints/wave6-outward-packaging-threshold.md)
+  - outward packaging threshold
+- [docs/blueprints/openclaw-zero-token-adoption-ledger.md](./blueprints/openclaw-zero-token-adoption-ledger.md)
+  - upstream adoption ledger
 
 ## Explanations
 
@@ -199,23 +244,6 @@ The shortest truthful route is:
 - [docs/mcp-tool-catalog.schema.json](./mcp-tool-catalog.schema.json)
   - MCP tool catalog schema
 
-## Program Truth
-
-- [docs/blueprints/m2-kernel-beta-verdict.md](./blueprints/m2-kernel-beta-verdict.md)
-  - current `M2 / Kernel Beta` verdict
-- [docs/blueprints/m3-first-party-integration-readiness.md](./blueprints/m3-first-party-integration-readiness.md)
-  - current `M3` readiness package
-- [docs/blueprints/wave3-consumer-seam-matrix.md](./blueprints/wave3-consumer-seam-matrix.md)
-  - the consumer seam matrix
-- [docs/blueprints/wave4-consumer-contract-freeze.md](./blueprints/wave4-consumer-contract-freeze.md)
-  - thin compat contract freeze
-- [docs/blueprints/wave5-thin-compat-starter.md](./blueprints/wave5-thin-compat-starter.md)
-  - thin compat starter boundary
-- [docs/blueprints/wave6-outward-packaging-threshold.md](./blueprints/wave6-outward-packaging-threshold.md)
-  - outward packaging threshold
-- [docs/blueprints/openclaw-zero-token-adoption-ledger.md](./blueprints/openclaw-zero-token-adoption-ledger.md)
-  - upstream adoption ledger
-
 ## Compatibility
 
 - [docs/compat/README.md](./compat/README.md)
@@ -247,11 +275,6 @@ The shortest truthful route is:
 ## i18n
 
 - [docs/i18n.md](./i18n.md)
-
-## Testing
-
-- [docs/testing-pyramid.md](./testing-pyramid.md)
-  - includes the current `pnpm run test:coverage` entrypoint
 
 ## Keyword Truth
 

@@ -7,6 +7,16 @@ It exists to answer one narrower question:
 
 > **What can this repository honestly prove today?**
 
+If you are choosing your first page, stay on the short public path first:
+
+- README
+- `docs/first-success.md`
+- this proof pack
+- `docs/api/service-http-reference.md`
+
+Contract shelves, blueprints, and packet/accounting pages still matter, but
+they are not the first stop for a new reader.
+
 ## One-Line Verdict
 
 Today Switchyard can be honestly proved as:
@@ -82,6 +92,10 @@ Use these pages:
 - [docs/public-surface-support-matrix.md](./public-surface-support-matrix.md)
 - [docs/public-distribution-ledger.md](./public-distribution-ledger.md)
 - [docs/compat/README.md](./compat/README.md)
+
+Do **not** treat [docs/submission-packet-ledger.md](./submission-packet-ledger.md)
+as a first-row landing page. It is a heavier packet/reference shelf for later
+distribution work.
 
 ## Current Live Truth For This Workspace
 
