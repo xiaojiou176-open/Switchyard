@@ -1,6 +1,5 @@
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { fileURLToPath, pathToFileURL } from "node:url";
-import { dirname, join } from "node:path";
 
 afterEach(() => {
   vi.restoreAllMocks();
