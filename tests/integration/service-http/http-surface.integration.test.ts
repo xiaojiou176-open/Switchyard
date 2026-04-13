@@ -290,6 +290,14 @@ describe("Switchyard HTTP surface", () => {
     expect(workbenchHtml).toContain("Read-only inspection surface");
     expect(workbenchHtml).toContain("/v1/runtime/providers/chatgpt/debug/support-bundle");
     expect(workbenchHtml).toContain("Current browser evidence");
+    expect(workbenchHtml).toContain("Browser session first");
+    expect(workbenchHtml).toContain(
+      "Runtime use is still blocked because the current browser session has not reached a reusable workspace yet.",
+    );
+    expect(workbenchHtml).toContain("Runtime still blocked");
+    expect(workbenchHtml).toContain("blocked on current browser");
+    expect(workbenchHtml).toContain("<strong>technical status</strong> <code>ready</code>");
+    expect(workbenchHtml).not.toContain("Runtime can invoke");
   });
 
   it("falls back to the default fail-closed support bundle when no debug runner is registered", async () => {
@@ -895,6 +903,10 @@ describe("Switchyard HTTP surface", () => {
     expect(workbenchHtml).toContain(
       "A reusable-looking browser page does not clear this blocker by itself.",
     );
+    expect(workbenchHtml).toContain("Runtime still blocked");
+    expect(workbenchHtml).toContain("blocked by owner action");
+    expect(workbenchHtml).toContain("<strong>technical status</strong> <code>blocked</code>");
+    expect(workbenchHtml).not.toContain("Runtime can invoke");
     expect(workbenchHtml).toContain("Browser looks reusable");
     expect(workbenchHtml).toContain("technical status");
     expect(workbenchHtml).toContain("live-ready");
@@ -905,6 +917,13 @@ describe("Switchyard HTTP surface", () => {
       "Switchyard could not inspect the attached browser: browserType.connectOverCDP: connect ECONNREFUSED 127.0.0.1:9338";
     const service = createTestService({
       useLocalWebAuthStore: false,
+      providerSessions: {
+        chatgpt: {
+          state: "ready",
+          runtimeReadiness: "ready",
+          validationState: "validated",
+        },
+      },
       debugSupportRunners: {
         chatgpt: async (provider) => ({
           providerId: provider.provider,
@@ -963,6 +982,8 @@ describe("Switchyard HTTP surface", () => {
     expect(workbenchResponse.status).toBe(200);
     expect(workbenchHtml).toContain("Detailed browser diagnostics");
     expect(workbenchHtml).toContain("Evidence stack, repair ladder, and raw JSON surfaces");
+    expect(workbenchHtml).toContain("Runtime can invoke");
+    expect(workbenchHtml).toContain("<strong>technical status</strong> <code>ready</code>");
     expect(workbenchHtml).toContain(
       "Fresh browser inspection is currently unavailable. Use the detailed browser diagnostics tray below for the raw transport error.",
     );
@@ -1054,6 +1075,18 @@ describe("Switchyard HTTP surface", () => {
     expect(authPortalHtml).toContain("User action required");
     expect(authPortalHtml).toContain("Last stored browser checkpoint");
     expect(authPortalHtml).not.toContain("Ready providers (1)");
+
+    const workbenchResponse = await getSurface(
+      service,
+      "/v1/runtime/providers/chatgpt/debug/workbench",
+    );
+    const workbenchHtml = await workbenchResponse.text();
+
+    expect(workbenchResponse.status).toBe(200);
+    expect(workbenchHtml).toContain("Owner action first");
+    expect(workbenchHtml).toContain("Runtime still blocked");
+    expect(workbenchHtml).toContain("blocked by user action");
+    expect(workbenchHtml).not.toContain("Runtime can invoke");
   });
 
   it("returns live-proof success through the probe route when a runner is injected", async () => {

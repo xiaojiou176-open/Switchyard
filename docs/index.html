@@ -36,6 +36,23 @@
         color: var(--ink);
       }
 
+      .skip-link {
+        position: absolute;
+        left: 16px;
+        top: 16px;
+        padding: 10px 14px;
+        border-radius: 999px;
+        background: var(--ink);
+        color: #fefcf8;
+        transform: translateY(-180%);
+        transition: transform 140ms ease;
+        z-index: 10;
+      }
+
+      .skip-link:focus {
+        transform: translateY(0);
+      }
+
       a {
         color: var(--accent);
         text-decoration: none;
@@ -315,13 +332,14 @@
     </style>
   </head>
   <body>
-    <main class="shell">
+    <a class="skip-link" href="#main-content">Skip to main content</a>
+    <main class="shell" id="main-content">
       <section class="topbar">
         <div class="brand">
           <strong>Switchyard Docs Atlas</strong>
           <span>
-            Shared provider runtime docs, routed like an adoption desk instead
-            of a giant file cabinet.
+            Shared provider runtime docs, routed like a public atlas instead of
+            a giant file cabinet.
           </span>
         </div>
         <div class="top-links">
@@ -337,7 +355,7 @@
       <section class="hero">
         <div class="hero-note">
           <span class="eyebrow">Answer-first front door</span>
-          <h1>Choose the shortest truthful route: identity, first success, proof, or API.</h1>
+          <h1>Choose the shortest truthful route before you open the fuller atlas.</h1>
           <p class="lede">
             Switchyard is not a chat product and not a hosted magic shell. This
             docs front door works best when it behaves like a reviewer map:
@@ -377,6 +395,10 @@
             public-but-demoted
             <a href="./runbooks/dev-bootstrap.md">dev bootstrap runbook</a>.
           </p>
+          <p class="quiet">
+            Need the fuller shelf map after the front-row question is answered?
+            Open <a href="./README.md">docs/README.md</a>.
+          </p>
         </div>
       </section>
 
@@ -390,7 +412,7 @@
         <p class="section-intro">
           The fastest way to understand Switchyard is to match your current
           question to the one route built for it. That keeps the docs front door
-          reviewer-friendly even though the repo contains a large atlas behind it.
+          reviewer-friendly even though the repo contains a larger atlas behind it.
         </p>
         <div class="grid">
           <article class="route-card">
@@ -497,7 +519,7 @@
           </article>
           <article class="atlas-card">
             <strong>Builder and deeper shelves</strong>
-            <p>Use chooser, journeys, compat, catalogs, and packet/accounting pages only after the front-row product questions are already answered.</p>
+            <p>Use the fuller docs atlas, builder routes, compat hubs, catalogs, and packet/accounting pages only after the front-row product questions are already answered.</p>
           </article>
         </div>
       </section>

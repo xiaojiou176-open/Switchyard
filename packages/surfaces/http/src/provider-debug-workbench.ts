@@ -52,6 +52,56 @@ interface SharedDiagnosticState {
   condensedSummary?: string;
 }
 
+function getEffectiveRuntimePathStatus(
+  debug: ServiceProviderDebugSupportView,
+  truthFocus: DebugTruthFocus | null,
+): string {
+  if (!truthFocus) {
+    return debug.runtime.runtimeReadiness;
+  }
+
+  switch (debug.currentPage.classification) {
+    case "account-action-required":
+    case "human-verification-required":
+    case "session-incomplete":
+    case "login-required":
+    case "provider-adjacent":
+    case "permission-gated":
+      return "blocked";
+    default:
+      if (debug.auth.session?.state === "user-action-required") {
+        return "blocked";
+      }
+      return debug.runtime.runtimeReadiness;
+  }
+}
+
+function getRuntimePathFactValue(
+  debug: ServiceProviderDebugSupportView,
+  truthFocus: DebugTruthFocus | null,
+): string {
+  if (!truthFocus) {
+    return debug.runtime.runtimeReadiness;
+  }
+
+  switch (debug.currentPage.classification) {
+    case "account-action-required":
+      return "blocked by owner action";
+    case "human-verification-required":
+      return "blocked on verification";
+    case "session-incomplete":
+    case "login-required":
+    case "provider-adjacent":
+    case "permission-gated":
+      return "blocked on current browser";
+    default:
+      if (debug.auth.session?.state === "user-action-required") {
+        return "blocked by user action";
+      }
+      return debug.runtime.runtimeReadiness;
+  }
+}
+
 function getDebugTruthFocus(debug: ServiceProviderDebugSupportView): DebugTruthFocus | null {
   const classification = debug.currentPage.classification;
   const requiredUserAction = debug.auth.session?.requiredUserAction?.trim();
@@ -253,9 +303,15 @@ function renderEvidenceStack(
   </details>`;
 }
 
-function renderSummaryCard(title: string, status: string, summary: string, meta: string): string {
+function renderSummaryCard(
+  title: string,
+  status: string,
+  summary: string,
+  meta: string,
+  technicalStatus = status,
+): string {
   const tone = mapTone(status);
-  const cardMeta = [renderOptionalCode("technical status", status), meta]
+  const cardMeta = [renderOptionalCode("technical status", technicalStatus), meta]
     .filter(Boolean)
     .join("");
 
@@ -345,7 +401,7 @@ function renderPrimaryVerdict(
       </article>
       <article class="verdict-fact">
         <p class="eyebrow eyebrow-compact">Runtime path</p>
-        <strong>${escapeHtml(debug.runtime.runtimeReadiness)}</strong>
+        <strong>${escapeHtml(getRuntimePathFactValue(debug, truthFocus))}</strong>
       </article>
     </div>
   </section>`;
@@ -410,6 +466,7 @@ export function renderProviderDebugWorkbench(
   authPortalRoute = "/v1/runtime/auth-portal",
 ): string {
   const truthFocus = getDebugTruthFocus(debug);
+  const runtimePathStatus = getEffectiveRuntimePathStatus(debug, truthFocus);
   const sharedDiagnostic = getSharedDiagnosticState(debug);
   const storeMeta = [
     renderOptionalCode("validation", debug.storeReadiness.validationState),
@@ -846,7 +903,7 @@ export function renderProviderDebugWorkbench(
         )}
         ${renderSummaryCard(
           "Runtime path",
-          debug.runtime.runtimeReadiness,
+          runtimePathStatus,
           runtimeSummary,
           [
             renderOptionalCode("policy", debug.runtime.degradedInvocationPolicy),
@@ -854,6 +911,7 @@ export function renderProviderDebugWorkbench(
           ]
             .filter(Boolean)
             .join(""),
+          debug.runtime.runtimeReadiness,
         )}
       </section>
       ${renderEvidenceStack(
