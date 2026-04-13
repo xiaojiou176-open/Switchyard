@@ -3,6 +3,37 @@
 > 本文件是本轮 `Switchyard` master program 的唯一执行 SSOT。
 > 任何 fresh truth、SubAgent 回收、Git 变化、blocker 归类、阶段裁决，都先回写这里，再继续推进。
 
+## 2026-04-13 Final Mainline Truth Lock
+
+- this addendum supersedes all older same-day “pending mainline / pending branch cleanup” wording below whenever they conflict
+- current final git truth:
+  - local branch = `main`
+  - local worktree count = `1`
+  - remote heads = only `main`
+  - open PR = `0`
+  - open code-scanning alerts = `0`
+  - docs count = `99`
+- current final readiness truth:
+  - `repo-ready = yes`
+  - `submit-ready = yes`
+  - `platform-ready = no claim`
+  - `submission-done = no`
+  - `review-pending = no`
+  - `listed-live = out of scope`
+  - `product-surface-ready = yes`
+  - `docs-plane-ready = yes`
+  - `design-absorption-ready = yes`
+  - `quality-governance-ready = yes`
+  - `done-on-main = yes`
+- final repo-owned implication:
+  - latest-main UIUX follow-up polish has landed on `main`
+  - the stale remote branch `uiux-latest-main-polish` has been removed
+  - no meaningful repo-owned blocker remains across the active final-wave scope
+- final remaining tails:
+  - `Claude = external-only blocker / account-action-required`
+  - `Grok = external-only blocker / session-incomplete`
+  - everything else is closed on `main`
+
 ## 2026-04-13 Latest-Main UIUX Follow-Up Polish
 
 - this addendum supersedes older same-day “no further headroom” wording below whenever they conflict

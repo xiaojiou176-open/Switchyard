@@ -1,5 +1,25 @@
 # Switchyard Final Wave Receipt — 2026-04-13
 
+## Final Mainline Truth Lock
+
+- current fact:
+  - all repo-owned UIUX follow-up work is now fully mainlined
+  - the stale remote branch `uiux-latest-main-polish` has been removed
+  - latest `main` is the only surviving local and remote branch state
+- fresh git truth:
+  - local branch = `main`
+  - local worktree count = `1`
+  - remote heads = only `main`
+  - open PR = `0`
+  - open code-scanning alerts = `0`
+- blocker type:
+  - none on the repo-owned side
+- remaining blockers:
+  - `Claude = external-only blocker / account-action-required`
+  - `Grok = external-only blocker / session-incomplete`
+- next step:
+  - none for this final-wave repo-owned contract
+
 ## Latest-Main UIUX Follow-Up Polish
 
 - current fact:
