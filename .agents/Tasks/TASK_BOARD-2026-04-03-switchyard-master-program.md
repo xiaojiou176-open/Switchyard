@@ -3,6 +3,37 @@
 > 本文件是本轮 `Switchyard` master program 的唯一执行 SSOT。
 > 任何 fresh truth、SubAgent 回收、Git 变化、blocker 归类、阶段裁决，都先回写这里，再继续推进。
 
+## 2026-04-13 Latest-Main UIUX Follow-Up Polish
+
+- this addendum supersedes older same-day “no further headroom” wording below whenever they conflict
+- current intent:
+  - keep latest `main` as the canonical base
+  - accept only very small high-ROI UI hierarchy refinements
+  - reject broad redesign or new donor drift
+- final bounded changes in this follow-up:
+  - `auth-portal`
+    - hero-side metadata is quieter while keeping readable contrast
+    - first-screen urgency hierarchy between `account-action-required / session-incomplete / ready` is stronger
+  - `docs/index.html`
+    - hero right rail is lighter and less tutorial-like
+    - the docs foyer remains answer-first but feels less like an active guided lesson
+- explicit non-change:
+  - `provider-debug-workbench` was re-checked and intentionally not changed again
+    because it had already reached diminishing returns
+- fresh receipts for this follow-up:
+  - `pnpm exec vitest run tests/integration/auth-portal/auth-portal-shell.test.ts tests/integration/service-http/http-surface.integration.test.ts tests/integration/docs/frontdoor-docs.test.ts --config vitest.config.ts` = `0`
+  - `pnpm typecheck` = `0`
+  - `qa-02-axe`
+    - `auth-portal` = `0 violations`
+    - `docs/index.html` = `0 violations`
+- current honest judgment after this pass:
+  - `auth-portal` = closer to a true arrivals-board front desk
+  - `docs/index.html` = closer to a Mintlify-style foyer with less explanatory drag
+  - remaining headroom is now low-yield micro-polish, not a meaningful productization gap
+- next step after this addendum:
+  - mainline these latest two files
+  - restore clean `main`
+
 ## 2026-04-13 Post-Closeout UIUX Extreme-Polish Addendum
 
 - this addendum supersedes older same-day UIUX polish wording below whenever they conflict

@@ -1,5 +1,32 @@
 # Switchyard Final Wave Receipt — 2026-04-13
 
+## Latest-Main UIUX Follow-Up Polish
+
+- current fact:
+  - one additional latest-main follow-up pass was allowed only because a fresh
+    Chrome-only visual judgment still found 2 bounded high-ROI UIUX refinements
+- changed in this pass:
+  - `auth-portal`
+    - hero-side metadata is quieter but remains WCAG-compliant
+    - `account-action-required / session-incomplete / ready` first-screen
+      hierarchy is stronger
+  - `docs/index.html`
+    - hero right rail is lighter and less tutorial-like
+    - the front door remains answer-first but now carries less explanatory drag
+  - `provider-debug-workbench`
+    - intentionally left unchanged after fresh recheck because the page had
+      already reached diminishing returns
+- fresh evidence for this pass:
+  - `pnpm exec vitest run tests/integration/auth-portal/auth-portal-shell.test.ts tests/integration/service-http/http-surface.integration.test.ts tests/integration/docs/frontdoor-docs.test.ts --config vitest.config.ts` = `0`
+  - `pnpm typecheck` = `0`
+  - `qa-02-axe`
+    - auth portal = `0 violations`
+    - docs front door = `0 violations`
+- blocker type:
+  - none
+- next step:
+  - mainline the two latest polished files and restore clean `main`
+
 ## Post-Closeout UIUX Extreme-Polish Addendum
 
 - current fact:
