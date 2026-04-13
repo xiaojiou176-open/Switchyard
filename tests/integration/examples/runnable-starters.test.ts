@@ -12,8 +12,8 @@ const repoRoot = resolve(dirname(fileURLToPath(import.meta.url)), "../../..");
 
 async function runExample(relativePath: string, env: NodeJS.ProcessEnv) {
   const { stdout } = await execFileAsync(
-    "node",
-    [resolve(repoRoot, relativePath)],
+    "pnpm",
+    ["exec", "node", resolve(repoRoot, relativePath)],
     {
       cwd: repoRoot,
       env: {
@@ -209,24 +209,26 @@ describe("runnable starter mini-projects", () => {
           SWITCHYARD_RUNTIME_BASE_URL: `http://127.0.0.1:${address.port}`,
         });
 
-        expect(output).toEqual(
+        expect(output.starter).toBe("read-only-mcp-inspector");
+        expect(output.availableTools).toEqual(
+          expect.arrayContaining([
+            "switchyard.runtime.health",
+            "switchyard.catalog.mcp_tools",
+          ]),
+        );
+        expect(output.runtimeHealth).toEqual(
           expect.objectContaining({
-            starter: "read-only-mcp-inspector",
-            availableTools: expect.arrayContaining([
-              "switchyard.runtime.health",
-              "switchyard.catalog.mcp_tools",
-            ]),
-            runtimeHealth: expect.objectContaining({
-              command: "health",
-              result: expect.objectContaining({
-                totals: expect.objectContaining({
-                  ready: 5,
-                }),
+            command: "health",
+            result: expect.objectContaining({
+              totals: expect.objectContaining({
+                ready: 5,
               }),
             }),
-            catalogTools: expect.objectContaining({
-              command: "mcp-tools",
-            }),
+          }),
+        );
+        expect(output.catalogTools).toEqual(
+          expect.objectContaining({
+            command: "mcp-tools",
           }),
         );
         expect(requests).toContain("GET /v1/runtime/health");
@@ -342,19 +344,21 @@ describe("runnable starter mini-projects", () => {
           SWITCHYARD_RUNTIME_BASE_URL: `http://127.0.0.1:${address.port}`,
         });
 
-        expect(output).toEqual(
+        expect(output.starter).toBe("host-example-mcp");
+        expect(output.target).toBe("mcp");
+        expect(output.availableTools).toEqual(
+          expect.arrayContaining([
+            "switchyard.runtime.health",
+            "switchyard.catalog.host_examples",
+          ]),
+        );
+        expect(output.toolResult).toEqual(
           expect.objectContaining({
-            starter: "host-example-mcp",
-            target: "mcp",
-            availableTools: expect.arrayContaining([
-              "switchyard.runtime.health",
-              "switchyard.catalog.host_examples",
-            ]),
-            toolResult: expect.objectContaining({
-              command: "health",
-            }),
-            bestEntry: "pnpm run switchyard:cli -- host-example --target mcp",
+            command: "health",
           }),
+        );
+        expect(output.bestEntry).toBe(
+          "pnpm run switchyard:cli -- host-example --target mcp",
         );
         expect(requests).toContain("GET /v1/runtime/health");
       } finally {
