@@ -17,6 +17,10 @@ If someone is opening Switchyard for the first time, send them through:
 - `docs/public-distribution-ledger.md`
 - `docs/api/service-http-reference.md`
 
+If the question becomes local bootstrap or workstation-bound reality, open
+`docs/runbooks/dev-bootstrap.md`. Keep that runbook public, but one shelf
+deeper than the first-row product route.
+
 Wave 1 working packs no longer belong in the public docs plane. They now live
 under `.agents/internal-docs/wave1/`, and the old public paths only act as
 relocation notes.

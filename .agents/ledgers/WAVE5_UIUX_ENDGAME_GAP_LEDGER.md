@@ -1,84 +1,27 @@
 # Wave 5 UIUX Endgame Gap Ledger
 
-Updated: 2026-04-12 PDT
+Updated: 2026-04-13 PDT
 Owner: L1 Wave 5 Commander
-Status: active
+Status: re-locked
 
-## Scope
+## Final Verdict
 
-只记录 Wave 5 允许处理的可见 surface：
+| Surface | Current truth | Blocker status | Evidence |
+| --- | --- | --- | --- |
+| `auth-portal` | The current mainline shell is already verdict-first, blocker-first, and donor-aligned. | `no blocker` | `l2-designer` final verdict; `auth-portal-shell.ts`; `auth-portal-shell.test.ts` |
+| `provider-debug-workbench` | The current mainline shell is already a read-only diagnosis bench with the primary verdict, summary row, and evidence stack in the right order. | `no blocker` | `l2-designer` final verdict; `provider-debug-workbench.ts`; `switchyard-debug-cockpit/MASTER.md` |
+| `docs/public front door` | The old broken `../index.html` path and missing runbook route were the only blocker-grade IA/system gaps. Both are now cleared. | `no blocker` | `docs/index.html`; `README.md`; `docs/README.md`; Chrome screenshot at `.runtime-cache/wave5-final-qa/docs-index.png` |
+| `donor boundary` | `Linear` remains the authenticated shell donor, `Raycast` remains utility chrome only, and `Mintlify` remains docs/public only. | `no blocker` | `docs/contracts/design-mother-strategy.md`; `.stitch/DESIGN.md`; `design-system/MASTER.md` |
+
+## Non-Blocker Residuals
 
 - `auth-portal`
+  - The trust-boundary explanation still lives inside secondary context rather than the first visible rail.
+  - This is now a non-blocker because the page still clearly leads with the lane split, blocker-first triage, and next safe actions.
 - `provider-debug-workbench`
-- public/docs front door（只在理解与路由层面）
+  - The page-level contract still mentions a provider switcher, but the current page is already acceptable as a single-provider diagnosis bench.
+  - This is a non-blocker residual, not a Wave 5 acceptance blocker.
 
-## Already Strong / Do Not Reopen
+## Acceptance
 
-- `provider-debug-workbench` 的主结构已经接近目标状态：
-  - `Primary verdict` 在首屏
-  - `stored material / current browser / runtime path` 三张 summary cards 已成立
-  - 证据堆栈通过 `details` 折叠，已经具备 progressive disclosure
-- `README.md` 与 `docs/README.md` 的 repo identity 基本 truthful：
-  - `shared provider runtime for AI apps`
-  - `BYOK + Web/Login`
-  - `service-first` front door
-- donor boundary 没有明显漂移成 `Sentry / Vercel / HashiCorp / Claude shell`
-
-## Blocker-Grade Gaps
-
-### 1. Auth portal first-row truth is inconsistent with provider debug truth
-
-- Symptom:
-  - `auth-portal` 首屏分桶与 provider-scoped debug workbench 的 verdict 不一致
-  - `Claude` 当前被前台归到 `session incomplete`，但 provider debug 侧是 `owner/manual account action`
-- Why this is a blocker:
-  - 首屏 triage wall 是前台导诊台，不能把用户带去错误路径
-  - 这违反了 `verdict-first` 和 `truthful store-ready vs live-ready split`
-- Primary targets:
-  - `packages/surfaces/http/src/http-surface.ts`
-  - `packages/surfaces/http/src/auth-portal-shell.ts`
-  - `tests/integration/service-http/http-surface.integration.test.ts`
-  - `tests/integration/auth-portal/auth-portal-shell.test.ts`
-
-### 2. Auth portal leaks stale or cross-provider browser checkpoint evidence
-
-- Symptom:
-  - `Claude` card can show `Title = ChatGPT` / `chatgpt.com/...` style checkpoint text
-  - the card labels that data like current browser truth even when it is store-side audit residue
-- Why this is a blocker:
-  - 这是“把 A 机器的温度贴到 B 机器上”的问题，直接伤害可信度
-  - 当前 surface 语言把 store audit 和 live browser truth 混成一层
-- Primary targets:
-  - `packages/surfaces/http/src/auth-portal-shell.ts`
-  - `packages/surfaces/http/src/http-surface.ts`
-  - `tests/integration/service-http/http-surface.integration.test.ts`
-
-## Non-Blocker Polish
-
-### Auth portal
-
-- quick actions / first blocked provider jump can be more direct
-- hero copy 还能更短，更像 front desk，不像解释页
-- secondary context 还能再压缩，让 `Portal rules / workflows / browser handoff` 更像折叠式 utility tray
-
-### Provider debug workbench
-
-- 可补更清楚的 quick-action chrome，但不是 blocker
-- 当前 hero meta 可以更像 “current checkpoint + next safe action” 二分，但现状已可用
-
-### Docs/public front door
-
-- `docs/index.html` 当前风格更像 warm editorial atlas，不够明显对齐 `Mintlify` 的清晰文档阅读节奏
-- 这是 productization opportunity，不是 current blocker
-
-## Endgame Target
-
-Wave 5 结束时，这条 ledger 至少要满足：
-
-1. `auth-portal` 首屏 verdict 与 provider debug truth 不再冲突
-2. `auth-portal` 不再把 store audit 误写成 current browser truth
-3. `auth-portal` 和 `provider-debug-workbench` 都更接近：
-   - minimal cognitive load
-   - beauty
-   - productization
-   - progressive disclosure
+Wave 5 no longer needs another repo-owned UI surface pass to meet the current bar.

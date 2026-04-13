@@ -237,6 +237,7 @@ export async function captureBrowserDebugContext(
     join(bundleRootDir, `${provider}-${slugNow()}-${randomUUID().slice(0, 6)}`);
   const summaryPath = join(bundleDir, "summary.json");
   const screenshotPath = join(bundleDir, "current-page.png");
+  const tracePath = join(bundleDir, "trace.zip");
   const observeMs = options.observeMs ?? 750;
 
   const debugContext = {
@@ -251,11 +252,14 @@ export async function captureBrowserDebugContext(
       bundleDir,
       summaryPath,
       screenshotPath,
+      tracePath,
+      traceMode: "playwright-core-browser-ops",
       command: `pnpm exec node scripts/capture-web-debug-bundle.mjs --provider ${provider}`,
     },
     diagnoseLadder: [],
   };
   let bundleWritable = true;
+  let traceStarted = false;
 
   try {
     mkdirSync(bundleDir, { recursive: true });
@@ -266,14 +270,32 @@ export async function captureBrowserDebugContext(
   }
 
   let browser;
+  let context;
   try {
     browser = await chromium.connectOverCDP(attachTarget.cdpUrl, {
       timeout: options.attachTimeoutMs ?? 5_000,
     });
-    const context = browser.contexts()[0];
+    context = browser.contexts()[0];
 
     if (!context) {
       throw new Error(`No Chrome context is available at ${attachTarget.cdpUrl}.`);
+    }
+
+    if (
+      bundleWritable &&
+      typeof context.tracing?.start === "function"
+    ) {
+      try {
+        await context.tracing.start({
+          screenshots: true,
+          snapshots: true,
+          title: `Switchyard ${provider} browser debug support`,
+        });
+        traceStarted = true;
+      } catch (error) {
+        debugContext.supportBundle.traceError =
+          error instanceof Error ? error.message : String(error);
+      }
     }
 
     const page = selectProviderPage(context, provider);
@@ -371,6 +393,14 @@ export async function captureBrowserDebugContext(
 
     if (bundleWritable) {
       try {
+        if (
+          traceStarted &&
+          typeof context?.tracing?.stop === "function"
+        ) {
+          await context.tracing.stop({
+            path: tracePath,
+          });
+        }
         writeFileSync(summaryPath, `${JSON.stringify(debugContext, null, 2)}\n`, "utf8");
       } catch (error) {
         debugContext.supportBundle.error =

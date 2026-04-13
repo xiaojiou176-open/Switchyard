@@ -14,6 +14,11 @@ If you are choosing your first page, stay on the short public path first:
 - this proof pack
 - `docs/api/service-http-reference.md`
 
+Keep these public, but one shelf deeper:
+
+- `docs/public-surface-support-matrix.md`
+- `docs/runbooks/dev-bootstrap.md`
+
 Contract shelves, blueprints, and packet/accounting pages still matter, but
 they are not the first stop for a new reader. The old Wave 1 working packs also
 now live outside the public docs plane under `.agents/internal-docs/wave1/`.
@@ -92,6 +97,7 @@ Use these pages:
 
 - [docs/public-surface-support-matrix.md](./public-surface-support-matrix.md)
 - [docs/public-distribution-ledger.md](./public-distribution-ledger.md)
+- [docs/runbooks/dev-bootstrap.md](./runbooks/dev-bootstrap.md)
 - [docs/compat/README.md](./compat/README.md)
 
 Do **not** treat packet/accounting pages or Wave 1 working packs as first-row

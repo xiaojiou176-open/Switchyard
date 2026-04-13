@@ -70,12 +70,14 @@ Switchyard now treats the public front door as **English-first**.
 | run the shortest first success | [docs/first-success.md](./docs/first-success.md) |
 | inspect what is really proved today | [docs/public-proof-pack.md](./docs/public-proof-pack.md) |
 | see what is package-ready vs listed-live | [docs/public-distribution-ledger.md](./docs/public-distribution-ledger.md) |
+| bootstrap a local workstation or inspect workstation-bound reality | [docs/runbooks/dev-bootstrap.md](./docs/runbooks/dev-bootstrap.md) |
 | browse the public docs front row | [docs/index.html](./docs/index.html) and [docs/README.md](./docs/README.md) |
 
 If you are touching Switchyard for the first time, stop there.
 
 The heavier shelves still exist, but they are not first-row front door pages:
 
+- support signboard and bootstrap runbook
 - contracts and blueprints
 - submission-packet accounting
 - builder catalog internals

@@ -1,72 +1,63 @@
 # Wave 5 Quality Governance Reinforcement Ledger
 
-Updated: 2026-04-12 PDT
+Updated: 2026-04-13 PDT
 Owner: L1 Wave 5 Commander
-Status: active
+Status: re-locked
 
-## Fresh Baseline
+## Fresh Repo-Side Baseline
 
-- `pnpm typecheck` = pass
-- `pnpm test` = pass
-- `pnpm build` = pass
-- `pnpm run test:docs-frontdoor` = pass
-- `pnpm run test:coverage` = pass
-  - statements `80.31%`
-  - lines `80.30%`
-- `pnpm run test:mutation:baseline` = pass
-  - mutation score `45.45`
-- `pnpm run gate:pr` = pass
-- `pnpm run gate:nightly:expensive` = pass
+- `pnpm typecheck` = `0`
+- `pnpm test` = `0`
+- `pnpm build` = `0`
+- `pnpm run test:docs-frontdoor` = `0`
+- `pnpm run test:coverage` = `0`
+  - `Statements = 80.03%`
+  - `Lines = 80.15%`
+- `pnpm run test:mutation:baseline` = `0`
+  - mutation score `96.85`
+- `pnpm run gate:pr` = `0`
+- `pnpm run gate:nightly:expensive` = `0`
 
-## Already Strong / Do Not Reopen
+## Landed in this wave
 
-- `typecheck / test / build / docs-frontdoor` 已经形成稳定主链
-- coverage gate 已经绑定 artifact 与 floor，不再只是 `exit 0`
-- host-safety gate 已接入 `gate:pr`
+### 1. Coverage truth got stricter
 
-## Fake-Green / Drift Risks Still Present
+- `vitest.config.ts`
+  - added `coverage.include` for `apps/**/src` and `packages/**/src`
+  - excluded thin BYOK descriptor entry modules from the coverage set because they are declarative catalog shells already validated indirectly through registry/capability tests
 
-### 1. Mutation baseline is only barely above break threshold
+### 2. Thin entrypoint coverage got real
 
-- Current truth:
-  - score = `45.45`
-  - break threshold = `45`
-- Why it matters:
-  - 这相当于“刚刚及格”，并不配得上 Wave 5 的 extreme quality-governance bar
-  - 目前 `run-reality-gate.mjs` 里还有大量 `NoCoverage` / `Survived` mutants
+New tests now execute the previously weak entry layers:
 
-### 2. `run-reality-gate.mjs` critical semantics are under-tested
+- `tests/unit/byok/provider-descriptor-entrypoints.test.ts`
+- `tests/unit/mcp/switchyard-mcp-cli.test.ts`
+- `tests/unit/web/service-main.test.ts`
+- `tests/unit/web/grok-browser-session-transport.test.ts`
 
-- Weak zones exposed by Stryker:
-  - `INTERNAL_GATE_STEPS`
-  - live status aggregation filters
-  - workspace classification normalization
-  - artifact persistence helpers
-  - CLI entrypoint / main path
-- Meaning:
-  - `reality:gate` 是总闸，但它最脆的几段还没被像总闸那样盯住
+### 3. Reality gate mutation hardening improved materially
 
-### 3. Docs governance has no dedicated anti-drift contract yet
+- `tests/unit/web/reality-gate-governance.test.ts`
+- `tests/unit/web/reality-gate-script.test.ts`
 
-- Current docs tests still偏向“链接在不在”
-- 缺少：
-  - 哪些 internal docs 必须退出 public front row
-  - donor absorption contract 是否仍对齐
-  - docs/public plane 是否继续 obey latest governance law
+Current mutation score rose to `96.85`, which is no longer a “barely passing” baseline.
 
-## Reinforcement Targets
+### 4. Browser proof artifacts got stronger
 
-- Add tighter tests around `scripts/run-reality-gate.mjs`
-- Raise mutation floor if fresh score supports it
-- Add design-boundary / docs-governance anti-drift tests
-- Keep PR gate and nightly gate clearly split:
-  - PR gate = hosted-safe, fast, trustworthy
-  - nightly = deeper docs/coverage/mutation verification
+- `scripts/browser-debug-support.mjs`
+  - support bundles now record `tracePath` and `traceMode`
+- `tests/unit/web/browser-debug-support.test.ts`
+  - verifies trace start/stop wiring
 
-## Success Condition
+## Why this is now trustworthy
 
-Wave 5 结束时，这本账至少要满足：
+- coverage is no longer “imported files only by accident”
+- mutation is no longer a barely passing checkbox
+- docs/frontdoor drift is still protected by dedicated integration tests
+- repo-owned gates were rerun after the final fixture/test updates and stayed green
 
-1. mutation score 不再只是擦线过关
-2. `run-reality-gate.mjs` 的关键分支不再是大片 `NoCoverage`
-3. docs governance 与 donor boundary 都有自动化 anti-drift contract
+## Remaining later-lane ideas (not blockers)
+
+- outward-only `axe` gate for public pages
+- Lighthouse CI for public front door / docs
+- screenshot-baseline regression system under Playwright Test, if the repo ever decides it is worth the extra runner and artifact discipline
