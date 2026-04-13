@@ -73,6 +73,10 @@ V1 的外部复用方式固定为：
 - 当前 outward wording 要同步到 `Claude / Grok` 这组 workspace external blockers
 - detailed live snapshot 继续放在 `docs/public-proof-pack.md` 与 current task board，不再把 exact count 长期写死在 blueprint 主体里
 - 这仍然是 credentialed workstation 的时间片真相，不是 repo 常量
+- `pnpm run reality:gate` 也要按两层读：
+  - `overallStatus = external-blocker` / `exitCode = 2` = 当前工作机仍被外部 blocker 卡住
+  - `repoOwnedGate.verdict = pass` = repo-owned closeout 仍然成立，不应把这类 external-only 时间片写成 repo 或 milestone fail
+  - 只有 `repoOwnedGate.verdict = fail` 才是 repo-owned failure
 
 因此，当前最诚实的阶段语义是：
 

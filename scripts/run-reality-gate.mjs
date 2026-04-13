@@ -145,6 +145,13 @@ async function runWebLoginReality() {
 export function buildRealityGateReport({ internalGate, geminiByok, webLogin }) {
   const internalGatePassed = internalGate.every((step) => step.exitCode === 0);
   const { summary, externalBlockers, failures } = summarizeLiveStatuses(geminiByok, webLogin);
+  const repoOwnedPassed = internalGatePassed && summary.failureCount === 0;
+  const repoOwnedVerdict = repoOwnedPassed ? "pass" : "fail";
+  const repoOwnedStatus = !repoOwnedPassed
+    ? "failure"
+    : summary.externalBlockerCount > 0
+      ? "pass-with-external-blockers"
+      : "pass";
   const overallStatus = !internalGatePassed
     ? "failure"
     : summary.failureCount > 0
@@ -157,7 +164,12 @@ export function buildRealityGateReport({ internalGate, geminiByok, webLogin }) {
     generatedAt: new Date().toISOString(),
     overallStatus,
     exitCode: overallStatus === "success" ? 0 : overallStatus === "external-blocker" ? 2 : 1,
-    m1KernelAlphaRealityGate: overallStatus === "success" ? "pass" : "fail",
+    repoOwnedGate: {
+      passed: repoOwnedPassed,
+      verdict: repoOwnedVerdict,
+      status: repoOwnedStatus,
+    },
+    m1KernelAlphaRealityGate: repoOwnedVerdict,
     internalGate: {
       passed: internalGatePassed,
       steps: internalGate,
