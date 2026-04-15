@@ -65,9 +65,8 @@ If you only need the next truthful route, choose one:
 - I need local bootstrap or workstation-bound reality
   - [docs/runbooks/dev-bootstrap.md](./runbooks/dev-bootstrap.md)
 
-The old Wave 1 working packs were relocated out of the public docs plane. The
-legacy `docs/blueprints/wave1/*` paths now act only as relocation notes, while
-the working copies live under `.agents/internal-docs/wave1/`.
+The old Wave 1 working packs were relocated out of the public docs plane, and
+the working copies now live under `.agents/internal-docs/wave1/`.
 
 ## Front Row Rules
 
