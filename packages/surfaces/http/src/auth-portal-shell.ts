@@ -1043,6 +1043,41 @@ function renderPriorityMetric(
   </article>`;
 }
 
+function renderHeroFirstCallStrip(model: AuthPortalShellModel): string {
+  const webLoginSection = model.sections.find((section) => section.id === "web-login");
+  if (!webLoginSection) {
+    return "";
+  }
+
+  const readyCount = webLoginSection.cards.filter(
+    (card) => getWebLoginPriorityBucket(card) === "ready",
+  ).length;
+  const accountActionCount = webLoginSection.cards.filter(
+    (card) => getWebLoginPriorityBucket(card) === "account-action",
+  ).length;
+  const sessionWorkCount = webLoginSection.cards.filter(
+    (card) => getWebLoginPriorityBucket(card) === "session-work",
+  ).length;
+
+  return `<div class="hero-call-strip" aria-label="First call summary">
+    <article class="hero-call-card hero-call-card-danger">
+      <p class="eyebrow eyebrow-compact">Owner action</p>
+      <strong>${escapeHtml(`${accountActionCount}`)}</strong>
+      <span>Accounts blocked on payment, subscription, or other owner-manual steps.</span>
+    </article>
+    <article class="hero-call-card hero-call-card-warning">
+      <p class="eyebrow eyebrow-compact">Browser work</p>
+      <strong>${escapeHtml(`${sessionWorkCount}`)}</strong>
+      <span>Providers that still need the current browser seat finished before the runtime can trust them.</span>
+    </article>
+    <article class="hero-call-card hero-call-card-ok">
+      <p class="eyebrow eyebrow-compact">Ready now</p>
+      <strong>${escapeHtml(`${readyCount}`)}</strong>
+      <span>Providers already reusable without opening the deeper shelf first.</span>
+    </article>
+  </div>`;
+}
+
 function renderWebLoginPriorityRail(model: AuthPortalShellModel): string {
   const webLoginSection = model.sections.find((section) => section.id === "web-login");
   if (!webLoginSection) {
@@ -1536,6 +1571,48 @@ export function renderAuthPortalShell(model: AuthPortalShellModel): string {
         flex-wrap: wrap;
         gap: 0.65rem;
         margin-top: 1rem;
+      }
+
+      .hero-call-strip {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 0.8rem;
+        margin-top: 1rem;
+      }
+
+      .hero-call-card {
+        border: 1px solid var(--line);
+        border-radius: 18px;
+        padding: 0.82rem 0.9rem;
+        background: var(--panel-raised);
+        box-shadow:
+          0 0 0 1px rgba(255, 255, 255, 0.05),
+          inset 0 1px 0 rgba(255, 255, 255, 0.04);
+      }
+
+      .hero-call-card strong {
+        display: block;
+        margin-bottom: 0.2rem;
+        font-size: 1.55rem;
+        line-height: 1;
+      }
+
+      .hero-call-card span {
+        color: var(--muted);
+        font-size: 0.86rem;
+        line-height: 1.4;
+      }
+
+      .hero-call-card-ok {
+        border-color: rgba(76, 188, 118, 0.28);
+      }
+
+      .hero-call-card-warning {
+        border-color: rgba(199, 139, 44, 0.3);
+      }
+
+      .hero-call-card-danger {
+        border-color: rgba(201, 90, 90, 0.34);
       }
 
       .hero-meta {
@@ -2361,6 +2438,10 @@ export function renderAuthPortalShell(model: AuthPortalShellModel): string {
           grid-template-columns: 1fr;
         }
 
+        .hero-call-strip {
+          grid-template-columns: 1fr;
+        }
+
         .hero {
           grid-template-columns: 1fr;
         }
@@ -2394,6 +2475,7 @@ export function renderAuthPortalShell(model: AuthPortalShellModel): string {
             <a class="action action-ghost action-link" href="#auth-portal-provider-drawers">Open deeper provider shelf</a>
             <a class="action action-ghost action-link" href="#section-byok">Review BYOK inventory</a>
           </div>
+          ${renderHeroFirstCallStrip(model)}
         </div>
         <div class="hero-meta">
           <article class="hero-meta-card hero-meta-card-priority">
