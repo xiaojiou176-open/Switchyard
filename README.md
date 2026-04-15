@@ -83,9 +83,8 @@ The heavier shelves still exist, but they are not first-row front door pages:
 - builder catalog internals
 - testing/governance reference pages
 
-The old Wave 1 working packs were relocated out of the public docs plane. The
-legacy `docs/blueprints/wave1/*` paths now act only as relocation notes, while
-the real working copies live under `.agents/internal-docs/wave1/`.
+The old Wave 1 working packs were relocated out of the public docs plane, and
+the real working copies now live under `.agents/internal-docs/wave1/`.
 
 ## 30-Second Version
 
@@ -346,8 +345,6 @@ deeper shelves rather than the default first stop.
   - `.agents/internal-docs/product/`
   - `.agents/internal-docs/testing/`
 - Wave 1 contract/evidence packs continue to live under `.agents/internal-docs/wave1/`.
-- The old `docs/blueprints/wave1/*` locations remain only as relocation notes so
-  older links do not break.
 
 ## Truth Rules
 
