@@ -68,8 +68,8 @@ Important docs:
   - examples/hosts/index.schema.json
   - docs/compat/README.md
   - docs/shared-provider-runtime.md
-  - docs/product/v1-brief.md
-  - docs/product/scope-and-nongoals.md
+  - .agents/internal-docs/product/v1-brief.md
+  - .agents/internal-docs/product/scope-and-nongoals.md
   - docs/mcp.md
   - docs/provider-runtime-catalog.md
   - docs/provider-runtime-catalog.json
@@ -89,7 +89,7 @@ Important docs:
   - docs/faq.md
   - docs/glossary.md
   - docs/i18n.md
-  - docs/testing-pyramid.md
+  - .agents/internal-docs/testing/testing-pyramid.md
   - docs/discoverability-keyword-truth.md
   - docs/discoverability-keyword-truth.json
   - docs/discoverability-keyword-truth.schema.json
