@@ -95,4 +95,3 @@ Important docs:
   - docs/discoverability-keyword-truth.schema.json
 - Internal-only working packs:
   - .agents/internal-docs/wave1/README.md
-  - old docs/blueprints/wave1/* paths are relocation notes, not public front-door docs

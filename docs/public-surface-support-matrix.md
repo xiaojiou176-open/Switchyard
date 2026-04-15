@@ -22,8 +22,7 @@ If the question becomes local bootstrap or workstation-bound reality, open
 deeper than the first-row product route.
 
 Wave 1 working packs no longer belong in the public docs plane. They now live
-under `.agents/internal-docs/wave1/`, and the old public paths only act as
-relocation notes.
+under `.agents/internal-docs/wave1/`.
 
 ## Current Rule
 
