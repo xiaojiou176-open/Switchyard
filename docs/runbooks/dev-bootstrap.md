@@ -60,7 +60,7 @@
 
 如果你要看完整 5-layer 总图，先看：
 
-- [docs/testing-pyramid.md](../testing-pyramid.md)
+- [.agents/internal-docs/testing/testing-pyramid.md](../../.agents/internal-docs/testing/testing-pyramid.md)
 - [README.md](../../README.md)
 
 ---
@@ -381,16 +381,16 @@ pnpm run reseed:isolated-chrome-root -- --json
 在跑任何命令前，先读：
 
 1. `README.md`
-2. `docs/product/v1-brief.md`
-3. `docs/product/scope-and-nongoals.md`
-4. `docs/adr/0001-v1-boundary-and-lane-model.md`
-5. `docs/adr/0002-external-repo-adoption-matrix.md`
-6. `docs/adr/0003-upstream-relationship-openclaw-zero-token.md`
-7. `docs/adr/0004-architecture-skeleton-monorepo.md`
-8. `docs/contracts/provider-runtime-contract.md`
-9. `docs/contracts/auth-accounts-and-credentials.md`
-10. `docs/contracts/service-and-sdk-surfaces.md`
-11. `docs/blueprints/v1-delivery-plan.md`
+2. `.agents/internal-docs/product/v1-brief.md`
+3. `.agents/internal-docs/product/scope-and-nongoals.md`
+4. `.agents/internal-docs/adr/0001-v1-boundary-and-lane-model.md`
+5. `.agents/internal-docs/adr/0002-external-repo-adoption-matrix.md`
+6. `.agents/internal-docs/adr/0003-upstream-relationship-openclaw-zero-token.md`
+7. `.agents/internal-docs/adr/0004-architecture-skeleton-monorepo.md`
+8. `.agents/internal-docs/contracts/provider-runtime-contract.md`
+9. `.agents/internal-docs/contracts/auth-accounts-and-credentials.md`
+10. `.agents/internal-docs/contracts/service-and-sdk-surfaces.md`
+11. `.agents/internal-docs/blueprints/v1-delivery-plan.md`
 12. `.agents/Tasks/TASK_BOARD-2026-03-29-switchyard-bootstrap.md`
 
 如果这些没读够，就不要开工写代码。

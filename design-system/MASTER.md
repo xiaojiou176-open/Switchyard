@@ -3,11 +3,11 @@
 ## [Confirmed] Contract Role
 
 This file operationalizes
-`docs/contracts/design-mother-strategy.md` for repo-local design assets.
+`.agents/internal-docs/contracts/design-mother-strategy.md` for repo-local design assets.
 
 Authority order for design assets is fixed:
 
-1. `docs/contracts/design-mother-strategy.md`
+1. `.agents/internal-docs/contracts/design-mother-strategy.md`
 2. `design-system/MASTER.md`
 3. `design-system/switchyard-auth-portal/MASTER.md`
 4. `design-system/switchyard-debug-cockpit/MASTER.md`

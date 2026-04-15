@@ -51,7 +51,7 @@ Each row locks seven things:
 
 Historical drift anchor retained on purpose:
 
-| Public docs and help surfaces | `docs/contracts/design-mother-strategy.md` | `Mintlify` | docs hierarchy, reading rhythm, public knowledge clarity | `Raycast` primary shell, authenticated runtime shell borrowing | not part of authenticated runtime identity | included here so future work does not reopen donor choice; not edited in this wave |
+| Public docs and help surfaces | `.agents/internal-docs/contracts/design-mother-strategy.md` | `Mintlify` | docs hierarchy, reading rhythm, public knowledge clarity | `Raycast` primary shell, authenticated runtime shell borrowing | not part of authenticated runtime identity | included here so future work does not reopen donor choice; not edited in this wave |
 
 ## [Current Default] How To Use This Ledger
 

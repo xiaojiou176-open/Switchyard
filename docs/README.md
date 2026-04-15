@@ -110,9 +110,11 @@ tree or CLI surfaces instead of turning this atlas back into a file cabinet.
 These remain part of the repo's truth system, but they are not first-row public
 landing pages:
 
-- `docs/contracts/*`
-- `docs/blueprints/*`
-- `docs/testing-pyramid.md`
+- `.agents/internal-docs/adr/*`
+- `.agents/internal-docs/contracts/*`
+- `.agents/internal-docs/blueprints/*`
+- `.agents/internal-docs/product/*`
+- `.agents/internal-docs/testing/testing-pyramid.md`
 - packet/accounting pages such as `submission-packet-ledger`
 
 Current working packs that already moved out of the public docs plane live

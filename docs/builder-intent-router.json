@@ -250,7 +250,7 @@
       ],
       "relatedDocs": [
         "docs/shared-provider-runtime.md",
-        "docs/contracts/provider-runtime-contract.md"
+        ".agents/internal-docs/contracts/provider-runtime-contract.md"
       ],
       "searchKeywords": [
         "switchyard provider catalog",

@@ -11,7 +11,7 @@
       "canonicalDocs": [
         "README.md",
         "docs/shared-provider-runtime.md",
-        "docs/product/v1-brief.md"
+        ".agents/internal-docs/product/v1-brief.md"
       ]
     },
     {
@@ -46,9 +46,9 @@
       "truthfulMeaning": "BYOK is one of the two V1 supply lanes and can be claimed directly when the wording stays on user-provided provider credentials.",
       "requiredLabels": [],
       "canonicalDocs": [
-        "docs/product/v1-brief.md",
-        "docs/product/scope-and-nongoals.md",
-        "docs/contracts/auth-accounts-and-credentials.md"
+        ".agents/internal-docs/product/v1-brief.md",
+        ".agents/internal-docs/product/scope-and-nongoals.md",
+        ".agents/internal-docs/contracts/auth-accounts-and-credentials.md"
       ]
     },
     {
@@ -58,9 +58,9 @@
       "truthfulMeaning": "Web/Login is one of the two V1 supply lanes and can be claimed directly when the wording stays on end-user-owned web sessions.",
       "requiredLabels": [],
       "canonicalDocs": [
-        "docs/product/v1-brief.md",
-        "docs/product/scope-and-nongoals.md",
-        "docs/contracts/auth-accounts-and-credentials.md"
+        ".agents/internal-docs/product/v1-brief.md",
+        ".agents/internal-docs/product/scope-and-nongoals.md",
+        ".agents/internal-docs/contracts/auth-accounts-and-credentials.md"
       ]
     },
     {
@@ -70,7 +70,7 @@
       "truthfulMeaning": "Switchyard can honestly describe its public substrate as service-first when the claim stays on the runtime/service frontdoor rather than a host shell.",
       "requiredLabels": [],
       "canonicalDocs": [
-        "docs/contracts/service-and-sdk-surfaces.md",
+        ".agents/internal-docs/contracts/service-and-sdk-surfaces.md",
         "docs/shared-provider-runtime.md",
         "docs/api/service-http-reference.md"
       ]
@@ -82,7 +82,7 @@
       "truthfulMeaning": "Switchyard can honestly describe itself as API-substrate-first when the claim stays on the shared provider runtime surface.",
       "requiredLabels": [],
       "canonicalDocs": [
-        "docs/contracts/service-and-sdk-surfaces.md",
+        ".agents/internal-docs/contracts/service-and-sdk-surfaces.md",
         "docs/api/openapi.yaml",
         "docs/api/service-http-reference.md"
       ]
