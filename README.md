@@ -292,8 +292,6 @@ deeper shelves rather than the default first stop.
 
 - Product and scope
   - [docs/shared-provider-runtime.md](./docs/shared-provider-runtime.md)
-  - [docs/product/v1-brief.md](./docs/product/v1-brief.md)
-  - [docs/product/scope-and-nongoals.md](./docs/product/scope-and-nongoals.md)
 - API and diagnostics
   - [docs/api/sdk-quickstart.md](./docs/api/sdk-quickstart.md)
   - [docs/api/mcp-readonly-server.md](./docs/api/mcp-readonly-server.md)
@@ -320,9 +318,6 @@ deeper shelves rather than the default first stop.
   - [docs/public-surface-catalog.schema.json](./docs/public-surface-catalog.schema.json)
   - [docs/compat/README.md](./docs/compat/README.md)
   - [docs/mcp.md](./docs/mcp.md)
-  - [docs/blueprints/m2-kernel-beta-verdict.md](./docs/blueprints/m2-kernel-beta-verdict.md)
-  - [docs/blueprints/m3-first-party-integration-readiness.md](./docs/blueprints/m3-first-party-integration-readiness.md)
-  - [docs/blueprints/openclaw-zero-token-adoption-ledger.md](./docs/blueprints/openclaw-zero-token-adoption-ledger.md)
   - [docs/provider-runtime-catalog.md](./docs/provider-runtime-catalog.md)
   - [docs/provider-runtime-catalog.json](./docs/provider-runtime-catalog.json)
   - [docs/provider-runtime-catalog.schema.json](./docs/provider-runtime-catalog.schema.json)
@@ -341,11 +336,16 @@ deeper shelves rather than the default first stop.
   - [docs/faq.md](./docs/faq.md)
   - [docs/glossary.md](./docs/glossary.md)
   - [docs/i18n.md](./docs/i18n.md)
-  - [docs/testing-pyramid.md](./docs/testing-pyramid.md)
 
 ### Internal-only working packs
 
-- Wave 1 contract/evidence packs now live under `.agents/internal-docs/wave1/`.
+- Switchyard's internal truth shelves now live under:
+  - `.agents/internal-docs/adr/`
+  - `.agents/internal-docs/contracts/`
+  - `.agents/internal-docs/blueprints/`
+  - `.agents/internal-docs/product/`
+  - `.agents/internal-docs/testing/`
+- Wave 1 contract/evidence packs continue to live under `.agents/internal-docs/wave1/`.
 - The old `docs/blueprints/wave1/*` locations remain only as relocation notes so
   older links do not break.
 
