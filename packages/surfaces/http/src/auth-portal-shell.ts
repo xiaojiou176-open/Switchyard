@@ -1059,22 +1059,25 @@ function renderHeroFirstCallStrip(model: AuthPortalShellModel): string {
     (card) => getWebLoginPriorityBucket(card) === "session-work",
   ).length;
 
-  return `<div class="hero-call-strip" aria-label="First call summary">
-    <article class="hero-call-card hero-call-card-danger">
+  return `<div class="hero-call-strip-shell">
+    <p class="eyebrow eyebrow-compact">First call summary</p>
+    <div class="hero-call-strip" aria-label="First call summary">
+      <article class="hero-call-card hero-call-card-danger">
       <p class="eyebrow eyebrow-compact">Owner action</p>
       <strong>${escapeHtml(`${accountActionCount}`)}</strong>
       <span>Accounts blocked on payment, subscription, or other owner-manual steps.</span>
-    </article>
-    <article class="hero-call-card hero-call-card-warning">
+      </article>
+      <article class="hero-call-card hero-call-card-warning">
       <p class="eyebrow eyebrow-compact">Browser work</p>
       <strong>${escapeHtml(`${sessionWorkCount}`)}</strong>
       <span>Providers that still need the current browser seat finished before the runtime can trust them.</span>
-    </article>
-    <article class="hero-call-card hero-call-card-ok">
+      </article>
+      <article class="hero-call-card hero-call-card-ok">
       <p class="eyebrow eyebrow-compact">Ready now</p>
       <strong>${escapeHtml(`${readyCount}`)}</strong>
       <span>Providers already reusable without opening the deeper shelf first.</span>
-    </article>
+      </article>
+    </div>
   </div>`;
 }
 
@@ -1573,17 +1576,22 @@ export function renderAuthPortalShell(model: AuthPortalShellModel): string {
         margin-top: 1rem;
       }
 
+      .hero-call-strip-shell {
+        display: grid;
+        gap: 0.55rem;
+        margin-top: 1rem;
+      }
+
       .hero-call-strip {
         display: grid;
         grid-template-columns: repeat(3, minmax(0, 1fr));
         gap: 0.8rem;
-        margin-top: 1rem;
       }
 
       .hero-call-card {
         border: 1px solid var(--line);
         border-radius: 18px;
-        padding: 0.82rem 0.9rem;
+        padding: 0.95rem 1rem 0.9rem;
         background: var(--panel-raised);
         box-shadow:
           0 0 0 1px rgba(255, 255, 255, 0.05),
@@ -1592,27 +1600,36 @@ export function renderAuthPortalShell(model: AuthPortalShellModel): string {
 
       .hero-call-card strong {
         display: block;
-        margin-bottom: 0.2rem;
-        font-size: 1.55rem;
+        margin-bottom: 0.28rem;
+        font-size: 1.7rem;
         line-height: 1;
       }
 
       .hero-call-card span {
         color: var(--muted);
-        font-size: 0.86rem;
+        font-size: 0.84rem;
         line-height: 1.4;
       }
 
       .hero-call-card-ok {
-        border-color: rgba(76, 188, 118, 0.28);
+        border-color: rgba(76, 188, 118, 0.32);
+        background:
+          linear-gradient(180deg, rgba(76, 188, 118, 0.14), rgba(76, 188, 118, 0.04)),
+          var(--panel-raised);
       }
 
       .hero-call-card-warning {
-        border-color: rgba(199, 139, 44, 0.3);
+        border-color: rgba(199, 139, 44, 0.34);
+        background:
+          linear-gradient(180deg, rgba(199, 139, 44, 0.16), rgba(199, 139, 44, 0.045)),
+          var(--panel-raised);
       }
 
       .hero-call-card-danger {
-        border-color: rgba(201, 90, 90, 0.34);
+        border-color: rgba(201, 90, 90, 0.38);
+        background:
+          linear-gradient(180deg, rgba(201, 90, 90, 0.18), rgba(201, 90, 90, 0.05)),
+          var(--panel-raised);
       }
 
       .hero-meta {
@@ -2470,12 +2487,12 @@ export function renderAuthPortalShell(model: AuthPortalShellModel): string {
           <p class="eyebrow">Local-first provider access</p>
           <h1>${escapeHtml(model.title)}</h1>
           <p>Use this machine-local front desk to make one call first: <strong>who is ready now</strong>, <strong>who needs owner action</strong>, and <strong>who still needs the current browser seat finished</strong>.</p>
+          ${renderHeroFirstCallStrip(model)}
           <div class="hero-actions">
             <a class="action action-primary action-link" href="#auth-portal-web-login-priority-rail">Review arrivals board first</a>
             <a class="action action-ghost action-link" href="#auth-portal-provider-drawers">Open deeper provider shelf</a>
             <a class="action action-ghost action-link" href="#section-byok">Review BYOK inventory</a>
           </div>
-          ${renderHeroFirstCallStrip(model)}
         </div>
         <div class="hero-meta">
           <article class="hero-meta-card hero-meta-card-priority">
