@@ -1067,7 +1067,7 @@ function renderWebLoginPriorityRail(model: AuthPortalShellModel): string {
     (card) => getWebLoginPriorityBucket(card) === "session-work",
   ).length;
 
-  return `<section class="priority-rail" aria-label="Web/Login live readiness">
+  return `<section id="auth-portal-web-login-priority-rail" class="priority-rail" aria-label="Web/Login live readiness">
     <header class="section-header">
       <p class="eyebrow">Web/Login live readiness</p>
       <h2>The five provider verdicts that matter first</h2>
@@ -1085,12 +1085,21 @@ function renderWebLoginPriorityRail(model: AuthPortalShellModel): string {
           const bucket = getWebLoginPriorityBucket(card);
           const detail =
             truthFocus?.nextStepLabel ??
-            (bucket === "ready" ? "Ready to use" : "Open the deeper provider shelf");
+            card.handoff?.nextStep?.label ??
+            card.actions?.[0]?.label ??
+            (bucket === "ready" ? "Ready to use" : "Inspect current truth");
+          const summary =
+            truthFocus?.detail ??
+            card.statusSummary ??
+            (bucket === "ready"
+              ? "This provider is currently reusable."
+              : "Open the current provider shelf only after the arrivals board tells you this is the next blocker to resolve.");
           const linkTarget = card.routes?.debugWorkbench ?? `#provider-${card.providerId}`;
           return `<article class="priority-provider-card priority-provider-card-${bucket}">
             <p class="eyebrow eyebrow-compact">${escapeHtml(card.providerDisplayName)}</p>
             <h3>${escapeHtml(truthFocus?.title ?? card.stateLabel)}</h3>
-            <p>${escapeHtml(detail)}</p>
+            <p class="priority-provider-step">${escapeHtml(detail)}</p>
+            <p class="priority-provider-summary">${escapeHtml(summary)}</p>
             <a class="priority-provider-link" href="${escapeHtml(linkTarget)}">${escapeHtml(
               truthFocus ? "Open current truth" : "Jump to provider card",
             )}</a>
@@ -1562,6 +1571,65 @@ export function renderAuthPortalShell(model: AuthPortalShellModel): string {
         color: #7cd6a1;
       }
 
+      .hero-meta-card-priority {
+        border-color: rgba(63, 165, 107, 0.24);
+        background:
+          linear-gradient(180deg, rgba(63, 165, 107, 0.1), rgba(63, 165, 107, 0.03)),
+          var(--panel-raised);
+        box-shadow:
+          0 14px 30px rgba(63, 165, 107, 0.08),
+          inset 0 1px 0 rgba(255, 255, 255, 0.04);
+      }
+
+      .hero-step-list {
+        list-style: none;
+        display: grid;
+        gap: 0.6rem;
+        margin: 0;
+        padding: 0;
+      }
+
+      .hero-step-list li {
+        display: grid;
+        grid-template-columns: auto 1fr;
+        gap: 0.7rem;
+        align-items: start;
+      }
+
+      .hero-step-index {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        min-width: 1.55rem;
+        min-height: 1.55rem;
+        border-radius: 999px;
+        background: rgba(63, 165, 107, 0.18);
+        color: #dff5e8;
+        font-family: "JetBrains Mono", "Fira Code", monospace;
+        font-size: 0.76rem;
+        font-weight: 700;
+      }
+
+      .hero-step-copy strong {
+        display: block;
+        margin-bottom: 0.18rem;
+      }
+
+      .hero-step-copy span {
+        color: var(--muted);
+        font-size: 0.92rem;
+        line-height: 1.45;
+      }
+
+      .hero-meta-footer {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.6rem;
+        margin-top: 0.2rem;
+        color: rgba(234, 238, 239, 0.56);
+        font-size: 0.8rem;
+      }
+
       .priority-rail {
         padding: 1.2rem;
         margin-bottom: 1rem;
@@ -1639,6 +1707,27 @@ export function renderAuthPortalShell(model: AuthPortalShellModel): string {
         color: var(--muted);
       }
 
+      .priority-provider-step {
+        display: inline-flex;
+        align-items: center;
+        margin: 0 0 0.35rem;
+        padding: 0.26rem 0.58rem;
+        border-radius: 999px;
+        border: 1px solid rgba(255, 255, 255, 0.08);
+        background: rgba(255, 255, 255, 0.04);
+        color: rgba(232, 241, 236, 0.92);
+        font-size: 0.8rem;
+        font-weight: 600;
+      }
+
+      .priority-provider-card p.priority-provider-summary {
+        margin: 0;
+        min-height: 2.8rem;
+        color: var(--muted);
+        font-size: 0.92rem;
+        line-height: 1.45;
+      }
+
       .priority-provider-card-ready {
         border-color: rgba(76, 188, 118, 0.28);
         background: rgba(255, 255, 255, 0.016);
@@ -1647,6 +1736,11 @@ export function renderAuthPortalShell(model: AuthPortalShellModel): string {
       .priority-metric-ok .eyebrow,
       .priority-provider-card-ready .eyebrow {
         color: #79d19d;
+      }
+
+      .priority-provider-card-ready .priority-provider-step {
+        color: #dff5e8;
+        background: rgba(76, 188, 118, 0.15);
       }
 
       .priority-provider-card-account-action {
@@ -1659,6 +1753,11 @@ export function renderAuthPortalShell(model: AuthPortalShellModel): string {
           inset 0 1px 0 rgba(255, 255, 255, 0.04);
       }
 
+      .priority-provider-card-account-action .priority-provider-step {
+        color: #ffe8e8;
+        background: rgba(201, 90, 90, 0.17);
+      }
+
       .priority-provider-card-session-work {
         border-color: rgba(199, 139, 44, 0.3);
         background:
@@ -1667,6 +1766,11 @@ export function renderAuthPortalShell(model: AuthPortalShellModel): string {
         box-shadow:
           0 0 0 1px rgba(199, 139, 44, 0.1),
           inset 0 1px 0 rgba(255, 255, 255, 0.04);
+      }
+
+      .priority-provider-card-session-work .priority-provider-step {
+        color: #ffedbf;
+        background: rgba(199, 139, 44, 0.17);
       }
 
       .priority-provider-link {
@@ -2286,18 +2390,45 @@ export function renderAuthPortalShell(model: AuthPortalShellModel): string {
           <h1>${escapeHtml(model.title)}</h1>
           <p>Use this machine-local front desk to make one call first: <strong>who is ready now</strong>, <strong>who needs owner action</strong>, and <strong>who still needs the current browser seat finished</strong>.</p>
           <div class="hero-actions">
-            <a class="action action-primary action-link" href="#auth-portal-provider-drawers">Open deeper provider shelf</a>
+            <a class="action action-primary action-link" href="#auth-portal-web-login-priority-rail">Review arrivals board first</a>
+            <a class="action action-ghost action-link" href="#auth-portal-provider-drawers">Open deeper provider shelf</a>
             <a class="action action-ghost action-link" href="#section-byok">Review BYOK inventory</a>
           </div>
         </div>
         <div class="hero-meta">
+          <article class="hero-meta-card hero-meta-card-priority">
+            <p class="eyebrow eyebrow-compact">Read this page in order</p>
+            <ol class="hero-step-list">
+              <li>
+                <span class="hero-step-index">01</span>
+                <span class="hero-step-copy">
+                  <strong>Call the arrivals board first.</strong>
+                  <span>Decide who is ready, who needs owner action, and who still needs the current browser seat finished.</span>
+                </span>
+              </li>
+              <li>
+                <span class="hero-step-index">02</span>
+                <span class="hero-step-copy">
+                  <strong>Open current truth only for the blocker you just found.</strong>
+                  <span>Use the deeper provider shelf when you need browser evidence, capture steps, or the full action trail.</span>
+                </span>
+              </li>
+              <li>
+                <span class="hero-step-index">03</span>
+                <span class="hero-step-copy">
+                  <strong>Touch BYOK inventory only after the Web/Login call is clear.</strong>
+                  <span>Keep API-key inventory as the secondary shelf, not the first-screen decision source.</span>
+                </span>
+              </li>
+            </ol>
+          </article>
           <article class="hero-meta-card hero-meta-card-quiet">
             <p class="eyebrow eyebrow-compact">Current stance</p>
             <p>${escapeHtml(model.trustBoundary)}</p>
-          </article>
-          <article class="hero-meta-card hero-meta-card-quiet">
-            <p class="eyebrow eyebrow-compact">Generated</p>
-            <p class="mono">${escapeHtml(model.generatedAt)}</p>
+            <div class="hero-meta-footer">
+              <span>Generated</span>
+              <span class="mono">${escapeHtml(model.generatedAt)}</span>
+            </div>
           </article>
         </div>
       </section>

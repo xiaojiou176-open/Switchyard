@@ -285,19 +285,72 @@
 
       .hero-proof strong {
         display: block;
-        margin-bottom: 8px;
-        font-size: 0.94rem;
+        margin: 0;
+        font-size: 0.98rem;
       }
 
-      .hero-proof ol {
-        margin: 0 0 0 1.15rem;
+      .hero-proof-head {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        justify-content: space-between;
+        gap: 10px;
+        margin-bottom: 10px;
+      }
+
+      .hero-proof-caption {
+        display: inline-flex;
+        align-items: center;
+        padding: 6px 10px;
+        border-radius: 999px;
+        border: 1px solid rgba(22, 50, 38, 0.08);
+        background: rgba(255, 255, 255, 0.68);
+        color: var(--muted);
+        font-size: 0.76rem;
+        font-weight: 700;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+      }
+
+      .hero-sequence {
+        list-style: none;
+        display: grid;
+        gap: 10px;
+        margin: 0;
+        padding: 0;
         color: var(--muted);
         font-size: 0.9rem;
         line-height: 1.48;
       }
 
-      .hero-proof li + li {
-        margin-top: 0.3rem;
+      .hero-sequence li {
+        display: grid;
+        grid-template-columns: auto 1fr;
+        gap: 10px;
+        align-items: start;
+      }
+
+      .hero-sequence-index {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        min-width: 1.7rem;
+        min-height: 1.7rem;
+        border-radius: 999px;
+        background: rgba(24, 226, 153, 0.14);
+        color: var(--accent-strong);
+        font-size: 0.78rem;
+        font-weight: 700;
+      }
+
+      .hero-sequence-copy strong {
+        display: block;
+        margin-bottom: 4px;
+        font-size: 0.9rem;
+      }
+
+      .hero-sequence-copy span {
+        color: var(--muted);
       }
 
       .hero-proof .quiet {
@@ -440,12 +493,17 @@
       }
 
       .route-card-secondary {
+        grid-column: span 6;
         background:
           linear-gradient(180deg, rgba(255, 255, 255, 0.88), rgba(248, 251, 248, 0.8)),
           var(--panel);
+        box-shadow:
+          0 16px 34px rgba(27, 63, 45, 0.06),
+          inset 0 1px 0 rgba(255, 255, 255, 0.9);
       }
 
       .route-card-tertiary {
+        grid-column: span 6;
         background: rgba(255, 255, 255, 0.68);
       }
 
@@ -601,12 +659,39 @@
         </div>
 
         <div class="hero-proof">
-          <strong>Read it in this order</strong>
-          <ol>
-            <li>30-second overview when you need the product sentence fast.</li>
-            <li>First success when you want one bounded route that actually runs.</li>
-            <li>Public proof pack when the question becomes “what is really proved”.</li>
-            <li>Service HTTP reference when the question becomes “what can I call”.</li>
+          <div class="hero-proof-head">
+            <strong>Read it in this order</strong>
+            <span class="hero-proof-caption">4-step reader ladder</span>
+          </div>
+          <ol class="hero-sequence">
+            <li>
+              <span class="hero-sequence-index">01</span>
+              <span class="hero-sequence-copy">
+                <strong>30-second overview</strong>
+                <span>Use this when you need the clean product sentence fast.</span>
+              </span>
+            </li>
+            <li>
+              <span class="hero-sequence-index">02</span>
+              <span class="hero-sequence-copy">
+                <strong>First success</strong>
+                <span>Use this when you want one bounded route that actually runs.</span>
+              </span>
+            </li>
+            <li>
+              <span class="hero-sequence-index">03</span>
+              <span class="hero-sequence-copy">
+                <strong>Public proof pack</strong>
+                <span>Open this when the question becomes “what is really proved”.</span>
+              </span>
+            </li>
+            <li>
+              <span class="hero-sequence-index">04</span>
+              <span class="hero-sequence-copy">
+                <strong>Service HTTP reference</strong>
+                <span>Open this when the question becomes “what can I call”.</span>
+              </span>
+            </li>
           </ol>
           <p class="quiet">
             This page is intentionally still docs-first. It is here to route a
@@ -617,10 +702,7 @@
             public-but-demoted
             <a href="./runbooks/dev-bootstrap.md">dev bootstrap runbook</a>.
           </p>
-          <p class="quiet">
-            Need the fuller shelf map after the front-row question is answered?
-            Open <a href="./README.md">docs/README.md</a>.
-          </p>
+          <p class="quiet">Need the fuller shelf map after the front-row question is answered? Open <a href="./README.md">docs/README.md</a>.</p>
         </div>
       </section>
 
