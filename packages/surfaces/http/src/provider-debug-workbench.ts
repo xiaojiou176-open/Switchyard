@@ -784,8 +784,8 @@ export function renderProviderDebugWorkbench(
       }
 
       .hero-meta-card-quiet {
-        padding: 0.82rem 0.9rem;
-        background: rgba(255, 255, 255, 0.02);
+        padding: 0.72rem 0.82rem;
+        background: rgba(255, 255, 255, 0.014);
         border-color: rgba(255, 255, 255, 0.05);
         box-shadow:
           rgba(27, 28, 30, 0.95) 0 0 0 1px,
@@ -793,15 +793,21 @@ export function renderProviderDebugWorkbench(
       }
 
       .hero-meta-card-next {
-        border-color: rgba(63, 165, 107, 0.24);
+        border-color: rgba(63, 165, 107, 0.3);
         background:
-          linear-gradient(180deg, rgba(63, 165, 107, 0.12), rgba(63, 165, 107, 0.04)),
+          linear-gradient(180deg, rgba(63, 165, 107, 0.16), rgba(63, 165, 107, 0.045)),
           var(--panel-raised);
         box-shadow:
-          0 16px 30px rgba(63, 165, 107, 0.08),
+          0 18px 34px rgba(63, 165, 107, 0.1),
           rgba(27, 28, 30, 0.95) 0 0 0 1px,
           rgba(7, 8, 10, 0.88) 0 0 0 1px inset,
           rgba(255, 255, 255, 0.05) 0 1px 0 0 inset;
+      }
+
+      .hero-meta-card-next p:nth-of-type(2) {
+        font-size: 1.05rem;
+        line-height: 1.42;
+        color: var(--ink);
       }
 
       .hero-meta-card p {
@@ -825,7 +831,7 @@ export function renderProviderDebugWorkbench(
         margin-bottom: 0.45rem;
         padding: 0.22rem 0.58rem;
         border-radius: 999px;
-        background: rgba(63, 165, 107, 0.14);
+        background: rgba(63, 165, 107, 0.18);
         color: #dff5e8;
         font-size: 0.78rem;
         letter-spacing: 0.08em;
@@ -834,8 +840,8 @@ export function renderProviderDebugWorkbench(
 
       .hero-meta-card-quiet p:last-of-type {
         color: rgba(234, 238, 239, 0.74);
-        font-size: 0.93rem;
-        line-height: 1.45;
+        font-size: 0.88rem;
+        line-height: 1.38;
       }
 
       .verdict-strip {
