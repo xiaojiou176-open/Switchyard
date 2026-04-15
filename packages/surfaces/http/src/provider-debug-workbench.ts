@@ -543,6 +543,8 @@ export function renderProviderDebugWorkbench(
   const nextStepEyebrow = truthFocus?.eyebrow ?? "Current next step";
   const nextStepSummary = truthFocus?.summary ?? nextAction?.summary ?? "No next step recorded.";
   const nextStepDetail = truthFocus?.detail;
+  const nextStepCommand = nextAction?.command;
+  const nextStepCommandLabel = truthFocus ? "Rerun after the blocker clears" : "Run this next";
   const runtimeSummary = truthFocus?.runtimeSummary ?? debug.auth.statusSummary;
   const currentBrowserSummary =
     sharedDiagnostic.repeatedRaw &&
@@ -815,6 +817,19 @@ export function renderProviderDebugWorkbench(
         border-radius: 16px;
         background: rgba(10, 15, 12, 0.56);
         font-size: 0.98rem;
+      }
+
+      .hero-command-label {
+        display: inline-flex;
+        align-items: center;
+        margin-bottom: 0.45rem;
+        padding: 0.22rem 0.58rem;
+        border-radius: 999px;
+        background: rgba(63, 165, 107, 0.14);
+        color: #dff5e8;
+        font-size: 0.78rem;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
       }
 
       .hero-meta-card-quiet p:last-of-type {
@@ -1186,10 +1201,10 @@ export function renderProviderDebugWorkbench(
             <p class="eyebrow eyebrow-compact">${escapeHtml(nextStepEyebrow)}</p>
             <p>${escapeHtml(nextStepSummary)}</p>
             ${nextStepDetail ? `<p>${escapeHtml(nextStepDetail)}</p>` : ""}
-            ${truthFocus ? "" : nextAction?.command ? `<pre>${escapeHtml(nextAction.command)}</pre>` : ""}
+            ${nextStepCommand ? `<span class="hero-command-label">${escapeHtml(nextStepCommandLabel)}</span><pre>${escapeHtml(nextStepCommand)}</pre>` : ""}
           </article>
           <article class="hero-meta-card hero-meta-card-quiet">
-            <p class="eyebrow eyebrow-compact">Current attach target</p>
+            <p class="eyebrow eyebrow-compact">Technical attach target</p>
             <p>${escapeHtml(debug.attachTarget.note)}</p>
             <div class="meta-row">
               ${renderOptionalCode("source", debug.attachTarget.source)}
