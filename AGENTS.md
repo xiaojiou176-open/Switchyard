@@ -5,7 +5,7 @@
 这份文件是 `Switchyard` 仓的 repo 宪法。  
 它不是重复全局 `AGENTS.md`，而是把 **Switchyard 自己已经拍板的产品边界、上游关系、参考仓纪律、交付顺序** 固化下来，防止未来 Agent 再把项目做偏。
 
-如果根目录的其他说明、口头讨论、实现尝试与本文件冲突，以本文件和 `docs/adr/`、`docs/contracts/` 为准。
+如果根目录的其他说明、口头讨论、实现尝试与本文件冲突，以本文件和 `.agents/internal-docs/adr/`、`.agents/internal-docs/contracts/` 为准。
 
 ---
 
@@ -20,10 +20,10 @@
 
 后续任何实现、设计、修文，遵守以下真理源顺序：
 
-1. `docs/adr/*.md`
-2. `docs/contracts/*.md`
-3. `docs/blueprints/*.md`
-4. `docs/product/*.md`
+1. `.agents/internal-docs/adr/*.md`
+2. `.agents/internal-docs/contracts/*.md`
+3. `.agents/internal-docs/blueprints/*.md`
+4. `.agents/internal-docs/product/*.md`
 5. `docs/runbooks/*.md`
 6. `README.md`
 7. 本地参考仓与历史对话记录
@@ -150,7 +150,7 @@
 
 具体目录与 Day 1 范围，以：
 
-- `docs/adr/0004-architecture-skeleton-monorepo.md`
+- `.agents/internal-docs/adr/0004-architecture-skeleton-monorepo.md`
 
 为准。
 
@@ -247,16 +247,16 @@
 
 开始任何代码前，必须先读：
 
-1. `docs/product/v1-brief.md`
-2. `docs/product/scope-and-nongoals.md`
-3. `docs/adr/0001-v1-boundary-and-lane-model.md`
-4. `docs/adr/0002-external-repo-adoption-matrix.md`
-5. `docs/adr/0003-upstream-relationship-openclaw-zero-token.md`
-6. `docs/adr/0004-architecture-skeleton-monorepo.md`
-7. `docs/contracts/provider-runtime-contract.md`
-8. `docs/contracts/auth-accounts-and-credentials.md`
-9. `docs/contracts/service-and-sdk-surfaces.md`
-10. `docs/blueprints/v1-delivery-plan.md`
+1. `.agents/internal-docs/product/v1-brief.md`
+2. `.agents/internal-docs/product/scope-and-nongoals.md`
+3. `.agents/internal-docs/adr/0001-v1-boundary-and-lane-model.md`
+4. `.agents/internal-docs/adr/0002-external-repo-adoption-matrix.md`
+5. `.agents/internal-docs/adr/0003-upstream-relationship-openclaw-zero-token.md`
+6. `.agents/internal-docs/adr/0004-architecture-skeleton-monorepo.md`
+7. `.agents/internal-docs/contracts/provider-runtime-contract.md`
+8. `.agents/internal-docs/contracts/auth-accounts-and-credentials.md`
+9. `.agents/internal-docs/contracts/service-and-sdk-surfaces.md`
+10. `.agents/internal-docs/blueprints/v1-delivery-plan.md`
 11. `.agents/Tasks/TASK_BOARD-*.md`
 
 ### 先做什么

@@ -13,7 +13,7 @@ describe("Switchyard docs and design governance drift contracts", () => {
   it("keeps public-plane truth aligned with fail-closed runtime wording", () => {
     const supportMatrix = read("docs/public-surface-support-matrix.md");
     const proofPack = read("docs/public-proof-pack.md");
-    const serviceContract = read("docs/contracts/service-and-sdk-surfaces.md");
+    const serviceContract = read(".agents/internal-docs/contracts/service-and-sdk-surfaces.md");
 
     expect(serviceContract).toContain("API substrate first");
     expect(serviceContract).toContain("service-first");
@@ -34,7 +34,7 @@ describe("Switchyard docs and design governance drift contracts", () => {
   });
 
   it("keeps design absorption pinned to the declared donor boundary", () => {
-    const donorContract = read("docs/contracts/design-mother-strategy.md");
+    const donorContract = read(".agents/internal-docs/contracts/design-mother-strategy.md");
     const stitchDesign = read(".stitch/DESIGN.md");
     const designMaster = read("design-system/MASTER.md");
     const donorLedger = read("design-system/DONOR_ABSORPTION_LEDGER.md");
@@ -57,7 +57,7 @@ describe("Switchyard docs and design governance drift contracts", () => {
     expect(donorLedger).toContain("## [Confirmed] Surface Ledger");
     expect(donorLedger).toContain("| Auth portal shell | `design-system/switchyard-auth-portal/MASTER.md` | `Linear` |");
     expect(donorLedger).toContain("| Debug cockpit shell | `design-system/switchyard-debug-cockpit/MASTER.md` | `Linear` |");
-    expect(donorLedger).toContain("| Public docs and help surfaces | `docs/contracts/design-mother-strategy.md` | `Mintlify` |");
+    expect(donorLedger).toContain("| Public docs and help surfaces | `.agents/internal-docs/contracts/design-mother-strategy.md` | `Mintlify` |");
 
     expect(authPortalMaster).toContain("| Page shell | `Linear` | dark operational shell, dense-but-calm grouping, border-led structure, sustained readability | no `Mintlify` page shell, no `Raycast` launcher feel as the full page identity |");
     expect(authPortalMaster).toContain("| Quick actions or command-like entrypoints | `Raycast` utility chrome only | keyboard hints, compact quick actions, transient command grammar | must stay secondary to the page shell, must not become the primary navigation model |");
