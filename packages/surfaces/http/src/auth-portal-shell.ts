@@ -1574,6 +1574,25 @@ export function renderAuthPortalShell(model: AuthPortalShellModel): string {
         flex-wrap: wrap;
         gap: 0.65rem;
         margin-top: 1rem;
+        align-items: center;
+      }
+
+      .hero-primary-action {
+        display: inline-flex;
+        flex-direction: column;
+        gap: 0.32rem;
+      }
+
+      .hero-primary-action-note {
+        color: rgba(229, 232, 233, 0.64);
+        font-size: 0.78rem;
+        line-height: 1.4;
+      }
+
+      .hero-secondary-actions {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.65rem;
       }
 
       .hero-call-strip-shell {
@@ -2489,9 +2508,14 @@ export function renderAuthPortalShell(model: AuthPortalShellModel): string {
           <p>Use this machine-local front desk to make one call first: <strong>who is ready now</strong>, <strong>who needs owner action</strong>, and <strong>who still needs the current browser seat finished</strong>.</p>
           ${renderHeroFirstCallStrip(model)}
           <div class="hero-actions">
-            <a class="action action-primary action-link" href="#auth-portal-web-login-priority-rail">Review arrivals board first</a>
-            <a class="action action-ghost action-link" href="#auth-portal-provider-drawers">Open deeper provider shelf</a>
-            <a class="action action-ghost action-link" href="#section-byok">Review BYOK inventory</a>
+            <div class="hero-primary-action">
+              <a class="action action-primary action-link" href="#auth-portal-web-login-priority-rail">Review arrivals board first</a>
+              <span class="hero-primary-action-note">Make the first call here before you open the deeper shelf or the BYOK inventory.</span>
+            </div>
+            <div class="hero-secondary-actions">
+              <a class="action action-ghost action-link" href="#auth-portal-provider-drawers">Open deeper provider shelf</a>
+              <a class="action action-ghost action-link" href="#section-byok">Review BYOK inventory</a>
+            </div>
           </div>
         </div>
         <div class="hero-meta">
