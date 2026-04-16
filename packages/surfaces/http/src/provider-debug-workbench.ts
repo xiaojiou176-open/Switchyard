@@ -756,6 +756,7 @@ export function renderProviderDebugWorkbench(
         display: flex;
         flex-wrap: wrap;
         gap: 0.55rem;
+        align-items: center;
       }
 
       .hero-truth-strip {
@@ -831,6 +832,24 @@ export function renderProviderDebugWorkbench(
         box-shadow:
           0 12px 24px rgba(63, 165, 107, 0.2),
           rgba(255, 255, 255, 0.18) 0 1px 0 0 inset;
+      }
+
+      .pill-link-quiet {
+        padding: 0;
+        border: 0;
+        border-radius: 0;
+        background: transparent;
+        box-shadow: none;
+        color: rgba(232, 241, 236, 0.68);
+        font-size: 0.88rem;
+        line-height: 1.4;
+      }
+
+      .pill-link-quiet:hover {
+        color: var(--ink);
+        border-color: transparent;
+        background: transparent;
+        opacity: 1;
       }
 
       .hero-meta {
@@ -1278,7 +1297,7 @@ export function renderProviderDebugWorkbench(
           ${renderHeroTruthStrip(debug, runtimePathStatus)}
           <div class="hero-actions">
             <a class="pill-link pill-link-primary" href="${escapeHtml(authPortalRoute)}">Back to auth portal</a>
-            <a class="pill-link" href="${escapeHtml(debug.routes.debugSupportBundle)}" target="_blank" rel="noopener">Open support bundle JSON</a>
+            <a class="pill-link pill-link-quiet" href="${escapeHtml(debug.routes.debugSupportBundle)}" target="_blank" rel="noopener">Need the raw bundle? Open support bundle JSON.</a>
           </div>
         </div>
         <div class="hero-meta">
