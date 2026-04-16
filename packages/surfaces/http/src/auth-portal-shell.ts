@@ -1559,13 +1559,13 @@ export function renderAuthPortalShell(model: AuthPortalShellModel): string {
 
       .hero-copy h1 {
         max-width: 16ch;
-        font-size: clamp(2.1rem, 4vw, 3.5rem);
-        line-height: 1.02;
-        margin-bottom: 0.85rem;
+        font-size: clamp(2.2rem, 4.15vw, 3.7rem);
+        line-height: 0.99;
+        margin-bottom: 0.92rem;
       }
 
       .hero-copy p {
-        max-width: 64ch;
+        max-width: 58ch;
         color: var(--muted);
       }
 
@@ -1598,7 +1598,7 @@ export function renderAuthPortalShell(model: AuthPortalShellModel): string {
       .hero-call-strip-shell {
         display: grid;
         gap: 0.55rem;
-        margin-top: 1rem;
+        margin-top: 1.08rem;
       }
 
       .hero-call-strip {
@@ -1653,7 +1653,7 @@ export function renderAuthPortalShell(model: AuthPortalShellModel): string {
 
       .hero-meta {
         display: grid;
-        gap: 0.8rem;
+        gap: 0.68rem;
         align-content: start;
       }
 
@@ -1665,19 +1665,19 @@ export function renderAuthPortalShell(model: AuthPortalShellModel): string {
       }
 
       .hero-meta-card-quiet {
-        padding: 0.78rem 0.86rem;
-        background: rgba(255, 255, 255, 0.016);
+        padding: 0.72rem 0.8rem;
+        background: rgba(255, 255, 255, 0.012);
         border-color: rgba(255, 255, 255, 0.04);
         box-shadow:
           inset 0 1px 0 rgba(255, 255, 255, 0.025),
           0 10px 24px rgba(0, 0, 0, 0.08);
-        opacity: 0.88;
+        opacity: 0.8;
       }
 
       .hero-meta-card-quiet p {
-        color: rgba(229, 232, 233, 0.82);
-        font-size: 0.9rem;
-        line-height: 1.45;
+        color: rgba(229, 232, 233, 0.74);
+        font-size: 0.86rem;
+        line-height: 1.4;
       }
 
       .hero-meta-card-quiet .eyebrow {
@@ -1685,12 +1685,12 @@ export function renderAuthPortalShell(model: AuthPortalShellModel): string {
       }
 
       .hero-meta-card-priority {
-        border-color: rgba(63, 165, 107, 0.24);
+        border-color: rgba(63, 165, 107, 0.18);
         background:
-          linear-gradient(180deg, rgba(63, 165, 107, 0.1), rgba(63, 165, 107, 0.03)),
+          linear-gradient(180deg, rgba(63, 165, 107, 0.085), rgba(63, 165, 107, 0.022)),
           var(--panel-raised);
         box-shadow:
-          0 14px 30px rgba(63, 165, 107, 0.08),
+          0 12px 24px rgba(63, 165, 107, 0.06),
           inset 0 1px 0 rgba(255, 255, 255, 0.04);
       }
 
@@ -1730,8 +1730,8 @@ export function renderAuthPortalShell(model: AuthPortalShellModel): string {
 
       .hero-step-copy span {
         color: var(--muted);
-        font-size: 0.92rem;
-        line-height: 1.45;
+        font-size: 0.88rem;
+        line-height: 1.4;
       }
 
       .hero-meta-footer {
