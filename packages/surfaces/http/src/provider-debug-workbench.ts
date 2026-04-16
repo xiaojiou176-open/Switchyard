@@ -379,6 +379,42 @@ function renderSummaryCard(
   </article>`;
 }
 
+function renderHeroTruthStrip(
+  debug: ServiceProviderDebugSupportView,
+  runtimePathStatus: string,
+): string {
+  const items = [
+    {
+      title: "Stored material",
+      status: debug.storeReadiness.credentialState,
+      summary: debug.storeReadiness.note,
+    },
+    {
+      title: "Current browser",
+      status: debug.liveReadiness.status,
+      summary: debug.liveReadiness.diagnostic,
+    },
+    {
+      title: "Runtime path",
+      status: runtimePathStatus,
+      summary: debug.auth.statusSummary,
+    },
+  ];
+
+  return `<section class="hero-truth-strip" aria-label="First read summary">
+    ${items
+      .map((item) => {
+        const tone = mapTone(item.status);
+        return `<article class="hero-truth-card hero-truth-card-${tone}">
+          <p class="eyebrow eyebrow-compact">${escapeHtml(item.title)}</p>
+          <strong>${escapeHtml(getHumanStatusLabel(item.status, item.title))}</strong>
+          <span>${escapeHtml(item.summary)}</span>
+        </article>`;
+      })
+      .join("")}
+  </section>`;
+}
+
 function getHumanStatusLabel(status: string, title: string): string {
   if (title === "Current browser") {
     switch (status) {
@@ -720,6 +756,47 @@ export function renderProviderDebugWorkbench(
         display: flex;
         flex-wrap: wrap;
         gap: 0.55rem;
+      }
+
+      .hero-truth-strip {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 0.72rem;
+      }
+
+      .hero-truth-card {
+        border: 1px solid var(--line);
+        border-radius: 16px;
+        padding: 0.78rem 0.84rem;
+        background: rgba(255, 255, 255, 0.02);
+        box-shadow:
+          rgba(27, 28, 30, 0.95) 0 0 0 1px,
+          rgba(7, 8, 10, 0.88) 0 0 0 1px inset;
+      }
+
+      .hero-truth-card strong {
+        display: block;
+        margin-bottom: 0.18rem;
+        font-size: 1rem;
+        line-height: 1.25;
+      }
+
+      .hero-truth-card span {
+        color: var(--muted);
+        font-size: 0.82rem;
+        line-height: 1.4;
+      }
+
+      .hero-truth-card-ok {
+        border-color: rgba(76, 188, 118, 0.24);
+      }
+
+      .hero-truth-card-warning {
+        border-color: rgba(199, 139, 44, 0.28);
+      }
+
+      .hero-truth-card-danger {
+        border-color: rgba(201, 90, 90, 0.3);
       }
 
       .pill-link {
@@ -1175,7 +1252,8 @@ export function renderProviderDebugWorkbench(
 
         .summary-grid,
         .verdict-strip,
-        .verdict-facts {
+        .verdict-facts,
+        .hero-truth-strip {
           grid-template-columns: 1fr;
         }
 
@@ -1197,6 +1275,7 @@ export function renderProviderDebugWorkbench(
           </div>
           <h1>${escapeHtml(debug.providerDisplayName)} debug workbench</h1>
           <p class="hero-intro">This page compares <strong>stored material truth</strong> against <strong>the currently attached browser reality</strong>. It is a diagnosis bench, not a control plane, and it never invents green lights from missing evidence.</p>
+          ${renderHeroTruthStrip(debug, runtimePathStatus)}
           <div class="hero-actions">
             <a class="pill-link pill-link-primary" href="${escapeHtml(authPortalRoute)}">Back to auth portal</a>
             <a class="pill-link" href="${escapeHtml(debug.routes.debugSupportBundle)}" target="_blank" rel="noopener">Open support bundle JSON</a>
