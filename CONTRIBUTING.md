@@ -13,6 +13,7 @@
 开始前先读：
 
 - `README.md`
+- `DESIGN.md` if you are touching UI, UX, or public-facing wording/IA
 - `docs/public-proof-pack.md`
 - `docs/public-distribution-ledger.md`
 - `docs/testing-pyramid.md`

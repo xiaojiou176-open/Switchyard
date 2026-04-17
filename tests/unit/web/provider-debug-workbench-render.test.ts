@@ -63,6 +63,9 @@ describe("provider debug workbench render", () => {
 
     expect(html).toContain("Runtime can invoke");
     expect(html).toContain("<strong>technical status</strong> <code>ready</code>");
+    expect(html).toContain("Evidence preview");
+    expect(html).toContain("Open trays");
+    expect(html).toContain("Next repair step:");
     expect(html).not.toContain("Runtime still blocked");
   });
 
@@ -130,6 +133,9 @@ describe("provider debug workbench render", () => {
     expect(html).toContain("Verification first");
     expect(html).toContain("Runtime still blocked");
     expect(html).toContain("blocked on verification");
+    expect(html).toContain("Evidence preview");
+    expect(html).toContain("Current page: human-verification-required");
+    expect(html).toContain("Open trays");
     expect(html).toContain("<strong>technical status</strong> <code>ready</code>");
   });
 });

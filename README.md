@@ -34,6 +34,19 @@ apps can depend on.
 > lanes without every product re-inventing provider contracts, session logic,
 > and diagnostics.
 
+## Design Front Door
+
+If you are changing UI, UX, or public-surface copy/IA, open
+[DESIGN.md](./DESIGN.md) first.
+
+That file is the thin entrypoint into the full design contract stack:
+
+- root design truth and donor boundary
+- `design-system/MASTER.md`
+- page masters for `auth-portal` and the debug workbench
+- `design-system/DONOR_ABSORPTION_LEDGER.md`
+- `.stitch/DESIGN.md`
+
 ## Current Public Boundary
 
 Today the truthful public story is:
@@ -79,6 +92,7 @@ The heavier shelves still exist, but they are not first-row front door pages:
 
 - support signboard and bootstrap runbook
 - contracts and blueprints
+- builder workflow, starter-pack, and read-only MCP routers
 - submission-packet accounting
 - builder catalog internals
 - testing/governance reference pages

@@ -338,6 +338,137 @@ async function sendPrompt(page: Page, message: string) {
   }, message));
 }
 
+interface GrokTextSnapshot {
+  text: string;
+  isStreaming: boolean;
+  bodyText: string;
+}
+
+async function captureGrokTextSnapshot(
+  page: Page,
+  prompt: string,
+  baselineTexts: string[],
+): Promise<GrokTextSnapshot> {
+  return evaluateWithNavigationRetry(
+    page,
+    () =>
+      page.evaluate(
+        ({
+          prompt: inputPrompt,
+          baselineTexts: inputBaselineTexts,
+        }: {
+          prompt: string;
+          baselineTexts: string[];
+        }) => {
+          const browserGlobal = globalThis as typeof globalThis & {
+            document: {
+              querySelector: (selector: string) => any;
+              querySelectorAll: (selector: string) => Iterable<any>;
+              body: { innerText?: string } | null;
+            };
+          };
+          const clean = (value: string) => value.replace(/[\u200B-\u200D\uFEFF]/g, "").trim();
+          const baselineSet = new Set(inputBaselineTexts.map((entry) => clean(entry)));
+          const selectors = [
+            '[data-role="assistant"]',
+            '[class*="assistant"]',
+            '[class*="response"]',
+            '[class*="message"]',
+            "article",
+            "[class*='markdown']",
+            ".prose",
+          ];
+          let text = "";
+
+          for (const selector of selectors) {
+            const elements = Array.from(browserGlobal.document.querySelectorAll(selector));
+
+            for (let index = elements.length - 1; index >= 0; index -= 1) {
+              const candidate = clean((elements[index] as { textContent?: string }).textContent ?? "");
+              const looksLikePromptEcho =
+                candidate === inputPrompt ||
+                (inputPrompt.length > 0 &&
+                  candidate.includes(inputPrompt) &&
+                  candidate.length <= inputPrompt.length + 24) ||
+                candidate === "" ||
+                candidate.includes("Ask Grok") ||
+                baselineSet.has(candidate);
+
+              if (
+                candidate.length > 20 &&
+                !looksLikePromptEcho
+              ) {
+                text = candidate;
+                break;
+              }
+            }
+
+            if (text) {
+              break;
+            }
+          }
+
+          if (!text) {
+            const all = Array.from(browserGlobal.document.querySelectorAll("p, div[class]"));
+
+            for (let index = all.length - 1; index >= 0; index -= 1) {
+              const candidate = clean((all[index] as { textContent?: string }).textContent ?? "");
+              const looksLikePromptEcho =
+                candidate === inputPrompt ||
+                (inputPrompt.length > 0 &&
+                  candidate.includes(inputPrompt) &&
+                  candidate.length <= inputPrompt.length + 24) ||
+                candidate === "" ||
+                candidate.includes("Ask Grok") ||
+                baselineSet.has(candidate);
+
+              if (
+                candidate.length > 20 &&
+                !looksLikePromptEcho
+              ) {
+                text = candidate;
+                break;
+              }
+            }
+          }
+
+          const stopButton = browserGlobal.document.querySelector(
+            '[aria-label*="Stop"], [aria-label*="stop"]',
+          );
+
+          return {
+            text,
+            isStreaming: Boolean(stopButton),
+            bodyText: clean(browserGlobal.document.body?.innerText ?? ""),
+          };
+        },
+        {
+          prompt,
+          baselineTexts,
+        },
+      ),
+  );
+}
+
+function resolveRequestedGrokToken(
+  snapshot: GrokTextSnapshot,
+  requestedToken: string | undefined,
+): string | undefined {
+  if (!requestedToken) {
+    return undefined;
+  }
+
+  if (snapshot.bodyText.includes(requestedToken)) {
+    return requestedToken;
+  }
+
+  if (snapshot.text.includes(requestedToken)) {
+    return requestedToken;
+  }
+
+  return undefined;
+}
+
 async function waitForGrokText(
   page: Page,
   submittedPrompt: string,
@@ -383,110 +514,27 @@ async function waitForGrokText(
 
   for (let elapsed = 0; elapsed < maxWaitMs; elapsed += pollIntervalMs) {
     if (signal?.aborted) {
+      const lateSnapshot = await captureGrokTextSnapshot(page, normalizedPrompt, baselineTexts);
+      const lateToken = resolveRequestedGrokToken(lateSnapshot, requestedToken);
+
+      if (lateToken) {
+        return lateToken;
+      }
+
       throw new Error("Grok browser DOM transport aborted.");
     }
 
     await page.waitForTimeout(pollIntervalMs);
 
-    const result = await evaluateWithNavigationRetry(
-      page,
-      () => page.evaluate(
-      ({ prompt, baselineTexts }: { prompt: string; baselineTexts: string[] }) => {
-        const browserGlobal = globalThis as typeof globalThis & {
-          document: {
-            querySelectorAll: (selector: string) => Iterable<any>;
-            querySelector: (selector: string) => any;
-            body: { innerText?: string } | null;
-          };
-        };
-        const clean = (value: string) => value.replace(/[\u200B-\u200D\uFEFF]/g, "").trim();
-        const baselineSet = new Set(baselineTexts.map((entry) => clean(entry)));
-        const selectors = [
-          '[data-role="assistant"]',
-          '[class*="assistant"]',
-          '[class*="response"]',
-          '[class*="message"]',
-          "article",
-          "[class*='markdown']",
-          ".prose",
-        ];
-        let text = "";
+    const result = await captureGrokTextSnapshot(page, normalizedPrompt, baselineTexts);
 
-        for (const selector of selectors) {
-          const elements = Array.from(browserGlobal.document.querySelectorAll(selector));
+    const resolvedToken = resolveRequestedGrokToken(result, requestedToken);
 
-          for (let index = elements.length - 1; index >= 0; index -= 1) {
-            const candidate = clean((elements[index] as { textContent?: string }).textContent ?? "");
-            const looksLikePromptEcho =
-              candidate === prompt ||
-              (prompt.length > 0 &&
-                candidate.includes(prompt) &&
-                candidate.length <= prompt.length + 24);
-
-            if (
-              candidate.length > 20 &&
-              !looksLikePromptEcho &&
-              !candidate.includes("Ask Grok") &&
-              !baselineSet.has(candidate)
-            ) {
-              text = candidate;
-              break;
-            }
-          }
-
-          if (text) {
-            break;
-          }
-        }
-
-        if (!text) {
-          const all = Array.from(browserGlobal.document.querySelectorAll("p, div[class]"));
-
-          for (let index = all.length - 1; index >= 0; index -= 1) {
-            const candidate = clean((all[index] as { textContent?: string }).textContent ?? "");
-            const looksLikePromptEcho =
-              candidate === prompt ||
-              (prompt.length > 0 &&
-                candidate.includes(prompt) &&
-                candidate.length <= prompt.length + 24);
-
-            if (
-              candidate.length > 20 &&
-              !looksLikePromptEcho &&
-              !candidate.includes("Ask Grok") &&
-              !baselineSet.has(candidate)
-            ) {
-              text = candidate;
-              break;
-            }
-          }
-        }
-
-        const stopButton = browserGlobal.document.querySelector(
-          '[aria-label*="Stop"], [aria-label*="stop"]',
-        );
-
-        return {
-          text,
-          isStreaming: Boolean(stopButton),
-          bodyText: clean(browserGlobal.document.body?.innerText ?? ""),
-        };
-      },
-      {
-        prompt: normalizedPrompt,
-        baselineTexts,
-      },
-    ));
-
-    if (result?.bodyText && requestedToken && result.bodyText.includes(requestedToken)) {
-      return requestedToken;
+    if (resolvedToken) {
+      return resolvedToken;
     }
 
     if (result?.text) {
-      if (requestedToken && result.text.includes(requestedToken)) {
-        return requestedToken;
-      }
-
       if (requestedToken) {
         continue;
       }
@@ -503,6 +551,17 @@ async function waitForGrokText(
         return result.text;
       }
     }
+  }
+
+  const finalSnapshot = await captureGrokTextSnapshot(
+    page,
+    normalizedPrompt,
+    baselineTexts,
+  ).catch(() => undefined);
+  const finalToken = finalSnapshot ? resolveRequestedGrokToken(finalSnapshot, requestedToken) : undefined;
+
+  if (finalToken) {
+    return finalToken;
   }
 
   throw new Error(

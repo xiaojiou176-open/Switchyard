@@ -90,6 +90,7 @@ describe('auth portal shell', () => {
     expect(html).toContain('Inspect current browser');
     expect(html).toContain('Web/Login live readiness');
     expect(html).toContain('The five provider verdicts that matter first');
+    expect(html).toContain('Start here first');
     expect(html).toContain('Open deeper provider shelf');
     expect(html).toContain('Web/Login details, evidence, and actions');
     expect(html).toContain('The arrivals board above already makes the first call.');
@@ -237,6 +238,9 @@ describe('auth portal shell', () => {
     expect(html).toContain('Review current blocker');
     expect(html).toContain('Session incomplete');
     expect(html).toContain('Inspect current browser first');
+    expect(html).toContain('Start here first');
+    expect(html).toContain('Claude · Account action required');
+    expect(html).toContain('Review current blocker');
     expect(html).toContain('Re-authenticate');
     expect(html).toContain('Primary verdict');
     expect(html).toContain('Evidence and handoff details');
