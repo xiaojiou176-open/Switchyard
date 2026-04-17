@@ -47,7 +47,6 @@ pnpm run switchyard:cli -- host-playbook --target mcp
 ## Related Pages
 
 - [docs/starter-pack-chooser.md](./starter-pack-chooser.md)
-- [docs/plugin-skill-starter-kits.md](./plugin-skill-starter-kits.md)
 - [docs/host-integration-examples.md](./host-integration-examples.md)
 - [docs/public-surface-catalog.md](./public-surface-catalog.md)
 - [starter-packs/README.md](../starter-packs/README.md)

@@ -29,7 +29,7 @@
       "relatedDocs": [
         "docs/starter-pack-chooser.md",
         "docs/compat/codex.md",
-        "docs/plugin-skill-starter-kits.md",
+        "starter-packs/README.md",
         "examples/runtime-bridge/README.md"
       ],
       "safeClaims": [
@@ -76,7 +76,7 @@
       "relatedDocs": [
         "docs/starter-pack-chooser.md",
         "docs/compat/claude-code.md",
-        "docs/plugin-skill-starter-kits.md",
+        "starter-packs/README.md",
         "starter-packs/README.md"
       ],
       "safeClaims": [

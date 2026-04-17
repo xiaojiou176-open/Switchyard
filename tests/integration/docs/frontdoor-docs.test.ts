@@ -65,7 +65,6 @@ describe("Switchyard docs frontdoor contracts", () => {
       "docs/public-distribution-ledger.md",
       "docs/public-surface-support-matrix.md",
       "docs/public-surface-catalog.md",
-      "docs/shared-provider-runtime.md",
       "docs/compat/README.md",
       "docs/compat/codex.md",
       "docs/compat/claude-code.md",
@@ -75,7 +74,6 @@ describe("Switchyard docs frontdoor contracts", () => {
       "docs/compare/switchyard-vs-claude-code.md",
       "docs/compare/switchyard-vs-openclaw.md",
       "docs/mcp.md",
-      "docs/plugin-skill-starter-kits.md",
       "docs/starter-pack-chooser.md",
       "docs/builder-journeys.md",
       "docs/host-integration-playbooks.md",
@@ -101,7 +99,8 @@ describe("Switchyard docs frontdoor contracts", () => {
     expect(docsIndex).toContain("Choose the shortest truthful route before you open the fuller atlas.");
     expect(docsIndex).toContain("Open first success");
     expect(docsIndex).toContain("Skip to main content");
-    expect(docsIndex).toContain('href="./index.html"');
+    expect(docsIndex).toContain("Front door");
+    expect(docsIndex).toContain('aria-current="page"');
     expect(docsIndex).not.toContain('href="../index.html"');
     expect(docsIndex).toContain("public-proof-pack.md");
     expect(docsIndex).toContain("public-distribution-ledger.md");
@@ -130,6 +129,13 @@ describe("Switchyard docs frontdoor contracts", () => {
     expect(supportMatrix).toContain("docs/runbooks/dev-bootstrap.md");
     expect(distributionLedger).toContain("docs/runbooks/dev-bootstrap.md");
     expect(firstSuccess).toContain("docs/runbooks/dev-bootstrap.md");
+    expect(readme).toContain("pnpm run start:local-experience");
+    expect(firstSuccess).toContain("pnpm run start:local-experience");
+    expect(firstSuccess).toContain("docs front door");
+    expect(firstSuccess).toContain("auth-portal");
+    expect(firstSuccess).toContain("workbench");
+    const faq = read("docs/faq.md");
+    expect(faq).toContain("pnpm run start:local-experience");
   });
 
   it("keeps compat claims explicitly fail-closed instead of full support", () => {
@@ -216,13 +222,11 @@ describe("Switchyard docs frontdoor contracts", () => {
     expect(llms).toContain("docs/public-surface-catalog.md");
     expect(llms).toContain("docs/public-surface-catalog.json");
     expect(llms).toContain("docs/public-surface-catalog.schema.json");
-    expect(llms).toContain("docs/starter-manifest-templates.md");
     expect(llms).toContain("docs/starter-manifest-templates.schema.json");
-    expect(llms).toContain("docs/starter-manifest-examples.md");
     expect(llms).toContain("docs/starter-manifest-examples.schema.json");
     expect(llms).toContain("examples/README.md");
     expect(llms).toContain("starter-packs/README.md");
-    expect(llms).toContain("docs/starter-pack-index.md");
+    expect(llms).toContain("starter-packs/README.md");
     expect(llms).toContain("docs/starter-pack-chooser.md");
     expect(llms).toContain("docs/starter-pack-chooser.json");
     expect(llms).toContain("docs/starter-pack-chooser.schema.json");
@@ -247,10 +251,8 @@ describe("Switchyard docs frontdoor contracts", () => {
     expect(llms).toContain("docs/compat-target-catalog.md");
     expect(llms).toContain("docs/compat-target-catalog.json");
     expect(llms).toContain("docs/compat-target-catalog.schema.json");
-    expect(llms).toContain("docs/builder-kit-catalog.md");
     expect(llms).toContain("docs/builder-kit-catalog.json");
     expect(llms).toContain("docs/builder-kit-catalog.schema.json");
-    expect(llms).toContain("docs/skill-pack-catalog.md");
     expect(llms).toContain("docs/skill-pack-catalog.json");
     expect(llms).toContain("docs/skill-pack-catalog.schema.json");
     expect(llms).toContain("docs/mcp-tool-catalog.md");
@@ -279,9 +281,6 @@ describe("Switchyard docs frontdoor contracts", () => {
     expect(readme).toContain("docs/api/openapi.yaml");
     expect(readme).toContain("docs/api/mcp-readonly-server.md");
     expect(readme).toContain("docs/api/web-login-acquisition.md");
-    expect(readme).toContain("docs/compat/README.md");
-    expect(readme).toContain("docs/mcp.md");
-    expect(readme).toContain("docs/glossary.md");
     expect(readme).toContain(".agents/internal-docs/testing/");
     expect(readme).toContain("pnpm run test:coverage");
     expect(readme).toContain("shared provider runtime");
@@ -291,36 +290,39 @@ describe("Switchyard docs frontdoor contracts", () => {
     expect(readme).toContain("proof / runbook truth");
     expect(readme).toContain("credentialed workstation");
     expect(readme).toContain("docs/public-surface-support-matrix.md");
-    expect(readme).toContain("docs/public-surface-catalog.md");
-    expect(readme).toContain("docs/public-surface-catalog.schema.json");
-    expect(readme).toContain("docs/starter-manifest-templates.md");
-    expect(readme).toContain("docs/starter-manifest-templates.schema.json");
-    expect(readme).toContain("docs/starter-manifest-examples.md");
-    expect(readme).toContain("docs/starter-manifest-examples.schema.json");
     expect(readme).toContain("examples/README.md");
     expect(readme).toContain("starter-packs/README.md");
-    expect(readme).toContain("docs/starter-pack-index.md");
-    expect(readme).toContain("docs/starter-pack-chooser.md");
-    expect(readme).toContain("docs/starter-pack-comparison.md");
+    expect(readme).toContain("starter-packs/README.md");
     expect(readme).toContain("docs/builder-journeys.md");
     expect(readme).toContain("docs/builder-intent-router.md");
     expect(readme).toContain("docs/host-integration-playbooks.md");
     expect(readme).toContain("docs/host-integration-examples.md");
-    expect(readme).toContain("docs/provider-runtime-catalog.md");
-    expect(readme).toContain("docs/provider-runtime-catalog.json");
-    expect(readme).toContain("docs/provider-runtime-catalog.schema.json");
-    expect(readme).toContain("docs/compat-target-catalog.md");
-    expect(readme).toContain("docs/compat-target-catalog.json");
-    expect(readme).toContain("docs/compat-target-catalog.schema.json");
-    expect(readme).toContain("docs/builder-kit-catalog.md");
-    expect(readme).toContain("docs/builder-kit-catalog.json");
-    expect(readme).toContain("docs/builder-kit-catalog.schema.json");
-    expect(readme).toContain("docs/skill-pack-catalog.md");
-    expect(readme).toContain("docs/skill-pack-catalog.json");
-    expect(readme).toContain("docs/skill-pack-catalog.schema.json");
+    expect(readme).toContain("[docs/README.md](./docs/README.md)");
     expect(readme).toContain(".agents/internal-docs/blueprints/");
-    expect(readme).toContain("docs/discoverability-keyword-truth.json");
-    expect(readme).toContain("docs/discoverability-keyword-truth.schema.json");
+    expect(readme).not.toContain("docs/shared-provider-runtime.md");
+    expect(readme).not.toContain("docs/public-surface-catalog.schema.json");
+    expect(readme).not.toContain("docs/starter-manifest-examples.md");
+    expect(readme).not.toContain("docs/starter-manifest-examples.schema.json");
+    expect(readme).not.toContain("docs/starter-pack-chooser.md");
+    expect(readme).not.toContain("docs/starter-pack-comparison.md");
+    expect(readme).not.toContain("docs/public-surface-catalog.md");
+    expect(readme).not.toContain("docs/compat/README.md");
+    expect(readme).not.toContain("docs/mcp.md");
+    expect(readme).not.toContain("docs/faq.md");
+    expect(readme).not.toContain("docs/glossary.md");
+    expect(readme).not.toContain("docs/i18n.md");
+    expect(readme).not.toContain("docs/provider-runtime-catalog.md");
+    expect(readme).not.toContain("docs/provider-runtime-catalog.json");
+    expect(readme).not.toContain("docs/provider-runtime-catalog.schema.json");
+    expect(readme).not.toContain("docs/compat-target-catalog.md");
+    expect(readme).not.toContain("docs/compat-target-catalog.json");
+    expect(readme).not.toContain("docs/compat-target-catalog.schema.json");
+    expect(readme).not.toContain("docs/builder-kit-catalog.json");
+    expect(readme).not.toContain("docs/builder-kit-catalog.schema.json");
+    expect(readme).not.toContain("docs/skill-pack-catalog.json");
+    expect(readme).not.toContain("docs/skill-pack-catalog.schema.json");
+    expect(readme).not.toContain("docs/discoverability-keyword-truth.json");
+    expect(readme).not.toContain("docs/discoverability-keyword-truth.schema.json");
     expect(readme).not.toContain("fresh `verify:service-live` 当前停在 `Gemini = user-action-required`");
     expect(readme).not.toContain("workspace external blocker pack");
     expect(readme).not.toContain("bilingual developer frontdoor");
@@ -373,10 +375,8 @@ describe("Switchyard docs frontdoor contracts", () => {
     const compatTargetCatalogDoc = read("docs/compat-target-catalog.md");
     const compatTargetCatalogJson = JSON.parse(read("docs/compat-target-catalog.json"));
     const compatTargetCatalogSchema = JSON.parse(read("docs/compat-target-catalog.schema.json"));
-    const builderKitCatalogDoc = read("docs/builder-kit-catalog.md");
     const builderKitCatalogJson = JSON.parse(read("docs/builder-kit-catalog.json"));
     const builderKitCatalogSchema = JSON.parse(read("docs/builder-kit-catalog.schema.json"));
-    const skillPackCatalogDoc = read("docs/skill-pack-catalog.md");
     const skillPackCatalogJson = JSON.parse(read("docs/skill-pack-catalog.json"));
     const skillPackCatalogSchema = JSON.parse(read("docs/skill-pack-catalog.schema.json"));
     const mcpToolCatalogDoc = read("docs/mcp-tool-catalog.md");
@@ -448,16 +448,6 @@ describe("Switchyard docs frontdoor contracts", () => {
     expect(compatTargetCatalogDoc).toContain("pnpm run switchyard:cli -- compat-target-catalog");
     expect(compatTargetCatalogDoc).toContain("switchyard.catalog.compat_target_catalog");
     expect(compatTargetCatalogDoc).toContain("fail-closed");
-    expect(builderKitCatalogDoc).toContain("docs/builder-kit-catalog.json");
-    expect(builderKitCatalogDoc).toContain("docs/builder-kit-catalog.schema.json");
-    expect(builderKitCatalogDoc).toContain("pnpm run switchyard:cli -- builder-kit-catalog");
-    expect(builderKitCatalogDoc).toContain("switchyard.catalog.builder_kit_catalog");
-    expect(builderKitCatalogDoc).toContain("fail-closed");
-    expect(skillPackCatalogDoc).toContain("docs/skill-pack-catalog.json");
-    expect(skillPackCatalogDoc).toContain("docs/skill-pack-catalog.schema.json");
-    expect(skillPackCatalogDoc).toContain("pnpm run switchyard:cli -- skill-pack-catalog");
-    expect(skillPackCatalogDoc).toContain("switchyard.catalog.skill_pack_catalog");
-    expect(skillPackCatalogDoc).toContain("notYetSupported");
     expect(mcpToolCatalogDoc).toContain("docs/mcp-tool-catalog.json");
     expect(mcpToolCatalogDoc).toContain("pnpm run switchyard:cli -- mcp-tool-catalog");
     expect(mcpToolCatalogDoc).toContain("switchyard.catalog.mcp_tool_catalog");

@@ -30,7 +30,7 @@
       ],
       "recommendedDocs": [
         "docs/starter-pack-chooser.md",
-        "docs/plugin-skill-starter-kits.md",
+        "starter-packs/README.md",
         "docs/mcp.md",
         "docs/public-surface-support-matrix.md"
       ],
@@ -75,7 +75,7 @@
       ],
       "recommendedDocs": [
         "docs/starter-pack-chooser.md",
-        "docs/plugin-skill-starter-kits.md",
+        "starter-packs/README.md",
         "docs/discoverability-keyword-truth.md",
         "docs/public-surface-catalog.md"
       ],

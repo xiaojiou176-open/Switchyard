@@ -72,7 +72,6 @@ into host-local runnable glue and config examples.
 ## Related Pages
 
 - [docs/starter-pack-chooser.md](./starter-pack-chooser.md)
-- [docs/plugin-skill-starter-kits.md](./plugin-skill-starter-kits.md)
 - [examples/README.md](../examples/README.md)
 - [examples/hosts/README.md](../examples/hosts/README.md)
 - [starter-packs/README.md](../starter-packs/README.md)

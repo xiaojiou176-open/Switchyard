@@ -38,6 +38,17 @@ In plain English:
 
 ## Default Route
 
+If you prefer a click-first local experience instead of a manual step ladder,
+run this first:
+
+```bash
+pnpm run start:local-experience
+```
+
+That one command starts the local runtime, serves the docs front door, and
+prints the ready-to-open URLs for the local `auth-portal`, a provider
+workbench, and the docs front door.
+
 ### Step 1. Start the local service runtime
 
 ```bash
@@ -114,7 +125,6 @@ Start here:
 
 Open:
 
-- [docs/plugin-skill-starter-kits.md](./plugin-skill-starter-kits.md)
 - [docs/starter-pack-chooser.md](./starter-pack-chooser.md)
 - [starter-packs/README.md](../starter-packs/README.md)
 

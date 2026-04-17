@@ -65,10 +65,8 @@ If you only need one slice instead of the aggregate catalog, read these directly
 - [docs/compat-target-catalog.md](./compat-target-catalog.md)
 - [docs/compat-target-catalog.json](./compat-target-catalog.json)
 - [docs/compat-target-catalog.schema.json](./compat-target-catalog.schema.json)
-- [docs/builder-kit-catalog.md](./builder-kit-catalog.md)
 - [docs/builder-kit-catalog.json](./builder-kit-catalog.json)
 - [docs/builder-kit-catalog.schema.json](./builder-kit-catalog.schema.json)
-- [docs/skill-pack-catalog.md](./skill-pack-catalog.md)
 - [docs/skill-pack-catalog.json](./skill-pack-catalog.json)
 - [docs/skill-pack-catalog.schema.json](./skill-pack-catalog.schema.json)
 
@@ -140,9 +138,9 @@ The same catalog truth is also readable from the read-only MCP surface:
 
 If you need more than raw status and want a concrete builder route, open:
 
-- [docs/plugin-skill-starter-kits.md](./plugin-skill-starter-kits.md)
+- [docs/builder-kit-catalog.json](./builder-kit-catalog.json)
+- [docs/skill-pack-catalog.json](./skill-pack-catalog.json)
 - [starter-packs/README.md](../starter-packs/README.md)
-- [docs/starter-pack-index.md](./starter-pack-index.md)
 - [docs/starter-pack-chooser.md](./starter-pack-chooser.md)
 - [docs/starter-pack-comparison.md](./starter-pack-comparison.md)
 - [docs/builder-journeys.md](./builder-journeys.md)
