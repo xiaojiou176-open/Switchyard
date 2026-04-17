@@ -62,7 +62,7 @@ If you only need the next truthful route, choose one:
   - [docs/public-distribution-ledger.md](./public-distribution-ledger.md)
 - I need the core API front door
   - [docs/api/service-http-reference.md](./api/service-http-reference.md)
-- I need the builder workflow / skills / MCP route
+- I need the AI workflow / builder workflow / skills / MCP route
   - [starter pack chooser](./starter-pack-chooser.md)
   - [surface catalog](./public-surface-catalog.md)
   - [MCP front door](./mcp.md)
