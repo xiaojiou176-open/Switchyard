@@ -81,6 +81,10 @@ Partially yes, but only in a thin read-only sense.
 3. `pnpm run example:mcp-inspector`
 4. `pnpm run example:runtime-bridge`
 
+如果你不想手动分三步，而是想直接进入本地前台体验：
+
+- `pnpm run start:local-experience`
+
 先把它理解成：
 
 - 先证明 runtime 活着
@@ -188,13 +192,13 @@ Partially yes, but only in a thin read-only sense.
 - `docs/host-integration-playbooks.schema.json`
 - `examples/hosts/index.json`
 - `examples/hosts/index.schema.json`
-- `docs/starter-manifest-templates.md`
 - `docs/starter-manifest-templates.schema.json`
-- `docs/starter-manifest-examples.md`
 - `docs/starter-manifest-examples.schema.json`
 - `docs/compat-target-catalog.md`
-- `docs/builder-kit-catalog.md`
-- `docs/skill-pack-catalog.md`
+- `docs/builder-kit-catalog.json`
+- `docs/builder-kit-catalog.schema.json`
+- `docs/skill-pack-catalog.json`
+- `docs/skill-pack-catalog.schema.json`
 - `docs/provider-runtime-catalog.md`
 
 这样做的好处是：
@@ -440,7 +444,6 @@ No.
 
 当前最短路径是：
 
-- [docs/builder-kit-catalog.md](./builder-kit-catalog.md)
 - [docs/builder-kit-catalog.json](./builder-kit-catalog.json)
 - [docs/builder-kit-catalog.schema.json](./builder-kit-catalog.schema.json)
 - `pnpm run switchyard:cli -- builder-kit-catalog`
@@ -459,7 +462,6 @@ No.
 
 当前最短路径是：
 
-- [docs/skill-pack-catalog.md](./skill-pack-catalog.md)
 - [docs/skill-pack-catalog.json](./skill-pack-catalog.json)
 - [docs/skill-pack-catalog.schema.json](./skill-pack-catalog.schema.json)
 - `pnpm run switchyard:cli -- skill-pack-catalog`

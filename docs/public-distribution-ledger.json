@@ -174,7 +174,7 @@
       "artifactNames": [
         "starter-packs/**",
         "starter-packs/index.json",
-        "docs/starter-pack-index.md"
+        "starter-packs/README.md"
       ],
       "proofCommands": [
         "pnpm run starter-pack:codex",
@@ -193,7 +193,7 @@
       "sourceAnchors": [
         "docs/public-distribution-ledger.md",
         "starter-packs/README.md",
-        "docs/starter-pack-index.md"
+        "starter-packs/index.json"
       ]
     },
     {
@@ -226,7 +226,7 @@
       "officialSources": [],
       "sourceAnchors": [
         "docs/public-distribution-ledger.md",
-        "docs/skill-pack-catalog.md",
+        "docs/skill-pack-catalog.json",
         "docs/discoverability-keyword-truth.md"
       ]
     }

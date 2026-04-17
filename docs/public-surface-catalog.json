@@ -260,7 +260,7 @@
         "docs/host-integration-examples.md",
         "docs/compat/codex.md",
         "docs/public-surface-support-matrix.md",
-        "docs/plugin-skill-starter-kits.md"
+        "starter-packs/README.md"
       ],
       "copyReadyPackPath": "starter-packs/builders/codex",
       "notYetSupported": [
@@ -302,7 +302,7 @@
         "docs/host-integration-examples.md",
         "docs/compat/claude-code.md",
         "docs/public-surface-support-matrix.md",
-        "docs/plugin-skill-starter-kits.md"
+        "starter-packs/README.md"
       ],
       "copyReadyPackPath": "starter-packs/builders/claude-code",
       "notYetSupported": [
@@ -345,7 +345,7 @@
         "docs/host-integration-examples.md",
         "docs/compat/openclaw.md",
         "docs/compare/switchyard-vs-openclaw.md",
-        "docs/plugin-skill-starter-kits.md"
+        "starter-packs/README.md"
       ],
       "copyReadyPackPath": "starter-packs/builders/openclaw",
       "notYetSupported": [
@@ -387,7 +387,7 @@
         "docs/host-integration-examples.md",
         "docs/mcp.md",
         "docs/api/mcp-readonly-server.md",
-        "docs/plugin-skill-starter-kits.md"
+        "starter-packs/README.md"
       ],
       "copyReadyPackPath": "starter-packs/builders/mcp",
       "notYetSupported": [
@@ -427,7 +427,7 @@
       ],
       "recommendedDocs": [
         "docs/starter-pack-chooser.md",
-        "docs/plugin-skill-starter-kits.md",
+        "starter-packs/README.md",
         "docs/mcp.md",
         "docs/public-surface-support-matrix.md"
       ],
@@ -472,7 +472,7 @@
       ],
       "recommendedDocs": [
         "docs/starter-pack-chooser.md",
-        "docs/plugin-skill-starter-kits.md",
+        "starter-packs/README.md",
         "docs/discoverability-keyword-truth.md",
         "docs/public-surface-catalog.md"
       ],

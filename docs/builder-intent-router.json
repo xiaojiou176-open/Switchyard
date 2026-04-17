@@ -51,7 +51,7 @@
       ],
       "relatedDocs": [
         "docs/starter-pack-comparison.md",
-        "docs/plugin-skill-starter-kits.md",
+        "starter-packs/README.md",
         "starter-packs/README.md"
       ],
       "searchKeywords": [
@@ -80,7 +80,7 @@
       ],
       "relatedDocs": [
         "docs/starter-pack-chooser.md",
-        "docs/plugin-skill-starter-kits.md"
+        "starter-packs/README.md"
       ],
       "searchKeywords": [
         "switchyard compare starter packs",
@@ -249,7 +249,8 @@
         "provider entry does not imply every host path is equally supported"
       ],
       "relatedDocs": [
-        "docs/shared-provider-runtime.md",
+        "README.md",
+        "docs/media/30-second-overview.md",
         ".agents/internal-docs/contracts/provider-runtime-contract.md"
       ],
       "searchKeywords": [

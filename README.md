@@ -125,6 +125,20 @@ The default service port is `http://127.0.0.1:4010`.
 If you want the full step-by-step path and failure routing, open
 [docs/first-success.md](./docs/first-success.md).
 
+If you prefer a click-first local experience instead of running the steps one by
+one, use:
+
+```bash
+pnpm run start:local-experience
+```
+
+That command starts the local runtime plus a static docs front door and prints
+the ready-to-open URLs for:
+
+- `auth-portal`
+- `ChatGPT` debug workbench
+- `docs front door`
+
 ## Why Switchyard Exists
 
 Many AI products keep rebuilding the same messy layer:
@@ -289,52 +303,26 @@ deeper shelves rather than the default first stop.
 
 ### Deeper public shelves
 
-- Product and scope
-  - [docs/shared-provider-runtime.md](./docs/shared-provider-runtime.md)
 - API and diagnostics
   - [docs/api/sdk-quickstart.md](./docs/api/sdk-quickstart.md)
   - [docs/api/mcp-readonly-server.md](./docs/api/mcp-readonly-server.md)
   - [docs/api/error-diagnostics-reference.md](./docs/api/error-diagnostics-reference.md)
   - [docs/api/web-login-acquisition.md](./docs/api/web-login-acquisition.md)
-- Builder adoption
+- Builder adoption and route catalogs
   - [examples/README.md](./examples/README.md)
   - [starter-packs/README.md](./starter-packs/README.md)
-  - [docs/starter-pack-index.md](./docs/starter-pack-index.md)
-  - [docs/plugin-skill-starter-kits.md](./docs/plugin-skill-starter-kits.md)
-  - [docs/starter-manifest-templates.md](./docs/starter-manifest-templates.md)
-  - [docs/starter-manifest-templates.schema.json](./docs/starter-manifest-templates.schema.json)
-  - [docs/starter-manifest-examples.md](./docs/starter-manifest-examples.md)
-  - [docs/starter-manifest-examples.schema.json](./docs/starter-manifest-examples.schema.json)
-  - [docs/starter-pack-chooser.md](./docs/starter-pack-chooser.md)
-  - [docs/starter-pack-comparison.md](./docs/starter-pack-comparison.md)
-  - [docs/builder-journeys.md](./docs/builder-journeys.md)
   - [docs/builder-intent-router.md](./docs/builder-intent-router.md)
+  - [docs/builder-journeys.md](./docs/builder-journeys.md)
   - [docs/host-integration-playbooks.md](./docs/host-integration-playbooks.md)
   - [docs/host-integration-examples.md](./docs/host-integration-examples.md)
-- Public reference and catalogs
+  - the paired machine-readable catalogs that these routers point to
+- Public support truth
   - [docs/public-surface-support-matrix.md](./docs/public-surface-support-matrix.md)
-  - [docs/public-surface-catalog.md](./docs/public-surface-catalog.md)
-  - [docs/public-surface-catalog.schema.json](./docs/public-surface-catalog.schema.json)
-  - [docs/compat/README.md](./docs/compat/README.md)
-  - [docs/mcp.md](./docs/mcp.md)
-  - [docs/provider-runtime-catalog.md](./docs/provider-runtime-catalog.md)
-  - [docs/provider-runtime-catalog.json](./docs/provider-runtime-catalog.json)
-  - [docs/provider-runtime-catalog.schema.json](./docs/provider-runtime-catalog.schema.json)
-  - [docs/compat-target-catalog.md](./docs/compat-target-catalog.md)
-  - [docs/compat-target-catalog.json](./docs/compat-target-catalog.json)
-  - [docs/compat-target-catalog.schema.json](./docs/compat-target-catalog.schema.json)
-  - [docs/builder-kit-catalog.md](./docs/builder-kit-catalog.md)
-  - [docs/builder-kit-catalog.json](./docs/builder-kit-catalog.json)
-  - [docs/builder-kit-catalog.schema.json](./docs/builder-kit-catalog.schema.json)
-  - [docs/skill-pack-catalog.md](./docs/skill-pack-catalog.md)
-  - [docs/skill-pack-catalog.json](./docs/skill-pack-catalog.json)
-  - [docs/skill-pack-catalog.schema.json](./docs/skill-pack-catalog.schema.json)
-  - [docs/discoverability-keyword-truth.json](./docs/discoverability-keyword-truth.json)
-  - [docs/discoverability-keyword-truth.schema.json](./docs/discoverability-keyword-truth.schema.json)
-- Support surfaces
-  - [docs/faq.md](./docs/faq.md)
-  - [docs/glossary.md](./docs/glossary.md)
-  - [docs/i18n.md](./docs/i18n.md)
+
+If you need the fuller shelf map for compat, MCP, FAQ, glossary, helper-page
+language support, or the wider catalog family, open
+[docs/README.md](./docs/README.md) instead of turning this root README into a
+public warehouse list.
 
 ### Internal-only working packs
 

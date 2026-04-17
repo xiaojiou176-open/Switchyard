@@ -10,7 +10,7 @@
       "requiredLabels": [],
       "canonicalDocs": [
         "README.md",
-        "docs/shared-provider-runtime.md",
+        "docs/media/30-second-overview.md",
         ".agents/internal-docs/product/v1-brief.md"
       ]
     },
@@ -22,7 +22,7 @@
       "requiredLabels": [],
       "canonicalDocs": [
         "README.md",
-        "docs/shared-provider-runtime.md"
+        "docs/media/30-second-overview.md"
       ]
     },
     {
@@ -71,7 +71,7 @@
       "requiredLabels": [],
       "canonicalDocs": [
         ".agents/internal-docs/contracts/service-and-sdk-surfaces.md",
-        "docs/shared-provider-runtime.md",
+        "README.md",
         "docs/api/service-http-reference.md"
       ]
     },

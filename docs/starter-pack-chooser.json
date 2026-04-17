@@ -135,7 +135,7 @@
       "recommendedDocs": [
         "docs/starter-pack-chooser.md",
         "docs/compat/codex.md",
-        "docs/plugin-skill-starter-kits.md",
+        "starter-packs/README.md",
         "starter-packs/README.md"
       ],
       "searchKeywords": [
@@ -181,7 +181,7 @@
       "recommendedDocs": [
         "docs/starter-pack-chooser.md",
         "docs/compat/claude-code.md",
-        "docs/plugin-skill-starter-kits.md",
+        "starter-packs/README.md",
         "starter-packs/README.md"
       ],
       "searchKeywords": [
@@ -319,7 +319,7 @@
       ],
       "recommendedDocs": [
         "docs/starter-pack-chooser.md",
-        "docs/plugin-skill-starter-kits.md",
+        "starter-packs/README.md",
         "docs/mcp.md",
         "starter-packs/README.md"
       ],
@@ -365,7 +365,7 @@
       ],
       "recommendedDocs": [
         "docs/starter-pack-chooser.md",
-        "docs/plugin-skill-starter-kits.md",
+        "starter-packs/README.md",
         "docs/discoverability-keyword-truth.md",
         "starter-packs/README.md"
       ],

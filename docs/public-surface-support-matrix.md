@@ -53,7 +53,10 @@ not copy this page by hand. Use:
 
 - `docs/public-surface-catalog.md`
 - `docs/public-surface-catalog.json`
-- `docs/plugin-skill-starter-kits.md`
+- `docs/builder-kit-catalog.json`
+- `docs/builder-kit-catalog.schema.json`
+- `docs/skill-pack-catalog.json`
+- `docs/skill-pack-catalog.schema.json`
 - `pnpm run switchyard:cli -- surface-catalog`
 - `pnpm run switchyard:cli -- compat-targets`
 - `pnpm run switchyard:cli -- builder-kits`

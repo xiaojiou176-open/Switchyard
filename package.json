@@ -64,6 +64,7 @@
     "starter-pack:runtime-diagnostics-pack": "pnpm exec node starter-packs/skills/runtime-diagnostics-pack/smoke.mjs",
     "starter-pack:docs-seo-sync-pack": "pnpm exec node starter-packs/skills/docs-seo-sync-pack/smoke.mjs",
     "start:service-local": "pnpm --filter @switchyard/app-service start",
+    "start:local-experience": "pnpm exec node scripts/start-local-experience.mjs",
     "audit:runtime-footprint": "pnpm exec node scripts/runtime-cache-maintenance.mjs audit",
     "cleanup:runtime": "pnpm exec node scripts/runtime-cache-maintenance.mjs cleanup",
     "diagnose:web-login-browser": "pnpm exec node scripts/diagnose-web-login-browser.mjs",

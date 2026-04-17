@@ -1,5 +1,5 @@
 import { execFileSync } from "node:child_process";
-import { readFileSync } from "node:fs";
+import { existsSync, readFileSync } from "node:fs";
 import { resolve } from "node:path";
 
 import { describe, expect, it } from "vitest";
@@ -64,6 +64,7 @@ describe("Switchyard sensitive surface hygiene", () => {
   it("keeps tracked text content free of real secret formats and host absolute paths", () => {
     const trackedFiles = listTrackedFiles().filter(
       (file) =>
+        existsSync(resolve(repoRoot, file)) &&
         !file.endsWith(".png") &&
         !file.endsWith(".jpg") &&
         !file.endsWith(".jpeg") &&
