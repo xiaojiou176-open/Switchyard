@@ -62,6 +62,10 @@ If you only need the next truthful route, choose one:
   - [docs/public-distribution-ledger.md](./public-distribution-ledger.md)
 - I need the core API front door
   - [docs/api/service-http-reference.md](./api/service-http-reference.md)
+- I need the builder workflow / skills / MCP route
+  - [starter pack chooser](./starter-pack-chooser.md)
+  - [surface catalog](./public-surface-catalog.md)
+  - [MCP front door](./mcp.md)
 - I need local bootstrap or workstation-bound reality
   - [docs/runbooks/dev-bootstrap.md](./runbooks/dev-bootstrap.md)
 
@@ -100,6 +104,10 @@ not presented as the default tour:
   - builder starter packs and runnable starter surfaces
 - [examples/README.md](../examples/README.md)
   - host examples and integration entrypoints
+- [surface catalog](./public-surface-catalog.md)
+  - machine-readable surface, skill-pack, builder-kit, and MCP truth
+- [MCP front door](./mcp.md)
+  - read-only MCP front door once the question is explicitly about MCP
 
 If you need every catalog, schema, or machine-readable companion, use the repo
 tree or CLI surfaces instead of turning this atlas back into a file cabinet.
