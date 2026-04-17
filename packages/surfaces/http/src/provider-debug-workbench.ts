@@ -249,8 +249,24 @@ function renderEvidenceStack(
   currentConsoleDiagnostic: string,
   currentNetworkDiagnostic: string,
 ): string {
+  const firstDiagnoseStep = debug.diagnoseLadder[0];
+  const evidencePeek = [
+    debug.currentPage.classification
+      ? `Current page: ${debug.currentPage.classification}`
+      : "Current page: live-read evidence in primary tray",
+    firstDiagnoseStep?.summary
+      ? `Next repair step: ${firstDiagnoseStep.summary}`
+      : "Next repair step: open the diagnose ladder",
+  ];
+
   return `<details class="evidence-stack">
-    <summary>Evidence stack, repair ladder, and raw JSON surfaces</summary>
+    <summary>
+      <span class="evidence-stack-summary-copy">
+        <span class="evidence-stack-summary-title">Evidence stack, repair ladder, and raw JSON surfaces</span>
+        <span class="evidence-stack-summary-peek">${escapeHtml(evidencePeek.join(" • "))}</span>
+      </span>
+      <span class="evidence-stack-summary-toggle">Open trays</span>
+    </summary>
     <div class="evidence-stack-body">
       <div class="evidence-stack-intro">
         <p class="eyebrow eyebrow-compact">Progressive disclosure</p>
@@ -357,6 +373,23 @@ function renderEvidenceStack(
       </div>
     </div>
   </details>`;
+}
+
+function renderEvidencePreview(debug: ServiceProviderDebugSupportView): string {
+  const firstDiagnoseStep = debug.diagnoseLadder[0];
+  const previewBits = [
+    debug.currentPage.classification
+      ? `Current page: ${debug.currentPage.classification}`
+      : "Current page: workspace-ready evidence available",
+    firstDiagnoseStep?.summary
+      ? `Next repair step: ${firstDiagnoseStep.summary}`
+      : "Next repair step: open the full diagnose ladder",
+  ];
+
+  return `<section class="evidence-preview" aria-label="Evidence preview">
+    <p class="eyebrow eyebrow-compact">Evidence preview</p>
+    <p>${escapeHtml(previewBits.join(" • "))}</p>
+  </section>`;
 }
 
 function renderSummaryCard(
@@ -999,6 +1032,28 @@ export function renderProviderDebugWorkbench(
           var(--panel);
       }
 
+      .evidence-preview {
+        display: grid;
+        gap: 0.28rem;
+        padding: 0.9rem 1rem;
+        margin-bottom: 1rem;
+        border: 1px solid rgba(255, 255, 255, 0.06);
+        border-radius: 18px;
+        background:
+          linear-gradient(180deg, rgba(255, 255, 255, 0.032), rgba(255, 255, 255, 0.015)),
+          var(--panel);
+        box-shadow:
+          rgba(255, 255, 255, 0.035) 0 1px 0 0 inset,
+          rgba(0, 0, 0, 0.16) 0 10px 18px -14px;
+      }
+
+      .evidence-preview p:last-child {
+        margin: 0;
+        color: var(--muted);
+        font-size: 0.94rem;
+        line-height: 1.45;
+      }
+
       .summary-card h2 {
         margin: 0;
         font-size: 1.08rem;
@@ -1151,6 +1206,10 @@ export function renderProviderDebugWorkbench(
 
       .evidence-stack summary {
         cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 0.9rem;
         padding: 0.9rem 1rem;
         color: var(--muted);
         transition:
@@ -1161,6 +1220,37 @@ export function renderProviderDebugWorkbench(
       .evidence-stack summary:hover {
         color: var(--ink);
         opacity: 0.96;
+      }
+
+      .evidence-stack-summary-copy {
+        display: grid;
+        gap: 0.24rem;
+      }
+
+      .evidence-stack-summary-title {
+        color: var(--ink);
+        font-weight: 700;
+      }
+
+      .evidence-stack-summary-peek {
+        color: var(--muted);
+        font-size: 0.9rem;
+        line-height: 1.45;
+      }
+
+      .evidence-stack-summary-toggle {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        padding: 0.25rem 0.56rem;
+        border-radius: 999px;
+        border: 1px solid rgba(255, 255, 255, 0.08);
+        background: rgba(255, 255, 255, 0.04);
+        color: var(--muted);
+        font-size: 0.74rem;
+        letter-spacing: 0.06em;
+        text-transform: uppercase;
+        white-space: nowrap;
       }
 
       .evidence-stack-body {
@@ -1320,6 +1410,8 @@ export function renderProviderDebugWorkbench(
 
       ${truthFocus ? renderPrimaryVerdict(debug, truthFocus) : ""}
       ${renderDetailedBrowserDiagnostics(sharedDiagnostic)}
+
+      ${renderEvidencePreview(debug)}
 
       <section class="summary-grid" aria-label="Provider readiness summary">
         ${renderSummaryCard(
