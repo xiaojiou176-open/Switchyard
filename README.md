@@ -83,6 +83,7 @@ Switchyard now treats the public front door as **English-first**.
 | run the shortest first success | [docs/first-success.md](./docs/first-success.md) |
 | inspect what is really proved today | [docs/public-proof-pack.md](./docs/public-proof-pack.md) |
 | see what is package-ready vs listed-live | [docs/public-distribution-ledger.md](./docs/public-distribution-ledger.md) |
+| find the builder workflow / AI workflow route | [docs/README.md](./docs/README.md) |
 | bootstrap a local workstation or inspect workstation-bound reality | [docs/runbooks/dev-bootstrap.md](./docs/runbooks/dev-bootstrap.md) |
 | browse the public docs front row | [docs/index.html](./docs/index.html) and [docs/README.md](./docs/README.md) |
 
