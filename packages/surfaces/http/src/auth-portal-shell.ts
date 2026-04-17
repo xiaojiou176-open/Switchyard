@@ -1043,6 +1043,20 @@ function renderPriorityMetric(
   </article>`;
 }
 
+function getPrimaryHeroBlockerCard(section: AuthPortalSection): AuthPortalCard | undefined {
+  const orderedCards = [...section.cards].sort((left, right) => {
+    const rank = {
+      "account-action": 0,
+      "session-work": 1,
+      ready: 2,
+    } as const;
+
+    return rank[getWebLoginPriorityBucket(left)] - rank[getWebLoginPriorityBucket(right)];
+  });
+
+  return orderedCards.find((card) => getWebLoginPriorityBucket(card) !== "ready");
+}
+
 function renderHeroFirstCallStrip(model: AuthPortalShellModel): string {
   const webLoginSection = model.sections.find((section) => section.id === "web-login");
   if (!webLoginSection) {
@@ -1058,6 +1072,16 @@ function renderHeroFirstCallStrip(model: AuthPortalShellModel): string {
   const sessionWorkCount = webLoginSection.cards.filter(
     (card) => getWebLoginPriorityBucket(card) === "session-work",
   ).length;
+  const firstBlocker = getPrimaryHeroBlockerCard(webLoginSection);
+  const blockerTruthFocus = firstBlocker ? getVisibleTruthFocus(firstBlocker) : null;
+  const blockerHref =
+    firstBlocker?.routes?.debugWorkbench ?? (firstBlocker ? `#provider-${firstBlocker.providerId}` : "");
+  const blockerLabel =
+    blockerTruthFocus?.primaryLinkLabel ??
+    blockerTruthFocus?.nextStepLabel ??
+    firstBlocker?.handoff?.nextStep?.label ??
+    firstBlocker?.actions?.[0]?.label ??
+    "Inspect current truth";
 
   return `<div class="hero-call-strip-shell">
     <p class="eyebrow eyebrow-compact">First call summary</p>
@@ -1078,6 +1102,24 @@ function renderHeroFirstCallStrip(model: AuthPortalShellModel): string {
       <span>Providers already reusable without opening the deeper shelf first.</span>
       </article>
     </div>
+    ${
+      firstBlocker
+        ? `<aside class="hero-top-blocker" aria-label="Current first blocker">
+      <div class="hero-top-blocker-copy">
+        <p class="eyebrow eyebrow-compact">Start here first</p>
+        <strong>${escapeHtml(firstBlocker.providerDisplayName)} · ${escapeHtml(
+          blockerTruthFocus?.title ?? firstBlocker.stateLabel,
+        )}</strong>
+        <p>${escapeHtml(
+          blockerTruthFocus?.detail ??
+            firstBlocker.statusSummary ??
+            "Open the current provider shelf before touching the rest of the list.",
+        )}</p>
+      </div>
+      <a class="hero-top-blocker-link" href="${escapeHtml(blockerHref)}">${escapeHtml(blockerLabel)}</a>
+    </aside>`
+        : ""
+    }
   </div>`;
 }
 
@@ -1800,6 +1842,54 @@ export function renderAuthPortalShell(model: AuthPortalShellModel): string {
         display: grid;
         grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
         gap: 0.85rem;
+      }
+
+      .hero-top-blocker {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 0.9rem;
+        margin-top: 0.85rem;
+        padding: 0.95rem 1rem;
+        border: 1px solid rgba(255, 255, 255, 0.08);
+        border-radius: 18px;
+        background:
+          linear-gradient(180deg, rgba(255, 255, 255, 0.035), rgba(255, 255, 255, 0.015)),
+          var(--panel-raised);
+        box-shadow:
+          0 0 0 1px rgba(255, 255, 255, 0.03),
+          inset 0 1px 0 rgba(255, 255, 255, 0.04);
+      }
+
+      .hero-top-blocker-copy {
+        display: grid;
+        gap: 0.22rem;
+      }
+
+      .hero-top-blocker-copy strong {
+        font-size: 1rem;
+        color: var(--ink);
+      }
+
+      .hero-top-blocker-copy p:last-child {
+        margin: 0;
+        color: var(--muted);
+        font-size: 0.92rem;
+        line-height: 1.45;
+      }
+
+      .hero-top-blocker-link {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        padding: 0.62rem 0.9rem;
+        border-radius: 999px;
+        border: 1px solid rgba(255, 255, 255, 0.08);
+        background: rgba(255, 255, 255, 0.04);
+        color: var(--ink);
+        font-size: 0.85rem;
+        font-weight: 700;
+        white-space: nowrap;
       }
 
       .priority-provider-card {

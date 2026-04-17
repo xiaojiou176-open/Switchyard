@@ -349,4 +349,77 @@ describe("Grok browser DOM transport", () => {
     expect(waitForTimeout).toHaveBeenCalledTimes(4);
     expect(close).toHaveBeenCalled();
   });
+
+  it("returns the requested token from a final DOM read-back even if the abort signal is already set", async () => {
+    vi.stubEnv("SWITCHYARD_WEB_AUTH_CDP_URL", "http://127.0.0.1:39222");
+    vi.stubEnv("SWITCHYARD_WEB_GROK_COOKIE_BUNDLE", "auth_token=abc; sso=def");
+    vi.stubEnv("SWITCHYARD_WEB_GROK_USER_AGENT", "SwitchyardTest/1.0");
+
+    const controller = new AbortController();
+    controller.abort();
+
+    const evaluate = vi
+      .fn()
+      .mockResolvedValueOnce({
+        ok: true,
+      })
+      .mockResolvedValueOnce(["Existing Grok assistant text"])
+      .mockResolvedValueOnce({
+        text: "SWITCHYARD_GROK_DOM_ABORT_OK",
+        isStreaming: false,
+        bodyText:
+          "Reply with exactly SWITCHYARD_GROK_DOM_ABORT_OK and nothing else. SWITCHYARD_GROK_DOM_ABORT_OK",
+      });
+    const goto = vi.fn().mockResolvedValue(undefined);
+    const waitForTimeout = vi.fn().mockResolvedValue(undefined);
+    const close = vi.fn().mockResolvedValue(undefined);
+    const click = vi.fn().mockResolvedValue(undefined);
+    const sendClick = vi.fn().mockResolvedValue(undefined);
+    const type = vi.fn().mockResolvedValue(undefined);
+    const press = vi.fn().mockResolvedValue(undefined);
+    const locator = vi.fn((selector: string) => ({
+      first: () => ({
+        click: selector.includes("contenteditable") ? click : sendClick,
+      }),
+    }));
+    const page = {
+      goto,
+      evaluate,
+      waitForTimeout,
+      url: () => "https://grok.com/",
+      locator,
+      keyboard: {
+        type,
+        press,
+      },
+    };
+    const addCookies = vi.fn().mockResolvedValue(undefined);
+    const newPage = vi.fn().mockResolvedValue(page);
+    const context = {
+      pages: () => [],
+      addCookies,
+      newPage,
+    };
+    const browser = {
+      contexts: () => [context],
+      close,
+    };
+
+    const { invokeGrokBrowserDomTransport } = await import(
+      "../../../packages/providers/web/grok/src/browser-dom-transport.js"
+    );
+
+    const text = await invokeGrokBrowserDomTransport(
+      {
+        message: "Reply with exactly SWITCHYARD_GROK_DOM_ABORT_OK and nothing else.",
+        signal: controller.signal,
+      },
+      process.env,
+      vi.fn().mockResolvedValue(browser),
+    );
+
+    expect(text).toBe("SWITCHYARD_GROK_DOM_ABORT_OK");
+    expect(waitForTimeout).toHaveBeenCalledTimes(1);
+    expect(close).toHaveBeenCalled();
+  });
 });
