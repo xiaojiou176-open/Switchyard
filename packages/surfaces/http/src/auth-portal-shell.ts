@@ -1057,6 +1057,31 @@ function getPrimaryHeroBlockerCard(section: AuthPortalSection): AuthPortalCard |
   return orderedCards.find((card) => getWebLoginPriorityBucket(card) !== "ready");
 }
 
+function getHeroBlockerLabel(
+  card: AuthPortalCard,
+  truthFocus: AuthPortalVisibleTruthFocus | null,
+): string {
+  const candidate =
+    truthFocus?.primaryLinkLabel ??
+    truthFocus?.nextStepLabel ??
+    card.handoff?.nextStep?.label ??
+    card.actions?.[0]?.label;
+
+  if (!candidate) {
+    return `Inspect ${card.providerDisplayName} truth`;
+  }
+
+  if (candidate === "Review current blocker") {
+    return `Inspect ${card.providerDisplayName} blocker`;
+  }
+
+  if (candidate === "Inspect current browser first") {
+    return `Inspect ${card.providerDisplayName} browser`;
+  }
+
+  return candidate;
+}
+
 function renderHeroFirstCallStrip(model: AuthPortalShellModel): string {
   const webLoginSection = model.sections.find((section) => section.id === "web-login");
   if (!webLoginSection) {
@@ -1076,12 +1101,9 @@ function renderHeroFirstCallStrip(model: AuthPortalShellModel): string {
   const blockerTruthFocus = firstBlocker ? getVisibleTruthFocus(firstBlocker) : null;
   const blockerHref =
     firstBlocker?.routes?.debugWorkbench ?? (firstBlocker ? `#provider-${firstBlocker.providerId}` : "");
-  const blockerLabel =
-    blockerTruthFocus?.primaryLinkLabel ??
-    blockerTruthFocus?.nextStepLabel ??
-    firstBlocker?.handoff?.nextStep?.label ??
-    firstBlocker?.actions?.[0]?.label ??
-    "Inspect current truth";
+  const blockerLabel = firstBlocker
+    ? getHeroBlockerLabel(firstBlocker, blockerTruthFocus)
+    : "Inspect current truth";
 
   return `<div class="hero-call-strip-shell">
     <p class="eyebrow eyebrow-compact">First call summary</p>

@@ -235,12 +235,12 @@ describe('auth portal shell', () => {
     });
 
     expect(html).toContain('Account action required');
-    expect(html).toContain('Review current blocker');
+    expect(html).toContain('Inspect Claude blocker');
     expect(html).toContain('Session incomplete');
     expect(html).toContain('Inspect current browser first');
     expect(html).toContain('Start here first');
     expect(html).toContain('Claude · Account action required');
-    expect(html).toContain('Review current blocker');
+    expect(html).toContain('Inspect Claude blocker');
     expect(html).toContain('Re-authenticate');
     expect(html).toContain('Primary verdict');
     expect(html).toContain('Evidence and handoff details');
@@ -330,7 +330,7 @@ describe('auth portal shell', () => {
 
     expect(html).toContain('Current browser truth');
     expect(html).toContain('Account action required');
-    expect(html).toContain('Review current blocker');
+    expect(html).toContain('Inspect Claude blocker');
     expect(html).toContain('Title</strong> Claude');
     expect(html).toContain('https://claude.ai/new');
     expect(html).not.toContain('https://chatgpt.com/c/stale-seat');
