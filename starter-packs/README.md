@@ -4,7 +4,7 @@
 
 说得更直白一点：
 
-- `docs/plugin-skill-starter-kits.md` 像施工说明书
+- `docs/starter-pack-chooser.md` 像前台导购
 - `docs/starter-manifest-templates*.json` 像标准模板
 - `docs/starter-manifest-examples*.json` 像可参考的样例
 - `examples/` 像按场景划分的演示样板间
@@ -34,7 +34,6 @@
 
 - [starter-packs/index.json](./index.json)
 - [starter-packs/index.schema.json](./index.schema.json)
-- [docs/starter-pack-index.md](../docs/starter-pack-index.md)
 - [docs/starter-pack-chooser.md](../docs/starter-pack-chooser.md)
 
 或者直接用：

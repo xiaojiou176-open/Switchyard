@@ -49,4 +49,3 @@ pnpm run switchyard:cli -- builder-journey --target codex-first-success
 - [docs/starter-pack-comparison.md](./starter-pack-comparison.md)
 - [docs/host-integration-playbooks.md](./host-integration-playbooks.md)
 - [docs/host-integration-examples.md](./host-integration-examples.md)
-- [docs/plugin-skill-starter-kits.md](./plugin-skill-starter-kits.md)
