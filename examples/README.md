@@ -4,8 +4,8 @@
 
 说人话：
 
-- `docs/starter-manifest-templates.md` 像施工图
-- `docs/starter-manifest-examples.md` 像摆在桌上的样板配置
+- `docs/starter-pack-chooser.md` 像前台导购
+- `docs/starter-manifest-templates.json` / `docs/starter-manifest-examples.json` 像摆在桌上的样板配置
 - `examples/` 这里则像真的把厨房、插座、开关都接好了的样板间
 - `starter-packs/` 则像已经按目标打包好的搬运箱
 

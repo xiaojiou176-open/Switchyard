@@ -9,7 +9,7 @@ this page is the answer.
 In plain English:
 
 - `starter-packs/README.md` is the shelf overview
-- `docs/starter-pack-index.md` is the warehouse map
+- `starter-packs/index.json` is the warehouse map
 - this page is the front-desk guide
 
 It does not invent new capability. It reorganizes the packs that already exist
@@ -84,9 +84,7 @@ This chooser is **not**:
 
 ## Related Pages
 
-- [docs/plugin-skill-starter-kits.md](./plugin-skill-starter-kits.md)
 - [starter-packs/README.md](../starter-packs/README.md)
-- [docs/starter-pack-index.md](./starter-pack-index.md)
 - [docs/starter-pack-comparison.md](./starter-pack-comparison.md)
 - [docs/host-integration-playbooks.md](./host-integration-playbooks.md)
 - [docs/host-integration-examples.md](./host-integration-examples.md)

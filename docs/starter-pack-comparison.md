@@ -77,6 +77,4 @@ pnpm run switchyard:cli -- starter-pack-filter --target thin-runtime-bridges
 ## Related Pages
 
 - [docs/starter-pack-chooser.md](./starter-pack-chooser.md)
-- [docs/starter-pack-index.md](./starter-pack-index.md)
-- [docs/plugin-skill-starter-kits.md](./plugin-skill-starter-kits.md)
 - [starter-packs/README.md](../starter-packs/README.md)

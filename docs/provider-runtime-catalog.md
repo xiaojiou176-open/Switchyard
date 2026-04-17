@@ -84,5 +84,4 @@ pnpm run switchyard:cli -- provider-entry --target gemini:web-login
 - [docs/public-surface-catalog.md](./public-surface-catalog.md)
 - [docs/provider-runtime-catalog.json](./provider-runtime-catalog.json)
 - [docs/provider-runtime-catalog.schema.json](./provider-runtime-catalog.schema.json)
-- [docs/plugin-skill-starter-kits.md](./plugin-skill-starter-kits.md)
 - [docs/public-surface-support-matrix.md](./public-surface-support-matrix.md)
