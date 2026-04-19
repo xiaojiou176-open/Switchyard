@@ -1,3 +1,6 @@
+import { mkdtempSync, rmSync, symlinkSync } from "node:fs";
+import { tmpdir } from "node:os";
+import { join, resolve } from "node:path";
 import { describe, expect, it } from "vitest";
 
 describe("start-local-experience script helpers", () => {
@@ -17,7 +20,7 @@ describe("start-local-experience script helpers", () => {
       authPortalUrl: "http://127.0.0.1:4010/v1/runtime/auth-portal",
       chatgptWorkbenchUrl:
         "http://127.0.0.1:4010/v1/runtime/providers/chatgpt/debug/workbench",
-      docsFrontDoorUrl: "http://127.0.0.1:4185/docs/index.html",
+      docsFrontDoorUrl: "http://127.0.0.1:4185/",
     });
   });
 
@@ -28,7 +31,52 @@ describe("start-local-experience script helpers", () => {
 
     expect(resolveStaticFilePath(repoRoot, "/docs/index.html")).toBeTruthy();
     expect(resolveStaticFilePath(repoRoot, "/")).toContain("/docs/index.html");
+    expect(resolveStaticFilePath(repoRoot, "/README.md")).toContain("/docs/README.md");
+    expect(resolveStaticFilePath(repoRoot, "/first-success.md")).toContain("/docs/first-success.md");
+    expect(resolveStaticFilePath(repoRoot, "/public-proof-pack.md")).toContain(
+      "/docs/public-proof-pack.md",
+    );
+    expect(resolveStaticFilePath(repoRoot, "/mcp.md")).toContain("/docs/mcp.md");
+    expect(resolveStaticFilePath(repoRoot, "/viewer.html?doc=first-success.md")).toContain(
+      "/docs/viewer.html",
+    );
+    expect(resolveStaticFilePath(repoRoot, "/docs/viewer.html?doc=first-success.md")).toContain(
+      "/docs/viewer.html",
+    );
     expect(resolveStaticFilePath(repoRoot, "/../package.json")).toBeNull();
+  });
+
+  it("mirrors GitHub Pages-style project-site root docs routes when the repo is mounted under a subpath", async () => {
+    const { resolveStaticFilePath } = await import(
+      "../../../scripts/start-local-experience.mjs"
+    );
+
+    const tempRoot = mkdtempSync(join(tmpdir(), "switchyard-project-site-"));
+    const projectRoot = resolve(tempRoot, "Switchyard");
+    symlinkSync(process.cwd(), projectRoot, "dir");
+
+    try {
+      expect(resolveStaticFilePath(tempRoot, "/Switchyard/")).toContain(
+        "/Switchyard/docs/index.html",
+      );
+      expect(resolveStaticFilePath(tempRoot, "/Switchyard/README.md")).toContain(
+        "/Switchyard/docs/README.md",
+      );
+      expect(resolveStaticFilePath(tempRoot, "/Switchyard/first-success.md")).toContain(
+        "/Switchyard/docs/first-success.md",
+      );
+      expect(resolveStaticFilePath(tempRoot, "/Switchyard/public-proof-pack.md")).toContain(
+        "/Switchyard/docs/public-proof-pack.md",
+      );
+      expect(resolveStaticFilePath(tempRoot, "/Switchyard/mcp.md")).toContain(
+        "/Switchyard/docs/mcp.md",
+      );
+    } finally {
+      rmSync(tempRoot, {
+        recursive: true,
+        force: true,
+      });
+    }
   });
 
   it("returns readable content types for docs front door assets", async () => {
@@ -37,7 +85,7 @@ describe("start-local-experience script helpers", () => {
     );
 
     expect(getContentType("docs/index.html")).toBe("text/html; charset=utf-8");
-    expect(getContentType("docs/public-surface-catalog.json")).toBe(
+    expect(getContentType("catalogs/public-surface-catalog.json")).toBe(
       "application/json; charset=utf-8",
     );
     expect(getContentType("docs/first-success.md")).toBe(

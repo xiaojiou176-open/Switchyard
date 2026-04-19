@@ -1,5 +1,5 @@
 {
-  "$schema": "../../../docs/starter-manifest-templates.schema.json",
+  "$schema": "../../../catalogs/starter-manifest-templates.schema.json",
   "manifestVersion": 1,
   "builderTemplates": [
     {

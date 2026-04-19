@@ -70,7 +70,7 @@ V1 的外部复用方式固定为：
 
 - `repo-side gate` 仍然是 green
 - fresh `verify:service-live` 当前不该再写成 trio 全绿，而是停在 `Claude = account-action-required`
-- 当前 outward wording 要同步到 `Claude / Grok` 这组 workspace external blockers
+- 当前 outward wording 要同步到 `Claude` 这条 workspace external blocker
 - detailed live snapshot 继续放在 `docs/public-proof-pack.md` 与 current task board，不再把 exact count 长期写死在 blueprint 主体里
 - 这仍然是 credentialed workstation 的时间片真相，不是 repo 常量
 - `pnpm run reality:gate` 也要按两层读：
@@ -98,7 +98,7 @@ V1 的外部复用方式固定为：
 
 - 保持 `pnpm run verify:service-live` / `verify:web-login-live` / `reality:gate` 在 credentialed workstation 上可复验
 - frontdoor 当前统一用 `repo-side green + workspace external blockers` 说法，不再继续抄 exact blocker counts
-- 这轮要同步的 current blocker pack = `Claude / Grok`
+- 这轮要同步的 current blocker pack = `Claude`
 - 更细的 provider-by-provider live snapshot 继续看 `docs/public-proof-pack.md`
 - 进入 M3 之前，先读 `docs/blueprints/m3-first-party-integration-readiness.md`
 

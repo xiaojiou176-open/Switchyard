@@ -1,0 +1,436 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/xiaojiou176-open/Switchyard/catalogs/public-surface-catalog.schema.json",
+  "title": "Switchyard Public Surface Catalog",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "$schema",
+    "catalogVersion",
+    "generatedFrom",
+    "publicSurfaces",
+    "compatTargets",
+    "builderKits",
+    "skillPacks",
+    "hostExamples",
+    "providerCatalog",
+    "mcp"
+  ],
+  "properties": {
+    "$schema": {
+      "type": "string"
+    },
+    "catalogVersion": {
+      "type": "integer",
+      "minimum": 1
+    },
+    "generatedFrom": {
+      "type": "string"
+    },
+    "publicSurfaces": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/publicSurface"
+      }
+    },
+    "compatTargets": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/compatTarget"
+      }
+    },
+    "builderKits": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/builderKit"
+      }
+    },
+    "skillPacks": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/skillPack"
+      }
+    },
+    "hostExamples": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/hostExample"
+      }
+    },
+    "providerCatalog": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/providerCatalogEntry"
+      }
+    },
+    "mcp": {
+      "$ref": "#/$defs/mcpStatus"
+    }
+  },
+  "$defs": {
+    "status": {
+      "type": "string",
+      "enum": [
+        "supported now",
+        "partial",
+        "planned",
+        "research only",
+        "not now"
+      ]
+    },
+    "stringArray": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "toolDescriptor": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "name",
+        "title",
+        "providerScoped",
+        "route",
+        "readOnlyHint"
+      ],
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "title": {
+          "type": "string"
+        },
+        "providerScoped": {
+          "type": "boolean"
+        },
+        "route": {
+          "type": "string"
+        },
+        "readOnlyHint": {
+          "type": "boolean"
+        }
+      }
+    },
+    "publicSurface": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "surface",
+        "status",
+        "truthfulMeaning",
+        "sourceAnchors"
+      ],
+      "properties": {
+        "surface": {
+          "type": "string"
+        },
+        "status": {
+          "$ref": "#/$defs/status"
+        },
+        "truthfulMeaning": {
+          "type": "string"
+        },
+        "sourceAnchors": {
+          "$ref": "#/$defs/stringArray"
+        },
+        "readOnly": {
+          "type": "boolean"
+        },
+        "commands": {
+          "$ref": "#/$defs/stringArray"
+        }
+      }
+    },
+    "compatTarget": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "target",
+        "status",
+        "builderFacing",
+        "failClosed",
+        "transport",
+        "route",
+        "supportedModes",
+        "truthfulMeaning",
+        "notYetSupported",
+        "notes",
+        "sourceAnchors"
+      ],
+      "properties": {
+        "target": {
+          "type": "string"
+        },
+        "status": {
+          "$ref": "#/$defs/status"
+        },
+        "builderFacing": {
+          "type": "boolean"
+        },
+        "failClosed": {
+          "type": "boolean"
+        },
+        "transport": {
+          "type": "string"
+        },
+        "route": {
+          "type": "string"
+        },
+        "supportedModes": {
+          "$ref": "#/$defs/stringArray"
+        },
+        "truthfulMeaning": {
+          "type": "string"
+        },
+        "notYetSupported": {
+          "$ref": "#/$defs/stringArray"
+        },
+        "notes": {
+          "$ref": "#/$defs/stringArray"
+        },
+        "sourceAnchors": {
+          "$ref": "#/$defs/stringArray"
+        }
+      }
+    },
+    "builderKit": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "target",
+        "status",
+        "starterShape",
+        "bestEntry",
+        "recommendedDocs",
+        "notYetSupported"
+      ],
+      "properties": {
+        "target": {
+          "type": "string"
+        },
+        "status": {
+          "$ref": "#/$defs/status"
+        },
+        "starterShape": {
+          "type": "string"
+        },
+        "bestEntry": {
+          "type": "string"
+        },
+        "requiredInputs": {
+          "$ref": "#/$defs/stringArray"
+        },
+        "starterSteps": {
+          "$ref": "#/$defs/stringArray"
+        },
+        "outputArtifacts": {
+          "$ref": "#/$defs/stringArray"
+        },
+        "safeClaims": {
+          "$ref": "#/$defs/stringArray"
+        },
+        "recommendedDocs": {
+          "$ref": "#/$defs/stringArray"
+        },
+        "copyReadyPackPath": {
+          "type": "string"
+        },
+        "notYetSupported": {
+          "$ref": "#/$defs/stringArray"
+        }
+      }
+    },
+    "skillPack": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "status",
+        "starterShape",
+        "bestEntry",
+        "recommendedDocs",
+        "backingSurfaces",
+        "notYetSupported"
+      ],
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "status": {
+          "$ref": "#/$defs/status"
+        },
+        "starterShape": {
+          "type": "string"
+        },
+        "bestEntry": {
+          "type": "string"
+        },
+        "requiredInputs": {
+          "$ref": "#/$defs/stringArray"
+        },
+        "starterSteps": {
+          "$ref": "#/$defs/stringArray"
+        },
+        "outputArtifacts": {
+          "$ref": "#/$defs/stringArray"
+        },
+        "safeClaims": {
+          "$ref": "#/$defs/stringArray"
+        },
+        "recommendedDocs": {
+          "$ref": "#/$defs/stringArray"
+        },
+        "copyReadyPackPath": {
+          "type": "string"
+        },
+        "backingSurfaces": {
+          "$ref": "#/$defs/stringArray"
+        },
+        "notYetSupported": {
+          "$ref": "#/$defs/stringArray"
+        }
+      }
+    },
+    "hostExample": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "target",
+        "status",
+        "hostShape",
+        "bestEntry",
+        "examplePath",
+        "smokeScriptPath",
+        "smokeCommand",
+        "relatedDocs",
+        "firstSuccessCheck",
+        "relatedStarterPackPath",
+        "notYetSupported"
+      ],
+      "properties": {
+        "target": {
+          "type": "string"
+        },
+        "status": {
+          "$ref": "#/$defs/status"
+        },
+        "hostShape": {
+          "type": "string"
+        },
+        "bestEntry": {
+          "type": "string"
+        },
+        "examplePath": {
+          "type": "string"
+        },
+        "configPath": {
+          "type": "string"
+        },
+        "smokeScriptPath": {
+          "type": "string"
+        },
+        "smokeCommand": {
+          "type": "string"
+        },
+        "firstSuccessCheck": {
+          "type": "string"
+        },
+        "relatedCompatTarget": {
+          "type": "string"
+        },
+        "relatedStarterPackPath": {
+          "type": "string"
+        },
+        "relatedDocs": {
+          "$ref": "#/$defs/stringArray"
+        },
+        "safeClaims": {
+          "$ref": "#/$defs/stringArray"
+        },
+        "notYetSupported": {
+          "$ref": "#/$defs/stringArray"
+        }
+      }
+    },
+    "mcpStatus": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "status",
+        "truthfulMeaning",
+        "readOnly",
+        "serverTransport",
+        "bridgeHosting",
+        "startupCommand",
+        "notYetSupported",
+        "sourceAnchors",
+        "tools"
+      ],
+      "properties": {
+        "status": {
+          "$ref": "#/$defs/status"
+        },
+        "truthfulMeaning": {
+          "type": "string"
+        },
+        "readOnly": {
+          "type": "boolean"
+        },
+        "serverTransport": {
+          "type": "boolean"
+        },
+        "bridgeHosting": {
+          "type": "boolean"
+        },
+        "startupCommand": {
+          "type": "string"
+        },
+        "notYetSupported": {
+          "$ref": "#/$defs/stringArray"
+        },
+        "sourceAnchors": {
+          "$ref": "#/$defs/stringArray"
+        },
+        "tools": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/toolDescriptor"
+          }
+        }
+      }
+    },
+    "providerCatalogEntry": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "providerId",
+        "displayName",
+        "lane",
+        "authMode",
+        "stabilityTarget",
+        "truthfulMeaning"
+      ],
+      "properties": {
+        "providerId": {
+          "type": "string"
+        },
+        "displayName": {
+          "type": "string"
+        },
+        "lane": {
+          "type": "string"
+        },
+        "authMode": {
+          "type": "string"
+        },
+        "stabilityTarget": {
+          "type": "string"
+        },
+        "truthfulMeaning": {
+          "type": "string"
+        }
+      }
+    }
+  }
+}

@@ -89,6 +89,12 @@
         backdrop-filter: blur(16px);
       }
 
+      section[id],
+      article[id],
+      div[id] {
+        scroll-margin-top: 96px;
+      }
+
       .topbar {
         display: flex;
         flex-wrap: wrap;
@@ -666,7 +672,7 @@
       </section>
 
       <section class="hero">
-        <div class="hero-note">
+        <div class="hero-note" id="identity-shelf">
           <span class="eyebrow">Answer-first front door</span>
           <h1>Choose the shortest truthful route before you open the fuller atlas.</h1>
           <p class="lede">
@@ -756,7 +762,7 @@
           reviewer-friendly even though the repo contains a larger atlas behind it.
         </p>
         <div class="route-grid">
-          <article class="route-card route-card-primary">
+          <article class="route-card route-card-primary" id="proof-pack">
             <div class="route-label">Primary route</div>
             <strong>I need the 30-second product verdict.</strong>
             <p>
@@ -768,7 +774,7 @@
               <li><a href="./public-proof-pack.md">Proof pack</a></li>
             </ul>
           </article>
-          <article class="route-card route-card-secondary">
+          <article class="route-card route-card-secondary" id="first-success">
             <div class="route-label">First success</div>
             <strong>I want the shortest runnable first success.</strong>
             <p>
@@ -782,7 +788,7 @@
               <li><a href="./api/service-http-reference.md">Service HTTP reference</a></li>
             </ul>
           </article>
-          <article class="route-card route-card-tertiary">
+          <article class="route-card route-card-tertiary" id="public-truth">
             <div class="route-label">Public truth</div>
             <strong>I need proof or public-distribution truth.</strong>
             <p>
@@ -795,7 +801,7 @@
               <li><a href="./public-surface-support-matrix.md">Support matrix</a></li>
             </ul>
           </article>
-          <article class="route-card route-card-tertiary">
+          <article class="route-card route-card-tertiary" id="api-reference">
             <div class="route-label">API surface</div>
             <strong>I need the core API front door.</strong>
             <p>
@@ -808,7 +814,7 @@
               <li><a href="./api/error-diagnostics-reference.md">Error diagnostics</a></li>
             </ul>
           </article>
-          <article class="route-card route-card-tertiary">
+          <article class="route-card route-card-tertiary" id="builder-workflow">
             <div class="route-label">Builder workflow</div>
             <strong>I need the AI workflow, builder workflow, skill-pack, or MCP map.</strong>
             <p>
@@ -880,7 +886,33 @@
           <article class="atlas-card">
             <div class="atlas-label">Shelf four</div>
             <strong>Builder and deeper shelves</strong>
-            <p>Use the fuller docs atlas, builder routes, compat hubs, catalogs, and packet/accounting pages only after the front-row product questions are already answered.</p>
+            <p>Use the fuller docs atlas, builder routes, compat hubs, media shelf, catalogs, and packet/accounting pages only after the front-row product questions are already answered.</p>
+          </article>
+        </div>
+      </section>
+
+      <section class="section" id="support-truth">
+        <div class="section-head">
+          <div>
+            <div class="section-kicker">Support and bootstrap</div>
+            <h2>Keep operational truth visible without sending readers into dead ends.</h2>
+          </div>
+        </div>
+        <p class="section-intro">
+          The public front door should still answer package-ready versus listed-live
+          questions and local bootstrap questions, but it should do that on the
+          live root surface instead of shipping readers into a broken deep-link path.
+        </p>
+        <div class="atlas-grid">
+          <article class="atlas-card">
+            <div class="atlas-label">Support truth</div>
+            <strong>Package-ready versus listed-live</strong>
+            <p>Use this shelf when the question becomes proof, distribution status, support matrix boundaries, or what still depends on later listing work.</p>
+          </article>
+          <article class="atlas-card" id="bootstrap-runbook">
+            <div class="atlas-label">Bootstrap</div>
+            <strong>Local first success and workstation reality</strong>
+            <p>Use this shelf when the question becomes local bootstrap, start-local-experience, auth-portal, debug workbench, or workstation-bound browser/session reality.</p>
           </article>
         </div>
       </section>

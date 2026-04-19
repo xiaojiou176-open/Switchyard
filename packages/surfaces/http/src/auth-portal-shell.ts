@@ -1365,8 +1365,8 @@ document.addEventListener('click', async (event) => {
 
   if (authModeId !== 'web-login') {
     setFeedback(
-      'BYOK stays local',
-      'BYOK providers keep local API key management on this surface. Browser acquisition is only for Web/Login providers.'
+      'Review BYOK key setup',
+      'BYOK key entry stays outside the browser acquisition flow. Use this provider slot to review the local key requirements, then bind the end-user key through the local setup path.'
     );
     return;
   }
@@ -1519,8 +1519,8 @@ export function renderAuthPortalShell(model: AuthPortalShellModel): string {
       body {
         margin: 0;
         background:
-          radial-gradient(circle at top left, rgba(63, 165, 107, 0.18), transparent 24rem),
-          radial-gradient(circle at bottom right, rgba(199, 139, 44, 0.12), transparent 18rem),
+          radial-gradient(circle at top left, rgba(63, 165, 107, 0.08), transparent 24rem),
+          radial-gradient(circle at bottom right, rgba(199, 139, 44, 0.06), transparent 18rem),
           var(--bg);
         color: var(--ink);
         font-family: "IBM Plex Sans", "Fira Sans", "Segoe UI", sans-serif;
@@ -1622,10 +1622,10 @@ export function renderAuthPortalShell(model: AuthPortalShellModel): string {
       }
 
       .hero-copy h1 {
-        max-width: 16ch;
-        font-size: clamp(2.2rem, 4.15vw, 3.7rem);
-        line-height: 0.99;
-        margin-bottom: 0.92rem;
+        max-width: 14ch;
+        font-size: clamp(1.85rem, 3.1vw, 2.8rem);
+        line-height: 1.02;
+        margin-bottom: 0.78rem;
       }
 
       .hero-copy p {
@@ -1735,11 +1735,10 @@ export function renderAuthPortalShell(model: AuthPortalShellModel): string {
         box-shadow:
           inset 0 1px 0 rgba(255, 255, 255, 0.025),
           0 10px 24px rgba(0, 0, 0, 0.08);
-        opacity: 0.8;
       }
 
       .hero-meta-card-quiet p {
-        color: rgba(229, 232, 233, 0.74);
+        color: rgba(240, 244, 242, 0.86);
         font-size: 0.86rem;
         line-height: 1.4;
       }
@@ -1803,8 +1802,12 @@ export function renderAuthPortalShell(model: AuthPortalShellModel): string {
         flex-wrap: wrap;
         gap: 0.6rem;
         margin-top: 0.2rem;
-        color: rgba(234, 238, 239, 0.56);
+        color: rgba(244, 247, 246, 0.9);
         font-size: 0.8rem;
+      }
+
+      .hero-meta-footer .mono {
+        color: #ffffff;
       }
 
       .priority-rail {

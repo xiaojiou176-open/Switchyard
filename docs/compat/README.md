@@ -54,6 +54,10 @@ Prefer:
 - `pnpm run switchyard:cli -- compat-target --target codex`
 - `pnpm run switchyard:cli -- compat-target --target claude-code`
 - `pnpm run switchyard:cli -- compat-target --target openclaw`
+- `switchyard.catalog.compat_target_catalog`
+- `switchyard.catalog.compat_target_catalog_schema`
+- `switchyard.catalog.compat_targets`
+- `switchyard.catalog.compat_target`
 - `pnpm run switchyard:cli -- builder-kit-catalog`
 - `pnpm run switchyard:cli -- builder-kit-catalog-schema`
 - `pnpm run switchyard:cli -- builder-kits`
@@ -98,9 +102,12 @@ Prefer:
 
 Or read these machine-readable files directly:
 
-- [docs/public-distribution-ledger.json](../public-distribution-ledger.json)
-- [docs/compat-target-catalog.json](../compat-target-catalog.json)
-- [docs/public-surface-catalog.json](../public-surface-catalog.json)
+- [catalogs/public-distribution-ledger.json](../../catalogs/public-distribution-ledger.json)
+- [catalogs/public-distribution-ledger.schema.json](../../catalogs/public-distribution-ledger.schema.json)
+- [catalogs/compat-target-catalog.json](../../catalogs/compat-target-catalog.json)
+- [catalogs/compat-target-catalog.schema.json](../../catalogs/compat-target-catalog.schema.json)
+- [catalogs/public-surface-catalog.json](../../catalogs/public-surface-catalog.json)
+- [catalogs/public-surface-catalog.schema.json](../../catalogs/public-surface-catalog.schema.json)
 
 ## Important Rule
 

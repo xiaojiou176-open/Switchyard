@@ -1,8 +1,11 @@
-import { readFileSync } from "node:fs";
+import { mkdtempSync, readFileSync, rmSync, symlinkSync } from "node:fs";
+import { tmpdir } from "node:os";
 import { resolve } from "node:path";
 
 import Ajv2020 from "ajv/dist/2020.js";
 import { describe, expect, it } from "vitest";
+
+import { launchChromiumForUiTest } from "../../support/chromium.js";
 
 const repoRoot = process.cwd();
 
@@ -26,6 +29,7 @@ describe("Switchyard docs frontdoor contracts", () => {
     expect(docsReadme).toContain("docs/public-proof-pack.md");
     expect(docsReadme).toContain("docs/public-distribution-ledger.md");
     expect(docsReadme).toContain("docs/runbooks/dev-bootstrap.md");
+    expect(docsReadme).toContain("docs/media/README.md");
     expect(docsReadme).toContain("examples/README.md");
     expect(docsReadme).toContain("starter-packs/README.md");
     expect(docsReadme).toContain("docs/compat/README.md");
@@ -46,13 +50,206 @@ describe("Switchyard docs frontdoor contracts", () => {
     expect(docsReadme).not.toContain("docs/compare/switchyard-vs-claude-code.md");
     expect(docsReadme).not.toContain("docs/compare/switchyard-vs-openclaw.md");
     expect(docsReadme).not.toContain("docs/public-surface-catalog.md");
-    expect(docsReadme).not.toContain("docs/public-surface-catalog.schema.json");
-    expect(docsReadme).not.toContain("docs/provider-runtime-catalog.json");
-    expect(docsReadme).not.toContain("docs/compat-target-catalog.json");
-    expect(docsReadme).not.toContain("docs/builder-kit-catalog.json");
-    expect(docsReadme).not.toContain("docs/skill-pack-catalog.json");
-    expect(docsReadme).not.toContain("docs/mcp-tool-catalog.json");
+    expect(docsReadme).not.toContain("catalogs/public-surface-catalog.schema.json");
+    expect(docsReadme).not.toContain("catalogs/provider-runtime-catalog.json");
+    expect(docsReadme).not.toContain("catalogs/compat-target-catalog.json");
+    expect(docsReadme).not.toContain("catalogs/builder-kit-catalog.json");
+    expect(docsReadme).not.toContain("catalogs/skill-pack-catalog.json");
+    expect(docsReadme).not.toContain("catalogs/mcp-tool-catalog.json");
   });
+
+  it("keeps the docs viewer base-path-safe and nested-list aware", () => {
+    const viewer = read("docs/viewer.html");
+
+    expect(viewer).toContain('import { mountViewer } from "./viewer-runtime.js";');
+    expect(viewer).toContain("mountViewer({");
+    expect(viewer).toContain("locationHref: window.location.href");
+    expect(viewer).toContain("fetchImpl: window.fetch.bind(window)");
+  });
+
+  it("keeps viewer runtime helpers project-site safe and nested-list aware as executable logic", async () => {
+    const moduleUrl = new URL("../../../docs/viewer-runtime.js", import.meta.url);
+    const { resolveRepoAssetHref, resolveMarkdownHref, renderMarkdown, resolveDocPath, resolveFrontDoorHref } = await import(
+      moduleUrl.href
+    );
+
+    const viewerHref = "http://127.0.0.1:4185/Switchyard/docs/viewer.html?doc=README.md";
+    const rootViewerHref = "http://127.0.0.1:4185/Switchyard/viewer.html?doc=README.md";
+
+    expect(resolveRepoAssetHref("docs/first-success.md", viewerHref)).toBe(
+      "http://127.0.0.1:4185/Switchyard/docs/first-success.md",
+    );
+    expect(
+      resolveMarkdownHref("./docs/runbooks/dev-bootstrap.md", "docs/README.md", viewerHref),
+    ).toBe("./viewer.html?doc=docs%2Frunbooks%2Fdev-bootstrap.md");
+    expect(resolveDocPath("?doc=README.md", viewerHref)).toBe("docs/README.md");
+    expect(resolveRepoAssetHref("docs/first-success.md", rootViewerHref)).toBe(
+      "http://127.0.0.1:4185/Switchyard/first-success.md",
+    );
+    expect(
+      resolveMarkdownHref("./docs/runbooks/dev-bootstrap.md", "docs/README.md", rootViewerHref),
+    ).toBe("./viewer.html?doc=runbooks%2Fdev-bootstrap.md");
+    expect(resolveFrontDoorHref(rootViewerHref)).toBe("http://127.0.0.1:4185/Switchyard/");
+
+    const rendered = renderMarkdown("- top\n  - child\n- next", "docs/README.md", viewerHref);
+    expect(rendered).toContain("<ul><li>top<ul><li>child</li></ul></li><li>next</li></ul>");
+  });
+
+  it(
+    "keeps the docs viewer working from a GitHub Pages-style project-site path",
+    async () => {
+      const tempRoot = mkdtempSync(resolve(tmpdir(), "switchyard-viewer-"));
+      const projectRoot = resolve(tempRoot, "Switchyard");
+      symlinkSync(repoRoot, projectRoot, "dir");
+
+      const { startDocsStaticServer } = await import("../../../scripts/start-local-experience.mjs");
+      const server = await startDocsStaticServer({
+        rootDir: tempRoot,
+        host: "127.0.0.1",
+        port: 0,
+      });
+      const address = server.address();
+      if (!address || typeof address === "string") {
+        throw new Error("Expected docs viewer test server to expose a TCP port.");
+      }
+      const baseUrl = `http://127.0.0.1:${address.port}`;
+
+      try {
+        const browser = await launchChromiumForUiTest();
+        try {
+          const page = await browser.newPage();
+          await page.goto(
+            `${baseUrl}/Switchyard/docs/viewer.html?doc=first-success.md`,
+            { waitUntil: "networkidle" },
+          );
+          expect(await page.locator("#viewer-title").innerText()).toContain("First Success");
+          await page.locator("#viewer-content a").first().click();
+          await page.waitForLoadState("networkidle");
+          expect(page.url()).toContain(
+            "/Switchyard/docs/viewer.html?doc=docs%2Frunbooks%2Fdev-bootstrap.md",
+          );
+          expect(await page.locator("#viewer-title").innerText()).toContain("Dev Bootstrap");
+        } finally {
+          await browser.close();
+        }
+      } finally {
+        await new Promise<void>((resolveClose) => server.close(() => resolveClose()));
+        rmSync(tempRoot, { recursive: true, force: true });
+      }
+    },
+    20_000,
+  );
+
+  it(
+    "keeps the root viewer working from a GitHub Pages-style project-site path",
+    async () => {
+      const tempRoot = mkdtempSync(resolve(tmpdir(), "switchyard-root-viewer-"));
+      const projectRoot = resolve(tempRoot, "Switchyard");
+      symlinkSync(repoRoot, projectRoot, "dir");
+
+      const { startDocsStaticServer } = await import("../../../scripts/start-local-experience.mjs");
+      const server = await startDocsStaticServer({
+        rootDir: tempRoot,
+        host: "127.0.0.1",
+        port: 0,
+      });
+      const address = server.address();
+      if (!address || typeof address === "string") {
+        throw new Error("Expected root viewer test server to expose a TCP port.");
+      }
+      const baseUrl = `http://127.0.0.1:${address.port}`;
+
+      try {
+        const browser = await launchChromiumForUiTest();
+        try {
+          const page = await browser.newPage();
+          await page.goto(
+            `${baseUrl}/Switchyard/viewer.html?doc=first-success.md`,
+            { waitUntil: "networkidle" },
+          );
+          expect(await page.locator("#viewer-title").innerText()).toContain("First Success");
+          await page.locator("#viewer-content a").first().click();
+          await page.waitForLoadState("networkidle");
+          expect(page.url()).toContain(
+            "/Switchyard/viewer.html?doc=runbooks%2Fdev-bootstrap.md",
+          );
+          expect(await page.locator("#viewer-title").innerText()).toContain("Dev Bootstrap");
+          await page.locator("#frontdoor-link").click();
+          await page.waitForLoadState("networkidle").catch(() => undefined);
+          expect(page.url()).toContain("/Switchyard/");
+          expect(await page.title()).toContain("Switchyard Docs Front Door");
+        } finally {
+          await browser.close();
+        }
+      } finally {
+        await new Promise<void>((resolveClose) => server.close(() => resolveClose()));
+        rmSync(tempRoot, { recursive: true, force: true });
+      }
+    },
+    20_000,
+  );
+
+  it(
+    "keeps the root docs front door working from a GitHub Pages-style project-site path",
+    async () => {
+      const tempRoot = mkdtempSync(resolve(tmpdir(), "switchyard-frontdoor-"));
+      const projectRoot = resolve(tempRoot, "Switchyard");
+      symlinkSync(repoRoot, projectRoot, "dir");
+
+      const { startDocsStaticServer } = await import("../../../scripts/start-local-experience.mjs");
+      const server = await startDocsStaticServer({
+        rootDir: tempRoot,
+        host: "127.0.0.1",
+        port: 0,
+      });
+      const address = server.address();
+      if (!address || typeof address === "string") {
+        throw new Error("Expected frontdoor test server to expose a TCP port.");
+      }
+      const baseUrl = `http://127.0.0.1:${address.port}`;
+
+      try {
+        const browser = await launchChromiumForUiTest();
+        try {
+          const page = await browser.newPage();
+          await page.goto(
+            `${baseUrl}/Switchyard/`,
+            { waitUntil: "networkidle" },
+          );
+          expect(await page.title()).toContain("Switchyard Docs Front Door");
+
+          await page.locator('a[href="./first-success.md"]').first().click();
+          await page.waitForLoadState("networkidle").catch(() => undefined);
+          expect(page.url()).toContain("/Switchyard/first-success.md");
+          expect((await page.textContent("body")) ?? "").toContain("Switchyard Default First Success");
+
+          await page.goto(
+            `${baseUrl}/Switchyard/`,
+            { waitUntil: "networkidle" },
+          );
+          await page.locator('a[href="./public-proof-pack.md"]').first().click();
+          await page.waitForLoadState("networkidle").catch(() => undefined);
+          expect(page.url()).toContain("/Switchyard/public-proof-pack.md");
+          expect((await page.textContent("body")) ?? "").toContain("Switchyard Public Proof Pack");
+
+          await page.goto(
+            `${baseUrl}/Switchyard/`,
+            { waitUntil: "networkidle" },
+          );
+          await page.locator('a[href="./README.md"]').first().click();
+          await page.waitForLoadState("networkidle").catch(() => undefined);
+          expect(page.url()).toContain("/Switchyard/README.md");
+          expect((await page.textContent("body")) ?? "").toContain("Switchyard Docs Atlas");
+        } finally {
+          await browser.close();
+        }
+      } finally {
+        await new Promise<void>((resolveClose) => server.close(() => resolveClose()));
+        rmSync(tempRoot, { recursive: true, force: true });
+      }
+    },
+    20_000,
+  );
 
   it("keeps the primary public frontdoor English-first while allowing helper-page bilingual support", () => {
     const frontdoorFiles = [
@@ -69,13 +266,8 @@ describe("Switchyard docs frontdoor contracts", () => {
       "docs/compat/codex.md",
       "docs/compat/claude-code.md",
       "docs/compat/openclaw.md",
-      "docs/compare/byok-vs-web-login.md",
-      "docs/compare/switchyard-vs-codex.md",
-      "docs/compare/switchyard-vs-claude-code.md",
-      "docs/compare/switchyard-vs-openclaw.md",
       "docs/mcp.md",
       "docs/starter-pack-chooser.md",
-      "docs/builder-journeys.md",
       "docs/host-integration-playbooks.md",
       "docs/host-integration-examples.md",
     ];
@@ -102,10 +294,12 @@ describe("Switchyard docs frontdoor contracts", () => {
     expect(docsIndex).toContain("Front door");
     expect(docsIndex).toContain('aria-current="page"');
     expect(docsIndex).not.toContain('href="../index.html"');
-    expect(docsIndex).toContain("public-proof-pack.md");
-    expect(docsIndex).toContain("public-distribution-ledger.md");
-    expect(docsIndex).toContain("service-http-reference.md");
-    expect(docsIndex).toContain("docs/README.md");
+    expect(docsIndex).toContain("Support and bootstrap");
+    expect(docsIndex).toContain("media shelf");
+    expect(docsIndex).toContain('href="./README.md"');
+    expect(docsIndex).toContain('href="./public-proof-pack.md"');
+    expect(docsIndex).toContain('href="./public-distribution-ledger.md"');
+    expect(docsIndex).toContain('href="./api/service-http-reference.md"');
   });
 
   it("keeps the bootstrap runbook visible but demoted across the public front door", () => {
@@ -120,11 +314,12 @@ describe("Switchyard docs frontdoor contracts", () => {
     expect(readme).toContain("docs/runbooks/dev-bootstrap.md");
     expect(docsReadme).toContain("docs/runbooks/dev-bootstrap.md");
     expect(docsReadme).toContain("Keep these public, but demoted one shelf deeper:");
+    expect(docsIndex).toContain("Support and bootstrap");
     expect(docsIndex).toContain("dev bootstrap runbook");
-    expect(docsIndex).toContain("public-but-demoted");
-    expect(docsIndex).toContain("./first-success.md");
-    expect(docsIndex).toContain("./public-proof-pack.md");
-    expect(docsIndex).toContain("./public-distribution-ledger.md");
+    expect(docsIndex).toContain('href="./first-success.md"');
+    expect(docsIndex).toContain('href="./public-proof-pack.md"');
+    expect(docsIndex).toContain('href="./public-distribution-ledger.md"');
+    expect(docsIndex).toContain('id="bootstrap-runbook"');
     expect(proofPack).toContain("docs/runbooks/dev-bootstrap.md");
     expect(supportMatrix).toContain("docs/runbooks/dev-bootstrap.md");
     expect(distributionLedger).toContain("docs/runbooks/dev-bootstrap.md");
@@ -143,9 +338,6 @@ describe("Switchyard docs frontdoor contracts", () => {
     const claudeCodeCompat = read("docs/compat/claude-code.md");
     const openclawCompat = read("docs/compat/openclaw.md");
     const mcpDocs = read("docs/mcp.md");
-    const codexCompare = read("docs/compare/switchyard-vs-codex.md");
-    const claudeCompare = read("docs/compare/switchyard-vs-claude-code.md");
-
     for (const document of [codexCompat, claudeCodeCompat, openclawCompat]) {
       expect(/`(planned|partial)`/.test(document)).toBe(true);
       expect(document).toContain("thin");
@@ -155,16 +347,12 @@ describe("Switchyard docs frontdoor contracts", () => {
 
     expect(mcpDocs).toContain("read-only stdio MCP server/tool surface on main");
     expect(mcpDocs).toContain("pnpm run switchyard:mcp");
-    expect(codexCompare).toContain("`partial`");
-    expect(codexCompare.toLowerCase()).not.toContain("does **not** support codex compatibility today");
-    expect(claudeCompare).toContain("`partial`");
-    expect(claudeCompare.toLowerCase()).not.toContain("does **not** support claude code today");
   });
 
   it("keeps MCP docs aligned with the current read-only tool inventory and route map", () => {
     const mcpDocs = read("docs/mcp.md");
     const mcpApi = read("docs/api/mcp-readonly-server.md");
-    const catalogJson = JSON.parse(read("docs/public-surface-catalog.json")) as {
+    const catalogJson = JSON.parse(read("catalogs/public-surface-catalog.json")) as {
       mcp: { tools: Array<{ name: string }> };
     };
     const mcpToolNames = catalogJson.mcp.tools.map((tool) => tool.name);
@@ -220,50 +408,45 @@ describe("Switchyard docs frontdoor contracts", () => {
     expect(llms).toContain("docs/api/web-login-acquisition.md");
     expect(llms).toContain("docs/compat/README.md");
     expect(llms).toContain("docs/public-surface-catalog.md");
-    expect(llms).toContain("docs/public-surface-catalog.json");
-    expect(llms).toContain("docs/public-surface-catalog.schema.json");
-    expect(llms).toContain("docs/starter-manifest-templates.schema.json");
-    expect(llms).toContain("docs/starter-manifest-examples.schema.json");
+    expect(llms).toContain("catalogs/public-surface-catalog.json");
+    expect(llms).toContain("catalogs/public-surface-catalog.schema.json");
+    expect(llms).toContain("catalogs/starter-manifest-templates.schema.json");
+    expect(llms).toContain("catalogs/starter-manifest-examples.schema.json");
     expect(llms).toContain("examples/README.md");
     expect(llms).toContain("starter-packs/README.md");
-    expect(llms).toContain("starter-packs/README.md");
     expect(llms).toContain("docs/starter-pack-chooser.md");
-    expect(llms).toContain("docs/starter-pack-chooser.json");
-    expect(llms).toContain("docs/starter-pack-chooser.schema.json");
-    expect(llms).toContain("docs/starter-pack-comparison.md");
-    expect(llms).toContain("docs/starter-pack-comparison.json");
-    expect(llms).toContain("docs/starter-pack-comparison.schema.json");
-    expect(llms).toContain("docs/builder-journeys.md");
-    expect(llms).toContain("docs/builder-journeys.json");
-    expect(llms).toContain("docs/builder-journeys.schema.json");
-    expect(llms).toContain("docs/builder-intent-router.md");
-    expect(llms).toContain("docs/builder-intent-router.json");
-    expect(llms).toContain("docs/builder-intent-router.schema.json");
+    expect(llms).toContain("catalogs/starter-pack-chooser.json");
+    expect(llms).toContain("catalogs/starter-pack-chooser.schema.json");
+    expect(llms).toContain("catalogs/starter-pack-comparison.json");
+    expect(llms).toContain("catalogs/starter-pack-comparison.json");
+    expect(llms).toContain("catalogs/starter-pack-comparison.schema.json");
+    expect(llms).toContain("catalogs/builder-journeys.json");
+    expect(llms).toContain("catalogs/builder-journeys.schema.json");
+    expect(llms).toContain("catalogs/builder-intent-router.json");
+    expect(llms).toContain("catalogs/builder-intent-router.schema.json");
     expect(llms).toContain("docs/host-integration-playbooks.md");
-    expect(llms).toContain("docs/host-integration-playbooks.json");
-    expect(llms).toContain("docs/host-integration-playbooks.schema.json");
+    expect(llms).toContain("catalogs/host-integration-playbooks.json");
+    expect(llms).toContain("catalogs/host-integration-playbooks.schema.json");
     expect(llms).toContain("docs/host-integration-examples.md");
     expect(llms).toContain("examples/hosts/index.json");
     expect(llms).toContain("examples/hosts/index.schema.json");
     expect(llms).toContain("docs/provider-runtime-catalog.md");
-    expect(llms).toContain("docs/provider-runtime-catalog.json");
-    expect(llms).toContain("docs/provider-runtime-catalog.schema.json");
-    expect(llms).toContain("docs/compat-target-catalog.md");
-    expect(llms).toContain("docs/compat-target-catalog.json");
-    expect(llms).toContain("docs/compat-target-catalog.schema.json");
-    expect(llms).toContain("docs/builder-kit-catalog.json");
-    expect(llms).toContain("docs/builder-kit-catalog.schema.json");
-    expect(llms).toContain("docs/skill-pack-catalog.json");
-    expect(llms).toContain("docs/skill-pack-catalog.schema.json");
-    expect(llms).toContain("docs/mcp-tool-catalog.md");
-    expect(llms).toContain("docs/mcp-tool-catalog.json");
-    expect(llms).toContain("docs/mcp-tool-catalog.schema.json");
+    expect(llms).toContain("catalogs/provider-runtime-catalog.json");
+    expect(llms).toContain("catalogs/provider-runtime-catalog.schema.json");
+    expect(llms).toContain("catalogs/compat-target-catalog.json");
+    expect(llms).toContain("catalogs/compat-target-catalog.schema.json");
+    expect(llms).toContain("catalogs/builder-kit-catalog.json");
+    expect(llms).toContain("catalogs/builder-kit-catalog.schema.json");
+    expect(llms).toContain("catalogs/skill-pack-catalog.json");
+    expect(llms).toContain("catalogs/skill-pack-catalog.schema.json");
+    expect(llms).toContain("catalogs/mcp-tool-catalog.json");
+    expect(llms).toContain("catalogs/mcp-tool-catalog.schema.json");
     expect(llms).toContain("docs/mcp.md");
     expect(llms).toContain("docs/i18n.md");
     expect(llms).toContain(".agents/internal-docs/testing/testing-pyramid.md");
     expect(llms).toContain("docs/discoverability-keyword-truth.md");
-    expect(llms).toContain("docs/discoverability-keyword-truth.json");
-    expect(llms).toContain("docs/discoverability-keyword-truth.schema.json");
+    expect(llms).toContain("catalogs/discoverability-keyword-truth.json");
+    expect(llms).toContain("catalogs/discoverability-keyword-truth.schema.json");
     expect(llms).toContain(
       "Live verification depends on local end-user credentials and browser session materials",
     );
@@ -275,6 +458,7 @@ describe("Switchyard docs frontdoor contracts", () => {
     expect(readme).toContain("Shared provider runtime for AI apps.");
     expect(readme).toContain("English-first");
     expect(readme).toContain("docs/media/30-second-overview.md");
+    expect(readme).toContain("docs/media/README.md");
     expect(readme).toContain("docs/first-success.md");
     expect(readme).toContain("docs/public-proof-pack.md");
     expect(readme).toContain("docs/api/service-http-reference.md");
@@ -292,19 +476,16 @@ describe("Switchyard docs frontdoor contracts", () => {
     expect(readme).toContain("docs/public-surface-support-matrix.md");
     expect(readme).toContain("examples/README.md");
     expect(readme).toContain("starter-packs/README.md");
-    expect(readme).toContain("starter-packs/README.md");
-    expect(readme).toContain("docs/builder-journeys.md");
-    expect(readme).toContain("docs/builder-intent-router.md");
     expect(readme).toContain("docs/host-integration-playbooks.md");
     expect(readme).toContain("docs/host-integration-examples.md");
     expect(readme).toContain("[docs/README.md](./docs/README.md)");
     expect(readme).toContain(".agents/internal-docs/blueprints/");
     expect(readme).not.toContain("docs/shared-provider-runtime.md");
-    expect(readme).not.toContain("docs/public-surface-catalog.schema.json");
+    expect(readme).not.toContain("catalogs/public-surface-catalog.schema.json");
     expect(readme).not.toContain("docs/starter-manifest-examples.md");
-    expect(readme).not.toContain("docs/starter-manifest-examples.schema.json");
+    expect(readme).not.toContain("catalogs/starter-manifest-examples.schema.json");
     expect(readme).not.toContain("docs/starter-pack-chooser.md");
-    expect(readme).not.toContain("docs/starter-pack-comparison.md");
+    expect(readme).not.toContain("catalogs/starter-pack-comparison.json");
     expect(readme).not.toContain("docs/public-surface-catalog.md");
     expect(readme).not.toContain("docs/compat/README.md");
     expect(readme).not.toContain("docs/mcp.md");
@@ -312,17 +493,17 @@ describe("Switchyard docs frontdoor contracts", () => {
     expect(readme).not.toContain("docs/glossary.md");
     expect(readme).not.toContain("docs/i18n.md");
     expect(readme).not.toContain("docs/provider-runtime-catalog.md");
-    expect(readme).not.toContain("docs/provider-runtime-catalog.json");
-    expect(readme).not.toContain("docs/provider-runtime-catalog.schema.json");
+    expect(readme).not.toContain("catalogs/provider-runtime-catalog.json");
+    expect(readme).not.toContain("catalogs/provider-runtime-catalog.schema.json");
     expect(readme).not.toContain("docs/compat-target-catalog.md");
-    expect(readme).not.toContain("docs/compat-target-catalog.json");
-    expect(readme).not.toContain("docs/compat-target-catalog.schema.json");
-    expect(readme).not.toContain("docs/builder-kit-catalog.json");
-    expect(readme).not.toContain("docs/builder-kit-catalog.schema.json");
-    expect(readme).not.toContain("docs/skill-pack-catalog.json");
-    expect(readme).not.toContain("docs/skill-pack-catalog.schema.json");
-    expect(readme).not.toContain("docs/discoverability-keyword-truth.json");
-    expect(readme).not.toContain("docs/discoverability-keyword-truth.schema.json");
+    expect(readme).not.toContain("catalogs/compat-target-catalog.json");
+    expect(readme).not.toContain("catalogs/compat-target-catalog.schema.json");
+    expect(readme).not.toContain("catalogs/builder-kit-catalog.json");
+    expect(readme).not.toContain("catalogs/builder-kit-catalog.schema.json");
+    expect(readme).not.toContain("catalogs/skill-pack-catalog.json");
+    expect(readme).not.toContain("catalogs/skill-pack-catalog.schema.json");
+    expect(readme).not.toContain("catalogs/discoverability-keyword-truth.json");
+    expect(readme).not.toContain("catalogs/discoverability-keyword-truth.schema.json");
     expect(readme).not.toContain("fresh `verify:service-live` 当前停在 `Gemini = user-action-required`");
     expect(readme).not.toContain("workspace external blocker pack");
     expect(readme).not.toContain("bilingual developer frontdoor");
@@ -339,8 +520,8 @@ describe("Switchyard docs frontdoor contracts", () => {
 
     expect(readme).toContain("Live/browser outcomes are important");
     expect(readme).not.toContain("`Gemini / Grok`");
-    expect(proofPack).toContain("`Claude / Grok`");
-    expect(v1Plan).toContain("`Claude / Grok`");
+    expect(proofPack).toContain("`Claude`");
+    expect(v1Plan).toContain("`Claude`");
     expect(v1Plan).toContain("live snapshot 继续放在 `docs/public-proof-pack.md`");
     expect(openapi).toContain("http://127.0.0.1:4010");
     expect(openapi).not.toContain("http://127.0.0.1:4317");
@@ -352,41 +533,40 @@ describe("Switchyard docs frontdoor contracts", () => {
   it("keeps a machine-readable outward catalog linked from frontdoor docs", () => {
     const compatReadme = read("docs/compat/README.md");
     const faq = read("docs/faq.md");
-    const catalogJson = JSON.parse(read("docs/public-surface-catalog.json"));
-    const catalogSchema = JSON.parse(read("docs/public-surface-catalog.schema.json"));
-    const starterTemplatesJson = JSON.parse(read("docs/starter-manifest-templates.json"));
-    const starterTemplatesSchema = JSON.parse(read("docs/starter-manifest-templates.schema.json"));
-    const starterExamplesJson = JSON.parse(read("docs/starter-manifest-examples.json"));
-    const starterExamplesSchema = JSON.parse(read("docs/starter-manifest-examples.schema.json"));
+    const catalogJson = JSON.parse(read("catalogs/public-surface-catalog.json"));
+    const catalogSchema = JSON.parse(read("catalogs/public-surface-catalog.schema.json"));
+    const starterTemplatesJson = JSON.parse(read("catalogs/starter-manifest-templates.json"));
+    const starterTemplatesSchema = JSON.parse(read("catalogs/starter-manifest-templates.schema.json"));
+    const starterExamplesJson = JSON.parse(read("catalogs/starter-manifest-examples.json"));
+    const starterExamplesSchema = JSON.parse(read("catalogs/starter-manifest-examples.schema.json"));
     const starterPackIndexJson = JSON.parse(read("starter-packs/index.json"));
     const starterPackIndexSchema = JSON.parse(read("starter-packs/index.schema.json"));
-    const starterPackChooserJson = JSON.parse(read("docs/starter-pack-chooser.json"));
-    const starterPackChooserSchema = JSON.parse(read("docs/starter-pack-chooser.schema.json"));
-    const starterPackComparisonJson = JSON.parse(read("docs/starter-pack-comparison.json"));
-    const starterPackComparisonSchema = JSON.parse(read("docs/starter-pack-comparison.schema.json"));
-    const builderJourneysJson = JSON.parse(read("docs/builder-journeys.json"));
-    const builderJourneysSchema = JSON.parse(read("docs/builder-journeys.schema.json"));
-    const builderIntentRouterDoc = read("docs/builder-intent-router.md");
-    const builderIntentRouterJson = JSON.parse(read("docs/builder-intent-router.json"));
-    const builderIntentRouterSchema = JSON.parse(read("docs/builder-intent-router.schema.json"));
+    const starterPackChooserJson = JSON.parse(read("catalogs/starter-pack-chooser.json"));
+    const starterPackChooserSchema = JSON.parse(read("catalogs/starter-pack-chooser.schema.json"));
+    const starterPackComparisonJson = JSON.parse(read("catalogs/starter-pack-comparison.json"));
+    const starterPackComparisonSchema = JSON.parse(read("catalogs/starter-pack-comparison.schema.json"));
+    const builderJourneysJson = JSON.parse(read("catalogs/builder-journeys.json"));
+    const builderJourneysSchema = JSON.parse(read("catalogs/builder-journeys.schema.json"));
+    const builderIntentRouterJson = JSON.parse(read("catalogs/builder-intent-router.json"));
+    const builderIntentRouterSchema = JSON.parse(read("catalogs/builder-intent-router.schema.json"));
+    const publicSurfaceCatalogDoc = read("docs/public-surface-catalog.md");
     const providerRuntimeCatalogDoc = read("docs/provider-runtime-catalog.md");
-    const providerRuntimeCatalogJson = JSON.parse(read("docs/provider-runtime-catalog.json"));
-    const providerRuntimeCatalogSchema = JSON.parse(read("docs/provider-runtime-catalog.schema.json"));
-    const compatTargetCatalogDoc = read("docs/compat-target-catalog.md");
-    const compatTargetCatalogJson = JSON.parse(read("docs/compat-target-catalog.json"));
-    const compatTargetCatalogSchema = JSON.parse(read("docs/compat-target-catalog.schema.json"));
-    const builderKitCatalogJson = JSON.parse(read("docs/builder-kit-catalog.json"));
-    const builderKitCatalogSchema = JSON.parse(read("docs/builder-kit-catalog.schema.json"));
-    const skillPackCatalogJson = JSON.parse(read("docs/skill-pack-catalog.json"));
-    const skillPackCatalogSchema = JSON.parse(read("docs/skill-pack-catalog.schema.json"));
-    const mcpToolCatalogDoc = read("docs/mcp-tool-catalog.md");
-    const mcpToolCatalogJson = JSON.parse(read("docs/mcp-tool-catalog.json"));
-    const mcpToolCatalogSchema = JSON.parse(read("docs/mcp-tool-catalog.schema.json"));
+    const providerRuntimeCatalogJson = JSON.parse(read("catalogs/provider-runtime-catalog.json"));
+    const providerRuntimeCatalogSchema = JSON.parse(read("catalogs/provider-runtime-catalog.schema.json"));
+    const compatTargetCatalogJson = JSON.parse(read("catalogs/compat-target-catalog.json"));
+    const compatTargetCatalogSchema = JSON.parse(read("catalogs/compat-target-catalog.schema.json"));
+    const builderKitCatalogJson = JSON.parse(read("catalogs/builder-kit-catalog.json"));
+    const builderKitCatalogSchema = JSON.parse(read("catalogs/builder-kit-catalog.schema.json"));
+    const skillPackCatalogJson = JSON.parse(read("catalogs/skill-pack-catalog.json"));
+    const skillPackCatalogSchema = JSON.parse(read("catalogs/skill-pack-catalog.schema.json"));
+    const mcpDocs = read("docs/mcp.md");
+    const mcpToolCatalogJson = JSON.parse(read("catalogs/mcp-tool-catalog.json"));
+    const mcpToolCatalogSchema = JSON.parse(read("catalogs/mcp-tool-catalog.schema.json"));
     const keywordTruthDoc = read("docs/discoverability-keyword-truth.md");
-    const keywordTruthJson = JSON.parse(read("docs/discoverability-keyword-truth.json"));
-    const keywordTruthSchema = JSON.parse(read("docs/discoverability-keyword-truth.schema.json"));
-    const hostPlaybooksJson = JSON.parse(read("docs/host-integration-playbooks.json"));
-    const hostPlaybooksSchema = JSON.parse(read("docs/host-integration-playbooks.schema.json"));
+    const keywordTruthJson = JSON.parse(read("catalogs/discoverability-keyword-truth.json"));
+    const keywordTruthSchema = JSON.parse(read("catalogs/discoverability-keyword-truth.schema.json"));
+    const hostPlaybooksJson = JSON.parse(read("catalogs/host-integration-playbooks.json"));
+    const hostPlaybooksSchema = JSON.parse(read("catalogs/host-integration-playbooks.schema.json"));
     const hostExamplesDoc = read("docs/host-integration-examples.md");
     const hostExamplesJson = JSON.parse(read("examples/hosts/index.json"));
     const hostExamplesSchema = JSON.parse(read("examples/hosts/index.schema.json"));
@@ -408,58 +588,57 @@ describe("Switchyard docs frontdoor contracts", () => {
     expect(faq).toContain("pnpm run switchyard:cli -- provider-catalog-schema");
     expect(faq).toContain("pnpm run switchyard:cli -- compat-target-catalog");
     expect(faq).toContain("pnpm run switchyard:cli -- compat-target-catalog-schema");
-    expect(faq).toContain("docs/compat-target-catalog.json");
-    expect(faq).toContain("docs/compat-target-catalog.schema.json");
+    expect(faq).toContain("catalogs/compat-target-catalog.json");
+    expect(faq).toContain("catalogs/compat-target-catalog.schema.json");
     expect(faq).toContain("pnpm run switchyard:cli -- builder-kit-catalog");
     expect(faq).toContain("pnpm run switchyard:cli -- builder-kit-catalog-schema");
-    expect(faq).toContain("docs/builder-kit-catalog.json");
-    expect(faq).toContain("docs/builder-kit-catalog.schema.json");
+    expect(faq).toContain("catalogs/builder-kit-catalog.json");
+    expect(faq).toContain("catalogs/builder-kit-catalog.schema.json");
     expect(faq).toContain("pnpm run switchyard:cli -- skill-pack-catalog");
     expect(faq).toContain("pnpm run switchyard:cli -- skill-pack-catalog-schema");
-    expect(faq).toContain("docs/skill-pack-catalog.json");
-    expect(faq).toContain("docs/skill-pack-catalog.schema.json");
+    expect(faq).toContain("catalogs/skill-pack-catalog.json");
+    expect(faq).toContain("catalogs/skill-pack-catalog.schema.json");
     expect(faq).toContain("pnpm run switchyard:cli -- starter-manifests");
     expect(faq).toContain("pnpm run switchyard:cli -- starter-manifests-schema");
     expect(faq).toContain("pnpm run switchyard:cli -- starter-examples");
     expect(faq).toContain("pnpm run switchyard:cli -- starter-examples-schema");
     expect(faq).toContain("pnpm run switchyard:cli -- starter-pack-chooser");
-    expect(faq).toContain("docs/starter-pack-chooser.json");
+    expect(faq).toContain("catalogs/starter-pack-chooser.json");
     expect(faq).toContain("pnpm run switchyard:cli -- starter-pack-comparison");
-    expect(faq).toContain("docs/starter-pack-comparison.json");
+    expect(faq).toContain("catalogs/starter-pack-comparison.json");
     expect(faq).toContain("pnpm run switchyard:cli -- builder-journeys");
-    expect(faq).toContain("docs/builder-journeys.md");
+    expect(faq).toContain("catalogs/builder-journeys.json");
     expect(faq).toContain("pnpm run switchyard:cli -- builder-intent-router");
     expect(faq).toContain("switchyard.catalog.builder_intent_router");
+    expect(faq).toContain("docs/starter-pack-chooser.md");
     expect(faq).toContain("pnpm run switchyard:cli -- keyword-truth");
     expect(faq).toContain("pnpm run switchyard:cli -- keyword-truth-schema");
     expect(faq).toContain("pnpm run switchyard:cli -- keyword-entry --target switchyard-mcp");
-    expect(faq).toContain("docs/discoverability-keyword-truth.json");
-    expect(faq).toContain("docs/discoverability-keyword-truth.schema.json");
-    expect(faq).toContain("docs/builder-intent-router.json");
-    expect(faq).toContain("docs/builder-intent-router.schema.json");
-    expect(providerRuntimeCatalogDoc).toContain("docs/provider-runtime-catalog.json");
-    expect(providerRuntimeCatalogDoc).toContain("docs/provider-runtime-catalog.schema.json");
+    expect(faq).toContain("catalogs/discoverability-keyword-truth.json");
+    expect(faq).toContain("catalogs/discoverability-keyword-truth.schema.json");
+    expect(faq).toContain("catalogs/builder-intent-router.json");
+    expect(faq).toContain("catalogs/builder-intent-router.schema.json");
+    expect(providerRuntimeCatalogDoc).toContain("catalogs/provider-runtime-catalog.json");
+    expect(providerRuntimeCatalogDoc).toContain("catalogs/provider-runtime-catalog.schema.json");
     expect(providerRuntimeCatalogDoc).toContain("pnpm run switchyard:cli -- provider-catalog-schema");
     expect(providerRuntimeCatalogDoc).toContain("switchyard.catalog.provider_catalog_schema");
     expect(providerRuntimeCatalogDoc).toContain("providerId + lane");
     expect(providerRuntimeCatalogDoc).toContain("providerId:lane");
-    expect(compatTargetCatalogDoc).toContain("docs/compat-target-catalog.json");
-    expect(compatTargetCatalogDoc).toContain("docs/compat-target-catalog.schema.json");
-    expect(compatTargetCatalogDoc).toContain("pnpm run switchyard:cli -- compat-target-catalog");
-    expect(compatTargetCatalogDoc).toContain("switchyard.catalog.compat_target_catalog");
-    expect(compatTargetCatalogDoc).toContain("fail-closed");
-    expect(mcpToolCatalogDoc).toContain("docs/mcp-tool-catalog.json");
-    expect(mcpToolCatalogDoc).toContain("pnpm run switchyard:cli -- mcp-tool-catalog");
-    expect(mcpToolCatalogDoc).toContain("switchyard.catalog.mcp_tool_catalog");
-    expect(builderIntentRouterDoc).toContain("docs/builder-intent-router.json");
-    expect(builderIntentRouterDoc).toContain("pnpm run switchyard:cli -- builder-intent-router");
-    expect(builderIntentRouterDoc).toContain("switchyard.catalog.builder_intent_router");
+    expect(compatReadme).toContain("catalogs/compat-target-catalog.json");
+    expect(compatReadme).toContain("catalogs/compat-target-catalog.schema.json");
+    expect(compatReadme).toContain("pnpm run switchyard:cli -- compat-target-catalog");
+    expect(compatReadme).toContain("switchyard.catalog.compat_target_catalog");
+    expect(compatReadme).toContain("fail-closed");
+    expect(mcpDocs).toContain("pnpm run switchyard:cli -- mcp-tool-catalog");
+    expect(mcpDocs).toContain("catalogs/mcp-tool-catalog.json");
+    expect(publicSurfaceCatalogDoc).toContain("catalogs/builder-intent-router.json");
+    expect(publicSurfaceCatalogDoc).toContain("pnpm run switchyard:cli -- builder-intent-router");
     expect(faq).toContain("switchyard.catalog.keyword_truth");
-    expect(keywordTruthDoc).toContain("docs/discoverability-keyword-truth.json");
+    expect(keywordTruthDoc).toContain("catalogs/discoverability-keyword-truth.json");
     expect(keywordTruthDoc).toContain("pnpm run switchyard:cli -- keyword-truth");
     expect(keywordTruthDoc).toContain("switchyard.catalog.keyword_truth");
     expect(faq).toContain("pnpm run switchyard:cli -- host-playbooks");
-    expect(faq).toContain("docs/host-integration-playbooks.json");
+    expect(faq).toContain("catalogs/host-integration-playbooks.json");
     expect(faq).toContain("pnpm run switchyard:cli -- host-examples");
     expect(faq).toContain("pnpm run switchyard:cli -- host-example --target mcp");
     expect(faq).toContain("examples/hosts/index.json");
@@ -645,27 +824,27 @@ describe("Switchyard docs frontdoor contracts", () => {
     expect(
       mcpToolCatalogJson.tools.find((tool: { name: string; route: string }) => tool.name === "switchyard.catalog.compat_targets")
         ?.route,
-    ).toBe("docs/compat-target-catalog.json#targets");
+    ).toBe("catalogs/compat-target-catalog.json#targets");
     expect(
       mcpToolCatalogJson.tools.find((tool: { name: string; route: string }) => tool.name === "switchyard.catalog.compat_target")
         ?.route,
-    ).toBe("docs/compat-target-catalog.json#targets[target]");
+    ).toBe("catalogs/compat-target-catalog.json#targets[target]");
     expect(
       mcpToolCatalogJson.tools.find((tool: { name: string; route: string }) => tool.name === "switchyard.catalog.builder_kits")
         ?.route,
-    ).toBe("docs/builder-kit-catalog.json#kits");
+    ).toBe("catalogs/builder-kit-catalog.json#kits");
     expect(
       mcpToolCatalogJson.tools.find((tool: { name: string; route: string }) => tool.name === "switchyard.catalog.builder_kit")
         ?.route,
-    ).toBe("docs/builder-kit-catalog.json#kits[target]");
+    ).toBe("catalogs/builder-kit-catalog.json#kits[target]");
     expect(
       mcpToolCatalogJson.tools.find((tool: { name: string; route: string }) => tool.name === "switchyard.catalog.skill_packs")
         ?.route,
-    ).toBe("docs/skill-pack-catalog.json#packs");
+    ).toBe("catalogs/skill-pack-catalog.json#packs");
     expect(
       mcpToolCatalogJson.tools.find((tool: { name: string; route: string }) => tool.name === "switchyard.catalog.skill_pack")
         ?.route,
-    ).toBe("docs/skill-pack-catalog.json#packs[id]");
+    ).toBe("catalogs/skill-pack-catalog.json#packs[id]");
     expect(new Set(mcpToolCatalogJson.tools.map((tool: { name: string }) => tool.name)).size).toBe(
       mcpToolCatalogJson.tools.length,
     );

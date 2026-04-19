@@ -112,6 +112,48 @@ function includesAny(value, needles) {
   return needles.some((needle) => value.includes(needle));
 }
 
+function normalizePageText(value) {
+  return `${value ?? ""}`.replace(/\s+/g, " ").trim();
+}
+
+export function summarizeCurrentPageTextEvidence({
+  bodyText = "",
+  rootText = "",
+  visibleHintParts = [],
+} = {}) {
+  const normalizedBody = normalizePageText(bodyText);
+
+  if (normalizedBody) {
+    return normalizedBody.slice(0, 300);
+  }
+
+  const normalizedRoot = normalizePageText(rootText);
+  const hintParts = [];
+
+  for (const part of visibleHintParts) {
+    const normalizedPart = normalizePageText(part);
+
+    if (!normalizedPart) {
+      continue;
+    }
+
+    if (normalizedRoot && normalizedRoot.includes(normalizedPart)) {
+      continue;
+    }
+
+    if (hintParts.includes(normalizedPart)) {
+      continue;
+    }
+
+    hintParts.push(normalizedPart);
+  }
+
+  return [normalizedRoot, ...hintParts]
+    .filter(Boolean)
+    .join(" ")
+    .slice(0, 300);
+}
+
 function nowIso() {
   return new Date().toISOString();
 }
@@ -751,59 +793,82 @@ export async function collectBrowserEvidence(provider, target, options) {
     }
 
     const title = await page.title().catch(() => "");
-    const pageSnapshot = await page
-      .evaluate(() => {
-        const selectors = [
-          '[contenteditable="true"]',
-          'div[role="textbox"]',
-          "textarea[placeholder]",
-          "textarea",
-          'input[type="text"]',
-        ];
-        const hasComposerSurface = selectors.some((selector) => {
-          const element = document.querySelector(selector);
-          return Boolean(element && element.offsetParent !== null);
-        });
-        const visibleHints = Array.from(
-          document.querySelectorAll(
-            [
-              "[aria-label]",
-              "[placeholder]",
-              "button",
-              "a",
-              "nav",
-              "aside",
-              "[role='button']",
-              "[role='textbox']",
-            ].join(", "),
-          ),
-        )
-          .map((node) => {
-            const text =
-              node.textContent?.trim() ||
-              node.getAttribute?.("aria-label")?.trim() ||
-              node.getAttribute?.("placeholder")?.trim() ||
-              "";
-            return text;
-          })
-          .filter(Boolean)
-          .join(" ");
-        const bodyText = document.body?.innerText?.trim() ?? "";
-        const rootText = document.documentElement?.innerText?.trim() ?? "";
-        const combinedText = (bodyText || rootText || visibleHints)
-          .replace(/\s+/g, " ")
-          .trim()
-          .slice(0, 300);
+    let pageSnapshot = {
+      bodySnippet: "",
+      hasComposerSurface: false,
+    };
 
-        return {
-          bodySnippet: combinedText,
-          hasComposerSurface,
-        };
-      })
-      .catch(() => ({
-        bodySnippet: "",
-        hasComposerSurface: false,
-      }));
+    for (let attempt = 0; attempt < 3; attempt += 1) {
+      const rawSnapshot = await page
+        .evaluate(() => {
+          const selectors = [
+            '[contenteditable="true"]',
+            'div[role="textbox"]',
+            "textarea[placeholder]",
+            "textarea",
+            'input[type="text"]',
+          ];
+          const hasComposerSurface = selectors.some((selector) => {
+            const element = document.querySelector(selector);
+            return Boolean(element && element.offsetParent !== null);
+          });
+          const visibleHintParts = Array.from(
+            document.querySelectorAll(
+              [
+                "[aria-label]",
+                "[placeholder]",
+                "[data-placeholder]",
+                "button",
+                "a",
+                "nav",
+                "aside",
+                "[role='button']",
+                "[role='textbox']",
+                '[contenteditable="true"]',
+                "textarea",
+              ].join(", "),
+            ),
+          )
+            .map((node) => {
+              const text =
+                node.textContent?.trim() ||
+                node.getAttribute?.("aria-label")?.trim() ||
+                node.getAttribute?.("placeholder")?.trim() ||
+                node.getAttribute?.("data-placeholder")?.trim() ||
+                "";
+              return text;
+            })
+            .filter(Boolean);
+          const bodyText = document.body?.innerText?.trim() ?? "";
+          const rootText = document.documentElement?.innerText?.trim() ?? "";
+
+          return {
+            bodyText,
+            rootText,
+            visibleHintParts,
+            hasComposerSurface,
+          };
+        })
+        .catch(() => ({
+          bodyText: "",
+          rootText: "",
+          visibleHintParts: [],
+          hasComposerSurface: false,
+        }));
+
+      pageSnapshot = {
+        bodySnippet: summarizeCurrentPageTextEvidence(rawSnapshot),
+        hasComposerSurface: Boolean(rawSnapshot.hasComposerSurface),
+      };
+
+      if (pageSnapshot.bodySnippet || pageSnapshot.hasComposerSurface || attempt === 2) {
+        break;
+      }
+
+      if (typeof page.waitForTimeout === "function") {
+        await page.waitForTimeout(500);
+      }
+    }
 
     return {
       ok: true,

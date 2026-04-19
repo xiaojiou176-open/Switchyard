@@ -164,9 +164,10 @@ function getMissingAction(authModeId: AuthModeId): CredentialUserAction {
   if (authModeId === 'byok') {
     return {
       id: 'provide-api-key',
-      label: 'Add API Key',
-      description: 'Bring your own API key from the end user and bind it to this provider slot.',
-      emphasis: 'primary',
+      label: 'Review key setup',
+      description:
+        'BYOK binding stays local today. Review this provider slot and complete API-key setup outside the browser acquisition flow.',
+      emphasis: 'secondary',
       blocking: true
     };
   }
@@ -184,8 +185,9 @@ function getExpiredAction(authModeId: AuthModeId): CredentialUserAction {
   if (authModeId === 'byok') {
     return {
       id: 'replace-api-key',
-      label: 'Replace API Key',
-      description: 'Ask the end user to update the expired or revoked key for this provider.',
+      label: 'Review key replacement',
+      description:
+        'Ask the end user to refresh the expired or revoked API key outside the browser acquisition flow, then re-check this slot.',
       emphasis: 'warning',
       blocking: true
     };

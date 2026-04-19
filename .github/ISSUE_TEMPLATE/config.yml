@@ -4,5 +4,5 @@ contact_links:
     url: https://github.com/xiaojiou176-open/Switchyard/discussions
     about: Use Discussions for open-ended questions, frontdoor wording, and builder conversations.
   - name: Public Proof Pack
-    url: https://xiaojiou176-open.github.io/Switchyard/public-proof-pack.html
+    url: https://xiaojiou176-open.github.io/Switchyard/public-proof-pack.md
     about: Check the current proof wording before opening a support or readiness issue.

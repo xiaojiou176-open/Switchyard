@@ -66,6 +66,8 @@ If you only need the next truthful route, choose one:
   - [starter pack chooser](./starter-pack-chooser.md)
   - [surface catalog](./public-surface-catalog.md)
   - [MCP front door](./mcp.md)
+- I need promo or presentation assets
+  - [docs/media/README.md](./media/README.md)
 - I need local bootstrap or workstation-bound reality
   - [docs/runbooks/dev-bootstrap.md](./runbooks/dev-bootstrap.md)
 
@@ -88,7 +90,6 @@ Use the front row for:
 Do **not** use this page to flatten:
 
 - every compat page
-- every compare page
 - every builder catalog
 - every schema or machine-readable companion
 - every internal truth shelf
@@ -104,13 +105,16 @@ not presented as the default tour:
   - builder starter packs and runnable starter surfaces
 - [examples/README.md](../examples/README.md)
   - host examples and integration entrypoints
+- [docs/media/README.md](./media/README.md)
+  - deeper media shelf for text/video presentation assets
 - [surface catalog](./public-surface-catalog.md)
   - machine-readable surface, skill-pack, builder-kit, and MCP truth
 - [MCP front door](./mcp.md)
   - read-only MCP front door once the question is explicitly about MCP
 
 If you need every catalog, schema, or machine-readable companion, use the repo
-tree or CLI surfaces instead of turning this atlas back into a file cabinet.
+tree or CLI surfaces, with the root-level [`catalogs/`](../catalogs/) as the
+machine-readable shelf, instead of turning this atlas back into a file cabinet.
 
 ## Internal Truth Shelves
 
@@ -129,6 +133,7 @@ under `.agents/internal-docs/`, including:
 
 - `.agents/internal-docs/wave1/*`
 - `.agents/internal-docs/wave5/wave5-thin-compat-starter.md`
+- `.agents/internal-docs/compare/*`
 - `.agents/internal-docs/mcp/mcp-listings-cockpit.md`
 - `.agents/internal-docs/distribution/submission-packet-ledger.md`
 

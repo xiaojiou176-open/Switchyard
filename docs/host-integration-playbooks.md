@@ -19,8 +19,8 @@ narrow slices into clearer host playbooks.
 
 ## Machine-Readable Source
 
-- [docs/host-integration-playbooks.json](./host-integration-playbooks.json)
-- [docs/host-integration-playbooks.schema.json](./host-integration-playbooks.schema.json)
+- [catalogs/host-integration-playbooks.json](../catalogs/host-integration-playbooks.json)
+- [catalogs/host-integration-playbooks.schema.json](../catalogs/host-integration-playbooks.schema.json)
 
 ## Read-Only Access
 

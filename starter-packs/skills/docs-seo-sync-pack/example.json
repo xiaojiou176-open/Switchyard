@@ -1,5 +1,5 @@
 {
-  "$schema": "../../../docs/starter-manifest-examples.schema.json",
+  "$schema": "../../../catalogs/starter-manifest-examples.schema.json",
   "exampleVersion": 1,
   "builderExamples": [],
   "skillExamples": [

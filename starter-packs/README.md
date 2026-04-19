@@ -5,8 +5,8 @@
 说得更直白一点：
 
 - `docs/starter-pack-chooser.md` 像前台导购
-- `docs/starter-manifest-templates*.json` 像标准模板
-- `docs/starter-manifest-examples*.json` 像可参考的样例
+- `catalogs/starter-manifest-templates*.json` 像标准模板
+- `catalogs/starter-manifest-examples*.json` 像可参考的样例
 - `examples/` 像按场景划分的演示样板间
 - `starter-packs/` 这里则是按 **目标对象** 拆好的整包 starter
 

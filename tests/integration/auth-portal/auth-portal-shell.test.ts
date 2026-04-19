@@ -399,6 +399,6 @@ describe('auth portal shell', () => {
     expect(html).toContain('Session incomplete');
     expect(html).toContain('User action required');
     expect(html).not.toContain('Ready providers (1)');
-    expect(html).toContain('BYOK providers keep local API key management on this surface.');
+    expect(html).toContain('BYOK key entry stays outside the browser acquisition flow.');
   });
 });

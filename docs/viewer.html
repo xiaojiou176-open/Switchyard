@@ -1,0 +1,317 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Switchyard Docs Viewer</title>
+    <style>
+      :root {
+        color-scheme: light;
+        --bg: #f6f8f7;
+        --panel: rgba(255, 255, 255, 0.88);
+        --panel-strong: #ffffff;
+        --ink: #15201b;
+        --muted: #5f7067;
+        --line: #d9e2dc;
+        --accent: #1d7b57;
+        --shadow: 0 24px 60px rgba(18, 31, 24, 0.08);
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        margin: 0;
+        min-height: 100vh;
+        background:
+          radial-gradient(circle at top left, rgba(29, 123, 87, 0.08), transparent 22rem),
+          radial-gradient(circle at bottom right, rgba(21, 32, 27, 0.05), transparent 18rem),
+          var(--bg);
+        color: var(--ink);
+        font-family: "Inter", "IBM Plex Sans", "Segoe UI", sans-serif;
+      }
+
+      a {
+        color: var(--accent);
+      }
+
+      main {
+        width: min(980px, calc(100vw - 2rem));
+        margin: 0 auto;
+        padding: 1.5rem 0 3rem;
+      }
+
+      .skip-link {
+        position: absolute;
+        left: 1rem;
+        top: 1rem;
+        transform: translateY(-240%);
+        padding: 0.75rem 1rem;
+        border-radius: 999px;
+        background: var(--accent);
+        color: #ffffff;
+        font-weight: 700;
+        text-decoration: none;
+        transition: transform 140ms ease;
+        z-index: 20;
+      }
+
+      .skip-link:focus-visible {
+        transform: translateY(0);
+      }
+
+      .shell,
+      .article {
+        border: 1px solid var(--line);
+        border-radius: 24px;
+        background: var(--panel);
+        box-shadow: var(--shadow);
+      }
+
+      .shell {
+        display: grid;
+        gap: 0.9rem;
+        padding: 1.1rem 1.15rem;
+        margin-bottom: 1rem;
+        backdrop-filter: blur(14px);
+      }
+
+      .eyebrow {
+        margin: 0 0 0.45rem;
+        color: var(--accent);
+        font-size: 0.78rem;
+        letter-spacing: 0.1em;
+        text-transform: uppercase;
+        font-family: "JetBrains Mono", "Fira Code", monospace;
+      }
+
+      .shell-head {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.75rem;
+        justify-content: space-between;
+        align-items: start;
+      }
+
+      .shell-head h1 {
+        margin: 0;
+        font-size: clamp(1.7rem, 3vw, 2.5rem);
+        line-height: 1.02;
+        letter-spacing: -0.04em;
+      }
+
+      .shell-head p {
+        margin: 0;
+        max-width: 64ch;
+        color: var(--muted);
+        line-height: 1.5;
+      }
+
+      .shell-actions {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.55rem;
+      }
+
+      .pill {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        padding: 0.58rem 0.9rem;
+        border-radius: 999px;
+        border: 1px solid var(--line);
+        background: var(--panel-strong);
+        color: var(--ink);
+        text-decoration: none;
+        font-size: 0.92rem;
+      }
+
+      .pill-primary {
+        border-color: transparent;
+        background: var(--accent);
+        color: #ffffff;
+      }
+
+      .meta-row {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.6rem 0.75rem;
+        color: var(--muted);
+        font-size: 0.92rem;
+      }
+
+      .meta-row code {
+        font-family: "JetBrains Mono", "Fira Code", monospace;
+        font-size: 0.82rem;
+      }
+
+      .article {
+        padding: 1.5rem;
+        background: var(--panel-strong);
+      }
+
+      .article h1,
+      .article h2,
+      .article h3,
+      .article h4 {
+        line-height: 1.08;
+        letter-spacing: -0.03em;
+        margin-top: 1.8rem;
+        margin-bottom: 0.7rem;
+      }
+
+      .article h1 {
+        margin-top: 0;
+        font-size: clamp(1.95rem, 3vw, 2.9rem);
+      }
+
+      .article h2 {
+        font-size: clamp(1.5rem, 2.4vw, 2.1rem);
+      }
+
+      .article h3 {
+        font-size: clamp(1.2rem, 2vw, 1.6rem);
+      }
+
+      .article p,
+      .article li,
+      .article blockquote {
+        color: var(--ink);
+        line-height: 1.72;
+      }
+
+      .article p {
+        margin: 0 0 1rem;
+      }
+
+      .article ul,
+      .article ol {
+        padding-left: 1.35rem;
+        margin: 0 0 1rem;
+      }
+
+      .article li + li {
+        margin-top: 0.28rem;
+      }
+
+      .article code {
+        padding: 0.12rem 0.34rem;
+        border-radius: 8px;
+        background: #eef3ef;
+        font-family: "JetBrains Mono", "Fira Code", monospace;
+        font-size: 0.9em;
+      }
+
+      .article pre {
+        margin: 0 0 1rem;
+        padding: 1rem;
+        border-radius: 18px;
+        overflow: auto;
+        background: #142019;
+        color: #eef7f1;
+      }
+
+      .article pre code {
+        padding: 0;
+        background: transparent;
+        color: inherit;
+      }
+
+      .article blockquote {
+        margin: 0 0 1rem;
+        padding: 0.9rem 1rem;
+        border-left: 4px solid var(--accent);
+        border-radius: 0 16px 16px 0;
+        background: #f1f7f3;
+      }
+
+      .article table {
+        width: 100%;
+        border-collapse: collapse;
+        margin: 0 0 1rem;
+      }
+
+      .article th,
+      .article td {
+        border-top: 1px solid var(--line);
+        padding: 0.7rem 0.75rem;
+        text-align: left;
+        vertical-align: top;
+      }
+
+      .article th {
+        color: var(--muted);
+        font-size: 0.86rem;
+        text-transform: uppercase;
+        letter-spacing: 0.06em;
+      }
+
+      .article hr {
+        border: 0;
+        border-top: 1px solid var(--line);
+        margin: 1.5rem 0;
+      }
+
+      .article .empty {
+        color: var(--muted);
+      }
+
+      .error {
+        border-color: rgba(201, 90, 90, 0.35);
+        background: #fff4f4;
+      }
+
+      @media (max-width: 720px) {
+        main {
+          width: min(100vw - 1rem, 980px);
+        }
+
+        .shell,
+        .article {
+          border-radius: 20px;
+        }
+
+        .article {
+          padding: 1.15rem;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <a class="skip-link" href="#viewer-content">Skip to main content</a>
+    <main>
+      <section class="shell">
+        <div class="shell-head">
+          <div>
+            <p class="eyebrow">Rendered docs route</p>
+            <h1 id="viewer-title">Switchyard docs viewer</h1>
+            <p id="viewer-subtitle">
+              Stay inside the docs/public surface while reading first-row markdown pages.
+            </p>
+          </div>
+          <div class="shell-actions">
+            <a class="pill pill-primary" id="frontdoor-link" href="./index.html">Back to docs front door</a>
+            <a class="pill" id="raw-link" href="./README.md">Open raw markdown</a>
+          </div>
+        </div>
+        <div class="meta-row">
+          <span>Rendered document: <code id="doc-path">README.md</code></span>
+        </div>
+      </section>
+      <article id="viewer-content" class="article" aria-live="polite">
+        <p class="empty">Loading document…</p>
+      </article>
+    </main>
+    <script type="module">
+      import { mountViewer } from "./viewer-runtime.js";
+
+      mountViewer({
+        document: window.document,
+        locationHref: window.location.href,
+        search: window.location.search,
+        fetchImpl: window.fetch.bind(window),
+      });
+    </script>
+  </body>
+</html>

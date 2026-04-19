@@ -67,4 +67,61 @@ describe("Switchyard docs and design governance drift contracts", () => {
     expect(debugWorkbenchMaster).toContain("| Quick actions or overlays | `Raycast` utility chrome only | compact keyboard-first actions, transient overlays, launcher-like assistive controls | must stay subordinate to evidence flow, must not become the primary navigation model |");
     expect(debugWorkbenchMaster).toContain("read-only diagnosis bench");
   });
+
+  it("keeps moved docs wrappers out of the public docs plane while preserving machine-readable routes", () => {
+    const docsReadme = read("docs/README.md");
+    const publicSurfaceCatalog = read("docs/public-surface-catalog.md");
+    const faq = read("docs/faq.md");
+    const rootReadme = read("README.md");
+    const llms = read("llms.txt");
+
+    expect(docsReadme).not.toContain("docs/builder-intent-router.md");
+    expect(docsReadme).not.toContain("docs/builder-journeys.md");
+    expect(docsReadme).not.toContain("docs/starter-pack-comparison.md");
+    expect(docsReadme).not.toContain("docs/compat-target-catalog.md");
+    expect(docsReadme).not.toContain("docs/mcp-tool-catalog.md");
+
+    expect(rootReadme).not.toContain("docs/builder-intent-router.md");
+    expect(rootReadme).not.toContain("docs/builder-journeys.md");
+    expect(rootReadme).not.toContain("docs/compat-target-catalog.md");
+
+    expect(publicSurfaceCatalog).toContain("catalogs/builder-intent-router.json");
+    expect(publicSurfaceCatalog).toContain("catalogs/builder-journeys.json");
+    expect(publicSurfaceCatalog).toContain("catalogs/starter-pack-comparison.json");
+    expect(publicSurfaceCatalog).toContain("catalogs/compat-target-catalog.json");
+
+    expect(faq).toContain("catalogs/builder-intent-router.json");
+    expect(faq).toContain("catalogs/builder-journeys.json");
+    expect(faq).toContain("catalogs/starter-pack-comparison.json");
+    expect(faq).toContain("catalogs/compat-target-catalog.json");
+    expect(faq).toContain("catalogs/mcp-tool-catalog.json");
+
+    expect(llms).not.toContain("docs/builder-intent-router.md");
+    expect(llms).not.toContain("docs/builder-journeys.md");
+    expect(llms).not.toContain("docs/starter-pack-comparison.md");
+    expect(llms).not.toContain("docs/compat-target-catalog.md");
+    expect(llms).not.toContain("docs/mcp-tool-catalog.md");
+
+    expect(llms).toContain("catalogs/builder-intent-router.json");
+    expect(llms).toContain("catalogs/builder-journeys.json");
+    expect(llms).toContain("catalogs/starter-pack-comparison.json");
+    expect(llms).toContain("catalogs/compat-target-catalog.json");
+    expect(llms).toContain("catalogs/mcp-tool-catalog.json");
+
+    expect(read("catalogs/builder-intent-router.schema.json")).toContain(
+      "Switchyard Builder Intent Router",
+    );
+    expect(read("catalogs/builder-journeys.schema.json")).toContain(
+      "Switchyard Builder Journeys",
+    );
+    expect(read("catalogs/starter-pack-comparison.schema.json")).toContain(
+      "Switchyard Starter Pack Comparison",
+    );
+    expect(read("catalogs/compat-target-catalog.schema.json")).toContain(
+      "Switchyard Compat Target Catalog",
+    );
+    expect(read("catalogs/mcp-tool-catalog.schema.json")).toContain(
+      "Switchyard MCP Tool Catalog",
+    );
+  });
 });
