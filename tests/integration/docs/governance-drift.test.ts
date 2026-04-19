@@ -108,19 +108,19 @@ describe("Switchyard docs and design governance drift contracts", () => {
     expect(llms).toContain("catalogs/compat-target-catalog.json");
     expect(llms).toContain("catalogs/mcp-tool-catalog.json");
 
-    expect(read(".agents/internal-docs/builder-routing/builder-intent-router.md")).toContain(
+    expect(read("catalogs/builder-intent-router.schema.json")).toContain(
       "Switchyard Builder Intent Router",
     );
-    expect(read(".agents/internal-docs/builder-routing/builder-journeys.md")).toContain(
+    expect(read("catalogs/builder-journeys.schema.json")).toContain(
       "Switchyard Builder Journeys",
     );
-    expect(read(".agents/internal-docs/builder-routing/starter-pack-comparison.md")).toContain(
+    expect(read("catalogs/starter-pack-comparison.schema.json")).toContain(
       "Switchyard Starter Pack Comparison",
     );
-    expect(read(".agents/internal-docs/compat/compat-target-catalog.md")).toContain(
+    expect(read("catalogs/compat-target-catalog.schema.json")).toContain(
       "Switchyard Compat Target Catalog",
     );
-    expect(read(".agents/internal-docs/mcp/mcp-tool-catalog.md")).toContain(
+    expect(read("catalogs/mcp-tool-catalog.schema.json")).toContain(
       "Switchyard MCP Tool Catalog",
     );
   });
