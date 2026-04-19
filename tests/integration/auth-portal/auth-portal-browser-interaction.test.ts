@@ -92,6 +92,13 @@ describe("auth portal browser interaction", () => {
             .locator('#provider-claude button[data-action-id="start-web-login"][data-acquisition-mode="isolated-chrome-root"]')
             .click();
           await page.waitForSelector('#auth-portal-feedback:not([hidden])');
+          await page.waitForFunction(() => {
+            const element = document.querySelector("#auth-portal-feedback");
+            return (
+              element instanceof HTMLElement &&
+              element.textContent?.includes("Browser handoff ready")
+            );
+          });
 
           const feedbackText = (await page.locator("#auth-portal-feedback").textContent()) ?? "";
           expect(feedbackText).toContain("Browser handoff ready");
