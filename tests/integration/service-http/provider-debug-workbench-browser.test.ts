@@ -3,6 +3,7 @@ import { createServer } from "node:http";
 import { describe, expect, it } from "vitest";
 
 import { renderProviderDebugWorkbench } from "../../../packages/surfaces/http/src/provider-debug-workbench.js";
+import { launchChromiumForUiTest } from "../../support/chromium.js";
 
 describe("provider debug workbench browser interaction", () => {
   it(
@@ -88,11 +89,7 @@ describe("provider debug workbench browser interaction", () => {
       await new Promise<void>((resolveListen) => server.listen(4198, "127.0.0.1", () => resolveListen()));
 
       try {
-        const { chromium } = await import("playwright-core");
-        const browser = await chromium.launch({
-          headless: true,
-          executablePath: "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome",
-        });
+        const browser = await launchChromiumForUiTest();
 
         try {
           const page = await browser.newPage();

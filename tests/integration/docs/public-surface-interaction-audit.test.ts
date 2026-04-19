@@ -4,6 +4,8 @@ import { resolve } from "node:path";
 
 import { describe, expect, it } from "vitest";
 
+import { launchChromiumForUiTest } from "../../support/chromium.js";
+
 const repoRoot = process.cwd();
 
 const routeChecks = [
@@ -62,7 +64,6 @@ describe("public surface interaction audit", () => {
       const projectRoot = resolve(tempRoot, "Switchyard");
       symlinkSync(repoRoot, projectRoot, "dir");
 
-      const { chromium } = await import("playwright-core");
       const { startDocsStaticServer } = await import("../../../scripts/start-local-experience.mjs");
 
       const rootServer = await startDocsStaticServer({
@@ -77,10 +78,7 @@ describe("public surface interaction audit", () => {
       });
 
       try {
-        const browser = await chromium.launch({
-          headless: true,
-          executablePath: "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome",
-        });
+        const browser = await launchChromiumForUiTest();
         try {
           const page = await browser.newPage();
 

@@ -4,6 +4,7 @@ import { describe, expect, it } from "vitest";
 
 import { buildAuthPortalShellModel, renderAuthPortalShell } from "../../../apps/auth-portal/src/index.js";
 import { createCredentialOwner } from "../../../packages/credentials/src/index.js";
+import { launchChromiumForUiTest } from "../../support/chromium.js";
 
 describe("auth portal browser interaction", () => {
   function buildRouteCatalog() {
@@ -73,11 +74,7 @@ describe("auth portal browser interaction", () => {
       await new Promise<void>((resolveListen) => server.listen(4197, "127.0.0.1", () => resolveListen()));
 
       try {
-        const { chromium } = await import("playwright-core");
-        const browser = await chromium.launch({
-          headless: true,
-          executablePath: "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome",
-        });
+        const browser = await launchChromiumForUiTest();
 
         try {
           const page = await browser.newPage();

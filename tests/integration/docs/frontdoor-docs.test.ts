@@ -6,6 +6,8 @@ import { createServer } from "node:http";
 import Ajv2020 from "ajv/dist/2020.js";
 import { describe, expect, it } from "vitest";
 
+import { launchChromiumForUiTest } from "../../support/chromium.js";
+
 const repoRoot = process.cwd();
 
 function read(relativePath: string) {
@@ -101,23 +103,24 @@ describe("Switchyard docs frontdoor contracts", () => {
       const projectRoot = resolve(tempRoot, "Switchyard");
       symlinkSync(repoRoot, projectRoot, "dir");
 
-      const { chromium } = await import("playwright-core");
       const { startDocsStaticServer } = await import("../../../scripts/start-local-experience.mjs");
       const server = await startDocsStaticServer({
         rootDir: tempRoot,
         host: "127.0.0.1",
-        port: 4185,
+        port: 0,
       });
+      const address = server.address();
+      if (!address || typeof address === "string") {
+        throw new Error("Expected docs viewer test server to expose a TCP port.");
+      }
+      const baseUrl = `http://127.0.0.1:${address.port}`;
 
       try {
-        const browser = await chromium.launch({
-          headless: true,
-          executablePath: "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome",
-        });
+        const browser = await launchChromiumForUiTest();
         try {
           const page = await browser.newPage();
           await page.goto(
-            "http://127.0.0.1:4185/Switchyard/docs/viewer.html?doc=first-success.md",
+            `${baseUrl}/Switchyard/docs/viewer.html?doc=first-success.md`,
             { waitUntil: "networkidle" },
           );
           expect(await page.locator("#viewer-title").innerText()).toContain("First Success");
@@ -145,23 +148,24 @@ describe("Switchyard docs frontdoor contracts", () => {
       const projectRoot = resolve(tempRoot, "Switchyard");
       symlinkSync(repoRoot, projectRoot, "dir");
 
-      const { chromium } = await import("playwright-core");
       const { startDocsStaticServer } = await import("../../../scripts/start-local-experience.mjs");
       const server = await startDocsStaticServer({
         rootDir: tempRoot,
         host: "127.0.0.1",
-        port: 4185,
+        port: 0,
       });
+      const address = server.address();
+      if (!address || typeof address === "string") {
+        throw new Error("Expected root viewer test server to expose a TCP port.");
+      }
+      const baseUrl = `http://127.0.0.1:${address.port}`;
 
       try {
-        const browser = await chromium.launch({
-          headless: true,
-          executablePath: "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome",
-        });
+        const browser = await launchChromiumForUiTest();
         try {
           const page = await browser.newPage();
           await page.goto(
-            "http://127.0.0.1:4185/Switchyard/viewer.html?doc=first-success.md",
+            `${baseUrl}/Switchyard/viewer.html?doc=first-success.md`,
             { waitUntil: "networkidle" },
           );
           expect(await page.locator("#viewer-title").innerText()).toContain("First Success");
@@ -193,23 +197,24 @@ describe("Switchyard docs frontdoor contracts", () => {
       const projectRoot = resolve(tempRoot, "Switchyard");
       symlinkSync(repoRoot, projectRoot, "dir");
 
-      const { chromium } = await import("playwright-core");
       const { startDocsStaticServer } = await import("../../../scripts/start-local-experience.mjs");
       const server = await startDocsStaticServer({
         rootDir: tempRoot,
         host: "127.0.0.1",
-        port: 4185,
+        port: 0,
       });
+      const address = server.address();
+      if (!address || typeof address === "string") {
+        throw new Error("Expected frontdoor test server to expose a TCP port.");
+      }
+      const baseUrl = `http://127.0.0.1:${address.port}`;
 
       try {
-        const browser = await chromium.launch({
-          headless: true,
-          executablePath: "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome",
-        });
+        const browser = await launchChromiumForUiTest();
         try {
           const page = await browser.newPage();
           await page.goto(
-            "http://127.0.0.1:4185/Switchyard/",
+            `${baseUrl}/Switchyard/`,
             { waitUntil: "networkidle" },
           );
           expect(await page.title()).toContain("Switchyard Docs Front Door");
@@ -220,7 +225,7 @@ describe("Switchyard docs frontdoor contracts", () => {
           expect((await page.textContent("body")) ?? "").toContain("Switchyard Default First Success");
 
           await page.goto(
-            "http://127.0.0.1:4185/Switchyard/",
+            `${baseUrl}/Switchyard/`,
             { waitUntil: "networkidle" },
           );
           await page.locator('a[href="./public-proof-pack.md"]').first().click();
@@ -229,7 +234,7 @@ describe("Switchyard docs frontdoor contracts", () => {
           expect((await page.textContent("body")) ?? "").toContain("Switchyard Public Proof Pack");
 
           await page.goto(
-            "http://127.0.0.1:4185/Switchyard/",
+            `${baseUrl}/Switchyard/`,
             { waitUntil: "networkidle" },
           );
           await page.locator('a[href="./README.md"]').first().click();
