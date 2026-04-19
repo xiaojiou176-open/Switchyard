@@ -55,16 +55,16 @@ It does **not** mean:
 - [llms-install.md](llms-install.md)
 - [INTEGRATIONS.md](INTEGRATIONS.md)
 - [docs/public-distribution-ledger.md](docs/public-distribution-ledger.md)
-- [docs/submission-packet-ledger.md](docs/submission-packet-ledger.md)
-- [docs/mcp-listings-cockpit.md](docs/mcp-listings-cockpit.md)
-- [docs/plugin-skill-starter-kits.md](docs/plugin-skill-starter-kits.md)
+- [.agents/internal-docs/distribution/submission-packet-ledger.md](.agents/internal-docs/distribution/submission-packet-ledger.md)
+- [.agents/internal-docs/mcp/mcp-listings-cockpit.md](.agents/internal-docs/mcp/mcp-listings-cockpit.md)
+- [starter-packs/README.md](starter-packs/README.md)
 - [docs/starter-pack-chooser.md](docs/starter-pack-chooser.md)
 
 ## Canonical Submission Packet
 
 If you need the shortest "what exactly goes into the box" answer before an
 Official MCP Registry or host-native submission pass, use
-[docs/submission-packet-ledger.md](docs/submission-packet-ledger.md).
+[.agents/internal-docs/distribution/submission-packet-ledger.md](.agents/internal-docs/distribution/submission-packet-ledger.md).
 
 That page keeps three boxes separate:
 
@@ -76,7 +76,7 @@ This matters because a packet-scoped host receipt still does **not** upgrade
 Switchyard-wide npm, Official MCP Registry, or hosted-runtime truth.
 
 If you need the current registry / marketplace / owner-manual cockpit, open
-[docs/mcp-listings-cockpit.md](docs/mcp-listings-cockpit.md).
+[.agents/internal-docs/mcp/mcp-listings-cockpit.md](.agents/internal-docs/mcp/mcp-listings-cockpit.md).
 
 ## Minimal Human Action Packs
 

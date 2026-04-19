@@ -1,0 +1,118 @@
+{
+  "$schema": "./provider-runtime-catalog.schema.json",
+  "catalogVersion": 1,
+  "providers": [
+    {
+      "providerId": "openai",
+      "displayName": "OpenAI",
+      "lane": "byok",
+      "authMode": "byok",
+      "stabilityTarget": "baseline",
+      "truthfulMeaning": "Supported V1 BYOK provider family on the static catalog."
+    },
+    {
+      "providerId": "anthropic",
+      "displayName": "Anthropic",
+      "lane": "byok",
+      "authMode": "byok",
+      "stabilityTarget": "baseline",
+      "truthfulMeaning": "Supported V1 BYOK provider family on the static catalog."
+    },
+    {
+      "providerId": "gemini",
+      "displayName": "Gemini",
+      "lane": "byok",
+      "authMode": "byok",
+      "stabilityTarget": "baseline",
+      "truthfulMeaning": "Supported V1 BYOK provider family on the static catalog."
+    },
+    {
+      "providerId": "xai",
+      "displayName": "xAI / Grok API",
+      "lane": "byok",
+      "authMode": "byok",
+      "stabilityTarget": "baseline",
+      "truthfulMeaning": "Supported V1 BYOK provider family on the static catalog."
+    },
+    {
+      "providerId": "openrouter",
+      "displayName": "OpenRouter",
+      "lane": "byok",
+      "authMode": "byok",
+      "stabilityTarget": "baseline",
+      "truthfulMeaning": "Supported V1 BYOK provider family on the static catalog."
+    },
+    {
+      "providerId": "groq",
+      "displayName": "Groq",
+      "lane": "byok",
+      "authMode": "byok",
+      "stabilityTarget": "baseline",
+      "truthfulMeaning": "Supported V1 BYOK provider family on the static catalog."
+    },
+    {
+      "providerId": "qwen",
+      "displayName": "Qwen API",
+      "lane": "byok",
+      "authMode": "byok",
+      "stabilityTarget": "baseline",
+      "truthfulMeaning": "Supported V1 BYOK provider family on the static catalog."
+    },
+    {
+      "providerId": "vertex",
+      "displayName": "Vertex AI",
+      "lane": "byok",
+      "authMode": "byok",
+      "stabilityTarget": "baseline",
+      "truthfulMeaning": "Supported V1 BYOK provider family on the static catalog."
+    },
+    {
+      "providerId": "bedrock",
+      "displayName": "Bedrock",
+      "lane": "byok",
+      "authMode": "byok",
+      "stabilityTarget": "baseline",
+      "truthfulMeaning": "Supported V1 BYOK provider family on the static catalog."
+    },
+    {
+      "providerId": "chatgpt",
+      "displayName": "ChatGPT",
+      "lane": "web-login",
+      "authMode": "web-login",
+      "stabilityTarget": "high-stability",
+      "truthfulMeaning": "Supported V1 Web/Login provider and part of the high-stability trio."
+    },
+    {
+      "providerId": "gemini",
+      "displayName": "Gemini",
+      "lane": "web-login",
+      "authMode": "web-login",
+      "stabilityTarget": "high-stability",
+      "truthfulMeaning": "Supported V1 Web/Login provider and part of the high-stability trio."
+    },
+    {
+      "providerId": "claude",
+      "displayName": "Claude",
+      "lane": "web-login",
+      "authMode": "web-login",
+      "stabilityTarget": "high-stability",
+      "truthfulMeaning": "Supported V1 Web/Login provider and part of the high-stability trio."
+    },
+    {
+      "providerId": "grok",
+      "displayName": "Grok",
+      "lane": "web-login",
+      "authMode": "web-login",
+      "stabilityTarget": "baseline",
+      "truthfulMeaning": "Supported V1 Web/Login provider at the baseline stability tier."
+    },
+    {
+      "providerId": "qwen",
+      "displayName": "Qwen",
+      "lane": "web-login",
+      "authMode": "web-login",
+      "stabilityTarget": "baseline",
+      "truthfulMeaning": "Supported V1 Web/Login provider at the baseline stability tier."
+    }
+  ]
+}

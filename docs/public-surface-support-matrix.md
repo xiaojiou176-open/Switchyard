@@ -52,11 +52,11 @@ If you want machine-readable truth for plugin, skills, or builder tooling, do
 not copy this page by hand. Use:
 
 - `docs/public-surface-catalog.md`
-- `docs/public-surface-catalog.json`
-- `docs/builder-kit-catalog.json`
-- `docs/builder-kit-catalog.schema.json`
-- `docs/skill-pack-catalog.json`
-- `docs/skill-pack-catalog.schema.json`
+- `catalogs/public-surface-catalog.json`
+- `catalogs/builder-kit-catalog.json`
+- `catalogs/builder-kit-catalog.schema.json`
+- `catalogs/skill-pack-catalog.json`
+- `catalogs/skill-pack-catalog.schema.json`
 - `pnpm run switchyard:cli -- surface-catalog`
 - `pnpm run switchyard:cli -- compat-targets`
 - `pnpm run switchyard:cli -- builder-kits`

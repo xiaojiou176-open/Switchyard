@@ -1,0 +1,101 @@
+{
+  "$schema": "./compat-target-catalog.schema.json",
+  "catalogVersion": 1,
+  "targets": [
+    {
+      "target": "codex",
+      "status": "partial",
+      "builderFacing": true,
+      "failClosed": true,
+      "transport": "responses",
+      "route": "/v1/runtime/invoke",
+      "supportedModes": [
+        "chat",
+        "plan",
+        "copilot-brain"
+      ],
+      "truthfulMeaning": "Thin fail-closed runtime adapter is landed for text/runtime delegation only.",
+      "notYetSupported": [
+        "tool-execution",
+        "mcp-execution",
+        "execution-brain",
+        "terminal-shell",
+        "approval-ui",
+        "browser-automation"
+      ],
+      "notes": [
+        "builder-facing runtime adapter only",
+        "no tool or MCP parity"
+      ],
+      "sourceAnchors": [
+        "docs/compat/codex.md",
+        "packages/consumers/codex/src/index.ts",
+        "tests/unit/compat/codex-consumer.test.ts"
+      ]
+    },
+    {
+      "target": "claude-code",
+      "status": "partial",
+      "builderFacing": true,
+      "failClosed": true,
+      "transport": "anthropic-compatible",
+      "route": "/v1/runtime/invoke",
+      "supportedModes": [
+        "chat",
+        "plan",
+        "copilot-brain"
+      ],
+      "truthfulMeaning": "Thin fail-closed message/runtime bridge is landed, but terminal, approval, tool, and MCP parity are not.",
+      "notYetSupported": [
+        "tool-execution",
+        "mcp-execution",
+        "execution-brain",
+        "terminal-shell",
+        "approval-ui",
+        "browser-automation"
+      ],
+      "notes": [
+        "builder-facing runtime adapter only",
+        "header/body fidelity bridge is intentionally thin",
+        "no terminal shell, tool plane, or MCP parity"
+      ],
+      "sourceAnchors": [
+        "docs/compat/claude-code.md",
+        "packages/consumers/claude-code/src/index.ts",
+        "tests/unit/compat/claude-code-consumer.test.ts"
+      ]
+    },
+    {
+      "target": "openclaw",
+      "status": "partial",
+      "builderFacing": true,
+      "failClosed": true,
+      "transport": "delegated-runtime",
+      "route": "/v1/runtime/invoke",
+      "supportedModes": [
+        "chat",
+        "plan",
+        "copilot-brain"
+      ],
+      "truthfulMeaning": "Delegation-first thin runtime bridge is landed, but operator/control-plane/product-shell parity is not.",
+      "notYetSupported": [
+        "tool-execution",
+        "mcp-execution",
+        "execution-brain",
+        "terminal-shell",
+        "approval-ui",
+        "browser-automation"
+      ],
+      "notes": [
+        "future consumer-side adapter only",
+        "provider/runtime delegation without product-shell inheritance",
+        "no operator control plane or channel shell parity"
+      ],
+      "sourceAnchors": [
+        "docs/compat/openclaw.md",
+        "packages/consumers/openclaw/src/index.ts",
+        "tests/unit/compat/openclaw-consumer.test.ts"
+      ]
+    }
+  ]
+}

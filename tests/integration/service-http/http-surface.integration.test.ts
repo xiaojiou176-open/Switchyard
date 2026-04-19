@@ -292,11 +292,11 @@ describe("Switchyard HTTP surface", () => {
     expect(workbenchHtml).toContain("Current browser evidence");
     expect(workbenchHtml).toContain("Browser session first");
     expect(workbenchHtml).toContain(
-      "Runtime use is still blocked because the current browser session has not reached a reusable workspace yet.",
+      "Finish the current browser session until this provider reaches a real workspace.",
     );
-    expect(workbenchHtml).toContain("Runtime still blocked");
     expect(workbenchHtml).toContain("blocked on current browser");
-    expect(workbenchHtml).toContain("<strong>technical status</strong> <code>ready</code>");
+    expect(workbenchHtml).toContain("Open repair ladder");
+    expect(workbenchHtml).not.toContain("<strong>technical status</strong> <code>ready</code>");
     expect(workbenchHtml).not.toContain("Runtime can invoke");
   });
 
@@ -903,15 +903,13 @@ describe("Switchyard HTTP surface", () => {
     );
     expect(workbenchHtml).toContain("Current browser evidence can still look reusable.");
     expect(workbenchHtml).toContain(
-      "A reusable-looking browser page does not clear this blocker by itself.",
+      "Current browser evidence can still look reusable. That does not clear the blocker.",
     );
-    expect(workbenchHtml).toContain("Runtime still blocked");
     expect(workbenchHtml).toContain("blocked by owner action");
-    expect(workbenchHtml).toContain("<strong>technical status</strong> <code>blocked</code>");
+    expect(workbenchHtml).toContain("Open repair ladder");
+    expect(workbenchHtml).not.toContain("<strong>technical status</strong> <code>blocked</code>");
     expect(workbenchHtml).not.toContain("Runtime can invoke");
-    expect(workbenchHtml).toContain("Browser looks reusable");
-    expect(workbenchHtml).toContain("technical status");
-    expect(workbenchHtml).toContain("live-ready");
+    expect(workbenchHtml).toContain("Current browser");
   });
 
   it("folds repeated browser-inspection failures into a detailed diagnostics tray", async () => {
@@ -1086,8 +1084,8 @@ describe("Switchyard HTTP surface", () => {
 
     expect(workbenchResponse.status).toBe(200);
     expect(workbenchHtml).toContain("Owner action first");
-    expect(workbenchHtml).toContain("Runtime still blocked");
     expect(workbenchHtml).toContain("blocked by user action");
+    expect(workbenchHtml).toContain("Open repair ladder");
     expect(workbenchHtml).not.toContain("Runtime can invoke");
   });
 

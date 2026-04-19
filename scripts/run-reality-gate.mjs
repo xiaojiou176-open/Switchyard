@@ -95,6 +95,16 @@ export function summarizeLiveStatuses(geminiByok, webLogin) {
         cdpUrl: result.cdpUrl,
         rerunCommand: result.rerunCommand,
         summary: result.summary,
+        currentPage:
+          result?.debug?.currentPage
+            ? {
+                url: result.debug.currentPage.url,
+                title: result.debug.currentPage.title,
+                snippet: result.debug.currentPage.snippet,
+                hasComposerSurface: result.debug.currentPage.hasComposerSurface,
+                classification: result.debug.currentPage.classification,
+              }
+            : undefined,
       })),
     failures: allResults
       .filter((result) => result.status === "failure")

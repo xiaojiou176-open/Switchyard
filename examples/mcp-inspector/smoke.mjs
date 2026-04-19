@@ -8,11 +8,11 @@ import {
   resolveRuntimeBaseUrl,
 } from "../_shared/runtime-example-helpers.mjs";
 
-const templates = readRepoJson("docs/starter-manifest-templates.json");
+const templates = readRepoJson("catalogs/starter-manifest-templates.json");
 const starter = templates.builderTemplates.find((entry) => entry.target === "mcp");
 
 if (!starter) {
-  throw new Error("Missing mcp builder template in docs/starter-manifest-templates.json.");
+  throw new Error("Missing mcp builder template in catalogs/starter-manifest-templates.json.");
 }
 
 const baseUrl = resolveRuntimeBaseUrl();
@@ -40,7 +40,7 @@ try {
 
   printJson({
     starter: "read-only-mcp-inspector",
-    starterSource: "docs/starter-manifest-templates.json#builderTemplates[target=mcp]",
+    starterSource: "catalogs/starter-manifest-templates.json#builderTemplates[target=mcp]",
     baseUrl,
     startupCommand: starter.manifest.startupCommand,
     safeClaims: starter.manifest.safeClaims,

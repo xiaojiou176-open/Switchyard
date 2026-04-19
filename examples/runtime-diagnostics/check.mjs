@@ -6,14 +6,14 @@ import {
   resolveRuntimeBaseUrl,
 } from "../_shared/runtime-example-helpers.mjs";
 
-const examples = readRepoJson("docs/starter-manifest-examples.json");
+const examples = readRepoJson("catalogs/starter-manifest-examples.json");
 const starter = examples.skillExamples.find(
   (entry) => entry.id === "runtime-diagnostics-pack",
 );
 
 if (!starter) {
   throw new Error(
-    "Missing runtime-diagnostics-pack example in docs/starter-manifest-examples.json.",
+    "Missing runtime-diagnostics-pack example in catalogs/starter-manifest-examples.json.",
   );
 }
 
@@ -41,7 +41,7 @@ const supportBundle = supportBundlePayload.debug ?? supportBundlePayload;
 
 printJson({
   starter: "read-only-runtime-diagnostics",
-  starterSource: "docs/starter-manifest-examples.json#skillExamples[id=runtime-diagnostics-pack]",
+  starterSource: "catalogs/starter-manifest-examples.json#skillExamples[id=runtime-diagnostics-pack]",
   baseUrl,
   provider,
   catalogCommand: starter.example.catalogCommand,

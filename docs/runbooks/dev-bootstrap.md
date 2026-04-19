@@ -83,8 +83,8 @@
 - `typecheck / test / build` 已经可以稳定通过
 - `test:coverage` 也已经重新回到稳定通过，并回到 80% 线以上
 - fresh `verify:service-live` 当前不该继续写成 green，而是停在 `Claude = account-action-required`
-- current outward wording 要同步到 `Claude / Grok` 这组 workspace external blockers
-- 所以 runbook 现在服务的现实阶段不是“继续压内部工程债”，而是“在一个 repo-side 已过闸、front door 已把 blocker pack 写成 `Claude / Grok` 的 credentialed workstation 上继续维护 repo-local runtime hygiene，并在未来换环境时重新做 truth reset”
+- current outward wording 要同步到 `Claude` 这一条 workspace external blocker
+- 所以 runbook 现在服务的现实阶段不是“继续压内部工程债”，而是“在一个 repo-side 已过闸、front door 已把 blocker pack 写成 `Claude` 的 credentialed workstation 上继续维护 repo-local runtime hygiene，并在未来换环境时重新做 truth reset”
 
 当前 closeout 输出里的 `external-blocker` 还会再带一个 `classification` 字段，用来说明“为什么它仍然是外部尾巴”：
 

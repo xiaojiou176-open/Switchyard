@@ -111,9 +111,9 @@ Partially yes, but only in a thin read-only sense.
 先把入口分成三类会更不容易迷路：
 
 - 要看 surface / support truth：先读 `surface-catalog`
-- 要是不知道第一站该去哪：先读 `builder-intent-router`
+- 要是不知道第一站该去哪：先读 `builder-intent-router` 的 CLI/MCP 路由或 `starter-pack-chooser`
 - 要看 keyword-claim truth：先读 `keyword-truth`
-- 要选 builder path：先读 `starter-pack-chooser` 或 `builder-journeys`
+- 要选 builder path：先读 `starter-pack-chooser` 或 machine-readable `builder-journeys`
 
 当前最稳定的入口是：
 
@@ -172,33 +172,33 @@ Partially yes, but only in a thin read-only sense.
 - `pnpm run switchyard:cli -- mcp-tool-catalog`
 - `pnpm run switchyard:cli -- mcp-tool-catalog-schema`
 - `pnpm run switchyard:cli -- mcp-tool --target switchyard.runtime.health`
-- `docs/public-surface-catalog.json`
-- `docs/public-surface-catalog.schema.json`
-- `docs/compat-target-catalog.json`
-- `docs/compat-target-catalog.schema.json`
-- `docs/builder-kit-catalog.json`
-- `docs/builder-kit-catalog.schema.json`
-- `docs/skill-pack-catalog.json`
-- `docs/skill-pack-catalog.schema.json`
-- `docs/starter-pack-chooser.json`
-- `docs/starter-pack-chooser.schema.json`
-- `docs/starter-pack-comparison.json`
-- `docs/starter-pack-comparison.schema.json`
-- `docs/discoverability-keyword-truth.json`
-- `docs/discoverability-keyword-truth.schema.json`
-- `docs/builder-intent-router.json`
-- `docs/builder-intent-router.schema.json`
-- `docs/host-integration-playbooks.json`
-- `docs/host-integration-playbooks.schema.json`
+- `catalogs/public-surface-catalog.json`
+- `catalogs/public-surface-catalog.schema.json`
+- `catalogs/compat-target-catalog.json`
+- `catalogs/compat-target-catalog.schema.json`
+- `catalogs/builder-kit-catalog.json`
+- `catalogs/builder-kit-catalog.schema.json`
+- `catalogs/skill-pack-catalog.json`
+- `catalogs/skill-pack-catalog.schema.json`
+- `catalogs/starter-pack-chooser.json`
+- `catalogs/starter-pack-chooser.schema.json`
+- `catalogs/starter-pack-comparison.json`
+- `catalogs/starter-pack-comparison.schema.json`
+- `catalogs/discoverability-keyword-truth.json`
+- `catalogs/discoverability-keyword-truth.schema.json`
+- `catalogs/builder-intent-router.json`
+- `catalogs/builder-intent-router.schema.json`
+- `catalogs/host-integration-playbooks.json`
+- `catalogs/host-integration-playbooks.schema.json`
 - `examples/hosts/index.json`
 - `examples/hosts/index.schema.json`
-- `docs/starter-manifest-templates.schema.json`
-- `docs/starter-manifest-examples.schema.json`
-- `docs/compat-target-catalog.md`
-- `docs/builder-kit-catalog.json`
-- `docs/builder-kit-catalog.schema.json`
-- `docs/skill-pack-catalog.json`
-- `docs/skill-pack-catalog.schema.json`
+- `catalogs/starter-manifest-templates.schema.json`
+- `catalogs/starter-manifest-examples.schema.json`
+- `catalogs/compat-target-catalog.json`
+- `catalogs/builder-kit-catalog.json`
+- `catalogs/builder-kit-catalog.schema.json`
+- `catalogs/skill-pack-catalog.json`
+- `catalogs/skill-pack-catalog.schema.json`
 - `docs/provider-runtime-catalog.md`
 
 这样做的好处是：
@@ -241,7 +241,7 @@ Partially yes, but only in a thin read-only sense.
 
 当前最短路径是：
 
-- [docs/starter-pack-comparison.md](./starter-pack-comparison.md)
+- [catalogs/starter-pack-comparison.json](../catalogs/starter-pack-comparison.json)
 - `pnpm run switchyard:cli -- starter-pack-comparison`
 - `pnpm run switchyard:cli -- starter-pack-filter --target thin-runtime-bridges`
 - `pnpm run switchyard:cli -- starter-pack-filter --target read-only-truth`
@@ -257,7 +257,7 @@ Partially yes, but only in a thin read-only sense.
 
 当前最短路径是：
 
-- [docs/builder-journeys.md](./builder-journeys.md)
+- [catalogs/builder-journeys.json](../catalogs/builder-journeys.json)
 - `pnpm run switchyard:cli -- builder-journeys`
 - `pnpm run switchyard:cli -- builder-journey --target codex-first-success`
 
@@ -397,8 +397,8 @@ No.
 当前最短路径是：
 
 - [docs/discoverability-keyword-truth.md](./discoverability-keyword-truth.md)
-- [docs/discoverability-keyword-truth.json](./discoverability-keyword-truth.json)
-- [docs/discoverability-keyword-truth.schema.json](./discoverability-keyword-truth.schema.json)
+- [catalogs/discoverability-keyword-truth.json](../catalogs/discoverability-keyword-truth.json)
+- [catalogs/discoverability-keyword-truth.schema.json](../catalogs/discoverability-keyword-truth.schema.json)
 - `pnpm run switchyard:cli -- keyword-truth`
 - `pnpm run switchyard:cli -- keyword-truth-schema`
 - `pnpm run switchyard:cli -- keyword-entry --target switchyard-mcp`
@@ -412,9 +412,9 @@ No.
 
 当前最短路径是：
 
-- [docs/builder-intent-router.md](./builder-intent-router.md)
-- [docs/builder-intent-router.json](./builder-intent-router.json)
-- [docs/builder-intent-router.schema.json](./builder-intent-router.schema.json)
+- [docs/starter-pack-chooser.md](./starter-pack-chooser.md)
+- [catalogs/builder-intent-router.json](../catalogs/builder-intent-router.json)
+- [catalogs/builder-intent-router.schema.json](../catalogs/builder-intent-router.schema.json)
 - `pnpm run switchyard:cli -- builder-intent-router`
 - `pnpm run switchyard:cli -- builder-intent --target support-truth`
 - `switchyard.catalog.builder_intent_router`
@@ -426,9 +426,8 @@ No.
 
 当前最短路径是：
 
-- [docs/compat-target-catalog.md](./compat-target-catalog.md)
-- [docs/compat-target-catalog.json](./compat-target-catalog.json)
-- [docs/compat-target-catalog.schema.json](./compat-target-catalog.schema.json)
+- [catalogs/compat-target-catalog.json](../catalogs/compat-target-catalog.json)
+- [catalogs/compat-target-catalog.schema.json](../catalogs/compat-target-catalog.schema.json)
 - `pnpm run switchyard:cli -- compat-target-catalog`
 - `pnpm run switchyard:cli -- compat-target-catalog-schema`
 - `pnpm run switchyard:cli -- compat-target --target codex`
@@ -444,8 +443,8 @@ No.
 
 当前最短路径是：
 
-- [docs/builder-kit-catalog.json](./builder-kit-catalog.json)
-- [docs/builder-kit-catalog.schema.json](./builder-kit-catalog.schema.json)
+- [catalogs/builder-kit-catalog.json](../catalogs/builder-kit-catalog.json)
+- [catalogs/builder-kit-catalog.schema.json](../catalogs/builder-kit-catalog.schema.json)
 - `pnpm run switchyard:cli -- builder-kit-catalog`
 - `pnpm run switchyard:cli -- builder-kit-catalog-schema`
 - `pnpm run switchyard:cli -- builder-kit --target codex`
@@ -462,8 +461,8 @@ No.
 
 当前最短路径是：
 
-- [docs/skill-pack-catalog.json](./skill-pack-catalog.json)
-- [docs/skill-pack-catalog.schema.json](./skill-pack-catalog.schema.json)
+- [catalogs/skill-pack-catalog.json](../catalogs/skill-pack-catalog.json)
+- [catalogs/skill-pack-catalog.schema.json](../catalogs/skill-pack-catalog.schema.json)
 - `pnpm run switchyard:cli -- skill-pack-catalog`
 - `pnpm run switchyard:cli -- skill-pack-catalog-schema`
 - `pnpm run switchyard:cli -- skill-pack --target runtime-diagnostics-pack`
@@ -479,8 +478,8 @@ No.
 当前最短路径是：
 
 - [docs/provider-runtime-catalog.md](./provider-runtime-catalog.md)
-- [docs/provider-runtime-catalog.json](./provider-runtime-catalog.json)
-- [docs/provider-runtime-catalog.schema.json](./provider-runtime-catalog.schema.json)
+- [catalogs/provider-runtime-catalog.json](../catalogs/provider-runtime-catalog.json)
+- [catalogs/provider-runtime-catalog.schema.json](../catalogs/provider-runtime-catalog.schema.json)
 - `pnpm run switchyard:cli -- provider-catalog`
 - `pnpm run switchyard:cli -- provider-catalog-schema`
 - `pnpm run switchyard:cli -- provider-entry --target chatgpt`
@@ -495,9 +494,8 @@ No.
 
 当前最短路径是：
 
-- [docs/mcp-tool-catalog.md](./mcp-tool-catalog.md)
-- [docs/mcp-tool-catalog.json](./mcp-tool-catalog.json)
-- [docs/mcp-tool-catalog.schema.json](./mcp-tool-catalog.schema.json)
+- [catalogs/mcp-tool-catalog.json](../catalogs/mcp-tool-catalog.json)
+- [catalogs/mcp-tool-catalog.schema.json](../catalogs/mcp-tool-catalog.schema.json)
 - `pnpm run switchyard:cli -- mcp-tool-catalog`
 - `pnpm run switchyard:cli -- mcp-tool-catalog-schema`
 - `pnpm run switchyard:cli -- mcp-tool --target switchyard.runtime.health`

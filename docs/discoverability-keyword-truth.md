@@ -5,8 +5,8 @@
 
 ## Machine-readable Source
 
-- [docs/discoverability-keyword-truth.json](./discoverability-keyword-truth.json)
-- [docs/discoverability-keyword-truth.schema.json](./discoverability-keyword-truth.schema.json)
+- [catalogs/discoverability-keyword-truth.json](../catalogs/discoverability-keyword-truth.json)
+- [catalogs/discoverability-keyword-truth.schema.json](../catalogs/discoverability-keyword-truth.schema.json)
 
 ## Read-only CLI Access
 

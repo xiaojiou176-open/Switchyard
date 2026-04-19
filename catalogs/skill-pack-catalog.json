@@ -1,0 +1,95 @@
+{
+  "$schema": "./skill-pack-catalog.schema.json",
+  "catalogVersion": 1,
+  "packs": [
+    {
+      "id": "runtime-diagnostics-pack",
+      "status": "partial",
+      "starterShape": "read-only-runtime-diagnostics",
+      "bestEntry": "pnpm run switchyard:cli -- skill-pack --target runtime-diagnostics-pack",
+      "requiredInputs": [
+        "current provider id",
+        "runtime diagnostics access",
+        "read-only automation context"
+      ],
+      "starterSteps": [
+        "Read provider diagnose and support-bundle data first.",
+        "Summarize readiness, remediation, and attach-target truth without invoking providers.",
+        "Escalate missing browser/login state as explicit blocker text.",
+        "Keep every action read-only."
+      ],
+      "outputArtifacts": [
+        "diagnostics skill recipe",
+        "provider triage checklist",
+        "bounded incident summary"
+      ],
+      "safeClaims": [
+        "read-only diagnostics pack",
+        "runtime readiness summary",
+        "no invoke/write actions"
+      ],
+      "recommendedDocs": [
+        "docs/starter-pack-chooser.md",
+        "starter-packs/README.md",
+        "docs/mcp.md",
+        "docs/public-surface-support-matrix.md"
+      ],
+      "copyReadyPackPath": "starter-packs/skills/runtime-diagnostics-pack",
+      "backingSurfaces": [
+        "CLI",
+        "MCP",
+        "HTTP/API"
+      ],
+      "notYetSupported": [
+        "invoke",
+        "acquisition write",
+        "browser automation",
+        "execution-brain parity"
+      ]
+    },
+    {
+      "id": "docs-seo-sync-pack",
+      "status": "partial",
+      "starterShape": "truth-sync-and-discoverability",
+      "bestEntry": "pnpm run switchyard:cli -- skill-pack --target docs-seo-sync-pack",
+      "requiredInputs": [
+        "current public-surface catalog",
+        "discoverability keyword table",
+        "human review before publishing claims"
+      ],
+      "starterSteps": [
+        "Read the current surface catalog and keyword truth table first.",
+        "Sync docs or builder metadata to the latest truthful support labels.",
+        "Keep partial and research-only labels intact instead of upgrading claims.",
+        "Hand the result to a human reviewer before any outward publication."
+      ],
+      "outputArtifacts": [
+        "docs sync recipe",
+        "SEO/discoverability checklist",
+        "truth-safe keyword set"
+      ],
+      "safeClaims": [
+        "truth-sync starter",
+        "discoverability helper",
+        "not a marketing autopilot"
+      ],
+      "recommendedDocs": [
+        "docs/starter-pack-chooser.md",
+        "starter-packs/README.md",
+        "docs/discoverability-keyword-truth.md",
+        "docs/public-surface-catalog.md"
+      ],
+      "copyReadyPackPath": "starter-packs/skills/docs-seo-sync-pack",
+      "backingSurfaces": [
+        "public-surface catalog",
+        "support matrix",
+        "discoverability truth"
+      ],
+      "notYetSupported": [
+        "marketing autopilot",
+        "claim escalation without review",
+        "launch automation"
+      ]
+    }
+  ]
+}

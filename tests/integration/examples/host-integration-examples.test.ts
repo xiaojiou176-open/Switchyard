@@ -12,9 +12,9 @@ function readJson(relativePath: string) {
 
 describe("host integration examples", () => {
   it("keeps host playbooks, host example assets, and public catalog entries aligned", () => {
-    const catalog = readJson("docs/public-surface-catalog.json");
-    const playbooks = readJson("docs/host-integration-playbooks.json");
-    const playbookSchema = readJson("docs/host-integration-playbooks.schema.json");
+    const catalog = readJson("catalogs/public-surface-catalog.json");
+    const playbooks = readJson("catalogs/host-integration-playbooks.json");
+    const playbookSchema = readJson("catalogs/host-integration-playbooks.schema.json");
     const hostIndex = readJson("examples/hosts/index.json");
     const hostIndexSchema = readJson("examples/hosts/index.schema.json");
     const ajv = new Ajv2020({ strict: false });

@@ -38,27 +38,24 @@ Important docs:
 - Deeper public shelves:
   - docs/public-surface-support-matrix.md
   - docs/public-surface-catalog.md
-  - docs/public-surface-catalog.json
-  - docs/public-surface-catalog.schema.json
-  - docs/starter-manifest-templates.schema.json
-  - docs/starter-manifest-examples.schema.json
+  - catalogs/public-surface-catalog.json
+  - catalogs/public-surface-catalog.schema.json
+  - catalogs/starter-manifest-templates.schema.json
+  - catalogs/starter-manifest-examples.schema.json
   - examples/README.md
   - starter-packs/README.md
   - docs/starter-pack-chooser.md
-  - docs/starter-pack-chooser.json
-  - docs/starter-pack-chooser.schema.json
-  - docs/starter-pack-comparison.md
-  - docs/starter-pack-comparison.json
-  - docs/starter-pack-comparison.schema.json
-  - docs/builder-journeys.md
-  - docs/builder-journeys.json
-  - docs/builder-journeys.schema.json
-  - docs/builder-intent-router.md
-  - docs/builder-intent-router.json
-  - docs/builder-intent-router.schema.json
+  - catalogs/starter-pack-chooser.json
+  - catalogs/starter-pack-chooser.schema.json
+  - catalogs/starter-pack-comparison.json
+  - catalogs/starter-pack-comparison.schema.json
+  - catalogs/builder-journeys.json
+  - catalogs/builder-journeys.schema.json
+  - catalogs/builder-intent-router.json
+  - catalogs/builder-intent-router.schema.json
   - docs/host-integration-playbooks.md
-  - docs/host-integration-playbooks.json
-  - docs/host-integration-playbooks.schema.json
+  - catalogs/host-integration-playbooks.json
+  - catalogs/host-integration-playbooks.schema.json
   - docs/host-integration-examples.md
   - examples/hosts/index.json
   - examples/hosts/index.schema.json
@@ -67,24 +64,20 @@ Important docs:
   - .agents/internal-docs/product/scope-and-nongoals.md
   - docs/mcp.md
   - docs/provider-runtime-catalog.md
-  - docs/provider-runtime-catalog.json
-  - docs/provider-runtime-catalog.schema.json
-  - docs/compat-target-catalog.md
-  - docs/compat-target-catalog.json
-  - docs/compat-target-catalog.schema.json
-  - docs/builder-kit-catalog.json
-  - docs/builder-kit-catalog.schema.json
-  - docs/skill-pack-catalog.json
-  - docs/skill-pack-catalog.schema.json
-  - docs/mcp-tool-catalog.md
-  - docs/mcp-tool-catalog.json
-  - docs/mcp-tool-catalog.schema.json
-  - docs/faq.md
-  - docs/glossary.md
-  - docs/i18n.md
-  - .agents/internal-docs/testing/testing-pyramid.md
-  - docs/discoverability-keyword-truth.md
-  - docs/discoverability-keyword-truth.json
-  - docs/discoverability-keyword-truth.schema.json
-- Internal-only working packs:
-  - .agents/internal-docs/wave1/README.md
+  - catalogs/provider-runtime-catalog.json
+  - catalogs/provider-runtime-catalog.schema.json
+  - catalogs/compat-target-catalog.json
+  - catalogs/compat-target-catalog.schema.json
+  - catalogs/builder-kit-catalog.json
+  - catalogs/builder-kit-catalog.schema.json
+  - catalogs/skill-pack-catalog.json
+  - catalogs/skill-pack-catalog.schema.json
+  - catalogs/mcp-tool-catalog.json
+  - catalogs/mcp-tool-catalog.schema.json
+- docs/faq.md
+- docs/glossary.md
+- docs/i18n.md
+- .agents/internal-docs/testing/testing-pyramid.md
+- docs/discoverability-keyword-truth.md
+- catalogs/discoverability-keyword-truth.json
+- catalogs/discoverability-keyword-truth.schema.json

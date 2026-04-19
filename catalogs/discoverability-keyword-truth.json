@@ -1,0 +1,312 @@
+{
+  "$schema": "./discoverability-keyword-truth.schema.json",
+  "keywordVersion": 1,
+  "entries": [
+    {
+      "id": "switchyard-shared-provider-runtime",
+      "term": "Switchyard",
+      "truthStatus": "claimable-now",
+      "truthfulMeaning": "Switchyard can honestly describe itself as a shared provider runtime for AI apps.",
+      "requiredLabels": [],
+      "canonicalDocs": [
+        "README.md",
+        "docs/media/30-second-overview.md",
+        ".agents/internal-docs/product/v1-brief.md"
+      ]
+    },
+    {
+      "id": "shared-provider-runtime",
+      "term": "shared provider runtime",
+      "truthStatus": "claimable-now",
+      "truthfulMeaning": "This is the core product identity and can be claimed directly.",
+      "requiredLabels": [],
+      "canonicalDocs": [
+        "README.md",
+        "docs/media/30-second-overview.md"
+      ]
+    },
+    {
+      "id": "ai-app-backend",
+      "term": "AI app backend",
+      "truthStatus": "claimable-now",
+      "truthfulMeaning": "Switchyard can claim a narrow AI app backend/runtime identity when the scope stays on provider access, auth, diagnostics, and service surfaces.",
+      "requiredLabels": [
+        "narrow",
+        "runtime-focused"
+      ],
+      "canonicalDocs": [
+        "README.md",
+        "docs/faq.md"
+      ]
+    },
+    {
+      "id": "byok",
+      "term": "BYOK",
+      "truthStatus": "claimable-now",
+      "truthfulMeaning": "BYOK is one of the two V1 supply lanes and can be claimed directly when the wording stays on user-provided provider credentials.",
+      "requiredLabels": [],
+      "canonicalDocs": [
+        ".agents/internal-docs/product/v1-brief.md",
+        ".agents/internal-docs/product/scope-and-nongoals.md",
+        ".agents/internal-docs/contracts/auth-accounts-and-credentials.md"
+      ]
+    },
+    {
+      "id": "web-login",
+      "term": "Web/Login",
+      "truthStatus": "claimable-now",
+      "truthfulMeaning": "Web/Login is one of the two V1 supply lanes and can be claimed directly when the wording stays on end-user-owned web sessions.",
+      "requiredLabels": [],
+      "canonicalDocs": [
+        ".agents/internal-docs/product/v1-brief.md",
+        ".agents/internal-docs/product/scope-and-nongoals.md",
+        ".agents/internal-docs/contracts/auth-accounts-and-credentials.md"
+      ]
+    },
+    {
+      "id": "service-first-ai-runtime",
+      "term": "service-first AI runtime",
+      "truthStatus": "claimable-now",
+      "truthfulMeaning": "Switchyard can honestly describe its public substrate as service-first when the claim stays on the runtime/service frontdoor rather than a host shell.",
+      "requiredLabels": [],
+      "canonicalDocs": [
+        ".agents/internal-docs/contracts/service-and-sdk-surfaces.md",
+        "README.md",
+        "docs/api/service-http-reference.md"
+      ]
+    },
+    {
+      "id": "api-substrate-first",
+      "term": "API substrate first",
+      "truthStatus": "claimable-now",
+      "truthfulMeaning": "Switchyard can honestly describe itself as API-substrate-first when the claim stays on the shared provider runtime surface.",
+      "requiredLabels": [],
+      "canonicalDocs": [
+        ".agents/internal-docs/contracts/service-and-sdk-surfaces.md",
+        "docs/api/openapi.yaml",
+        "docs/api/service-http-reference.md"
+      ]
+    },
+    {
+      "id": "switchyard-codex",
+      "term": "Switchyard Codex",
+      "truthStatus": "partial-with-label",
+      "truthfulMeaning": "This keyword is only honest when paired with partial, thin-adapter, and fail-closed wording.",
+      "requiredLabels": [
+        "partial",
+        "thin adapter",
+        "not full compatibility yet"
+      ],
+      "canonicalDocs": [
+        "docs/compat/codex.md"
+      ]
+    },
+    {
+      "id": "switchyard-claude-code",
+      "term": "Switchyard Claude Code",
+      "truthStatus": "partial-with-label",
+      "truthfulMeaning": "This keyword is only honest when paired with partial, thin-adapter, and fail-closed wording.",
+      "requiredLabels": [
+        "partial",
+        "thin adapter",
+        "not full compatibility yet"
+      ],
+      "canonicalDocs": [
+        "docs/compat/claude-code.md"
+      ]
+    },
+    {
+      "id": "switchyard-openclaw",
+      "term": "Switchyard OpenClaw",
+      "truthStatus": "partial-with-label",
+      "truthfulMeaning": "This keyword is only honest when paired with partial, thin-adapter, and fail-closed wording.",
+      "requiredLabels": [
+        "partial",
+        "thin adapter",
+        "not full compatibility yet"
+      ],
+      "canonicalDocs": [
+        "docs/compat/openclaw.md"
+      ]
+    },
+    {
+      "id": "switchyard-package-consumer-codex",
+      "term": "@switchyard/consumer-codex",
+      "truthStatus": "partial-with-label",
+      "truthfulMeaning": "This package name is only honest when paired with package-ready, partial, and thin-adapter wording; no registry publish is claimed yet.",
+      "requiredLabels": [
+        "package-ready",
+        "partial",
+        "thin adapter",
+        "not full compatibility yet"
+      ],
+      "canonicalDocs": [
+        "packages/consumers/codex/README.md",
+        "docs/public-distribution-ledger.md"
+      ]
+    },
+    {
+      "id": "switchyard-package-consumer-claude-code",
+      "term": "@switchyard/consumer-claude-code",
+      "truthStatus": "partial-with-label",
+      "truthfulMeaning": "This package name is only honest when paired with package-ready, partial, and thin-adapter wording; no registry publish is claimed yet.",
+      "requiredLabels": [
+        "package-ready",
+        "partial",
+        "thin adapter",
+        "not full compatibility yet"
+      ],
+      "canonicalDocs": [
+        "packages/consumers/claude-code/README.md",
+        "docs/public-distribution-ledger.md"
+      ]
+    },
+    {
+      "id": "switchyard-package-consumer-openclaw",
+      "term": "@switchyard/consumer-openclaw",
+      "truthStatus": "partial-with-label",
+      "truthfulMeaning": "This package name is only honest when paired with package-ready, partial, and thin-adapter wording; no registry publish is claimed yet.",
+      "requiredLabels": [
+        "package-ready",
+        "partial",
+        "thin adapter",
+        "not full compatibility yet"
+      ],
+      "canonicalDocs": [
+        "packages/consumers/openclaw/README.md",
+        "docs/public-distribution-ledger.md"
+      ]
+    },
+    {
+      "id": "switchyard-mcp",
+      "term": "Switchyard MCP",
+      "truthStatus": "partial-with-label",
+      "truthfulMeaning": "This keyword is only honest when paired with read-only MCP server, partial, and not-an-execution-brain wording.",
+      "requiredLabels": [
+        "partial",
+        "read-only MCP server",
+        "not an execution brain",
+        "not full Codex / Claude Code backend parity"
+      ],
+      "canonicalDocs": [
+        "docs/mcp.md",
+        "docs/api/mcp-readonly-server.md"
+      ]
+    },
+    {
+      "id": "switchyard-package-surface-mcp",
+      "term": "@switchyard/surface-mcp",
+      "truthStatus": "partial-with-label",
+      "truthfulMeaning": "This package name is only honest when paired with package-ready, partial, and read-only MCP wording; no registry publish is claimed yet.",
+      "requiredLabels": [
+        "package-ready",
+        "partial",
+        "read-only MCP server",
+        "not an execution brain"
+      ],
+      "canonicalDocs": [
+        "packages/surfaces/mcp/README.md",
+        "docs/public-distribution-ledger.md"
+      ]
+    },
+    {
+      "id": "supports-codex-today",
+      "term": "Switchyard supports Codex today",
+      "truthStatus": "not-claimable",
+      "truthfulMeaning": "This phrase is not honest on current main because Codex is only partial and fail-closed.",
+      "requiredLabels": [],
+      "canonicalDocs": [
+        "docs/discoverability-keyword-truth.md",
+        "docs/public-surface-support-matrix.md"
+      ]
+    },
+    {
+      "id": "supports-claude-code-today",
+      "term": "Switchyard supports Claude Code today",
+      "truthStatus": "not-claimable",
+      "truthfulMeaning": "This phrase is not honest on current main because Claude Code is only partial and fail-closed.",
+      "requiredLabels": [],
+      "canonicalDocs": [
+        "docs/discoverability-keyword-truth.md",
+        "docs/public-surface-support-matrix.md"
+      ]
+    },
+    {
+      "id": "supports-openclaw-today",
+      "term": "Switchyard supports OpenClaw today",
+      "truthStatus": "not-claimable",
+      "truthfulMeaning": "This phrase is not honest on current main because OpenClaw is only partial and fail-closed.",
+      "requiredLabels": [],
+      "canonicalDocs": [
+        "docs/discoverability-keyword-truth.md",
+        "docs/public-surface-support-matrix.md"
+      ]
+    },
+    {
+      "id": "mcp-full-parity",
+      "term": "Switchyard MCP has full parity today",
+      "truthStatus": "not-claimable",
+      "truthfulMeaning": "This phrase is not honest on current main because MCP is a partial read-only surface, not a full parity backend.",
+      "requiredLabels": [],
+      "canonicalDocs": [
+        "docs/discoverability-keyword-truth.md",
+        "docs/mcp.md"
+      ]
+    },
+    {
+      "id": "mcp-execution-backend",
+      "term": "Switchyard ships a full MCP execution backend today",
+      "truthStatus": "not-claimable",
+      "truthfulMeaning": "This phrase is not honest on current main because MCP remains read-only and fail-closed.",
+      "requiredLabels": [],
+      "canonicalDocs": [
+        "docs/discoverability-keyword-truth.md",
+        "docs/mcp.md"
+      ]
+    },
+    {
+      "id": "consumer-codex-on-npm-now",
+      "term": "@switchyard/consumer-codex available on npm now",
+      "truthStatus": "not-claimable",
+      "truthfulMeaning": "Current repo metadata is publish-ready, but no npm publish is claimed in fresh truth.",
+      "requiredLabels": [],
+      "canonicalDocs": [
+        "docs/public-distribution-ledger.md",
+        "packages/consumers/codex/README.md"
+      ]
+    },
+    {
+      "id": "consumer-claude-code-on-npm-now",
+      "term": "@switchyard/consumer-claude-code available on npm now",
+      "truthStatus": "not-claimable",
+      "truthfulMeaning": "Current repo metadata is publish-ready, but no npm publish is claimed in fresh truth.",
+      "requiredLabels": [],
+      "canonicalDocs": [
+        "docs/public-distribution-ledger.md",
+        "packages/consumers/claude-code/README.md"
+      ]
+    },
+    {
+      "id": "consumer-openclaw-on-npm-now",
+      "term": "@switchyard/consumer-openclaw available on npm now",
+      "truthStatus": "not-claimable",
+      "truthfulMeaning": "Current repo metadata is publish-ready, but no npm publish is claimed in fresh truth.",
+      "requiredLabels": [],
+      "canonicalDocs": [
+        "docs/public-distribution-ledger.md",
+        "packages/consumers/openclaw/README.md"
+      ]
+    },
+    {
+      "id": "surface-mcp-on-npm-now",
+      "term": "@switchyard/surface-mcp available on npm now",
+      "truthStatus": "not-claimable",
+      "truthfulMeaning": "Current repo metadata is publish-ready, but no npm publish is claimed in fresh truth.",
+      "requiredLabels": [],
+      "canonicalDocs": [
+        "docs/public-distribution-ledger.md",
+        "packages/surfaces/mcp/README.md"
+      ]
+    }
+  ]
+}

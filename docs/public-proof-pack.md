@@ -115,7 +115,7 @@ wording instead of copying an old scorecard:
 - `repo-side gate = green`
 - fresh `pnpm run verify:service-live` currently stops at
   `Claude = account-action-required`
-- the current workspace external blocker pack is `Claude / Grok`
+- the current workspace external blocker pack is now just `Claude`
 - detailed aggregate wording belongs in credentialed-workstation proof, not in
   every front-door page
 

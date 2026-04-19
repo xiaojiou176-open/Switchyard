@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "description": "Thin fail-closed OpenClaw delegation bridge for Switchyard.",
   "license": "MIT",
-  "homepage": "https://xiaojiou176-open.github.io/Switchyard/compat/openclaw.html",
+  "homepage": "https://xiaojiou176-open.github.io/Switchyard/compat/openclaw.md",
   "bugs": {
     "url": "https://github.com/xiaojiou176-open/Switchyard/issues"
   },
