@@ -27,7 +27,7 @@ runtime diagnostics surface.
 5. If the attach or proof path fails, use
    [references/TROUBLESHOOTING.md](references/TROUBLESHOOTING.md)
 6. Before making outward claims, check
-   [docs/public-distribution-ledger.md](../../../../../../../docs/public-distribution-ledger.md)
+   [docs/public-distribution-ledger.md](../../../../../../docs/public-distribution-ledger.md)
    so `package-ready` or `marketplace-compatible` wording does not drift into
    `listed-live`
 

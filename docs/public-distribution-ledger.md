@@ -37,8 +37,8 @@ pages and should not be used as the repo's first product sentence.
 
 ## Machine-Readable Source
 
-- [docs/public-distribution-ledger.json](./public-distribution-ledger.json)
-- [docs/public-distribution-ledger.schema.json](./public-distribution-ledger.schema.json)
+- [catalogs/public-distribution-ledger.json](../catalogs/public-distribution-ledger.json)
+- [catalogs/public-distribution-ledger.schema.json](../catalogs/public-distribution-ledger.schema.json)
 
 ## Read-Only CLI Access
 
@@ -68,7 +68,7 @@ pnpm run switchyard:cli -- distribution-surface --target mcp
 | `OpenClaw` thin compat | `yes` — official ClawHub and npm-based plugin distribution docs exist | official surfaces exist, but `Switchyard` is **not** claiming ClawHub/npm publication yet | package-ready adapter + starter pack + host example + OpenClaw-compatible Claude bundle | `@switchyard/consumer-openclaw`, `starter-packs/builders/openclaw/`, `examples/hosts/openclaw/`, `distribution/claude-marketplace/`, `docs/compat/openclaw.md` | `pnpm run starter-pack:openclaw`, `pnpm run example:host-openclaw` | `partial / thin compat / delegation-first bridge / package-ready artifact / OpenClaw-compatible bundle` | `official OpenClaw marketplace listed`, `OpenClaw product-shell parity`, `operator/control-plane parity` |
 | `MCP` read-only surface | `yes` — the official MCP Registry exists | official registry exists, but `Switchyard` is **not** claiming registry listing yet | package-ready MCP surface + stdio CLI/bin + docs + host example | `@switchyard/surface-mcp`, `switchyard-mcp` bin, `packages/surfaces/mcp/server.json`, `examples/hosts/mcp/`, `docs/mcp.md` | `pnpm run switchyard:mcp -- --base-url http://127.0.0.1:4010`, `pnpm run example:host-mcp` | `partial / read-only MCP server / package-ready artifact / registry-submission materials landed / not an execution brain` | `official MCP registry listed`, `full MCP backend`, `runtime invoke through MCP`, `acquisition write through MCP` |
 | Builder starter packs | `no` — not an official marketplace surface | public repo frontdoor only | public GitHub repo paths + machine-readable index + CLI/MCP catalogs | `starter-packs/**`, `starter-packs/index.json`, `starter-packs/README.md` | `pnpm run starter-pack:codex`, `pnpm run starter-pack:mcp` | `copy-ready starter packs`, `builder-facing public frontdoor`, `local-first first-success kits` | `official plugin marketplace listing`, `fully supported host product integration` |
-| Skill packs / docs SEO packs | `no` — not an official marketplace surface | public repo frontdoor only | public docs + machine-readable catalogs + starter packs + marketplace-compatible bundle | `docs/skill-pack-catalog.*`, `starter-packs/skills/**`, `docs/discoverability-keyword-truth.*`, `distribution/claude-marketplace/` | `pnpm run starter-pack:runtime-diagnostics-pack`, `pnpm run starter-pack:docs-seo-sync-pack` | `truth-first builder automation packs`, `public docs/discoverability helpers`, `marketplace-ready bundle artifact` | `official plugin listing`, `launch automation`, `supported publication pipeline` |
+| Skill packs / docs SEO packs | `no` — not an official marketplace surface | public repo frontdoor only | public docs + machine-readable catalogs + starter packs + marketplace-compatible bundle | `catalogs/skill-pack-catalog.*`, `starter-packs/skills/**`, `catalogs/discoverability-keyword-truth.*`, `distribution/claude-marketplace/` | `pnpm run starter-pack:runtime-diagnostics-pack`, `pnpm run starter-pack:docs-seo-sync-pack` | `truth-first builder automation packs`, `public docs/discoverability helpers`, `marketplace-ready bundle artifact` | `official plugin listing`, `launch automation`, `supported publication pipeline` |
 
 ## Packet-Scoped Host Read-Back
 

@@ -17,8 +17,8 @@ into a cleaner first decision.
 
 ## Machine-Readable Source
 
-- [docs/starter-pack-chooser.json](./starter-pack-chooser.json)
-- [docs/starter-pack-chooser.schema.json](./starter-pack-chooser.schema.json)
+- [catalogs/starter-pack-chooser.json](../catalogs/starter-pack-chooser.json)
+- [catalogs/starter-pack-chooser.schema.json](../catalogs/starter-pack-chooser.schema.json)
 
 ## Read-Only Access
 
@@ -85,7 +85,7 @@ This chooser is **not**:
 ## Related Pages
 
 - [starter-packs/README.md](../starter-packs/README.md)
-- [docs/starter-pack-comparison.md](./starter-pack-comparison.md)
+- [catalogs/starter-pack-comparison.json](../catalogs/starter-pack-comparison.json)
 - [docs/host-integration-playbooks.md](./host-integration-playbooks.md)
 - [docs/host-integration-examples.md](./host-integration-examples.md)
 - [docs/public-surface-catalog.md](./public-surface-catalog.md)

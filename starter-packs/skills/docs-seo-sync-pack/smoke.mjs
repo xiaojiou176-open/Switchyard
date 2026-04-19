@@ -7,7 +7,7 @@ import {
 
 const exampleDocument = readPackJson(import.meta.url, "./example.json");
 const starter = exampleDocument.skillExamples[0];
-const catalog = readRepoJson("docs/public-surface-catalog.json");
+const catalog = readRepoJson("catalogs/public-surface-catalog.json");
 const keywordTruth = readRepoText("docs/discoverability-keyword-truth.md");
 const supportMatrix = readRepoText("docs/public-surface-support-matrix.md");
 

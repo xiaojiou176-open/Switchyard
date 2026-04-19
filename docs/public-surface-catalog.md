@@ -34,10 +34,12 @@ If you are here to choose the right route:
 - keyword and discoverability truth
   - go to [docs/discoverability-keyword-truth.md](./discoverability-keyword-truth.md)
 - first route by question
-  - go to [docs/builder-intent-router.md](./builder-intent-router.md)
+  - start with [docs/starter-pack-chooser.md](./starter-pack-chooser.md) for the public first hop
+  - use [catalogs/builder-intent-router.json](../catalogs/builder-intent-router.json) or
+    `pnpm run switchyard:cli -- builder-intent-router` for the machine-readable router
 - starter-pack choice
   - go to [docs/starter-pack-chooser.md](./starter-pack-chooser.md) or
-    [docs/builder-journeys.md](./builder-journeys.md)
+    [catalogs/builder-journeys.json](../catalogs/builder-journeys.json)
 - package/listing truth
   - go to [docs/public-distribution-ledger.md](./public-distribution-ledger.md)
 
@@ -45,10 +47,10 @@ If you are here to choose the right route:
 
 ### JSON catalogs
 
-- [docs/public-surface-catalog.json](./public-surface-catalog.json)
-- [docs/public-surface-catalog.schema.json](./public-surface-catalog.schema.json)
-- [docs/public-distribution-ledger.json](./public-distribution-ledger.json)
-- [docs/public-distribution-ledger.schema.json](./public-distribution-ledger.schema.json)
+- [catalogs/public-surface-catalog.json](../catalogs/public-surface-catalog.json)
+- [catalogs/public-surface-catalog.schema.json](../catalogs/public-surface-catalog.schema.json)
+- [catalogs/public-distribution-ledger.json](../catalogs/public-distribution-ledger.json)
+- [catalogs/public-distribution-ledger.schema.json](../catalogs/public-distribution-ledger.schema.json)
 
 This JSON layer currently covers:
 
@@ -62,13 +64,12 @@ This JSON layer currently covers:
 
 If you only need one slice instead of the aggregate catalog, read these directly:
 
-- [docs/compat-target-catalog.md](./compat-target-catalog.md)
-- [docs/compat-target-catalog.json](./compat-target-catalog.json)
-- [docs/compat-target-catalog.schema.json](./compat-target-catalog.schema.json)
-- [docs/builder-kit-catalog.json](./builder-kit-catalog.json)
-- [docs/builder-kit-catalog.schema.json](./builder-kit-catalog.schema.json)
-- [docs/skill-pack-catalog.json](./skill-pack-catalog.json)
-- [docs/skill-pack-catalog.schema.json](./skill-pack-catalog.schema.json)
+- [catalogs/compat-target-catalog.json](../catalogs/compat-target-catalog.json)
+- [catalogs/compat-target-catalog.schema.json](../catalogs/compat-target-catalog.schema.json)
+- [catalogs/builder-kit-catalog.json](../catalogs/builder-kit-catalog.json)
+- [catalogs/builder-kit-catalog.schema.json](../catalogs/builder-kit-catalog.schema.json)
+- [catalogs/skill-pack-catalog.json](../catalogs/skill-pack-catalog.json)
+- [catalogs/skill-pack-catalog.schema.json](../catalogs/skill-pack-catalog.schema.json)
 
 ## Read-Only CLI Access
 
@@ -138,13 +139,12 @@ The same catalog truth is also readable from the read-only MCP surface:
 
 If you need more than raw status and want a concrete builder route, open:
 
-- [docs/builder-kit-catalog.json](./builder-kit-catalog.json)
-- [docs/skill-pack-catalog.json](./skill-pack-catalog.json)
+- [catalogs/builder-kit-catalog.json](../catalogs/builder-kit-catalog.json)
+- [catalogs/skill-pack-catalog.json](../catalogs/skill-pack-catalog.json)
 - [starter-packs/README.md](../starter-packs/README.md)
 - [docs/starter-pack-chooser.md](./starter-pack-chooser.md)
-- [docs/starter-pack-comparison.md](./starter-pack-comparison.md)
-- [docs/builder-journeys.md](./builder-journeys.md)
-- [docs/builder-intent-router.md](./builder-intent-router.md)
+- [catalogs/starter-pack-comparison.json](../catalogs/starter-pack-comparison.json)
+- [catalogs/builder-journeys.json](../catalogs/builder-journeys.json)
 - [docs/host-integration-playbooks.md](./host-integration-playbooks.md)
 - [docs/host-integration-examples.md](./host-integration-examples.md)
 

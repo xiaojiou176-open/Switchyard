@@ -30,17 +30,18 @@ function readJson(relativePath: string) {
 
 describe("copy-ready starter packs", () => {
   it("keeps pack directories aligned with catalog pack paths and starter manifests", () => {
-    const catalog = readJson("docs/public-surface-catalog.json");
-    const builderKitCatalog = readJson("docs/builder-kit-catalog.json");
-    const builderKitCatalogSchema = readJson("docs/builder-kit-catalog.schema.json");
-    const skillPackCatalog = readJson("docs/skill-pack-catalog.json");
-    const skillPackCatalogSchema = readJson("docs/skill-pack-catalog.schema.json");
-    const templates = readJson("docs/starter-manifest-templates.json");
-    const examples = readJson("docs/starter-manifest-examples.json");
+    const catalog = readJson("catalogs/public-surface-catalog.json");
+    const builderKitCatalog = readJson("catalogs/builder-kit-catalog.json");
+    const builderKitCatalogSchema = readJson("catalogs/builder-kit-catalog.schema.json");
+    const skillPackCatalog = readJson("catalogs/skill-pack-catalog.json");
+    const skillPackCatalogSchema = readJson("catalogs/skill-pack-catalog.schema.json");
+    const templates = readJson("catalogs/starter-manifest-templates.json");
+    const examples = readJson("catalogs/starter-manifest-examples.json");
+    const starterPacksReadme = readFileSync(resolve(repoRoot, "starter-packs/README.md"), "utf8");
     const starterPackIndex = readJson("starter-packs/index.json");
     const starterPackIndexSchema = readJson("starter-packs/index.schema.json");
-    const starterPackChooser = readJson("docs/starter-pack-chooser.json");
-    const starterPackChooserSchema = readJson("docs/starter-pack-chooser.schema.json");
+    const starterPackChooser = readJson("catalogs/starter-pack-chooser.json");
+    const starterPackChooserSchema = readJson("catalogs/starter-pack-chooser.schema.json");
     const ajv = new Ajv2020({ strict: false });
     const validateBuilderKitCatalog = ajv.compile(builderKitCatalogSchema);
     const validateSkillPackCatalog = ajv.compile(skillPackCatalogSchema);
@@ -51,6 +52,10 @@ describe("copy-ready starter packs", () => {
     expect(validateSkillPackCatalog(skillPackCatalog)).toBe(true);
     expect(validateStarterPackIndex(starterPackIndex)).toBe(true);
     expect(validateStarterPackChooser(starterPackChooser)).toBe(true);
+    expect(starterPacksReadme).toContain("catalogs/starter-manifest-templates*.json");
+    expect(starterPacksReadme).toContain("catalogs/starter-manifest-examples*.json");
+    expect(starterPacksReadme).not.toContain("docs/starter-manifest-templates*.json");
+    expect(starterPacksReadme).not.toContain("docs/starter-manifest-examples*.json");
     expect(builderKitCatalog.kits).toEqual(catalog.builderKits);
     expect(skillPackCatalog.packs).toEqual(catalog.skillPacks);
 

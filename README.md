@@ -84,6 +84,7 @@ Switchyard now treats the public front door as **English-first**.
 | inspect what is really proved today | [docs/public-proof-pack.md](./docs/public-proof-pack.md) |
 | see what is package-ready vs listed-live | [docs/public-distribution-ledger.md](./docs/public-distribution-ledger.md) |
 | find the builder workflow / AI workflow route | [docs/README.md](./docs/README.md) |
+| open promo or presentation assets | [docs/media/README.md](./docs/media/README.md) |
 | bootstrap a local workstation or inspect workstation-bound reality | [docs/runbooks/dev-bootstrap.md](./docs/runbooks/dev-bootstrap.md) |
 | browse the public docs front row | [docs/index.html](./docs/index.html) and [docs/README.md](./docs/README.md) |
 
@@ -94,6 +95,7 @@ The heavier shelves still exist, but they are not first-row front door pages:
 - support signboard and bootstrap runbook
 - contracts and blueprints
 - builder workflow, starter-pack, and read-only MCP routers
+- media shelf and promo assets
 - submission-packet accounting
 - builder catalog internals
 - testing/governance reference pages
@@ -284,7 +286,8 @@ Use the proof pack when the question becomes:
 
 Current distribution truth is intentionally narrow:
 
-- GitHub Pages storefront is live and remains the primary public homepage
+- GitHub Pages storefront remains the primary public homepage path and is
+  currently treated as `public-ready` rather than `listed-live`
 - repo materials are package-ready for the MCP surface and thin compat packages
 - official marketplace or registry publication is **not** claimed yet
 - builder packets and starter packs are public repo surfaces, not official
@@ -326,11 +329,10 @@ deeper shelves rather than the default first stop.
 - Builder adoption and route catalogs
   - [examples/README.md](./examples/README.md)
   - [starter-packs/README.md](./starter-packs/README.md)
-  - [docs/builder-intent-router.md](./docs/builder-intent-router.md)
-  - [docs/builder-journeys.md](./docs/builder-journeys.md)
   - [docs/host-integration-playbooks.md](./docs/host-integration-playbooks.md)
   - [docs/host-integration-examples.md](./docs/host-integration-examples.md)
-  - the paired machine-readable catalogs that these routers point to
+  - the paired machine-readable catalogs that these routers point to, now kept
+    under [`catalogs/`](./catalogs/)
 - Public support truth
   - [docs/public-surface-support-matrix.md](./docs/public-surface-support-matrix.md)
 
@@ -341,12 +343,11 @@ public warehouse list.
 
 ### Internal-only working packs
 
-- Switchyard's internal truth shelves now live under:
-  - `.agents/internal-docs/adr/`
-  - `.agents/internal-docs/contracts/`
-  - `.agents/internal-docs/blueprints/`
-  - `.agents/internal-docs/product/`
-  - `.agents/internal-docs/testing/`
+- Switchyard's internal truth shelves now live under
+  `.agents/internal-docs/adr/`, `.agents/internal-docs/contracts/`,
+  `.agents/internal-docs/blueprints/`, and `.agents/internal-docs/product/`;
+  they stay intentionally deeper than the public front door.
+- `.agents/internal-docs/testing/`
 - Wave 1 contract/evidence packs continue to live under `.agents/internal-docs/wave1/`.
 
 ## Truth Rules

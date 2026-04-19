@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "description": "Thin fail-closed Claude Code runtime bridge for Switchyard.",
   "license": "MIT",
-  "homepage": "https://xiaojiou176-open.github.io/Switchyard/compat/claude-code.html",
+  "homepage": "https://xiaojiou176-open.github.io/Switchyard/compat/claude-code.md",
   "bugs": {
     "url": "https://github.com/xiaojiou176-open/Switchyard/issues"
   },

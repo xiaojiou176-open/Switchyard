@@ -1,0 +1,60 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/xiaojiou176-open/Switchyard/catalogs/mcp-tool-catalog.schema.json",
+  "title": "Switchyard MCP Tool Catalog",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "$schema",
+    "catalogVersion",
+    "tools"
+  ],
+  "properties": {
+    "$schema": {
+      "type": "string"
+    },
+    "catalogVersion": {
+      "type": "integer",
+      "minimum": 1
+    },
+    "tools": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/tool"
+      }
+    }
+  },
+  "$defs": {
+    "tool": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "name",
+        "title",
+        "providerScoped",
+        "route",
+        "readOnlyHint"
+      ],
+      "properties": {
+        "name": {
+          "type": "string",
+          "minLength": 1
+        },
+        "title": {
+          "type": "string",
+          "minLength": 1
+        },
+        "providerScoped": {
+          "type": "boolean"
+        },
+        "route": {
+          "type": "string",
+          "minLength": 1
+        },
+        "readOnlyHint": {
+          "type": "boolean"
+        }
+      }
+    }
+  }
+}

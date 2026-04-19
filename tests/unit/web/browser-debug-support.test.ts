@@ -73,6 +73,16 @@ describe("browser debug support", () => {
         }
       },
       title,
+      evaluate: vi.fn(async () => ({
+        bodyText: "",
+        rootText: "",
+        visibleHintParts: [
+          "ChatGPT Workspace",
+          "What can I help with?",
+          "Send",
+        ],
+        hasComposerSurface: true,
+      })),
       screenshot,
     };
     const browser = {
@@ -126,6 +136,9 @@ describe("browser debug support", () => {
         currentPage: {
           url: "https://chatgpt.com/c/abc123",
           title: "ChatGPT Workspace",
+          snippet: "ChatGPT Workspace What can I help with? Send",
+          hasComposerSurface: true,
+          classification: "session-incomplete",
         },
         currentConsole: expect.arrayContaining([
           expect.objectContaining({

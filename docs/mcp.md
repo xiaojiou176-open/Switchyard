@@ -92,7 +92,9 @@ entrypoints today are:
   - `pnpm run switchyard:cli -- starter-pack-chooser`
   - `pnpm run switchyard:cli -- starter-pack-chooser-schema`
   - `pnpm run switchyard:cli -- starter-pack-scenario --target mcp-inspector`
-  - `docs/public-surface-catalog.json`
+  - `catalogs/mcp-tool-catalog.json`
+  - `catalogs/mcp-tool-catalog.schema.json`
+  - `catalogs/public-surface-catalog.json`
 
 If you want a minimal runnable sample instead of assembling a client manually,
 open:

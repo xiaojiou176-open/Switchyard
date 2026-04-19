@@ -31,7 +31,7 @@
 ## Use It With
 
 - [docs/compat/codex.md](../../../docs/compat/codex.md)
-- [docs/plugin-skill-starter-kits.md](../../../docs/plugin-skill-starter-kits.md)
+- [starter-packs/README.md](../../../starter-packs/README.md)
 - [starter-packs/builders/codex/README.md](../../../starter-packs/builders/codex/README.md)
 - [examples/hosts/codex/README.md](../../../examples/hosts/codex/README.md)
 

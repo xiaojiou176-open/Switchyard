@@ -30,7 +30,7 @@
 ## Use It With
 
 - [docs/compat/claude-code.md](../../../docs/compat/claude-code.md)
-- [docs/plugin-skill-starter-kits.md](../../../docs/plugin-skill-starter-kits.md)
+- [starter-packs/README.md](../../../starter-packs/README.md)
 - [starter-packs/builders/claude-code/README.md](../../../starter-packs/builders/claude-code/README.md)
 - [examples/hosts/claude-code/README.md](../../../examples/hosts/claude-code/README.md)
 

@@ -31,7 +31,7 @@ function readJson(relativePath: string) {
 
 describe("compat target catalog contract", () => {
   it("stays aligned with the thin compat manifests", () => {
-    const compatTargetCatalog = readJson("docs/compat-target-catalog.json");
+    const compatTargetCatalog = readJson("catalogs/compat-target-catalog.json");
     const entries = new Map(
       compatTargetCatalog.targets.map((entry) => [entry.target, entry]),
     );

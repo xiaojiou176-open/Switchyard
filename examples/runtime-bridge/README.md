@@ -31,7 +31,7 @@ pnpm run example:runtime-bridge
 
 默认值会从：
 
-- `docs/starter-manifest-examples.json`
+- `catalogs/starter-manifest-examples.json`
   - `builderExamples[target=codex]`
 
 里拿 seed payload，然后补上：

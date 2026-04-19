@@ -13,6 +13,7 @@ import {
   createEmptyLocalWebAuthStore,
   createCredentialRecord,
   getCredentialWorkflowId,
+  getCredentialWorkflowDescriptor,
   getCredentialUserActions,
   listStoredWebProviderSessions,
   readLocalWebAuthStore,
@@ -101,10 +102,18 @@ describe('credentials baseline', () => {
 
   it('maps states into explicit user actions instead of implicit failover', () => {
     const missingWebLoginActions = getCredentialUserActions('missing', 'web-login');
+    const missingByokActions = getCredentialUserActions('missing', 'byok');
     const expiredByokActions = getCredentialUserActions('expired', 'byok');
 
     expect(missingWebLoginActions[0]?.label).toBe('Start Login');
-    expect(expiredByokActions[0]?.label).toBe('Replace API Key');
+    expect(missingByokActions[0]).toMatchObject({
+      label: 'Review key setup',
+      emphasis: 'secondary'
+    });
+    expect(missingByokActions[0]?.description).toContain(
+      'BYOK binding stays local today'
+    );
+    expect(expiredByokActions[0]?.label).toBe('Review key replacement');
   });
 
   it('maps credential states into login, status, and re-auth workflows', () => {
@@ -115,7 +124,20 @@ describe('credentials baseline', () => {
     expect(getCredentialWorkflowId('user-action-required')).toBe('re-auth');
   });
 
+  it('fails closed for unsupported credential workflow states', () => {
+    expect(() => getCredentialWorkflowDescriptor('mystery-state' as never)).toThrow(
+      'Unsupported credential workflow'
+    );
+  });
+
   it('builds explicit local session handoff tickets for acquisition and refresh recovery', () => {
+    const missingByok = buildCredentialSessionHandoff(
+      createCredentialRecord({
+        userId: 'terry-local',
+        providerId: 'openai',
+        authModeId: 'byok'
+      })
+    );
     const missingWebLogin = buildCredentialSessionHandoff(
       createCredentialRecord({
         userId: 'terry-local',
@@ -136,6 +158,13 @@ describe('credentials baseline', () => {
           refreshEligible: true
         }
       })
+    );
+
+    expect(missingByok.kind).toBe('acquisition');
+    expect(missingByok.captureRequest?.artifacts[0]?.kind).toBe('api-key');
+    expect(missingByok.captureRequest?.artifacts[0]?.handoffChannel).toBe('local-auth-portal');
+    expect(missingByok.captureRequest?.artifacts[0]?.description).toContain(
+      'outside the browser acquisition flow'
     );
 
     expect(missingWebLogin.kind).toBe('acquisition');

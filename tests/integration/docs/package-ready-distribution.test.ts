@@ -36,18 +36,24 @@ describe("package-ready public distribution surfaces", () => {
       "packages/consumers/openclaw/package.json",
     );
     const mcpManifest = readJson<{ homepage: string }>("packages/surfaces/mcp/package.json");
+    const issueTemplateConfig = read(".github/ISSUE_TEMPLATE/config.yml");
 
     expect(rootManifest.homepage).toBe("https://xiaojiou176-open.github.io/Switchyard/");
     expect(codexManifest.homepage).toBe(
-      "https://xiaojiou176-open.github.io/Switchyard/compat/codex.html",
+      "https://xiaojiou176-open.github.io/Switchyard/compat/codex.md",
     );
     expect(claudeManifest.homepage).toBe(
-      "https://xiaojiou176-open.github.io/Switchyard/compat/claude-code.html",
+      "https://xiaojiou176-open.github.io/Switchyard/compat/claude-code.md",
     );
     expect(openclawManifest.homepage).toBe(
-      "https://xiaojiou176-open.github.io/Switchyard/compat/openclaw.html",
+      "https://xiaojiou176-open.github.io/Switchyard/compat/openclaw.md",
     );
-    expect(mcpManifest.homepage).toBe("https://xiaojiou176-open.github.io/Switchyard/mcp.html");
+    expect(mcpManifest.homepage).toBe(
+      "https://xiaojiou176-open.github.io/Switchyard/mcp.md",
+    );
+    expect(issueTemplateConfig).toContain(
+      "https://xiaojiou176-open.github.io/Switchyard/public-proof-pack.md",
+    );
   });
 
   it("ships package-ready metadata for consumer and MCP surfaces without overclaiming registry publication", () => {
@@ -138,7 +144,7 @@ describe("package-ready public distribution surfaces", () => {
   it("keeps keyword truth aligned with package-ready names and not-yet-published wording", () => {
     const keywordTruth = readJson<{
       entries: Array<{ term: string; truthStatus: string }>;
-    }>("docs/discoverability-keyword-truth.json");
+    }>("catalogs/discoverability-keyword-truth.json");
 
     expect(keywordTruth.entries).toEqual(
       expect.arrayContaining([
@@ -186,11 +192,11 @@ describe("package-ready public distribution surfaces", () => {
         currentListingStatus: string;
         officialSources: string[];
       }>;
-    }>("docs/public-distribution-ledger.json");
+    }>("catalogs/public-distribution-ledger.json");
     const schema = readJson<{
       title: string;
       required: string[];
-    }>("docs/public-distribution-ledger.schema.json");
+    }>("catalogs/public-distribution-ledger.schema.json");
 
     expect(schema.title).toBe("Switchyard Public Distribution Ledger");
     expect(schema.required).toEqual(

@@ -25,8 +25,8 @@
 
 ## Machine-readable Source
 
-- [docs/provider-runtime-catalog.json](./provider-runtime-catalog.json)
-- [docs/provider-runtime-catalog.schema.json](./provider-runtime-catalog.schema.json)
+- [catalogs/provider-runtime-catalog.json](../catalogs/provider-runtime-catalog.json)
+- [catalogs/provider-runtime-catalog.schema.json](../catalogs/provider-runtime-catalog.schema.json)
 
 ## Read-only CLI Access
 
@@ -82,6 +82,6 @@ pnpm run switchyard:cli -- provider-entry --target gemini:web-login
 ## Related Pages
 
 - [docs/public-surface-catalog.md](./public-surface-catalog.md)
-- [docs/provider-runtime-catalog.json](./provider-runtime-catalog.json)
-- [docs/provider-runtime-catalog.schema.json](./provider-runtime-catalog.schema.json)
+- [catalogs/provider-runtime-catalog.json](../catalogs/provider-runtime-catalog.json)
+- [catalogs/provider-runtime-catalog.schema.json](../catalogs/provider-runtime-catalog.schema.json)
 - [docs/public-surface-support-matrix.md](./public-surface-support-matrix.md)

@@ -5,11 +5,11 @@ import {
   resolveRuntimeBaseUrl,
 } from "../_shared/runtime-example-helpers.mjs";
 
-const examples = readRepoJson("docs/starter-manifest-examples.json");
+const examples = readRepoJson("catalogs/starter-manifest-examples.json");
 const starter = examples.builderExamples.find((entry) => entry.target === "codex");
 
 if (!starter) {
-  throw new Error("Missing codex builder example in docs/starter-manifest-examples.json.");
+  throw new Error("Missing codex builder example in catalogs/starter-manifest-examples.json.");
 }
 
 const baseUrl = resolveRuntimeBaseUrl();
@@ -30,7 +30,7 @@ const response = await requestJsonAtRuntimePath("/v1/runtime/invoke", {
 
 printJson({
   starter: "thin-runtime-bridge",
-  starterSource: "docs/starter-manifest-examples.json#builderExamples[target=codex]",
+  starterSource: "catalogs/starter-manifest-examples.json#builderExamples[target=codex]",
   baseUrl,
   catalogCommand: starter.example.catalogCommand,
   safeClaims: starter.safeClaims,
