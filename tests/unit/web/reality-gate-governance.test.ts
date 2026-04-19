@@ -112,6 +112,7 @@ describe("reality gate governance helpers", () => {
         cdpUrl: undefined,
         rerunCommand: undefined,
         summary: "user-owned key is missing",
+        currentPage: undefined,
       },
       {
         provider: "claude",
@@ -123,6 +124,7 @@ describe("reality gate governance helpers", () => {
         cdpUrl: undefined,
         rerunCommand: "pnpm run verify:web-login-live -- --provider claude",
         summary: "manual account action is still required",
+        currentPage: undefined,
       },
     ]);
     expect(summarized.failures).toEqual([
@@ -179,9 +181,60 @@ describe("reality gate governance helpers", () => {
         cdpUrl: undefined,
         rerunCommand: undefined,
         summary: "manual account action is still required",
+        currentPage: undefined,
       },
     ]);
     expect(summarized.failures).toEqual([]);
+  });
+
+  it("lifts current page evidence into the top-level external blocker ledger when debug context exists", async () => {
+    const { summarizeLiveStatuses } = await import("../../../scripts/run-reality-gate.mjs");
+
+    const summarized = summarizeLiveStatuses(
+      {
+        status: "success",
+        provider: "gemini",
+      },
+      [
+        {
+          status: "external-blocker",
+          provider: "grok",
+          blocker: "grok-browser-session-incomplete",
+          classification: "session-incomplete",
+          summary: "browser session is still incomplete",
+          debug: {
+            currentPage: {
+              url: "https://grok.com/",
+              title: "Grok",
+              snippet: "Imagine 登录 注册 Auto",
+              hasComposerSurface: true,
+              classification: "session-incomplete",
+            },
+          },
+        },
+      ],
+    );
+
+    expect(summarized.externalBlockers).toEqual([
+      {
+        provider: "grok",
+        blocker: "grok-browser-session-incomplete",
+        classification: "session-incomplete",
+        workspaceClassification: "session-incomplete",
+        missingEnvNames: [],
+        probeUrl: undefined,
+        cdpUrl: undefined,
+        rerunCommand: undefined,
+        summary: "browser session is still incomplete",
+        currentPage: {
+          url: "https://grok.com/",
+          title: "Grok",
+          snippet: "Imagine 登录 注册 Auto",
+          hasComposerSurface: true,
+          classification: "session-incomplete",
+        },
+      },
+    ]);
   });
 
   it("reports a fully green reality gate as success", async () => {

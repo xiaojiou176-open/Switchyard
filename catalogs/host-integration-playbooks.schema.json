@@ -1,0 +1,116 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/xiaojiou176-open/Switchyard/catalogs/host-integration-playbooks.schema.json",
+  "title": "Switchyard Host Integration Playbooks",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "$schema",
+    "playbookVersion",
+    "playbooks"
+  ],
+  "properties": {
+    "$schema": {
+      "type": "string"
+    },
+    "playbookVersion": {
+      "type": "integer",
+      "minimum": 1
+    },
+    "playbooks": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/playbook"
+      }
+    }
+  },
+  "$defs": {
+    "status": {
+      "type": "string",
+      "enum": [
+        "supported now",
+        "partial",
+        "planned",
+        "research only",
+        "not now"
+      ]
+    },
+    "stringArray": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
+    },
+    "playbook": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "host",
+        "status",
+        "recommendedPack",
+        "recommendedScenario",
+        "hostSurface",
+        "bestEntry",
+        "firstSuccessGoal",
+        "requiredInputs",
+        "setupSteps",
+        "verifySteps",
+        "relatedDocs",
+        "safeClaims",
+        "doNotClaim",
+        "searchKeywords"
+      ],
+      "properties": {
+        "host": {
+          "type": "string",
+          "minLength": 1
+        },
+        "status": {
+          "$ref": "#/$defs/status"
+        },
+        "recommendedPack": {
+          "type": "string",
+          "minLength": 1
+        },
+        "recommendedScenario": {
+          "type": "string",
+          "minLength": 1
+        },
+        "hostSurface": {
+          "type": "string",
+          "minLength": 1
+        },
+        "bestEntry": {
+          "type": "string",
+          "minLength": 1
+        },
+        "firstSuccessGoal": {
+          "type": "string",
+          "minLength": 1
+        },
+        "requiredInputs": {
+          "$ref": "#/$defs/stringArray"
+        },
+        "setupSteps": {
+          "$ref": "#/$defs/stringArray"
+        },
+        "verifySteps": {
+          "$ref": "#/$defs/stringArray"
+        },
+        "relatedDocs": {
+          "$ref": "#/$defs/stringArray"
+        },
+        "safeClaims": {
+          "$ref": "#/$defs/stringArray"
+        },
+        "doNotClaim": {
+          "$ref": "#/$defs/stringArray"
+        },
+        "searchKeywords": {
+          "$ref": "#/$defs/stringArray"
+        }
+      }
+    }
+  }
+}

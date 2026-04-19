@@ -114,10 +114,12 @@ export default defineConfig({
         'tests/unit/compat/*.test.ts'
       ]),
       createProject('auth-portal-integration', [
-        'tests/integration/auth-portal/auth-portal-shell.test.ts'
+        'tests/integration/auth-portal/auth-portal-shell.test.ts',
+        'tests/integration/auth-portal/auth-portal-browser-interaction.test.ts'
       ]),
       createProject('surface-http-integration', [
-        'tests/integration/service-http/http-surface.integration.test.ts'
+        'tests/integration/service-http/http-surface.integration.test.ts',
+        'tests/integration/service-http/provider-debug-workbench-browser.test.ts'
       ], {
         // The surface-http integration suite builds rich auth/debug views and
         // can exceed Vitest's 5s default under v8 coverage instrumentation even
@@ -128,6 +130,9 @@ export default defineConfig({
         'tests/integration/docs/frontdoor-docs.test.ts',
         'tests/integration/docs/governance-drift.test.ts',
         'tests/integration/docs/package-ready-distribution.test.ts',
+        'tests/integration/docs/public-surface-interaction-audit.test.ts',
+        'tests/integration/docs/public-surface-markdown-link-audit.test.ts',
+        'tests/integration/docs/public-surface-route-audit.test.ts',
         'tests/integration/docs/sensitive-surface-hygiene.test.ts'
       ]),
       createProject('app-service-e2e', [

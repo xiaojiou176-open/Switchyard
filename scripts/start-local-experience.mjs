@@ -56,30 +56,75 @@ export function buildExperienceUrls({
     serviceBaseUrl,
     authPortalUrl: `${serviceBaseUrl}/v1/runtime/auth-portal`,
     chatgptWorkbenchUrl: `${serviceBaseUrl}/v1/runtime/providers/chatgpt/debug/workbench`,
-    docsFrontDoorUrl: `${docsBaseUrl}/docs/index.html`,
+    docsFrontDoorUrl: `${docsBaseUrl}/`,
   };
 }
 
 export function resolveStaticFilePath(rootDir, requestPath) {
-  const decodedPath = decodeURIComponent(requestPath || "/");
-  const normalizedPath =
-    decodedPath === "/" ? "/docs/index.html" : decodedPath;
-  const absolutePath = resolve(rootDir, `.${normalizedPath}`);
+  const rawPath = `${requestPath || "/"}`.split("?")[0]?.split("#")[0] || "/";
+  const decodedPath = decodeURIComponent(rawPath);
 
-  if (!absolutePath.startsWith(`${rootDir}${sep}`)) {
+  if (decodedPath.split("/").includes("..")) {
     return null;
   }
 
-  if (!existsSync(absolutePath)) {
-    return null;
+  const buildDocsAliasPath = (pathValue) => {
+    if (pathValue === "/") {
+      return ["/docs/index.html"];
+    }
+
+    const trimmedPath = pathValue.replace(/\/+$/, "");
+    const segments = trimmedPath.split("/").filter(Boolean);
+
+    if (segments.length === 0) {
+      return ["/docs/index.html"];
+    }
+
+    if (segments[0] === "docs") {
+      return [pathValue];
+    }
+
+    return [
+      `/docs${trimmedPath}`,
+      `/${segments[0]}/docs/${segments.slice(1).join("/")}`,
+    ];
+  };
+
+  const candidatePaths =
+    decodedPath === "/"
+      ? ["/docs/index.html"]
+      : decodedPath.startsWith("/docs/")
+        ? [decodedPath]
+        : Array.from(
+            new Set([
+              ...buildDocsAliasPath(decodedPath),
+              decodedPath,
+            ]),
+          );
+
+  for (const candidatePath of candidatePaths) {
+    const absolutePath = resolve(rootDir, `.${candidatePath}`);
+
+    if (!absolutePath.startsWith(`${rootDir}${sep}`)) {
+      continue;
+    }
+
+    if (!existsSync(absolutePath)) {
+      continue;
+    }
+
+    if (statSync(absolutePath).isDirectory()) {
+      const indexPath = resolve(absolutePath, "index.html");
+      if (existsSync(indexPath)) {
+        return indexPath;
+      }
+      continue;
+    }
+
+    return absolutePath;
   }
 
-  if (statSync(absolutePath).isDirectory()) {
-    const indexPath = resolve(absolutePath, "index.html");
-    return existsSync(indexPath) ? indexPath : null;
-  }
-
-  return absolutePath;
+  return null;
 }
 
 export function getContentType(filePath) {

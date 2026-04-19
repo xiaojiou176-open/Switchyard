@@ -51,6 +51,7 @@ test-results/
 .agent/
 .codex/
 .claude/
+.cursor/
 .serena/
 .stitch/*
 !.stitch/DESIGN.md

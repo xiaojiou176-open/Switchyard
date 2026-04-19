@@ -104,7 +104,7 @@ describe('credentials baseline', () => {
     const expiredByokActions = getCredentialUserActions('expired', 'byok');
 
     expect(missingWebLoginActions[0]?.label).toBe('Start Login');
-    expect(expiredByokActions[0]?.label).toBe('Replace API Key');
+    expect(expiredByokActions[0]?.label).toBe('Review key replacement');
   });
 
   it('maps credential states into login, status, and re-auth workflows', () => {

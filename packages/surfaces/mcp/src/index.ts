@@ -18,35 +18,35 @@ export interface SwitchyardMcpCliOptions {
 const sourceDir = dirname(fileURLToPath(import.meta.url));
 const publicSurfaceCatalogPath = resolve(
   sourceDir,
-  "../../../../docs/public-surface-catalog.json",
+  "../../../../catalogs/public-surface-catalog.json",
 );
 const publicSurfaceCatalogSchemaPath = resolve(
   sourceDir,
-  "../../../../docs/public-surface-catalog.schema.json",
+  "../../../../catalogs/public-surface-catalog.schema.json",
 );
 const publicDistributionLedgerPath = resolve(
   sourceDir,
-  "../../../../docs/public-distribution-ledger.json",
+  "../../../../catalogs/public-distribution-ledger.json",
 );
 const publicDistributionLedgerSchemaPath = resolve(
   sourceDir,
-  "../../../../docs/public-distribution-ledger.schema.json",
+  "../../../../catalogs/public-distribution-ledger.schema.json",
 );
 const starterManifestTemplatesPath = resolve(
   sourceDir,
-  "../../../../docs/starter-manifest-templates.json",
+  "../../../../catalogs/starter-manifest-templates.json",
 );
 const starterManifestTemplatesSchemaPath = resolve(
   sourceDir,
-  "../../../../docs/starter-manifest-templates.schema.json",
+  "../../../../catalogs/starter-manifest-templates.schema.json",
 );
 const starterManifestExamplesPath = resolve(
   sourceDir,
-  "../../../../docs/starter-manifest-examples.json",
+  "../../../../catalogs/starter-manifest-examples.json",
 );
 const starterManifestExamplesSchemaPath = resolve(
   sourceDir,
-  "../../../../docs/starter-manifest-examples.schema.json",
+  "../../../../catalogs/starter-manifest-examples.schema.json",
 );
 const starterPackIndexPath = resolve(
   sourceDir,
@@ -58,27 +58,27 @@ const starterPackIndexSchemaPath = resolve(
 );
 const starterPackChooserPath = resolve(
   sourceDir,
-  "../../../../docs/starter-pack-chooser.json",
+  "../../../../catalogs/starter-pack-chooser.json",
 );
 const starterPackChooserSchemaPath = resolve(
   sourceDir,
-  "../../../../docs/starter-pack-chooser.schema.json",
+  "../../../../catalogs/starter-pack-chooser.schema.json",
 );
 const starterPackComparisonPath = resolve(
   sourceDir,
-  "../../../../docs/starter-pack-comparison.json",
+  "../../../../catalogs/starter-pack-comparison.json",
 );
 const starterPackComparisonSchemaPath = resolve(
   sourceDir,
-  "../../../../docs/starter-pack-comparison.schema.json",
+  "../../../../catalogs/starter-pack-comparison.schema.json",
 );
 const hostIntegrationPlaybooksPath = resolve(
   sourceDir,
-  "../../../../docs/host-integration-playbooks.json",
+  "../../../../catalogs/host-integration-playbooks.json",
 );
 const hostIntegrationPlaybooksSchemaPath = resolve(
   sourceDir,
-  "../../../../docs/host-integration-playbooks.schema.json",
+  "../../../../catalogs/host-integration-playbooks.schema.json",
 );
 const hostIntegrationExamplesPath = resolve(
   sourceDir,
@@ -90,67 +90,67 @@ const hostIntegrationExamplesSchemaPath = resolve(
 );
 const builderJourneysPath = resolve(
   sourceDir,
-  "../../../../docs/builder-journeys.json",
+  "../../../../catalogs/builder-journeys.json",
 );
 const builderJourneysSchemaPath = resolve(
   sourceDir,
-  "../../../../docs/builder-journeys.schema.json",
+  "../../../../catalogs/builder-journeys.schema.json",
 );
 const builderIntentRouterPath = resolve(
   sourceDir,
-  "../../../../docs/builder-intent-router.json",
+  "../../../../catalogs/builder-intent-router.json",
 );
 const builderIntentRouterSchemaPath = resolve(
   sourceDir,
-  "../../../../docs/builder-intent-router.schema.json",
+  "../../../../catalogs/builder-intent-router.schema.json",
 );
 const compatTargetCatalogPath = resolve(
   sourceDir,
-  "../../../../docs/compat-target-catalog.json",
+  "../../../../catalogs/compat-target-catalog.json",
 );
 const compatTargetCatalogSchemaPath = resolve(
   sourceDir,
-  "../../../../docs/compat-target-catalog.schema.json",
+  "../../../../catalogs/compat-target-catalog.schema.json",
 );
 const builderKitCatalogPath = resolve(
   sourceDir,
-  "../../../../docs/builder-kit-catalog.json",
+  "../../../../catalogs/builder-kit-catalog.json",
 );
 const builderKitCatalogSchemaPath = resolve(
   sourceDir,
-  "../../../../docs/builder-kit-catalog.schema.json",
+  "../../../../catalogs/builder-kit-catalog.schema.json",
 );
 const skillPackCatalogPath = resolve(
   sourceDir,
-  "../../../../docs/skill-pack-catalog.json",
+  "../../../../catalogs/skill-pack-catalog.json",
 );
 const skillPackCatalogSchemaPath = resolve(
   sourceDir,
-  "../../../../docs/skill-pack-catalog.schema.json",
+  "../../../../catalogs/skill-pack-catalog.schema.json",
 );
 const providerRuntimeCatalogPath = resolve(
   sourceDir,
-  "../../../../docs/provider-runtime-catalog.json",
+  "../../../../catalogs/provider-runtime-catalog.json",
 );
 const providerRuntimeCatalogSchemaPath = resolve(
   sourceDir,
-  "../../../../docs/provider-runtime-catalog.schema.json",
+  "../../../../catalogs/provider-runtime-catalog.schema.json",
 );
 const keywordTruthPath = resolve(
   sourceDir,
-  "../../../../docs/discoverability-keyword-truth.json",
+  "../../../../catalogs/discoverability-keyword-truth.json",
 );
 const keywordTruthSchemaPath = resolve(
   sourceDir,
-  "../../../../docs/discoverability-keyword-truth.schema.json",
+  "../../../../catalogs/discoverability-keyword-truth.schema.json",
 );
 const mcpToolCatalogPath = resolve(
   sourceDir,
-  "../../../../docs/mcp-tool-catalog.json",
+  "../../../../catalogs/mcp-tool-catalog.json",
 );
 const mcpToolCatalogSchemaPath = resolve(
   sourceDir,
-  "../../../../docs/mcp-tool-catalog.schema.json",
+  "../../../../catalogs/mcp-tool-catalog.schema.json",
 );
 
 type SwitchyardProviderId = Parameters<SwitchyardServiceClient["providerStatus"]>[0];

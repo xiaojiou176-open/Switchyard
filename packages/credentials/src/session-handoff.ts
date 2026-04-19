@@ -218,8 +218,8 @@ function getArtifactDescription(
 ): string {
   if (record.provider.authModeId === 'byok') {
     return kind === 're-authentication'
-      ? 'Collect a fresh end-user-owned API key and bind it back to the same local provider slot.'
-      : 'Collect the end user API key inside the local auth portal and bind it to this provider slot.';
+      ? 'Collect a fresh end-user-owned API key and rebind it to the same local provider slot outside the browser acquisition flow.'
+      : 'Review the local provider slot requirements, then collect and bind the end-user API key outside the browser acquisition flow.';
   }
 
   return kind === 're-authentication'

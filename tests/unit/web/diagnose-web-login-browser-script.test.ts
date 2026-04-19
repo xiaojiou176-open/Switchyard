@@ -78,6 +78,43 @@ describe("diagnose-web-login-browser script", () => {
     );
   });
 
+  it("builds a readable page snippet from visible placeholder and aria hints when body text stays thin", async () => {
+    const { summarizeCurrentPageTextEvidence } = await import(
+      "../../../scripts/diagnose-web-login-browser.mjs"
+    );
+
+    expect(
+      summarizeCurrentPageTextEvidence({
+        bodyText: "",
+        rootText: "",
+        visibleHintParts: [
+          "Imagine",
+          "登录",
+          "注册",
+          "你在想什么？",
+          "Auto",
+          "条款",
+          "隐私政策",
+          "登录",
+        ],
+      }),
+    ).toBe("Imagine 登录 注册 你在想什么？ Auto 条款 隐私政策");
+  });
+
+  it("prefers concrete body text over hint-only fallback when the page already exposes readable text", async () => {
+    const { summarizeCurrentPageTextEvidence } = await import(
+      "../../../scripts/diagnose-web-login-browser.mjs"
+    );
+
+    expect(
+      summarizeCurrentPageTextEvidence({
+        bodyText: "Grok 工作区已经加载完成",
+        rootText: "登录 注册 条款 隐私政策",
+        visibleHintParts: ["你在想什么？", "Auto"],
+      }),
+    ).toBe("Grok 工作区已经加载完成");
+  });
+
   it("marks login pages as store-ready but not live-ready", async () => {
     const { classifyLiveWorkspace } = await import(
       "../../../scripts/diagnose-web-login-browser.mjs"

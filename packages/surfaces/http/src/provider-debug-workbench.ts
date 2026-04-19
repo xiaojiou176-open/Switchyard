@@ -259,7 +259,7 @@ function renderEvidenceStack(
       : "Next repair step: open the diagnose ladder",
   ];
 
-  return `<details class="evidence-stack">
+  return `<details id="evidence-stack" class="evidence-stack">
     <summary>
       <span class="evidence-stack-summary-copy">
         <span class="evidence-stack-summary-title">Evidence stack, repair ladder, and raw JSON surfaces</span>
@@ -373,23 +373,6 @@ function renderEvidenceStack(
       </div>
     </div>
   </details>`;
-}
-
-function renderEvidencePreview(debug: ServiceProviderDebugSupportView): string {
-  const firstDiagnoseStep = debug.diagnoseLadder[0];
-  const previewBits = [
-    debug.currentPage.classification
-      ? `Current page: ${debug.currentPage.classification}`
-      : "Current page: workspace-ready evidence available",
-    firstDiagnoseStep?.summary
-      ? `Next repair step: ${firstDiagnoseStep.summary}`
-      : "Next repair step: open the full diagnose ladder",
-  ];
-
-  return `<section class="evidence-preview" aria-label="Evidence preview">
-    <p class="eyebrow eyebrow-compact">Evidence preview</p>
-    <p>${escapeHtml(previewBits.join(" • "))}</p>
-  </section>`;
 }
 
 function renderSummaryCard(
@@ -614,6 +597,7 @@ export function renderProviderDebugWorkbench(
   const nextStepDetail = truthFocus?.detail;
   const nextStepCommand = nextAction?.command;
   const nextStepCommandLabel = truthFocus ? "Rerun after the blocker clears" : "Run this next";
+  const primaryWorkbenchActionLabel = truthFocus ? "Open repair ladder" : "Open evidence stack";
   const runtimeSummary = truthFocus?.runtimeSummary ?? debug.auth.statusSummary;
   const currentBrowserSummary =
     sharedDiagnostic.repeatedRaw &&
@@ -792,47 +776,6 @@ export function renderProviderDebugWorkbench(
         align-items: center;
       }
 
-      .hero-truth-strip {
-        display: grid;
-        grid-template-columns: repeat(3, minmax(0, 1fr));
-        gap: 0.72rem;
-      }
-
-      .hero-truth-card {
-        border: 1px solid var(--line);
-        border-radius: 16px;
-        padding: 0.78rem 0.84rem;
-        background: rgba(255, 255, 255, 0.02);
-        box-shadow:
-          rgba(27, 28, 30, 0.95) 0 0 0 1px,
-          rgba(7, 8, 10, 0.88) 0 0 0 1px inset;
-      }
-
-      .hero-truth-card strong {
-        display: block;
-        margin-bottom: 0.18rem;
-        font-size: 1rem;
-        line-height: 1.25;
-      }
-
-      .hero-truth-card span {
-        color: var(--muted);
-        font-size: 0.82rem;
-        line-height: 1.4;
-      }
-
-      .hero-truth-card-ok {
-        border-color: rgba(76, 188, 118, 0.24);
-      }
-
-      .hero-truth-card-warning {
-        border-color: rgba(199, 139, 44, 0.28);
-      }
-
-      .hero-truth-card-danger {
-        border-color: rgba(201, 90, 90, 0.3);
-      }
-
       .pill-link {
         display: inline-flex;
         align-items: center;
@@ -939,6 +882,10 @@ export function renderProviderDebugWorkbench(
         color: var(--ink);
       }
 
+      .hero-next-step-summary strong {
+        color: var(--ink);
+      }
+
       .hero-meta-card p {
         margin: 0;
       }
@@ -1030,28 +977,6 @@ export function renderProviderDebugWorkbench(
         background:
           linear-gradient(180deg, rgba(255, 255, 255, 0.02), rgba(255, 255, 255, 0.01)),
           var(--panel);
-      }
-
-      .evidence-preview {
-        display: grid;
-        gap: 0.28rem;
-        padding: 0.9rem 1rem;
-        margin-bottom: 1rem;
-        border: 1px solid rgba(255, 255, 255, 0.06);
-        border-radius: 18px;
-        background:
-          linear-gradient(180deg, rgba(255, 255, 255, 0.032), rgba(255, 255, 255, 0.015)),
-          var(--panel);
-        box-shadow:
-          rgba(255, 255, 255, 0.035) 0 1px 0 0 inset,
-          rgba(0, 0, 0, 0.16) 0 10px 18px -14px;
-      }
-
-      .evidence-preview p:last-child {
-        margin: 0;
-        color: var(--muted);
-        font-size: 0.94rem;
-        line-height: 1.45;
       }
 
       .summary-card h2 {
@@ -1384,16 +1309,16 @@ export function renderProviderDebugWorkbench(
           </div>
           <h1>${escapeHtml(debug.providerDisplayName)} debug workbench</h1>
           <p class="hero-intro">This page compares <strong>stored material truth</strong> against <strong>the currently attached browser reality</strong>. It is a diagnosis bench, not a control plane, and it never invents green lights from missing evidence.</p>
-          ${renderHeroTruthStrip(debug, runtimePathStatus)}
-          <div class="hero-actions">
-            <a class="pill-link pill-link-primary" href="${escapeHtml(authPortalRoute)}">Back to auth portal</a>
+      <div class="hero-actions">
+            <a class="pill-link pill-link-primary" href="#evidence-stack">${escapeHtml(primaryWorkbenchActionLabel)}</a>
+            <a class="pill-link" href="${escapeHtml(authPortalRoute)}">Back to auth portal</a>
             <a class="pill-link pill-link-quiet" href="${escapeHtml(debug.routes.debugSupportBundle)}" target="_blank" rel="noopener">Need the raw bundle? Open support bundle JSON.</a>
           </div>
         </div>
         <div class="hero-meta">
           <article class="hero-meta-card hero-meta-card-next">
             <p class="eyebrow eyebrow-compact">${escapeHtml(nextStepEyebrow)}</p>
-            <p>${escapeHtml(nextStepSummary)}</p>
+            <p class="hero-next-step-summary"><strong>Next repair step:</strong> ${escapeHtml(nextStepSummary)}</p>
             ${nextStepDetail ? `<p>${escapeHtml(nextStepDetail)}</p>` : ""}
             ${nextStepCommand ? `<span class="hero-command-label">${escapeHtml(nextStepCommandLabel)}</span><pre>${escapeHtml(nextStepCommand)}</pre>` : ""}
           </article>
@@ -1411,9 +1336,8 @@ export function renderProviderDebugWorkbench(
       ${truthFocus ? renderPrimaryVerdict(debug, truthFocus) : ""}
       ${renderDetailedBrowserDiagnostics(sharedDiagnostic)}
 
-      ${renderEvidencePreview(debug)}
-
-      <section class="summary-grid" aria-label="Provider readiness summary">
+      ${!truthFocus
+        ? `<section class="summary-grid" aria-label="Provider readiness summary">
         ${renderSummaryCard(
           "Stored material",
           debug.storeReadiness.credentialState,
@@ -1438,7 +1362,8 @@ export function renderProviderDebugWorkbench(
             .join(""),
           debug.runtime.runtimeReadiness,
         )}
-      </section>
+      </section>`
+        : ""}
       ${renderEvidenceStack(
         debug,
         currentPageDiagnostic,

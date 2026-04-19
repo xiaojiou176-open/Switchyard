@@ -13,35 +13,35 @@ const scriptDir = dirname(fileURLToPath(import.meta.url));
 const repoRoot = resolve(scriptDir, "..");
 const publicSurfaceCatalogPath = resolve(
   repoRoot,
-  "docs/public-surface-catalog.json",
+  "catalogs/public-surface-catalog.json",
 );
 const publicSurfaceCatalogSchemaPath = resolve(
   repoRoot,
-  "docs/public-surface-catalog.schema.json",
+  "catalogs/public-surface-catalog.schema.json",
 );
 const publicDistributionLedgerPath = resolve(
   repoRoot,
-  "docs/public-distribution-ledger.json",
+  "catalogs/public-distribution-ledger.json",
 );
 const publicDistributionLedgerSchemaPath = resolve(
   repoRoot,
-  "docs/public-distribution-ledger.schema.json",
+  "catalogs/public-distribution-ledger.schema.json",
 );
 const starterManifestTemplatesPath = resolve(
   repoRoot,
-  "docs/starter-manifest-templates.json",
+  "catalogs/starter-manifest-templates.json",
 );
 const starterManifestTemplatesSchemaPath = resolve(
   repoRoot,
-  "docs/starter-manifest-templates.schema.json",
+  "catalogs/starter-manifest-templates.schema.json",
 );
 const starterManifestExamplesPath = resolve(
   repoRoot,
-  "docs/starter-manifest-examples.json",
+  "catalogs/starter-manifest-examples.json",
 );
 const starterManifestExamplesSchemaPath = resolve(
   repoRoot,
-  "docs/starter-manifest-examples.schema.json",
+  "catalogs/starter-manifest-examples.schema.json",
 );
 const starterPackIndexPath = resolve(
   repoRoot,
@@ -53,27 +53,27 @@ const starterPackIndexSchemaPath = resolve(
 );
 const starterPackChooserPath = resolve(
   repoRoot,
-  "docs/starter-pack-chooser.json",
+  "catalogs/starter-pack-chooser.json",
 );
 const starterPackChooserSchemaPath = resolve(
   repoRoot,
-  "docs/starter-pack-chooser.schema.json",
+  "catalogs/starter-pack-chooser.schema.json",
 );
 const starterPackComparisonPath = resolve(
   repoRoot,
-  "docs/starter-pack-comparison.json",
+  "catalogs/starter-pack-comparison.json",
 );
 const starterPackComparisonSchemaPath = resolve(
   repoRoot,
-  "docs/starter-pack-comparison.schema.json",
+  "catalogs/starter-pack-comparison.schema.json",
 );
 const hostIntegrationPlaybooksPath = resolve(
   repoRoot,
-  "docs/host-integration-playbooks.json",
+  "catalogs/host-integration-playbooks.json",
 );
 const hostIntegrationPlaybooksSchemaPath = resolve(
   repoRoot,
-  "docs/host-integration-playbooks.schema.json",
+  "catalogs/host-integration-playbooks.schema.json",
 );
 const hostIntegrationExamplesPath = resolve(
   repoRoot,
@@ -85,67 +85,67 @@ const hostIntegrationExamplesSchemaPath = resolve(
 );
 const builderJourneysPath = resolve(
   repoRoot,
-  "docs/builder-journeys.json",
+  "catalogs/builder-journeys.json",
 );
 const builderJourneysSchemaPath = resolve(
   repoRoot,
-  "docs/builder-journeys.schema.json",
+  "catalogs/builder-journeys.schema.json",
 );
 const builderIntentRouterPath = resolve(
   repoRoot,
-  "docs/builder-intent-router.json",
+  "catalogs/builder-intent-router.json",
 );
 const builderIntentRouterSchemaPath = resolve(
   repoRoot,
-  "docs/builder-intent-router.schema.json",
+  "catalogs/builder-intent-router.schema.json",
 );
 const compatTargetCatalogPath = resolve(
   repoRoot,
-  "docs/compat-target-catalog.json",
+  "catalogs/compat-target-catalog.json",
 );
 const compatTargetCatalogSchemaPath = resolve(
   repoRoot,
-  "docs/compat-target-catalog.schema.json",
+  "catalogs/compat-target-catalog.schema.json",
 );
 const builderKitCatalogPath = resolve(
   repoRoot,
-  "docs/builder-kit-catalog.json",
+  "catalogs/builder-kit-catalog.json",
 );
 const builderKitCatalogSchemaPath = resolve(
   repoRoot,
-  "docs/builder-kit-catalog.schema.json",
+  "catalogs/builder-kit-catalog.schema.json",
 );
 const skillPackCatalogPath = resolve(
   repoRoot,
-  "docs/skill-pack-catalog.json",
+  "catalogs/skill-pack-catalog.json",
 );
 const skillPackCatalogSchemaPath = resolve(
   repoRoot,
-  "docs/skill-pack-catalog.schema.json",
+  "catalogs/skill-pack-catalog.schema.json",
 );
 const providerRuntimeCatalogPath = resolve(
   repoRoot,
-  "docs/provider-runtime-catalog.json",
+  "catalogs/provider-runtime-catalog.json",
 );
 const providerRuntimeCatalogSchemaPath = resolve(
   repoRoot,
-  "docs/provider-runtime-catalog.schema.json",
+  "catalogs/provider-runtime-catalog.schema.json",
 );
 const keywordTruthPath = resolve(
   repoRoot,
-  "docs/discoverability-keyword-truth.json",
+  "catalogs/discoverability-keyword-truth.json",
 );
 const keywordTruthSchemaPath = resolve(
   repoRoot,
-  "docs/discoverability-keyword-truth.schema.json",
+  "catalogs/discoverability-keyword-truth.schema.json",
 );
 const mcpToolCatalogPath = resolve(
   repoRoot,
-  "docs/mcp-tool-catalog.json",
+  "catalogs/mcp-tool-catalog.json",
 );
 const mcpToolCatalogSchemaPath = resolve(
   repoRoot,
-  "docs/mcp-tool-catalog.schema.json",
+  "catalogs/mcp-tool-catalog.schema.json",
 );
 
 const COMMAND_HELP =

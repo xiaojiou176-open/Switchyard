@@ -61,6 +61,48 @@ function sanitizeText(value, limit = 240) {
   return `${value ?? ""}`.replace(/\s+/g, " ").trim().slice(0, limit);
 }
 
+function normalizePageText(value) {
+  return `${value ?? ""}`.replace(/\s+/g, " ").trim();
+}
+
+function summarizeCurrentPageTextEvidence({
+  bodyText = "",
+  rootText = "",
+  visibleHintParts = [],
+}) {
+  const normalizedBody = normalizePageText(bodyText);
+
+  if (normalizedBody) {
+    return normalizedBody.slice(0, 280);
+  }
+
+  const normalizedRoot = normalizePageText(rootText);
+  const hintParts = [];
+
+  for (const part of visibleHintParts) {
+    const normalizedPart = normalizePageText(part);
+
+    if (!normalizedPart) {
+      continue;
+    }
+
+    if (normalizedRoot && normalizedRoot.includes(normalizedPart)) {
+      continue;
+    }
+
+    if (hintParts.includes(normalizedPart)) {
+      continue;
+    }
+
+    hintParts.push(normalizedPart);
+  }
+
+  return [normalizedRoot, ...hintParts]
+    .filter(Boolean)
+    .join(" ")
+    .slice(0, 280);
+}
+
 export function sanitizeTraceUrl(value) {
   if (typeof value !== "string" || !value.trim()) {
     return undefined;
@@ -353,6 +395,12 @@ export async function captureBrowserDebugContext(
       });
     }
 
+    if (typeof page.waitForLoadState === "function") {
+      await page.waitForLoadState("domcontentloaded", {
+        timeout: 5_000,
+      }).catch(() => undefined);
+    }
+
     let title;
     try {
       title = await page.title();
@@ -360,10 +408,83 @@ export async function captureBrowserDebugContext(
       title = undefined;
     }
 
+    const currentPageSnapshot =
+      typeof page.evaluate === "function"
+        ? await page
+            .evaluate(() => {
+              const hasComposerSurface = [
+                '[contenteditable="true"]',
+                'div[role="textbox"]',
+                "textarea",
+                '[role="textbox"]',
+              ].some((selector) => {
+                const element = document.querySelector(selector);
+                return Boolean(element && element.offsetParent !== null);
+              });
+              const visibleHintParts = Array.from(
+                document.querySelectorAll(
+                  [
+                    "[aria-label]",
+                    "[placeholder]",
+                    "[data-placeholder]",
+                    "button",
+                    "a",
+                    "[role='button']",
+                    "[role='textbox']",
+                    '[contenteditable="true"]',
+                    "textarea",
+                  ].join(", "),
+                ),
+              )
+                .map((node) => {
+                  return (
+                    node.textContent?.trim() ||
+                    node.getAttribute?.("aria-label")?.trim() ||
+                    node.getAttribute?.("placeholder")?.trim() ||
+                    node.getAttribute?.("data-placeholder")?.trim() ||
+                    ""
+                  );
+                })
+                .filter(Boolean);
+
+              return {
+                bodyText: document.body?.innerText ?? "",
+                rootText: document.documentElement?.innerText ?? "",
+                visibleHintParts,
+                hasComposerSurface,
+              };
+            })
+            .catch(() => ({
+              bodyText: "",
+              rootText: "",
+              visibleHintParts: [],
+              hasComposerSurface: false,
+            }))
+        : {
+            bodyText: "",
+            rootText: "",
+            visibleHintParts: [],
+            hasComposerSurface: false,
+          };
+    const currentPageSnippet = summarizeCurrentPageTextEvidence(currentPageSnapshot);
+    const currentPageClassification =
+      typeof result?.classification === "string" &&
+      result.classification !== "diagnose-ladder"
+        ? result.classification
+        : undefined;
+    const currentPageDiagnostic = sanitizeText(
+      result?.diagnostic ?? result?.summary,
+      320,
+    ) || undefined;
+
     debugContext.attachStatus = "attached";
     debugContext.currentPage = {
       url: sanitizeTraceUrl(page.url()),
       title: sanitizeText(title, 160) || undefined,
+      snippet: currentPageSnippet || undefined,
+      hasComposerSurface: Boolean(currentPageSnapshot.hasComposerSurface),
+      classification: currentPageClassification,
+      diagnostic: currentPageDiagnostic,
     };
     debugContext.currentConsole = consoleEvents.slice(0, 10);
     debugContext.currentNetwork = networkEvents.slice(0, 10);
