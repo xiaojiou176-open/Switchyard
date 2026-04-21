@@ -65,7 +65,7 @@ describe("provider debug workbench render", () => {
     expect(html).toContain("<strong>technical status</strong> <code>ready</code>");
     expect(html).toContain("Open trays");
     expect(html).toContain("Next repair step:");
-    expect(html).toContain("Open evidence stack");
+    expect(html).toContain("Open browser evidence");
     expect(html).toContain("Back to auth portal");
     expect(html).not.toContain("Runtime still blocked");
   });

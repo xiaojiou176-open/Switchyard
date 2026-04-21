@@ -286,8 +286,8 @@ describe("Switchyard HTTP surface", () => {
     const workbenchHtml = await workbenchResponse.text();
 
     expect(workbenchResponse.status).toBe(200);
-    expect(workbenchHtml).toContain("ChatGPT Web debug workbench");
-    expect(workbenchHtml).toContain("Read-only inspection surface");
+    expect(workbenchHtml).toContain("ChatGPT Web browser readiness");
+    expect(workbenchHtml).toContain("Browser readiness check");
     expect(workbenchHtml).toContain("/v1/runtime/providers/chatgpt/debug/support-bundle");
     expect(workbenchHtml).toContain("Current browser evidence");
     expect(workbenchHtml).toContain("Browser session first");
@@ -872,7 +872,7 @@ describe("Switchyard HTTP surface", () => {
     expect(authPortalResponse.status).toBe(200);
     expect(authPortalHtml).toContain("Web/Login live readiness");
     expect(authPortalHtml).toContain("The five provider verdicts that matter first");
-    expect(authPortalHtml).toContain("Open deeper provider shelf");
+    expect(authPortalHtml).toContain("Open provider details");
     expect(authPortalHtml).toContain("Web/Login details, evidence, and actions");
     expect(authPortalHtml).not.toContain("This section now behaves like a triage wall");
     expect(authPortalHtml).toContain("Account action required");
@@ -980,8 +980,9 @@ describe("Switchyard HTTP surface", () => {
     const workbenchHtml = await workbenchResponse.text();
 
     expect(workbenchResponse.status).toBe(200);
-    expect(workbenchHtml).toContain("Detailed browser diagnostics");
+    expect(workbenchHtml).toContain("Detailed browser evidence");
     expect(workbenchHtml).toContain("Evidence stack, repair ladder, and raw JSON surfaces");
+    expect(workbenchHtml).toContain("Browser readiness check");
     expect(workbenchHtml).toContain("Runtime can invoke");
     expect(workbenchHtml).toContain("<strong>technical status</strong> <code>ready</code>");
     expect(workbenchHtml).toContain(

@@ -1111,12 +1111,12 @@ function renderHeroFirstCallStrip(model: AuthPortalShellModel): string {
       <article class="hero-call-card hero-call-card-danger">
       <p class="eyebrow eyebrow-compact">Owner action</p>
       <strong>${escapeHtml(`${accountActionCount}`)}</strong>
-      <span>Accounts blocked on payment, subscription, or other owner-manual steps.</span>
+      <span>Accounts blocked on payment, subscription, or other owner steps.</span>
       </article>
       <article class="hero-call-card hero-call-card-warning">
       <p class="eyebrow eyebrow-compact">Browser work</p>
       <strong>${escapeHtml(`${sessionWorkCount}`)}</strong>
-      <span>Providers that still need the current browser seat finished before the runtime can trust them.</span>
+      <span>Providers that still need you to finish the browser login before runtime can reuse them.</span>
       </article>
       <article class="hero-call-card hero-call-card-ok">
       <p class="eyebrow eyebrow-compact">Ready now</p>
@@ -1917,6 +1917,11 @@ export function renderAuthPortalShell(model: AuthPortalShellModel): string {
         white-space: nowrap;
       }
 
+      .hero-top-blocker-link:hover {
+        border-color: rgba(63, 165, 107, 0.44);
+        background: rgba(63, 165, 107, 0.16);
+      }
+
       .priority-provider-card {
         border: 1px solid var(--line);
         border-radius: 18px;
@@ -2620,41 +2625,41 @@ export function renderAuthPortalShell(model: AuthPortalShellModel): string {
         <div class="hero-copy">
           <p class="eyebrow">Local-first provider access</p>
           <h1>${escapeHtml(model.title)}</h1>
-          <p>Use this machine-local front desk to make one call first: <strong>who is ready now</strong>, <strong>who needs owner action</strong>, and <strong>who still needs the current browser seat finished</strong>.</p>
+          <p>Start with one question: <strong>who is ready now</strong>, <strong>who needs owner action</strong>, and <strong>who still needs you to finish the browser login before this page can be trusted</strong>.</p>
           ${renderHeroFirstCallStrip(model)}
           <div class="hero-actions">
             <div class="hero-primary-action">
-              <a class="action action-primary action-link" href="#auth-portal-web-login-priority-rail">Review arrivals board first</a>
-              <span class="hero-primary-action-note">Make the first call here before you open the deeper shelf or the BYOK inventory.</span>
+              <a class="action action-primary action-link" href="#auth-portal-web-login-priority-rail">Review live readiness first</a>
+              <span class="hero-primary-action-note">Make the first call here, then open deeper evidence only for the provider that still needs help.</span>
             </div>
             <div class="hero-secondary-actions">
-              <a class="action action-ghost action-link" href="#auth-portal-provider-drawers">Open deeper provider shelf</a>
-              <a class="action action-ghost action-link" href="#section-byok">Review BYOK inventory</a>
+              <a class="action action-ghost action-link" href="#auth-portal-provider-drawers">Open provider details</a>
+              <a class="action action-ghost action-link" href="#section-byok">Check BYOK slots</a>
             </div>
           </div>
         </div>
         <div class="hero-meta">
           <article class="hero-meta-card hero-meta-card-priority">
-            <p class="eyebrow eyebrow-compact">Read this page in order</p>
+            <p class="eyebrow eyebrow-compact">Start with one call</p>
             <ol class="hero-step-list">
               <li>
                 <span class="hero-step-index">01</span>
                 <span class="hero-step-copy">
-                  <strong>Call the arrivals board first.</strong>
-                  <span>Decide who is ready, who needs owner action, and who still needs the current browser seat finished.</span>
+                  <strong>Read the arrivals board.</strong>
+                  <span>Decide who is ready now, who needs owner action, and who still needs browser work.</span>
                 </span>
               </li>
               <li>
                 <span class="hero-step-index">02</span>
                 <span class="hero-step-copy">
-                  <strong>Open current truth only for the blocker you just found.</strong>
-                  <span>Use the deeper provider shelf when you need browser evidence, capture steps, or the full action trail.</span>
+                  <strong>Open one provider only when blocked.</strong>
+                  <span>Use the deeper drawer when you need browser evidence, capture steps, or the full action trail.</span>
                 </span>
               </li>
               <li>
                 <span class="hero-step-index">03</span>
                 <span class="hero-step-copy">
-                  <strong>Touch BYOK inventory only after the Web/Login call is clear.</strong>
+                  <strong>Check BYOK after the live call is clear.</strong>
                   <span>Keep API-key inventory as the secondary shelf, not the first-screen decision source.</span>
                 </span>
               </li>
@@ -2663,10 +2668,6 @@ export function renderAuthPortalShell(model: AuthPortalShellModel): string {
           <article class="hero-meta-card hero-meta-card-quiet">
             <p class="eyebrow eyebrow-compact">Current stance</p>
             <p>${escapeHtml(model.trustBoundary)}</p>
-            <div class="hero-meta-footer">
-              <span>Generated</span>
-              <span class="mono">${escapeHtml(model.generatedAt)}</span>
-            </div>
           </article>
         </div>
       </section>

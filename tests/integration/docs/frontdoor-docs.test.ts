@@ -19,7 +19,7 @@ describe("Switchyard docs frontdoor contracts", () => {
   it("keeps the docs frontdoor focused on first-row routes while demoting deeper shelves", () => {
     const docsReadme = read("docs/README.md");
 
-    expect(docsReadme).toContain("This is the public docs atlas for Switchyard.");
+    expect(docsReadme).toContain("This is the public docs map for Switchyard.");
     expect(docsReadme).toContain("Treat it like an adoption desk, not a warehouse list");
     expect(docsReadme).toContain("The public first row stays intentionally narrow");
     expect(docsReadme).toContain("docs/api/service-http-reference.md");
@@ -239,7 +239,7 @@ describe("Switchyard docs frontdoor contracts", () => {
           await page.locator('a[href="./README.md"]').first().click();
           await page.waitForLoadState("networkidle").catch(() => undefined);
           expect(page.url()).toContain("/Switchyard/README.md");
-          expect((await page.textContent("body")) ?? "").toContain("Switchyard Docs Atlas");
+          expect((await page.textContent("body")) ?? "").toContain("Switchyard Public Docs");
         } finally {
           await browser.close();
         }
@@ -287,8 +287,8 @@ describe("Switchyard docs frontdoor contracts", () => {
     expect(i18n).not.toContain("bilingual developer frontdoor");
 
     const docsIndex = read("docs/index.html");
-    expect(docsIndex).toContain("Switchyard Docs Atlas");
-    expect(docsIndex).toContain("Choose the shortest truthful route before you open the fuller atlas.");
+    expect(docsIndex).toContain("Switchyard Public Docs");
+    expect(docsIndex).toContain("Start with what Switchyard is, what is proved, and what to try next.");
     expect(docsIndex).toContain("Open first success");
     expect(docsIndex).toContain("Skip to main content");
     expect(docsIndex).toContain("Front door");
@@ -455,7 +455,7 @@ describe("Switchyard docs frontdoor contracts", () => {
   it("keeps the README developer frontdoor aligned with truthful compatibility and docs links", () => {
     const readme = read("README.md");
 
-    expect(readme).toContain("Shared provider runtime for AI apps.");
+    expect(readme).toContain("One shared provider runtime for AI apps.");
     expect(readme).toContain("English-first");
     expect(readme).toContain("docs/media/30-second-overview.md");
     expect(readme).toContain("docs/media/README.md");

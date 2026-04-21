@@ -1,6 +1,6 @@
-# Switchyard Docs Atlas
+# Switchyard Public Docs
 
-This is the public docs atlas for Switchyard.
+This is the public docs map for Switchyard.
 
 Treat it like an adoption desk, not a warehouse list: the job of this page is
 to route a reader to the next truthful page, not to enumerate every file in the

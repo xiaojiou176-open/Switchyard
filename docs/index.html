@@ -261,6 +261,14 @@
         color: var(--muted);
       }
 
+      .identity-line {
+        margin: 0.1rem 0 0.45rem;
+        color: #1f6548;
+        font-size: 0.94rem;
+        font-weight: 700;
+        letter-spacing: 0.02em;
+      }
+
       .hero-note,
       .hero-proof {
         position: relative;
@@ -650,10 +658,9 @@
     <main class="shell" id="main-content">
       <section class="topbar">
         <div class="brand">
-          <strong>Switchyard Docs Atlas</strong>
+          <strong>Switchyard Public Docs</strong>
           <span>
-            Shared provider runtime docs, routed like a public atlas instead of
-            a giant file cabinet.
+            Shared provider runtime docs for AI app builders.
           </span>
         </div>
         <div class="top-links" aria-label="Topbar quick shortcuts">
@@ -674,18 +681,18 @@
       <section class="hero">
         <div class="hero-note" id="identity-shelf">
           <span class="eyebrow">Answer-first front door</span>
-          <h1>Choose the shortest truthful route before you open the fuller atlas.</h1>
+          <p class="identity-line">One shared provider runtime for AI apps.</p>
+          <h1>Start with what Switchyard is, what is proved, and what to try next.</h1>
           <p class="lede">
-            Switchyard is not a chat product and not a hosted magic shell. This
-            docs front door works best when it behaves like a reviewer map:
-            first understand the runtime identity, then the first-success path,
-            then the proof, distribution, or API lane you actually need.
+            Switchyard is a shared provider runtime for AI apps. Start here for
+            the product sentence, the shortest first success, and the proof or
+            API lane you actually need next.
           </p>
           <div class="signal-row" aria-label="Front-door signals">
-            <span class="signal-pill">Shared provider runtime first</span>
+            <span class="signal-pill">Shared runtime for AI apps</span>
             <span class="signal-pill">BYOK + Web/Login only</span>
-            <span class="signal-pill">Core API stays first-row</span>
-            <span class="signal-pill">Artifact-ready is not listed-live</span>
+            <span class="signal-pill">Proof before overclaim</span>
+            <span class="signal-pill">API and docs stay front-row</span>
           </div>
           <div class="cta-row">
             <a class="cta-primary" href="./first-success.md">Open first success</a>
@@ -699,47 +706,47 @@
 
         <div class="hero-proof">
           <div class="hero-proof-head">
-            <strong>Read it in this order</strong>
-            <span class="hero-proof-caption">4-step reader ladder</span>
+            <strong>Start with one of these</strong>
+            <span class="hero-proof-caption">4 front-row routes</span>
           </div>
           <ol class="hero-sequence">
             <li>
               <span class="hero-sequence-index">01</span>
               <span class="hero-sequence-copy">
                 <strong>30-second overview</strong>
-                <span>Use this when you need the clean product sentence fast.</span>
+                <span>Use this when you need the product sentence fast.</span>
               </span>
             </li>
             <li>
               <span class="hero-sequence-index">02</span>
               <span class="hero-sequence-copy">
                 <strong>First success</strong>
-                <span>Use this when you want one bounded route that actually runs.</span>
+                <span>Use this when you want one bounded route that really runs.</span>
               </span>
             </li>
             <li>
               <span class="hero-sequence-index">03</span>
               <span class="hero-sequence-copy">
-                <strong>Public proof pack</strong>
+                <strong>Proof pack</strong>
                 <span>Open this when the question becomes “what is really proved”.</span>
               </span>
             </li>
             <li>
               <span class="hero-sequence-index">04</span>
               <span class="hero-sequence-copy">
-                <strong>Service HTTP reference</strong>
+                <strong>API reference</strong>
                 <span>Open this when the question becomes “what can I call”.</span>
               </span>
             </li>
           </ol>
           <p class="quiet">
-            This page is intentionally still docs-first. It is here to route a
-            reviewer, not to invent a fake app UI.
+            This page stays docs-first on purpose. It should read like a clear
+            public front door, not like an internal file cabinet.
           </p>
           <p class="quiet">
-            Need the AI workflow, builder workflow, skill-pack, or read-only
-            MCP route after the front-row question is answered? Open
-            <a href="./README.md">docs/README.md</a> for the fuller atlas map.
+            Need the builder workflow, compat map, or read-only MCP shelf after
+            the front-row question is answered? Open
+            <a href="./README.md">docs/README.md</a> for the deeper map.
           </p>
           <p class="quiet">
             Need local bootstrap or workstation-bound reality instead? Open the
@@ -816,7 +823,7 @@
           </article>
           <article class="route-card route-card-tertiary" id="builder-workflow">
             <div class="route-label">Builder workflow</div>
-            <strong>I need the AI workflow, builder workflow, skill-pack, or MCP map.</strong>
+            <strong>I need the builder workflow, compat shelf, or MCP map.</strong>
             <p>
               Use this when you already know the product sentence and need the
               fuller tooling atlas without turning this front door into a file
