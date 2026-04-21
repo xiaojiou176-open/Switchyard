@@ -1,24 +1,24 @@
 # Switchyard Media Shelf
 
-This shelf keeps **public-facing media artifacts** for Switchyard.
+This shelf keeps the **public-facing promo and presentation assets** for Switchyard.
 
-It is intentionally deeper than the first-row docs front door:
+Use it after the front door has already answered the core questions:
 
-- the front row should answer identity, first success, proof, distribution, and API questions
-- this shelf exists once the reader explicitly wants promo or presentation assets
+- what Switchyard is
+- what is already proved
+- what a new builder should try next
+
+Then come here when you want a faster visual pass or a presentation-ready asset.
 
 ## Current Media Assets
 
-- [30-second overview](./30-second-overview.md)
-  - the fastest text-only product sentence
-- [Remotion promo package](./remotion-switchyard-promo/README.md)
-  - a standalone source package for a short promo video
+| Asset | Type | Use it when | Open |
+| --- | --- | --- | --- |
+| 30-second overview | text brief | you need the fastest product sentence | [Open](./30-second-overview.md) |
+| Remotion promo package | programmable video source | you want the current promo source and render path | [Open](./remotion-switchyard-promo/README.md) |
 
 ## Current Media Truth
 
-- the text overview is public and stable
+- these assets support explanation, demos, and sharing
 - the Remotion package is source-first and local-renderable
-- the current promo asset does **not** upgrade Switchyard's product truth or listing status
-
-Media helps presentation.
-It does not change runtime truth, proof truth, or distribution truth.
+- the current promo asset does **not** upgrade runtime truth, proof truth, or listing truth by itself

@@ -1,6 +1,6 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="1280" height="640" viewBox="0 0 1280 640" role="img" aria-labelledby="title desc">
   <title id="title">Switchyard social preview</title>
-  <desc id="desc">Shared provider runtime for AI apps. BYOK plus Web/Login. Read-only MCP descriptor. Runtime-diagnostics packet. Later lanes need fresh read-back.</desc>
+  <desc id="desc">One shared provider runtime for AI apps. BYOK plus Web/Login. Docs, proof pack, and a read-only status view.</desc>
   <defs>
     <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
       <stop offset="0%" stop-color="#0c1f1a"/>
@@ -18,20 +18,16 @@
   <rect x="64" y="64" width="1152" height="512" rx="28" fill="#0f241e" fill-opacity="0.78" stroke="#d8e5d8" stroke-opacity="0.18"/>
   <rect x="104" y="104" width="220" height="46" rx="23" fill="#d5dfd2" fill-opacity="0.12" stroke="#d5dfd2" stroke-opacity="0.18"/>
   <text x="136" y="134" fill="#f3f0e6" font-family="Helvetica, Arial, sans-serif" font-size="24" font-weight="700">Switchyard</text>
-  <text x="104" y="228" fill="#f8f5ec" font-family="Helvetica, Arial, sans-serif" font-size="64" font-weight="800">Shared provider runtime</text>
-  <text x="104" y="294" fill="#f8f5ec" font-family="Helvetica, Arial, sans-serif" font-size="64" font-weight="800">for AI apps</text>
-  <text x="104" y="356" fill="#d7e3d8" font-family="Helvetica, Arial, sans-serif" font-size="28" font-weight="500">BYOK + Web/Login. Service-first substrate. Truth-first closeout.</text>
-  <rect x="104" y="414" width="480" height="108" rx="24" fill="url(#panel)"/>
-  <text x="136" y="458" fill="#173128" font-family="Helvetica, Arial, sans-serif" font-size="26" font-weight="700">Stable front door</text>
-  <text x="136" y="494" fill="#173128" font-family="Helvetica, Arial, sans-serif" font-size="24" font-weight="500">Service/runtime first</text>
-  <text x="136" y="526" fill="#173128" font-family="Helvetica, Arial, sans-serif" font-size="24" font-weight="500">Later lanes need fresh read-back</text>
-  <rect x="706" y="154" width="430" height="94" rx="22" fill="#e4cfa8"/>
-  <text x="738" y="202" fill="#182c25" font-family="Helvetica, Arial, sans-serif" font-size="30" font-weight="800">Machine-readable truth</text>
-  <text x="738" y="234" fill="#182c25" font-family="Helvetica, Arial, sans-serif" font-size="24" font-weight="600">Read-only MCP descriptor</text>
-  <rect x="706" y="282" width="430" height="178" rx="22" fill="#dbe7d6"/>
-  <text x="738" y="328" fill="#183127" font-family="Helvetica, Arial, sans-serif" font-size="28" font-weight="800">Companion surfaces</text>
-  <text x="738" y="366" fill="#183127" font-family="Helvetica, Arial, sans-serif" font-size="24" font-weight="500">Runtime-diagnostics packet</text>
-  <text x="738" y="400" fill="#183127" font-family="Helvetica, Arial, sans-serif" font-size="24" font-weight="500">Claude-compatible bundle</text>
-  <text x="738" y="434" fill="#183127" font-family="Helvetica, Arial, sans-serif" font-size="24" font-weight="500">Docs and starter packs</text>
-  <text x="738" y="468" fill="#183127" font-family="Helvetica, Arial, sans-serif" font-size="24" font-weight="500">No listed/live claim by default</text>
+  <text x="104" y="212" fill="#f8f5ec" font-family="Helvetica, Arial, sans-serif" font-size="56" font-weight="800">One shared provider runtime</text>
+  <text x="104" y="272" fill="#f8f5ec" font-family="Helvetica, Arial, sans-serif" font-size="56" font-weight="800">for AI apps</text>
+  <text x="104" y="324" fill="#d7e3d8" font-family="Helvetica, Arial, sans-serif" font-size="22" font-weight="500">BYOK + Web/Login. One service-first runtime.</text>
+  <text x="104" y="354" fill="#d7e3d8" font-family="Helvetica, Arial, sans-serif" font-size="22" font-weight="500">Proof before overclaim.</text>
+  <rect x="850" y="182" width="286" height="176" rx="24" fill="#dbe7d6"/>
+  <text x="878" y="218" fill="#183127" font-family="Helvetica, Arial, sans-serif" font-size="22" font-weight="800">What ships now</text>
+  <rect x="876" y="234" width="226" height="28" rx="10" fill="#f9fcf9" stroke="#c6d6cb" stroke-opacity="0.8"/>
+  <rect x="876" y="268" width="226" height="28" rx="10" fill="#f9fcf9" stroke="#c6d6cb" stroke-opacity="0.8"/>
+  <rect x="876" y="302" width="226" height="28" rx="10" fill="#f9fcf9" stroke="#c6d6cb" stroke-opacity="0.8"/>
+  <text x="892" y="253" fill="#183127" font-family="Helvetica, Arial, sans-serif" font-size="18" font-weight="700">Docs</text>
+  <text x="892" y="287" fill="#183127" font-family="Helvetica, Arial, sans-serif" font-size="18" font-weight="700">Proof pack</text>
+  <text x="892" y="321" fill="#183127" font-family="Helvetica, Arial, sans-serif" font-size="18" font-weight="700">Read-only status</text>
 </svg>

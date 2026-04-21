@@ -85,6 +85,23 @@ function formatDocTitle(docPath) {
     .join(" ");
 }
 
+function formatDocMetaLabel(docPath) {
+  const title = formatDocTitle(docPath);
+  switch (docPath) {
+    case "README.md":
+    case "docs/README.md":
+      return "Public Docs";
+    case "docs/media/README.md":
+      return "Media Shelf";
+    case "docs/public-proof-pack.md":
+      return "Proof pack";
+    case "docs/public-distribution-ledger.md":
+      return "Distribution ledger";
+    default:
+      return title || docPath;
+  }
+}
+
 export function renderInline(
   source,
   currentDocPath,
@@ -332,9 +349,12 @@ export async function mountViewer({
     frontDoorLink.href = resolveFrontDoorHref(locationHref);
   }
   rawLink.href = resolveRepoAssetHref(docPath, locationHref);
-  docPathNode.textContent = docPath;
+  if (docPathNode) {
+    docPathNode.textContent = formatDocMetaLabel(docPath);
+  }
   title.textContent = formatDocTitle(docPath);
-  subtitle.textContent = "Rendered markdown view for first-row and deeper public docs routes.";
+  subtitle.textContent =
+    "Reader view for supporting public docs and proof pages. This is a deeper public shelf, not the front door.";
 
   try {
     const response = await fetchImpl(resolveRepoAssetHref(docPath, locationHref));

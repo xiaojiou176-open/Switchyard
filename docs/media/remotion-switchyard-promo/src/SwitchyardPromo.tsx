@@ -20,8 +20,14 @@ const palette = {
   line: "rgba(21, 49, 38, 0.1)",
 };
 
+const identityShipRows = [
+  "Docs",
+  "Proof pack",
+  "Read-only status",
+] as const;
+
 const sceneTitleStyle: React.CSSProperties = {
-  fontSize: 88,
+  fontSize: 100,
   lineHeight: 1,
   letterSpacing: "-0.06em",
   fontWeight: 800,
@@ -100,7 +106,7 @@ const FrameShell: React.FC<{ children: React.ReactNode }> = ({ children }) => (
   <AbsoluteFill style={gradientBackdrop(0)}>
     <AbsoluteFill
       style={{
-        padding: "68px 84px",
+        padding: "54px 64px",
         fontFamily:
           'Inter, "IBM Plex Sans", "Helvetica Neue", Arial, sans-serif',
       }}
@@ -119,10 +125,10 @@ const IdentityScene: React.FC = () => {
         style={{
           ...cardStyle,
           display: "grid",
-          gridTemplateColumns: "1.35fr 0.75fr",
-          gap: 36,
-          padding: 46,
-          minHeight: 560,
+          gridTemplateColumns: "1.28fr 0.8fr",
+          gap: 30,
+          padding: 54,
+          minHeight: 620,
         }}
       >
         <div style={fadeUpStyle(frame, 0, 28)}>
@@ -134,15 +140,14 @@ const IdentityScene: React.FC = () => {
               color: palette.accent,
             }}
           >
-            Shared provider runtime
+            Switchyard
           </div>
           <h1 style={{ ...sceneTitleStyle, marginTop: 26 }}>
-            Switchyard is the runtime pipe for AI apps.
+            One shared provider runtime for AI apps.
           </h1>
           <p style={{ ...sceneBodyStyle, marginTop: 26 }}>
-            Not another chat shell. Not another all-in-one AI app. One shared
-            runtime layer that turns end-user access into a service-first
-            substrate.
+            BYOK + Web/Login. One service-first runtime. Proof before
+            overclaim.
           </p>
           <div
             style={{
@@ -152,7 +157,7 @@ const IdentityScene: React.FC = () => {
               marginTop: 32,
             }}
           >
-            {["BYOK + Web/Login", "Service-first", "Truth-first public surface"].map((item) => (
+            {["BYOK + Web/Login", "Service-first", "Proof before overclaim"].map((item) => (
               <div key={item} style={chipStyle}>
                 {item}
               </div>
@@ -163,75 +168,57 @@ const IdentityScene: React.FC = () => {
           style={{
             ...fadeUpStyle(frame, 10, 28),
             ...cardStyle,
-            padding: 24,
+            padding: 28,
             display: "grid",
             alignContent: "space-between",
             background: "rgba(245,250,246,0.92)",
           }}
         >
-          <div>
-            <p
-              style={{
-                fontSize: 22,
-                fontWeight: 700,
-                color: palette.accentStrong,
-                letterSpacing: "0.08em",
-                textTransform: "uppercase",
-                margin: 0,
-              }}
-            >
-              Public front door
-            </p>
-            <p
-              style={{
-                marginTop: 14,
-                fontSize: 24,
-                lineHeight: 1.45,
-                color: palette.muted,
-              }}
-            >
-              GitHub Pages root atlas
-              <br />
-              Service runtime docs
-              <br />
-              Thin compat docs
-            </p>
-          </div>
           <div
             style={{
               width: "100%",
-              minHeight: 240,
+              minHeight: 320,
               borderRadius: 24,
               border: `1px solid ${palette.line}`,
               background:
                 "linear-gradient(145deg, rgba(255,255,255,0.96), rgba(238,246,240,0.92))",
               display: "grid",
+              alignContent: "start",
               gap: 14,
               padding: 20,
             }}
           >
-            {[
-              "Shared provider runtime",
-              "BYOK + Web/Login",
-              "Read-only MCP",
-              "Thin compat + proof pack",
-            ].map((line, index) => (
-              <div
-                key={line}
+            <div style={{ display: "grid", gap: 10 }}>
+              <p
                 style={{
-                  ...chipStyle,
-                  fontSize: 20,
-                  justifySelf: index % 2 === 0 ? "start" : "end",
-                  background:
-                    index === 0
-                      ? palette.accentSoft
-                      : "rgba(255,255,255,0.92)",
-                  color: index === 0 ? palette.accent : palette.ink,
+                  margin: 0,
+                  fontSize: 18,
+                  lineHeight: 1.3,
+                  color: palette.accentStrong,
+                  fontWeight: 800,
+                  letterSpacing: "0.06em",
                 }}
               >
-                {line}
-              </div>
-            ))}
+                What ships now
+              </p>
+              {identityShipRows.map((row) => (
+                <div
+                  key={row}
+                  style={{
+                    padding: "14px 16px",
+                    borderRadius: 18,
+                    border: `1px solid ${palette.line}`,
+                    background: "rgba(255,255,255,0.88)",
+                    fontSize: 22,
+                    lineHeight: 1.18,
+                    color: palette.ink,
+                    fontWeight: 700,
+                  }}
+                >
+                  {row}
+                </div>
+              ))}
+            </div>
           </div>
         </div>
       </div>
@@ -355,7 +342,7 @@ const TruthScene: React.FC = () => {
           <h2 style={{ ...sceneTitleStyle, fontSize: 70, marginTop: 24 }}>
             Strong public surface,
             <br />
-            zero fake green.
+            honest proof sequence.
           </h2>
           <div
             style={{
@@ -366,9 +353,9 @@ const TruthScene: React.FC = () => {
           >
             {[
               "Repo-native runtime and service-first HTTP surface",
-              "Partial thin compat for Codex, Claude Code, OpenClaw",
-              "Read-only MCP descriptor and runtime diagnostics packet",
-              "Root front door plus live markdown docs that stay truthful",
+              "Public docs that explain what ships now",
+              "Read-only MCP status and runtime diagnostics packet",
+              "Thin compat shelves that stay honest about current limits",
             ].map((item) => (
               <div
                 key={item}
@@ -418,7 +405,7 @@ const TruthScene: React.FC = () => {
               <br />
               Partial is not parity.
               <br />
-              Local proof is not global overclaim.
+              Proof stays ahead of overclaim.
             </p>
           </div>
           <div

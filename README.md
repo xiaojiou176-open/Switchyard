@@ -1,6 +1,6 @@
 # Switchyard
 
-**Shared provider runtime for AI apps.**
+**One shared provider runtime for AI apps.**
 
 Switchyard turns end-user `BYOK + Web/Login` access into one service-first
 runtime that AI products can call without rebuilding provider routing,
@@ -13,7 +13,7 @@ apps can depend on.
 <p align="center">
   <img
     src="./.github/social-preview-switchyard.svg"
-    alt="Switchyard social preview: shared provider runtime for AI apps. BYOK plus Web/Login. Read-only MCP descriptor. Runtime-diagnostics packet. Later lanes need fresh read-back."
+    alt="Switchyard social preview: one shared provider runtime for AI apps. BYOK plus Web/Login. Docs, proof pack, and a read-only status view."
     width="960"
   />
 </p>

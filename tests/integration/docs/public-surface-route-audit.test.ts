@@ -17,7 +17,7 @@ const publicSurfaceCases = [
     label: "docs-atlas",
     path: "/README.md",
     expectedContentType: "text/markdown",
-    expectedSnippet: "Switchyard Docs Atlas",
+    expectedSnippet: "Switchyard Public Docs",
   },
   {
     label: "first-success",

@@ -210,13 +210,19 @@ function renderDetailedBrowserDiagnostics(sharedDiagnostic: SharedDiagnosticStat
     return "";
   }
 
-  return `<section class="section">
-    <header class="section-header">
-      <h2>Detailed browser diagnostics</h2>
-      <p>${escapeHtml(sharedDiagnostic.condensedSummary ?? "")}</p>
-    </header>
-    <pre>${escapeHtml(sharedDiagnostic.repeatedRaw)}</pre>
-  </section>`;
+  return renderDiagnosticTray(
+    "Detailed browser evidence",
+    sharedDiagnostic.condensedSummary ??
+      "Open the raw browser diagnostic only when the summary and next step still are not enough.",
+    `<section class="section">
+      <header class="section-header">
+        <h2>Detailed browser evidence</h2>
+        <p>${escapeHtml(sharedDiagnostic.condensedSummary ?? "")}</p>
+      </header>
+      <pre>${escapeHtml(sharedDiagnostic.repeatedRaw)}</pre>
+    </section>`,
+    { badge: "Raw log" },
+  );
 }
 
 function renderDiagnosticTray(
@@ -596,8 +602,8 @@ export function renderProviderDebugWorkbench(
   const nextStepSummary = truthFocus?.summary ?? nextAction?.summary ?? "No next step recorded.";
   const nextStepDetail = truthFocus?.detail;
   const nextStepCommand = nextAction?.command;
-  const nextStepCommandLabel = truthFocus ? "Rerun after the blocker clears" : "Run this next";
-  const primaryWorkbenchActionLabel = truthFocus ? "Open repair ladder" : "Open evidence stack";
+  const nextStepCommandLabel = truthFocus ? "Rerun after the blocker clears" : "Next check";
+  const primaryWorkbenchActionLabel = truthFocus ? "Open repair ladder" : "Open browser evidence";
   const runtimeSummary = truthFocus?.runtimeSummary ?? debug.auth.statusSummary;
   const currentBrowserSummary =
     sharedDiagnostic.repeatedRaw &&
@@ -613,13 +619,17 @@ export function renderProviderDebugWorkbench(
     debug.currentNetwork.diagnostic,
     sharedDiagnostic,
   );
+  const nextStepTone =
+    debug.liveReadiness.status === "live-ready" && runtimePathStatus === "ready"
+      ? "ok"
+      : "warning";
 
   return `<!doctype html>
 <html lang="en">
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>${escapeHtml(debug.providerDisplayName)} debug workbench</title>
+    <title>${escapeHtml(debug.providerDisplayName)} browser readiness</title>
     <style>
       :root {
         color-scheme: dark;
@@ -810,6 +820,15 @@ export function renderProviderDebugWorkbench(
           rgba(255, 255, 255, 0.18) 0 1px 0 0 inset;
       }
 
+      .pill-link-warning {
+        background: rgba(199, 139, 44, 0.18);
+        color: #f4d18a;
+        border-color: rgba(199, 139, 44, 0.3);
+        box-shadow:
+          0 12px 24px rgba(199, 139, 44, 0.12),
+          rgba(255, 255, 255, 0.12) 0 1px 0 0 inset;
+      }
+
       .pill-link-quiet {
         padding: 0;
         border: 0;
@@ -864,7 +883,8 @@ export function renderProviderDebugWorkbench(
           rgba(7, 8, 10, 0.86) 0 0 0 1px inset;
       }
 
-      .hero-meta-card-next {
+      .hero-meta-card-ok,
+      .hero-meta-card-warning {
         border-color: rgba(63, 165, 107, 0.3);
         background:
           linear-gradient(180deg, rgba(63, 165, 107, 0.16), rgba(63, 165, 107, 0.045)),
@@ -876,7 +896,20 @@ export function renderProviderDebugWorkbench(
           rgba(255, 255, 255, 0.05) 0 1px 0 0 inset;
       }
 
-      .hero-meta-card-next p:nth-of-type(2) {
+      .hero-meta-card-warning {
+        border-color: rgba(199, 139, 44, 0.28);
+        background:
+          linear-gradient(180deg, rgba(199, 139, 44, 0.14), rgba(199, 139, 44, 0.04)),
+          var(--panel-raised);
+        box-shadow:
+          0 18px 34px rgba(199, 139, 44, 0.08),
+          rgba(27, 28, 30, 0.95) 0 0 0 1px,
+          rgba(7, 8, 10, 0.88) 0 0 0 1px inset,
+          rgba(255, 255, 255, 0.05) 0 1px 0 0 inset;
+      }
+
+      .hero-meta-card-ok p:nth-of-type(2),
+      .hero-meta-card-warning p:nth-of-type(2) {
         font-size: 1.05rem;
         line-height: 1.42;
         color: var(--ink);
@@ -894,7 +927,8 @@ export function renderProviderDebugWorkbench(
         margin-top: 0;
       }
 
-      .hero-meta-card-next pre {
+      .hero-meta-card-ok pre,
+      .hero-meta-card-warning pre {
         padding: 0.9rem;
         border-radius: 16px;
         background: rgba(10, 15, 12, 0.56);
@@ -1304,26 +1338,26 @@ export function renderProviderDebugWorkbench(
       <section class="hero">
         <div class="hero-copy">
           <div class="hero-topline">
-            <p class="eyebrow">Read-only inspection surface</p>
-            <span class="hero-chip">Truth-first diagnosis cockpit</span>
+            <p class="eyebrow">Browser readiness check</p>
+            <span class="hero-chip">Saved session and current browser</span>
           </div>
-          <h1>${escapeHtml(debug.providerDisplayName)} debug workbench</h1>
-          <p class="hero-intro">This page compares <strong>stored material truth</strong> against <strong>the currently attached browser reality</strong>. It is a diagnosis bench, not a control plane, and it never invents green lights from missing evidence.</p>
+          <h1>${escapeHtml(debug.providerDisplayName)} browser readiness</h1>
+          <p class="hero-intro">Start with one question: <strong>does this browser still look usable</strong>? This page compares saved session material with the current browser page, and it never invents green lights from missing evidence.</p>
       <div class="hero-actions">
-            <a class="pill-link pill-link-primary" href="#evidence-stack">${escapeHtml(primaryWorkbenchActionLabel)}</a>
-            <a class="pill-link" href="${escapeHtml(authPortalRoute)}">Back to auth portal</a>
-            <a class="pill-link pill-link-quiet" href="${escapeHtml(debug.routes.debugSupportBundle)}" target="_blank" rel="noopener">Need the raw bundle? Open support bundle JSON.</a>
+            <a class="pill-link ${nextStepTone === "ok" ? "pill-link-primary" : "pill-link-warning"}" href="#evidence-stack">${escapeHtml(primaryWorkbenchActionLabel)}</a>
+            <a class="pill-link pill-link-quiet" href="${escapeHtml(authPortalRoute)}">Back to auth portal</a>
+            <a class="pill-link pill-link-quiet" href="${escapeHtml(debug.routes.debugSupportBundle)}" target="_blank" rel="noopener">Open support bundle</a>
           </div>
         </div>
         <div class="hero-meta">
-          <article class="hero-meta-card hero-meta-card-next">
+          <article class="hero-meta-card hero-meta-card-${nextStepTone}">
             <p class="eyebrow eyebrow-compact">${escapeHtml(nextStepEyebrow)}</p>
             <p class="hero-next-step-summary"><strong>Next repair step:</strong> ${escapeHtml(nextStepSummary)}</p>
             ${nextStepDetail ? `<p>${escapeHtml(nextStepDetail)}</p>` : ""}
             ${nextStepCommand ? `<span class="hero-command-label">${escapeHtml(nextStepCommandLabel)}</span><pre>${escapeHtml(nextStepCommand)}</pre>` : ""}
           </article>
           <article class="hero-meta-card hero-meta-card-quiet">
-            <p class="eyebrow eyebrow-compact">Technical attach target</p>
+            <p class="eyebrow eyebrow-compact">Browser connection</p>
             <p>${escapeHtml(debug.attachTarget.note)}</p>
             <div class="meta-row">
               ${renderOptionalCode("source", debug.attachTarget.source)}

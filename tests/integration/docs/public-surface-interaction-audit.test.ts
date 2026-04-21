@@ -12,7 +12,7 @@ const routeChecks = [
   {
     href: "./README.md",
     urlSuffix: "/README.md",
-    snippet: "Switchyard Docs Atlas",
+    snippet: "Switchyard Public Docs",
   },
   {
     href: "./media/30-second-overview.md",
