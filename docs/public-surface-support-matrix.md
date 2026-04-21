@@ -22,7 +22,8 @@ If the question becomes local bootstrap or workstation-bound reality, open
 deeper than the first-row product route.
 
 Wave 1 working packs no longer belong in the public docs plane. They now live
-under `.agents/internal-docs/wave1/`.
+in a private maintainer-only `.agents/` shelf that is intentionally not part of
+the public repo history.
 
 ## Current Rule
 
@@ -39,7 +40,7 @@ The current public story is:
 | --- | --- | --- | --- |
 | `HTTP/API` | `supported now` | Durable runtime discovery, auth, remediation, acquisition, invoke, and read-only browser-debug workbench routes are public and repo-backed today. | `docs/api/openapi.yaml`, `docs/api/service-http-reference.md`, `packages/surfaces/http/src/http-surface.ts`, `packages/surfaces/http/src/service-language.ts` |
 | `SDK/client` | `partial` | BYOK SDK, service client, and web helper exist, but they do not replace the service/runtime substrate as the primary public front door. | `docs/api/sdk-quickstart.md`, `packages/sdk/src/index.ts`, `packages/surfaces/sdk-client/src/service-client.ts` |
-| `CLI` | `partial` | The read-only builder/runtime helper is landed. It is not an execution brain or a publication claim. | `scripts/switchyard-cli.mjs`, `tests/unit/web/switchyard-cli.test.ts`, `.agents/internal-docs/blueprints/wave6-outward-packaging-threshold.md` |
+| `CLI` | `partial` | The read-only builder/runtime helper is landed. It is not an execution brain or a publication claim. | `scripts/switchyard-cli.mjs`, `tests/unit/web/switchyard-cli.test.ts`, `docs/public-distribution-ledger.md` |
 | `MCP` | `partial` | A read-only stdio MCP server/tool surface is landed on main and delegates to the same runtime inspection substrate. It is not an execution brain or full consumer parity. | `docs/mcp.md`, `packages/surfaces/mcp/src/index.ts`, `scripts/switchyard-mcp.mjs`, `tests/unit/mcp/switchyard-mcp.test.ts` |
 | `Codex compat` | `partial` | A thin fail-closed adapter exists for text/runtime delegation only. | `docs/compat/codex.md`, `packages/consumers/codex/src/index.ts`, `tests/unit/compat/codex-consumer.test.ts` |
 | `Claude Code compat` | `partial` | A thin fail-closed adapter exists for message/runtime delegation only. | `docs/compat/claude-code.md`, `packages/consumers/claude-code/src/index.ts`, `tests/unit/compat/claude-code-consumer.test.ts` |

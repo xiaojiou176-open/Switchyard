@@ -36,8 +36,7 @@ describe("Switchyard docs frontdoor contracts", () => {
     expect(docsReadme).toContain("docs/public-surface-support-matrix.md");
     expect(docsReadme).toContain("Use the front row for");
     expect(docsReadme).toContain("Do **not** use this page to flatten:");
-    expect(docsReadme).toContain(".agents/internal-docs/testing/testing-pyramid.md");
-    expect(docsReadme).toContain(".agents/internal-docs/");
+    expect(docsReadme).toContain("private maintainer-only `.agents/` shelf");
     expect(docsReadme).toContain("If a new reader cannot decide where to go within a few seconds");
     expect(docsReadme).toContain("use the repo");
     expect(docsReadme).toContain("tree or CLI surfaces");
@@ -443,7 +442,7 @@ describe("Switchyard docs frontdoor contracts", () => {
     expect(llms).toContain("catalogs/mcp-tool-catalog.schema.json");
     expect(llms).toContain("docs/mcp.md");
     expect(llms).toContain("docs/i18n.md");
-    expect(llms).toContain(".agents/internal-docs/testing/testing-pyramid.md");
+    expect(llms).toContain("private maintainer-only testing/governance notes");
     expect(llms).toContain("docs/discoverability-keyword-truth.md");
     expect(llms).toContain("catalogs/discoverability-keyword-truth.json");
     expect(llms).toContain("catalogs/discoverability-keyword-truth.schema.json");
@@ -465,7 +464,7 @@ describe("Switchyard docs frontdoor contracts", () => {
     expect(readme).toContain("docs/api/openapi.yaml");
     expect(readme).toContain("docs/api/mcp-readonly-server.md");
     expect(readme).toContain("docs/api/web-login-acquisition.md");
-    expect(readme).toContain(".agents/internal-docs/testing/");
+    expect(readme).toContain("private local `.agents/` shelf");
     expect(readme).toContain("pnpm run test:coverage");
     expect(readme).toContain("shared provider runtime");
     expect(readme).toContain("read-only MCP descriptor");
@@ -479,7 +478,7 @@ describe("Switchyard docs frontdoor contracts", () => {
     expect(readme).toContain("docs/host-integration-playbooks.md");
     expect(readme).toContain("docs/host-integration-examples.md");
     expect(readme).toContain("[docs/README.md](./docs/README.md)");
-    expect(readme).toContain(".agents/internal-docs/blueprints/");
+    expect(readme).toContain("private local `.agents/` shelf");
     expect(readme).not.toContain("docs/shared-provider-runtime.md");
     expect(readme).not.toContain("catalogs/public-surface-catalog.schema.json");
     expect(readme).not.toContain("docs/starter-manifest-examples.md");
@@ -512,7 +511,6 @@ describe("Switchyard docs frontdoor contracts", () => {
   it("keeps blocker wording and default service port aligned across frontdoor docs", () => {
     const readme = read("README.md");
     const proofPack = read("docs/public-proof-pack.md");
-    const v1Plan = read(".agents/internal-docs/blueprints/v1-delivery-plan.md");
     const openapi = read("docs/api/openapi.yaml");
     const serviceReference = read("docs/api/service-http-reference.md");
     const sdkQuickstart = read("docs/api/sdk-quickstart.md");
@@ -521,8 +519,6 @@ describe("Switchyard docs frontdoor contracts", () => {
     expect(readme).toContain("Live/browser outcomes are important");
     expect(readme).not.toContain("`Gemini / Grok`");
     expect(proofPack).toContain("`Claude`");
-    expect(v1Plan).toContain("`Claude`");
-    expect(v1Plan).toContain("live snapshot 继续放在 `docs/public-proof-pack.md`");
     expect(openapi).toContain("http://127.0.0.1:4010");
     expect(openapi).not.toContain("http://127.0.0.1:4317");
     expect(serviceReference).toContain("http://127.0.0.1:4010");
