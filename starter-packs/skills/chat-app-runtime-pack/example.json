@@ -1,0 +1,28 @@
+{
+  "$schema": "../../../catalogs/starter-manifest-examples.schema.json",
+  "exampleVersion": 1,
+  "builderExamples": [],
+  "skillExamples": [
+    {
+      "id": "chat-app-runtime-pack",
+      "status": "planned",
+      "exampleShape": "chat-app-runtime-bridge",
+      "example": {
+        "name": "chat-app-runtime-pack-example",
+        "catalogCommand": "pnpm exec node starter-packs/skills/chat-app-runtime-pack/smoke.mjs",
+        "steps": [
+          "pnpm exec node starter-packs/skills/chat-app-runtime-pack/smoke.mjs",
+          "pnpm run switchyard:cli -- surface-catalog --json",
+          "pnpm run switchyard:cli -- provider-catalog --json",
+          "cat docs/api/service-http-reference.md",
+          "cat docs/api/sdk-quickstart.md"
+        ]
+      },
+      "safeClaims": [
+        "chat-app runtime scaffold",
+        "service-first bridge planning pack",
+        "no full product shell"
+      ]
+    }
+  ]
+}

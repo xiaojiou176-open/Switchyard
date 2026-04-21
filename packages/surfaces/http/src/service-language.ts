@@ -11,6 +11,13 @@ import {
   type AuthRuntimeView
 } from '../../../diagnostics/src/index.js';
 import type {
+  CapabilityMatrix,
+  CapabilityId,
+  CredentialState as RuntimeCredentialState,
+  RuntimePolicyProfileId,
+  RuntimeDispatchReason,
+} from '../../../contracts/src/index.js';
+import type {
   DiagnosticRecord,
   ProviderStatusView,
   WebLiveProofResult,
@@ -40,8 +47,12 @@ export interface ServiceRuntimeRouteCatalog {
   byokProviders: string;
   authStatus: string;
   health: string;
+  runtimeDoctor: string;
+  runtimePlan: string;
   invoke: string;
   byokInvoke: string;
+  dispatchPlan: string;
+  providerDoctorTemplate: string;
   providerStatusTemplate: string;
   providerProbeTemplate: string;
   providerRemediationTemplate: string;
@@ -55,6 +66,7 @@ export interface ServiceRuntimeRouteCatalog {
 }
 
 export interface ServiceProviderRouteRefs {
+  doctor: string;
   status: string;
   probe: string;
   remediation: string;
@@ -119,6 +131,174 @@ export interface ServiceProviderRuntimeView {
   credentialState: ProviderStatusView['credentialState'];
   sessionPresence: ProviderStatusView['sessionPresence'];
   degradedInvocationPolicy: ProviderStatusView['degradedInvocationPolicy'];
+}
+
+export interface ServiceRuntimeDispatchPlanView {
+  providerId: string;
+  requestedModel: string;
+  policyProfile?: RuntimePolicyProfileId;
+  selectedLane?: "byok" | "web-login";
+  preferredLane?: "byok" | "web-login";
+  dispatchReason?: RuntimeDispatchReason;
+  candidateLanes: Array<"byok" | "web-login">;
+  credentialStates: Partial<Record<"byok" | "web-login", RuntimeCredentialState>>;
+  dispatchable: boolean;
+  blocked: boolean;
+  runtimeCanInvoke?: boolean;
+  remediationState?: string;
+  blockerClassification?: string;
+  blockerSummary?: string;
+}
+
+export interface ServiceProviderPolicyLaneBindingView {
+  laneId: "byok" | "web-login";
+  authModes: string[];
+  defaultModel?: string;
+  recommendedModel?: string;
+  capabilityMatrix: CapabilityMatrix;
+  diagnosticsStatus: string;
+  catalogSource: string;
+}
+
+export interface ServiceProviderPolicyView {
+  providerId: string;
+  displayName: string;
+  registeredLanes: Array<"byok" | "web-login">;
+  laneBindings: ServiceProviderPolicyLaneBindingView[];
+  dispatchPolicy: {
+    kind: "single-lane-provider" | "credential-aware-auto-lane";
+    laneOrder: Array<"byok" | "web-login">;
+    defaultLane?: "byok" | "web-login";
+    requiresCredentialStateMap: boolean;
+    autoDispatches: boolean;
+  };
+  doctorEntryPoints: {
+    serviceRoute: string;
+    cliCommand: string;
+    mcpTool: string;
+    providerCatalogTarget: string;
+  };
+}
+
+export interface ServiceProviderDoctorAlignmentView {
+  story: "dispatchable" | "blocked";
+  runtimeCanInvoke: boolean;
+  remediationState?: string;
+  blockerClassification?: string;
+  blockerSummary?: string;
+  liveReadiness?: "live-ready" | "live-blocked" | "unknown";
+}
+
+export interface ServiceProviderDoctorReceiptView {
+  summary: string;
+  recommendedCliCommands: string[];
+  recommendedMcpTools: string[];
+  remediationWorkflow: ServiceRemediationWorkflowView;
+}
+
+export interface ServiceProviderDoctorView {
+  providerId: string;
+  displayName: string;
+  activePolicyProfile?: RuntimePolicyProfileId;
+  availablePolicyProfiles?: RuntimePolicyProfileId[];
+  policy: ServiceProviderPolicyView;
+  dispatchPlan: ServiceRuntimeDispatchPlanView;
+  alignment: ServiceProviderDoctorAlignmentView;
+  receipt: ServiceProviderDoctorReceiptView;
+  probe?: ServiceProviderProbeView;
+  remediation?: ServiceProviderRemediationView;
+  diagnose?: ServiceProviderDebugSupportView;
+  routes: ServiceProviderRouteRefs;
+}
+
+export interface ServiceRemediationWorkflowStepView {
+  id: string;
+  label: string;
+  cliCommand?: string;
+  mcpTool?: string;
+  route?: string;
+}
+
+export interface ServiceRemediationWorkflowView {
+  providerId: string;
+  story: "dispatchable" | "blocked";
+  summary: string;
+  steps: ServiceRemediationWorkflowStepView[];
+}
+
+export interface ServiceRuntimeControlLedgerProviderView {
+  providerId: string;
+  displayName: string;
+  selectedLane?: "byok" | "web-login";
+  doctorRoute: string;
+  blockerClassification?: string;
+  summary: string;
+}
+
+export interface ServiceRuntimeDoctorView {
+  generatedAt: string;
+  activePolicyProfile: RuntimePolicyProfileId;
+  availablePolicyProfiles: RuntimePolicyProfileId[];
+  summary: {
+    totalProviders: number;
+    dispatchableCount: number;
+    blockingCount: number;
+    blockingProviders: string[];
+    readyProviders: string[];
+  };
+  strongestNextSteps: string[];
+  controlLedger: {
+    routes: Pick<
+      ServiceRuntimeRouteCatalog,
+      "runtimeDoctor" | "runtimePlan" | "invoke" | "authPortal"
+    >;
+    dispatchableProviders: ServiceRuntimeControlLedgerProviderView[];
+    blockedProviders: ServiceRuntimeControlLedgerProviderView[];
+    remediationWorkflows: ServiceRemediationWorkflowView[];
+  };
+  providers: ServiceProviderDoctorView[];
+}
+
+export interface ServiceRuntimePlanCandidateView {
+  providerId: string;
+  displayName: string;
+  laneId: "byok" | "web-login";
+  modelId: string;
+  dispatchable: boolean;
+  score: number;
+  reasons: string[];
+  doctorRoute: string;
+}
+
+export interface ServiceRuntimePlanView {
+  policyProfile: RuntimePolicyProfileId;
+  requiredCapabilities: CapabilityId[];
+  recommendations: ServiceRuntimePlanCandidateView[];
+  blockers: string[];
+  recommended?: ServiceRuntimePlanCandidateView;
+}
+
+export interface ServiceInvokeReceiptView {
+  policyProfile: RuntimePolicyProfileId;
+  providerId: string;
+  laneId: "byok" | "web-login";
+  modelId: string;
+  requestedModel: string;
+  dispatchReason?: RuntimeDispatchReason;
+  doctorRoute: string;
+  readinessSnapshot: {
+    dispatchable: boolean;
+    remediationState?: string;
+    blockerClassification?: string;
+  };
+  lineage: {
+    runtimeDoctorRoute: string;
+    runtimePlanRoute: string;
+    dispatchPlanRoute: string;
+    providerDoctorRoute: string;
+  };
+  remediationWorkflow: ServiceRemediationWorkflowView;
+  suggestedNextStep?: string;
 }
 
 export interface ServiceProviderProbeView {
@@ -293,8 +473,12 @@ export const SERVICE_RUNTIME_ROUTE_TEMPLATES: ServiceRuntimeRouteCatalog = {
   byokProviders: '/v1/runtime/byok/providers',
   authStatus: '/v1/runtime/auth-status',
   health: '/v1/runtime/health',
+  runtimeDoctor: '/v1/runtime/doctor',
+  runtimePlan: '/v1/runtime/plan',
   invoke: '/v1/runtime/invoke',
   byokInvoke: '/v1/runtime/byok/invoke',
+  dispatchPlan: '/v1/runtime/dispatch-plan',
+  providerDoctorTemplate: '/v1/runtime/providers/{providerId}/doctor',
   providerStatusTemplate: '/v1/runtime/providers/{providerId}/status',
   providerProbeTemplate: '/v1/runtime/providers/{providerId}/probe',
   providerRemediationTemplate: '/v1/runtime/providers/{providerId}/remediation',
@@ -359,8 +543,15 @@ export function buildServiceRouteCatalog(baseUrl?: string): ServiceRuntimeRouteC
     byokProviders: withBaseUrl(SERVICE_RUNTIME_ROUTE_TEMPLATES.byokProviders, baseUrl),
     authStatus: withBaseUrl(SERVICE_RUNTIME_ROUTE_TEMPLATES.authStatus, baseUrl),
     health: withBaseUrl(SERVICE_RUNTIME_ROUTE_TEMPLATES.health, baseUrl),
+    runtimeDoctor: withBaseUrl(SERVICE_RUNTIME_ROUTE_TEMPLATES.runtimeDoctor, baseUrl),
+    runtimePlan: withBaseUrl(SERVICE_RUNTIME_ROUTE_TEMPLATES.runtimePlan, baseUrl),
     invoke: withBaseUrl(SERVICE_RUNTIME_ROUTE_TEMPLATES.invoke, baseUrl),
     byokInvoke: withBaseUrl(SERVICE_RUNTIME_ROUTE_TEMPLATES.byokInvoke, baseUrl),
+    dispatchPlan: withBaseUrl(SERVICE_RUNTIME_ROUTE_TEMPLATES.dispatchPlan, baseUrl),
+    providerDoctorTemplate: withBaseUrl(
+      SERVICE_RUNTIME_ROUTE_TEMPLATES.providerDoctorTemplate,
+      baseUrl
+    ),
     providerStatusTemplate: withBaseUrl(
       SERVICE_RUNTIME_ROUTE_TEMPLATES.providerStatusTemplate,
       baseUrl
@@ -409,6 +600,7 @@ export function buildServiceProviderRouteRefs(
   baseUrl?: string
 ): ServiceProviderRouteRefs {
   return {
+    doctor: withBaseUrl(`/v1/runtime/providers/${providerId}/doctor`, baseUrl),
     status: withBaseUrl(`/v1/runtime/providers/${providerId}/status`, baseUrl),
     probe: withBaseUrl(`/v1/runtime/providers/${providerId}/probe`, baseUrl),
     remediation: withBaseUrl(`/v1/runtime/providers/${providerId}/remediation`, baseUrl),
@@ -559,6 +751,502 @@ export function buildServiceProviderRuntimeView(
     credentialState: provider.credentialState,
     sessionPresence: provider.sessionPresence,
     degradedInvocationPolicy: provider.degradedInvocationPolicy
+  };
+}
+
+function mapByokDispatchBlockerClassification(
+  state: RuntimeCredentialState | undefined,
+) {
+  switch (state) {
+    case "missing":
+      return "missing-credential";
+    case "expired":
+      return "session-expired";
+    case "invalid":
+      return "credential-invalid";
+    case "user-action-required":
+      return "user-action-required";
+    case "refreshable-degraded":
+      return "refreshable-degraded";
+    default:
+      return undefined;
+  }
+}
+
+function mapWebDispatchBlockerClassification(provider: ProviderStatusView): string | undefined {
+  const workspaceClassification = provider.session.persistenceAudit?.workspaceClassification;
+
+  if (
+    workspaceClassification === "session-incomplete" ||
+    workspaceClassification === "human-verification-required" ||
+    workspaceClassification === "account-action-required" ||
+    workspaceClassification === "permission-gated"
+  ) {
+    return workspaceClassification;
+  }
+
+  const detailText = [
+    provider.session.requiredUserAction,
+    provider.session.degradedReason,
+    provider.recommendedAction,
+    ...provider.diagnostics.map((diagnostic) => diagnostic.message),
+  ]
+    .filter(Boolean)
+    .join(" ")
+    .toLowerCase();
+
+  if (
+    detailText.includes("past due") ||
+    detailText.includes("payment") ||
+    detailText.includes("invoice")
+  ) {
+    return "account-action-required";
+  }
+
+  switch (provider.credentialState) {
+    case "missing":
+      return "missing-credential";
+    case "expired":
+      return "session-expired";
+    case "user-action-required":
+      return "user-action-required";
+    case "refreshable-but-degraded":
+    case "expiring":
+      return "refreshable-degraded";
+    case "provider-unavailable":
+      return "provider-unavailable";
+    default:
+      return undefined;
+  }
+}
+
+export function buildServiceDispatchPlanVerdict(args: {
+  selectedLane?: "byok" | "web-login";
+  credentialStates: Partial<Record<"byok" | "web-login", RuntimeCredentialState>>;
+  provider?: ProviderStatusView;
+}) {
+  if (args.selectedLane === "byok") {
+    const byokState = args.credentialStates.byok;
+    const dispatchable =
+      byokState === "configured" || byokState === "refreshable-degraded";
+
+    return {
+      dispatchable,
+      blocked: !dispatchable,
+      runtimeCanInvoke: dispatchable,
+      remediationState: byokState,
+      blockerClassification: dispatchable
+        ? undefined
+        : mapByokDispatchBlockerClassification(byokState),
+      blockerSummary: dispatchable
+        ? undefined
+        : byokState === "missing"
+          ? "The BYOK lane is missing the required credential material."
+          : byokState === "expired"
+            ? "The BYOK lane has expired credential material."
+            : byokState === "invalid"
+              ? "The BYOK lane credential material is invalid."
+              : byokState === "user-action-required"
+                ? "The BYOK lane requires an explicit user action before dispatch can continue."
+                : byokState === "refreshable-degraded"
+                  ? undefined
+                  : "The BYOK lane is not currently dispatchable.",
+    };
+  }
+
+  if (args.provider) {
+    const dispatchable = args.provider.available;
+    const primaryDiagnostic = args.provider.diagnostics[0];
+
+    return {
+      dispatchable,
+      blocked: !dispatchable,
+      runtimeCanInvoke: args.provider.available,
+      remediationState: args.provider.credentialState,
+      blockerClassification: dispatchable
+        ? undefined
+        : mapWebDispatchBlockerClassification(args.provider),
+      blockerSummary: dispatchable
+        ? undefined
+        : args.provider.recommendedAction ??
+          primaryDiagnostic?.recoveryHint ??
+          primaryDiagnostic?.message,
+    };
+  }
+
+  const fallbackState = args.credentialStates["web-login"] ?? args.credentialStates.byok;
+  const fallbackDispatchable =
+    fallbackState === "configured" || fallbackState === "refreshable-degraded";
+
+  return {
+    dispatchable: fallbackDispatchable,
+    blocked: !fallbackDispatchable,
+    runtimeCanInvoke: fallbackDispatchable,
+    remediationState: fallbackState,
+    blockerClassification: fallbackDispatchable
+      ? undefined
+      : mapByokDispatchBlockerClassification(fallbackState),
+    blockerSummary: fallbackDispatchable
+      ? undefined
+      : "The selected lane is not currently dispatchable.",
+  };
+}
+
+export function buildServiceProviderPolicyView(args: {
+  providerId: string;
+  displayName: string;
+  registeredEntries: Array<{
+    laneId: "byok" | "web-login";
+    authModes: readonly string[];
+    defaultModel?: string;
+    recommendedModel?: string;
+    capabilityMatrix: CapabilityMatrix;
+    diagnosticsStatus: string;
+    catalogSource: string;
+  }>;
+  runtimeLaneOrder: readonly ("byok" | "web-login")[];
+  baseUrl?: string;
+}): ServiceProviderPolicyView {
+  const laneIndex = new Map(
+    args.runtimeLaneOrder.map((laneId, index) => [laneId, index]),
+  );
+  const laneBindings = [...args.registeredEntries].sort(
+    (left, right) =>
+      (laneIndex.get(left.laneId) ?? Number.MAX_SAFE_INTEGER) -
+      (laneIndex.get(right.laneId) ?? Number.MAX_SAFE_INTEGER),
+  );
+  const registeredLanes = laneBindings.map((entry) => entry.laneId);
+  const dispatchKind =
+    registeredLanes.length > 1
+      ? "credential-aware-auto-lane"
+      : "single-lane-provider";
+  const providerCatalogTarget =
+    laneBindings.length > 1
+      ? `${args.providerId}:${laneBindings[0]?.laneId ?? "web-login"}`
+      : args.providerId;
+
+  return {
+    providerId: args.providerId,
+    displayName: args.displayName,
+    registeredLanes,
+    laneBindings: laneBindings.map((entry) => ({
+      laneId: entry.laneId,
+      authModes: [...entry.authModes],
+      defaultModel: entry.defaultModel,
+      recommendedModel: entry.recommendedModel,
+      capabilityMatrix: entry.capabilityMatrix,
+      diagnosticsStatus: entry.diagnosticsStatus,
+      catalogSource: entry.catalogSource,
+    })),
+    dispatchPolicy: {
+      kind: dispatchKind,
+      laneOrder: [...args.runtimeLaneOrder],
+      defaultLane: registeredLanes[0],
+      requiresCredentialStateMap: dispatchKind === "credential-aware-auto-lane",
+      autoDispatches: dispatchKind === "credential-aware-auto-lane",
+    },
+    doctorEntryPoints: {
+      serviceRoute: buildServiceProviderRouteRefs(
+        args.providerId as ProviderStatusView["provider"],
+        args.baseUrl,
+      ).doctor,
+      cliCommand: `pnpm run switchyard:cli -- provider-doctor --provider ${args.providerId} --json`,
+      mcpTool: "switchyard.provider.doctor",
+      providerCatalogTarget,
+    },
+  };
+}
+
+export function buildServiceProviderDoctorAlignment(args: {
+  dispatchPlan: ServiceRuntimeDispatchPlanView;
+  probe?: ServiceProviderProbeView;
+  remediation?: ServiceProviderRemediationView;
+  diagnose?: ServiceProviderDebugSupportView;
+}): ServiceProviderDoctorAlignmentView {
+  const runtimeCanInvoke =
+    args.dispatchPlan.runtimeCanInvoke ??
+    args.probe?.runtime.canInvoke ??
+    args.remediation?.runtime.canInvoke ??
+    false;
+
+  return {
+    story: args.dispatchPlan.dispatchable ? "dispatchable" : "blocked",
+    runtimeCanInvoke,
+    remediationState:
+      args.dispatchPlan.remediationState ??
+      args.remediation?.runtime.credentialState,
+    blockerClassification: args.dispatchPlan.blockerClassification,
+    blockerSummary: args.dispatchPlan.blockerSummary,
+    liveReadiness: args.diagnose?.liveReadiness.status,
+  };
+}
+
+export function buildServiceProviderDoctorReceipt(args: {
+  providerId: string;
+  alignment: ServiceProviderDoctorAlignmentView;
+  policy: ServiceProviderPolicyView;
+  routes: ServiceProviderRouteRefs;
+  hasDiagnose: boolean;
+}): ServiceProviderDoctorReceiptView {
+  const recommendedCliCommands = [
+    `pnpm run switchyard:cli -- provider-doctor --provider ${args.providerId} --json`,
+    `pnpm run switchyard:cli -- provider-entry --target ${args.policy.doctorEntryPoints.providerCatalogTarget}`,
+  ];
+
+  if (args.hasDiagnose) {
+    recommendedCliCommands.push(
+      `pnpm run switchyard:cli -- provider-diagnose --provider ${args.providerId} --json`,
+    );
+  }
+
+  const recommendedMcpTools = [
+    "switchyard.provider.doctor",
+    "switchyard.catalog.provider_entry",
+  ];
+
+  if (args.hasDiagnose) {
+    recommendedMcpTools.push("switchyard.provider.diagnose");
+  }
+
+  const remediationWorkflow = buildServiceRemediationWorkflow({
+    providerId: args.providerId,
+    story: args.alignment.story,
+    summary:
+      args.alignment.story === "dispatchable"
+        ? `${args.providerId} can dispatch under the current runtime ledger.`
+        : args.alignment.blockerSummary ??
+          `${args.providerId} is currently blocked under the current runtime ledger.`,
+    doctorRoute: args.policy.doctorEntryPoints.serviceRoute,
+    remediationRoute: args.routes.remediation,
+    runtimePlanRoute: buildServiceRouteCatalog().runtimePlan,
+    invokeRoute: buildServiceRouteCatalog().invoke,
+    hasDiagnose: args.hasDiagnose,
+  });
+
+  return {
+    summary:
+      args.alignment.story === "dispatchable"
+        ? `${args.providerId} is dispatchable under the current runtime truth.`
+        : args.alignment.blockerSummary ??
+          `${args.providerId} is currently blocked under the current runtime truth.`,
+    recommendedCliCommands,
+    recommendedMcpTools,
+    remediationWorkflow,
+  };
+}
+
+export function buildServiceRemediationWorkflow(args: {
+  providerId: string;
+  story: "dispatchable" | "blocked";
+  summary: string;
+  doctorRoute: string;
+  remediationRoute: string;
+  runtimePlanRoute: string;
+  invokeRoute: string;
+  hasDiagnose: boolean;
+}): ServiceRemediationWorkflowView {
+  const steps: ServiceRemediationWorkflowStepView[] = [
+    {
+      id: "inspect-provider-doctor",
+      label: "Inspect the provider doctor first.",
+      cliCommand: `pnpm run switchyard:cli -- provider-doctor --provider ${args.providerId} --json`,
+      mcpTool: "switchyard.provider.doctor",
+      route: args.doctorRoute,
+    },
+    {
+      id: "review-runtime-plan",
+      label: "Review the runtime planner before changing route or lane assumptions.",
+      cliCommand: "pnpm run switchyard:cli -- runtime-plan --json",
+      mcpTool: "switchyard.runtime.plan",
+      route: args.runtimePlanRoute,
+    },
+  ];
+
+  if (args.story === "blocked") {
+    steps.push({
+      id: args.hasDiagnose ? "inspect-provider-diagnose" : "inspect-provider-remediation",
+      label: args.hasDiagnose
+        ? "Inspect diagnose evidence before retrying the provider."
+        : "Inspect the provider remediation surface before retrying the provider.",
+      cliCommand: args.hasDiagnose
+        ? `pnpm run switchyard:cli -- provider-diagnose --provider ${args.providerId} --json`
+        : `pnpm run switchyard:cli -- provider-remediation --provider ${args.providerId} --json`,
+      mcpTool: args.hasDiagnose
+        ? "switchyard.provider.diagnose"
+        : "switchyard.provider.remediation",
+      route: args.remediationRoute,
+    });
+  } else {
+    steps.push({
+      id: "invoke-when-ready",
+      label: "Invoke through the runtime once the current policy profile still agrees.",
+      cliCommand: "pnpm run example:runtime-bridge",
+      route: args.invokeRoute,
+    });
+  }
+
+  return {
+    providerId: args.providerId,
+    story: args.story,
+    summary: args.summary,
+    steps,
+  };
+}
+
+export function buildServiceRuntimeControlLedgerView(args: {
+  providers: ServiceProviderDoctorView[];
+}): ServiceRuntimeDoctorView["controlLedger"] {
+  const routes = buildServiceRouteCatalog();
+  const mapProvider = (
+    provider: ServiceProviderDoctorView,
+  ): ServiceRuntimeControlLedgerProviderView => ({
+    providerId: provider.providerId,
+    displayName: provider.displayName,
+    selectedLane: provider.dispatchPlan.selectedLane,
+    doctorRoute: provider.routes.doctor,
+    blockerClassification: provider.dispatchPlan.blockerClassification,
+    summary: provider.receipt.summary,
+  });
+
+  return {
+    routes: {
+      runtimeDoctor: routes.runtimeDoctor,
+      runtimePlan: routes.runtimePlan,
+      invoke: routes.invoke,
+      authPortal: routes.authPortal,
+    },
+    dispatchableProviders: args.providers
+      .filter((provider) => provider.alignment.story === "dispatchable")
+      .map(mapProvider),
+    blockedProviders: args.providers
+      .filter((provider) => provider.alignment.story === "blocked")
+      .map(mapProvider),
+    remediationWorkflows: args.providers.map(
+      (provider) => provider.receipt.remediationWorkflow,
+    ),
+  };
+}
+
+export function applyServicePolicyProfileToDispatchPlan(args: {
+  policyProfile: RuntimePolicyProfileId;
+  dispatchPlan: ServiceRuntimeDispatchPlanView;
+}): ServiceRuntimeDispatchPlanView {
+  if (args.policyProfile !== "strict-fail-closed") {
+    return {
+      ...args.dispatchPlan,
+      policyProfile: args.policyProfile,
+    };
+  }
+
+  const remediationState = args.dispatchPlan.remediationState;
+  const shouldBlock =
+    remediationState === "refreshable-degraded" ||
+    remediationState === "expiring";
+
+  if (!shouldBlock) {
+    return {
+      ...args.dispatchPlan,
+      policyProfile: args.policyProfile,
+    };
+  }
+
+  return {
+    ...args.dispatchPlan,
+    policyProfile: args.policyProfile,
+    dispatchable: false,
+    blocked: true,
+    runtimeCanInvoke: false,
+    blockerClassification:
+      args.dispatchPlan.blockerClassification ?? "refreshable-degraded",
+    blockerSummary:
+      args.dispatchPlan.blockerSummary ??
+      "The strict-fail-closed profile refuses degraded or expiring runtime materials.",
+  };
+}
+
+export function buildServiceRuntimeDoctorView(args: {
+  activePolicyProfile: RuntimePolicyProfileId;
+  availablePolicyProfiles: RuntimePolicyProfileId[];
+  providers: ServiceProviderDoctorView[];
+}): ServiceRuntimeDoctorView {
+  const blockingProviders = args.providers
+    .filter((provider) => provider.alignment.story === "blocked")
+    .map((provider) => provider.providerId);
+  const readyProviders = args.providers
+    .filter((provider) => provider.alignment.story === "dispatchable")
+    .map((provider) => provider.providerId);
+  const strongestNextSteps = args.providers
+    .filter((provider) => provider.alignment.story === "blocked")
+    .flatMap((provider) =>
+      provider.receipt.remediationWorkflow.steps
+        .map((step) => step.cliCommand)
+        .filter((command): command is string => Boolean(command))
+        .slice(0, 1),
+    )
+    .slice(0, 5);
+
+  return {
+    generatedAt: new Date().toISOString(),
+    activePolicyProfile: args.activePolicyProfile,
+    availablePolicyProfiles: [...args.availablePolicyProfiles],
+    summary: {
+      totalProviders: args.providers.length,
+      dispatchableCount: readyProviders.length,
+      blockingCount: blockingProviders.length,
+      blockingProviders,
+      readyProviders,
+    },
+    strongestNextSteps,
+    controlLedger: buildServiceRuntimeControlLedgerView({
+      providers: args.providers,
+    }),
+    providers: args.providers,
+  };
+}
+
+export function buildServiceInvokeReceiptView(args: {
+  policyProfile: RuntimePolicyProfileId;
+  dispatchPlan: ServiceRuntimeDispatchPlanView;
+  doctorRoute: string;
+  suggestedNextStep?: string;
+}): ServiceInvokeReceiptView {
+  const routes = buildServiceRouteCatalog();
+  return {
+    policyProfile: args.policyProfile,
+    providerId: args.dispatchPlan.providerId,
+    laneId: args.dispatchPlan.selectedLane ?? "web-login",
+    modelId: args.dispatchPlan.requestedModel.split("/").slice(1).join("/") || args.dispatchPlan.requestedModel,
+    requestedModel: args.dispatchPlan.requestedModel,
+    dispatchReason: args.dispatchPlan.dispatchReason,
+    doctorRoute: args.doctorRoute,
+    readinessSnapshot: {
+      dispatchable: args.dispatchPlan.dispatchable,
+      remediationState: args.dispatchPlan.remediationState,
+      blockerClassification: args.dispatchPlan.blockerClassification,
+    },
+    lineage: {
+      runtimeDoctorRoute: routes.runtimeDoctor,
+      runtimePlanRoute: routes.runtimePlan,
+      dispatchPlanRoute: routes.dispatchPlan,
+      providerDoctorRoute: args.doctorRoute,
+    },
+    remediationWorkflow: buildServiceRemediationWorkflow({
+      providerId: args.dispatchPlan.providerId,
+      story: args.dispatchPlan.dispatchable ? "dispatchable" : "blocked",
+      summary:
+        args.dispatchPlan.dispatchable
+          ? `${args.dispatchPlan.providerId} can dispatch under the current runtime ledger.`
+          : args.dispatchPlan.blockerSummary ??
+            `${args.dispatchPlan.providerId} is currently blocked under the current runtime ledger.`,
+      doctorRoute: args.doctorRoute,
+      remediationRoute: buildServiceProviderRouteRefs(
+        args.dispatchPlan.providerId as ProviderStatusView["provider"],
+      ).remediation,
+      runtimePlanRoute: routes.runtimePlan,
+      invokeRoute: routes.invoke,
+      hasDiagnose: true,
+    }),
+    suggestedNextStep: args.suggestedNextStep,
   };
 }
 

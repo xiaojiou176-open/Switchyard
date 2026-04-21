@@ -1,0 +1,19 @@
+{
+  "id": "research-copilot-pack",
+  "status": "planned",
+  "templateShape": "research-copilot-grounding",
+  "manifest": {
+    "starterTarget": "research-copilot-pack",
+    "catalogCommand": "pnpm exec node starter-packs/skills/research-copilot-pack/smoke.mjs",
+    "safeClaims": [
+      "research copilot scaffold",
+      "truth-surface grounding pack",
+      "human-reviewed synthesis checklist"
+    ],
+    "notYetSupported": [
+      "autonomous multi-source research loop",
+      "citation autopilot",
+      "browser write automation"
+    ]
+  }
+}

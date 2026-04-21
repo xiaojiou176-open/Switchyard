@@ -179,6 +179,13 @@ const PROVIDER_INPUT_SCHEMA = {
 const TARGET_INPUT_SCHEMA = {
   target: z.string().trim().min(1).describe("Catalog target id."),
 };
+const RUNTIME_PLAN_INPUT_SCHEMA = {
+  policyProfile: z.string().trim().min(1).optional(),
+  requiredCapabilities: z.array(z.string().trim().min(1)).optional(),
+  allowWebLogin: z.boolean().optional(),
+  requireOfficialApi: z.boolean().optional(),
+  requireToolCalling: z.boolean().optional(),
+};
 
 type PublicSurfaceCatalog = {
   publicSurfaces: unknown[];
@@ -644,6 +651,21 @@ export const SWITCHYARD_MCP_TOOL_DEFINITIONS: ReadonlyArray<SwitchyardMcpToolDef
     },
   },
   {
+    name: "switchyard.runtime.doctor",
+    description: "Read the current aggregated runtime doctor receipt.",
+    async execute(client) {
+      return buildPayload("runtime-doctor", await client.runtimeDoctor());
+    },
+  },
+  {
+    name: "switchyard.runtime.plan",
+    description: "Read the current default task-centric runtime plan.",
+    inputSchema: RUNTIME_PLAN_INPUT_SCHEMA,
+    async execute(client, args) {
+      return buildPayload("runtime-plan", await client.runtimePlan(args ?? {}));
+    },
+  },
+  {
     name: "switchyard.auth.status",
     description: "Read the current Switchyard auth-status summary.",
     async execute(client) {
@@ -659,6 +681,20 @@ export const SWITCHYARD_MCP_TOOL_DEFINITIONS: ReadonlyArray<SwitchyardMcpToolDef
       return buildPayload(
         "provider-status",
         await client.providerStatus(provider),
+        provider,
+      );
+    },
+  },
+  {
+    name: "switchyard.provider.doctor",
+    description:
+      "Read the unified provider doctor receipt for a single provider.",
+    inputSchema: PROVIDER_INPUT_SCHEMA,
+    async execute(client, args) {
+      const provider = requireProvider(args, "switchyard.provider.doctor");
+      return buildPayload(
+        "provider-doctor",
+        await client.providerDoctor(provider),
         provider,
       );
     },

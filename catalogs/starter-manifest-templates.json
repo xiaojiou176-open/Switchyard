@@ -98,7 +98,7 @@
       "templateShape": "read-only-runtime-diagnostics",
       "manifest": {
         "starterTarget": "runtime-diagnostics-pack",
-        "catalogCommand": "pnpm run switchyard:cli -- skill-pack --target runtime-diagnostics-pack --json",
+        "catalogCommand": "pnpm run switchyard:cli -- skill-pack-route --target runtime-diagnostics-pack --json",
         "safeClaims": [
           "read-only runtime diagnostics starter",
           "provider triage helper",
@@ -118,7 +118,7 @@
       "templateShape": "truth-sync-and-discoverability",
       "manifest": {
         "starterTarget": "docs-seo-sync-pack",
-        "catalogCommand": "pnpm run switchyard:cli -- skill-pack --target docs-seo-sync-pack --json",
+        "catalogCommand": "pnpm run switchyard:cli -- skill-pack-route --target docs-seo-sync-pack --json",
         "safeClaims": [
           "docs truth-sync starter",
           "discoverability helper",
@@ -128,6 +128,82 @@
           "marketing copy generation",
           "launch automation",
           "claim escalation without review"
+        ]
+      }
+    },
+    {
+      "id": "chat-app-runtime-pack",
+      "status": "planned",
+      "templateShape": "chat-app-runtime-bridge",
+      "manifest": {
+        "starterTarget": "chat-app-runtime-pack",
+        "catalogCommand": "pnpm exec node starter-packs/skills/chat-app-runtime-pack/smoke.mjs",
+        "safeClaims": [
+          "chat-app runtime scaffold",
+          "service-first bridge planning pack",
+          "host-side provider grounding"
+        ],
+        "notYetSupported": [
+          "full chat product scaffold",
+          "tool-using agent shell",
+          "browser/session write automation"
+        ]
+      }
+    },
+    {
+      "id": "research-copilot-pack",
+      "status": "planned",
+      "templateShape": "research-copilot-grounding",
+      "manifest": {
+        "starterTarget": "research-copilot-pack",
+        "catalogCommand": "pnpm exec node starter-packs/skills/research-copilot-pack/smoke.mjs",
+        "safeClaims": [
+          "research copilot scaffold",
+          "truth-surface grounding pack",
+          "human-reviewed synthesis checklist"
+        ],
+        "notYetSupported": [
+          "autonomous multi-source research loop",
+          "citation autopilot",
+          "browser write automation"
+        ]
+      }
+    },
+    {
+      "id": "compare-runtime-pack",
+      "status": "planned",
+      "templateShape": "compare-first-runtime-decision",
+      "manifest": {
+        "starterTarget": "compare-runtime-pack",
+        "catalogCommand": "pnpm exec node starter-packs/skills/compare-runtime-pack/smoke.mjs",
+        "safeClaims": [
+          "compare-first scaffold",
+          "constraint filter worksheet",
+          "runtime tradeoff framing"
+        ],
+        "notYetSupported": [
+          "automatic winner selection",
+          "live benchmark automation",
+          "consumer parity scoring"
+        ]
+      }
+    },
+    {
+      "id": "byok-first-safe-pack",
+      "status": "planned",
+      "templateShape": "byok-first-safe-runtime",
+      "manifest": {
+        "starterTarget": "byok-first-safe-pack",
+        "catalogCommand": "pnpm exec node starter-packs/skills/byok-first-safe-pack/smoke.mjs",
+        "safeClaims": [
+          "BYOK-first scaffold",
+          "safe invoke planning pack",
+          "provider-lane grounding"
+        ],
+        "notYetSupported": [
+          "key storage workflow",
+          "web-login session recovery",
+          "automatic provider failover"
         ]
       }
     }

@@ -35,6 +35,9 @@
         "docs/public-surface-support-matrix.md"
       ],
       "copyReadyPackPath": "starter-packs/skills/runtime-diagnostics-pack",
+      "routeCommand": "pnpm run switchyard:cli -- skill-pack-route --target runtime-diagnostics-pack",
+      "routeCatalogPath": "catalogs/skill-pack-routes.json#routes[id]",
+      "routeMcpTool": "switchyard.catalog.skill_pack",
       "backingSurfaces": [
         "CLI",
         "MCP",
@@ -80,6 +83,9 @@
         "docs/public-surface-catalog.md"
       ],
       "copyReadyPackPath": "starter-packs/skills/docs-seo-sync-pack",
+      "routeCommand": "pnpm run switchyard:cli -- skill-pack-route --target docs-seo-sync-pack",
+      "routeCatalogPath": "catalogs/skill-pack-routes.json#routes[id]",
+      "routeMcpTool": "switchyard.catalog.skill_pack",
       "backingSurfaces": [
         "public-surface catalog",
         "support matrix",
@@ -89,6 +95,194 @@
         "marketing autopilot",
         "claim escalation without review",
         "launch automation"
+      ]
+    },
+    {
+      "id": "chat-app-runtime-pack",
+      "status": "planned",
+      "starterShape": "chat-app-runtime-bridge",
+      "bestEntry": "pnpm run switchyard:cli -- skill-pack --target chat-app-runtime-pack",
+      "requiredInputs": [
+        "runtime surface access",
+        "provider catalog truth",
+        "existing chat host context"
+      ],
+      "starterSteps": [
+        "Read runtime doctor or provider catalog truth first.",
+        "Confirm the service-first bridge shape before touching any product shell UI.",
+        "Keep runtime invoke and host wiring explicitly separated from product polish.",
+        "Escalate unsupported tool or browser-write requirements as out of scope."
+      ],
+      "outputArtifacts": [
+        "chat runtime scaffold",
+        "service-first host checklist",
+        "provider grounding note"
+      ],
+      "safeClaims": [
+        "chat-app runtime scaffold",
+        "service-first bridge planning pack",
+        "no full product shell"
+      ],
+      "recommendedDocs": [
+        "starter-packs/README.md",
+        "docs/api/service-http-reference.md",
+        "docs/api/sdk-quickstart.md",
+        "docs/public-surface-support-matrix.md"
+      ],
+      "copyReadyPackPath": "starter-packs/skills/chat-app-runtime-pack",
+      "routeCommand": "pnpm run switchyard:cli -- skill-pack-route --target chat-app-runtime-pack",
+      "routeCatalogPath": "catalogs/skill-pack-routes.json#routes[id]",
+      "routeMcpTool": "switchyard.catalog.skill_pack",
+      "backingSurfaces": [
+        "HTTP/API",
+        "SDK/client",
+        "provider catalog"
+      ],
+      "notYetSupported": [
+        "full chat product scaffold",
+        "tool-using agent shell",
+        "browser/session write automation"
+      ]
+    },
+    {
+      "id": "research-copilot-pack",
+      "status": "planned",
+      "starterShape": "research-copilot-grounding",
+      "bestEntry": "pnpm run switchyard:cli -- skill-pack --target research-copilot-pack",
+      "requiredInputs": [
+        "surface catalog truth",
+        "compat target truth",
+        "keyword truth table"
+      ],
+      "starterSteps": [
+        "Read truth surfaces before synthesizing research conclusions.",
+        "Keep human-reviewed synthesis separate from automatic claim escalation.",
+        "Use keyword truth and support labels as hard brakes.",
+        "Stay read-only across every step."
+      ],
+      "outputArtifacts": [
+        "research grounding checklist",
+        "truth-surface packet",
+        "human-review handoff"
+      ],
+      "safeClaims": [
+        "research copilot scaffold",
+        "truth-surface grounding pack",
+        "no autonomous research loop"
+      ],
+      "recommendedDocs": [
+        "starter-packs/README.md",
+        "docs/public-surface-support-matrix.md",
+        "docs/discoverability-keyword-truth.md",
+        "docs/public-surface-catalog.md"
+      ],
+      "copyReadyPackPath": "starter-packs/skills/research-copilot-pack",
+      "routeCommand": "pnpm run switchyard:cli -- skill-pack-route --target research-copilot-pack",
+      "routeCatalogPath": "catalogs/skill-pack-routes.json#routes[id]",
+      "routeMcpTool": "switchyard.catalog.skill_pack",
+      "backingSurfaces": [
+        "surface catalog",
+        "compat targets",
+        "keyword truth"
+      ],
+      "notYetSupported": [
+        "autonomous multi-source research loop",
+        "citation autopilot",
+        "browser write automation"
+      ]
+    },
+    {
+      "id": "compare-runtime-pack",
+      "status": "planned",
+      "starterShape": "compare-first-runtime-decision",
+      "bestEntry": "pnpm run switchyard:cli -- skill-pack --target compare-runtime-pack",
+      "requiredInputs": [
+        "starter pack comparison catalog",
+        "runtime surface truth",
+        "human-owned decision criteria"
+      ],
+      "starterSteps": [
+        "Read the starter-pack comparison and filter truth first.",
+        "Compare constraints before picking a winner.",
+        "Keep decision logic explicit instead of auto-selecting a runtime path.",
+        "Treat this pack as a worksheet, not an automated benchmark."
+      ],
+      "outputArtifacts": [
+        "compare-first worksheet",
+        "constraint tradeoff table",
+        "decision-ready shortlist"
+      ],
+      "safeClaims": [
+        "compare-first scaffold",
+        "constraint filter worksheet",
+        "no automatic winner selection"
+      ],
+      "recommendedDocs": [
+        "starter-packs/README.md",
+        "docs/starter-pack-chooser.md",
+        "docs/faq.md",
+        "docs/public-surface-catalog.md"
+      ],
+      "copyReadyPackPath": "starter-packs/skills/compare-runtime-pack",
+      "routeCommand": "pnpm run switchyard:cli -- skill-pack-route --target compare-runtime-pack",
+      "routeCatalogPath": "catalogs/skill-pack-routes.json#routes[id]",
+      "routeMcpTool": "switchyard.catalog.skill_pack",
+      "backingSurfaces": [
+        "starter-pack comparison",
+        "starter-pack filter",
+        "FAQ"
+      ],
+      "notYetSupported": [
+        "automatic winner selection",
+        "live benchmark automation",
+        "consumer parity scoring"
+      ]
+    },
+    {
+      "id": "byok-first-safe-pack",
+      "status": "planned",
+      "starterShape": "byok-first-safe-runtime",
+      "bestEntry": "pnpm run switchyard:cli -- skill-pack --target byok-first-safe-pack",
+      "requiredInputs": [
+        "provider catalog truth",
+        "service/http reference",
+        "sdk quickstart"
+      ],
+      "starterSteps": [
+        "Start with BYOK provider truth before considering web-login recovery.",
+        "Keep key handling and provider grounding explicit.",
+        "Use invoke only after confirming BYOK-safe prerequisites.",
+        "Do not widen into automatic failover or secret management claims."
+      ],
+      "outputArtifacts": [
+        "BYOK-first checklist",
+        "safe invoke scaffold",
+        "provider-lane grounding note"
+      ],
+      "safeClaims": [
+        "BYOK-first scaffold",
+        "safe invoke planning pack",
+        "no web-login recovery claims"
+      ],
+      "recommendedDocs": [
+        "starter-packs/README.md",
+        "docs/api/sdk-quickstart.md",
+        "docs/api/service-http-reference.md",
+        "docs/public-surface-support-matrix.md"
+      ],
+      "copyReadyPackPath": "starter-packs/skills/byok-first-safe-pack",
+      "routeCommand": "pnpm run switchyard:cli -- skill-pack-route --target byok-first-safe-pack",
+      "routeCatalogPath": "catalogs/skill-pack-routes.json#routes[id]",
+      "routeMcpTool": "switchyard.catalog.skill_pack",
+      "backingSurfaces": [
+        "provider catalog",
+        "SDK/client",
+        "HTTP/API"
+      ],
+      "notYetSupported": [
+        "key storage workflow",
+        "web-login session recovery",
+        "automatic provider failover"
       ]
     }
   ]

@@ -1,0 +1,19 @@
+{
+  "id": "chat-app-runtime-pack",
+  "status": "planned",
+  "templateShape": "chat-app-runtime-bridge",
+  "manifest": {
+    "starterTarget": "chat-app-runtime-pack",
+    "catalogCommand": "pnpm exec node starter-packs/skills/chat-app-runtime-pack/smoke.mjs",
+    "safeClaims": [
+      "chat-app runtime scaffold",
+      "service-first bridge planning pack",
+      "host-side provider grounding"
+    ],
+    "notYetSupported": [
+      "full chat product scaffold",
+      "tool-using agent shell",
+      "browser/session write automation"
+    ]
+  }
+}

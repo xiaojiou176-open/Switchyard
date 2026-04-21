@@ -70,7 +70,7 @@
       "smokeScriptPath": "examples/hosts/openclaw/smoke.mjs",
       "smokeCommand": "pnpm run example:host-openclaw",
       "bestEntry": "pnpm run switchyard:cli -- host-example --target openclaw",
-      "firstSuccessCheck": "Runs one delegation-first runtime invoke request through the host example config.",
+      "firstSuccessCheck": "Reads bootstrap/health/dispatch preflight when available, then runs one delegation-first runtime invoke request through the host example config.",
       "relatedCompatTarget": "openclaw",
       "relatedStarterPackPath": "starter-packs/builders/openclaw",
       "relatedDocs": [
@@ -81,6 +81,7 @@
       "safeClaims": [
         "partial OpenClaw host example",
         "delegation-first config example",
+        "preflight-first host wiring",
         "no product-shell parity"
       ],
       "notYetSupported": [

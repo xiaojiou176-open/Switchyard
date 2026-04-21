@@ -18,10 +18,37 @@ describe("start-local-experience script helpers", () => {
     ).toEqual({
       serviceBaseUrl: "http://127.0.0.1:4010",
       authPortalUrl: "http://127.0.0.1:4010/v1/runtime/auth-portal",
+      runtimeDoctorUrl: "http://127.0.0.1:4010/v1/runtime/doctor",
+      runtimePlanUrl: "http://127.0.0.1:4010/v1/runtime/plan",
       chatgptWorkbenchUrl:
         "http://127.0.0.1:4010/v1/runtime/providers/chatgpt/debug/workbench",
       docsFrontDoorUrl: "http://127.0.0.1:4185/",
+      runtimeControlLedgerUrl: "http://127.0.0.1:4185/runtime-control-ledger.md",
     });
+  });
+
+  it("formats a doctor-first local control shell route list", async () => {
+    const { buildExperienceUrls, formatReadyExperienceLines } = await import(
+      "../../../scripts/start-local-experience.mjs"
+    );
+
+    expect(
+      formatReadyExperienceLines(
+        buildExperienceUrls({
+          host: "127.0.0.1",
+          servicePort: 4010,
+          docsPort: 4185,
+        }),
+      ),
+    ).toEqual([
+      "  - Runtime WebUI: http://127.0.0.1:4010/v1/runtime/auth-portal",
+      "  - Runtime doctor: http://127.0.0.1:4010/v1/runtime/doctor",
+      "  - Runtime plan: http://127.0.0.1:4010/v1/runtime/plan",
+      "  - ChatGPT workbench: http://127.0.0.1:4010/v1/runtime/providers/chatgpt/debug/workbench",
+      "  - Docs front door: http://127.0.0.1:4185/",
+      "  - Doctor-first control ledger: http://127.0.0.1:4185/runtime-control-ledger.md",
+      "  - Press Ctrl+C to stop both local servers.",
+    ]);
   });
 
   it("resolves static file paths inside the repo root while rejecting traversal", async () => {
@@ -35,6 +62,9 @@ describe("start-local-experience script helpers", () => {
     expect(resolveStaticFilePath(repoRoot, "/first-success.md")).toContain("/docs/first-success.md");
     expect(resolveStaticFilePath(repoRoot, "/public-proof-pack.md")).toContain(
       "/docs/public-proof-pack.md",
+    );
+    expect(resolveStaticFilePath(repoRoot, "/runtime-control-ledger.md")).toContain(
+      "/docs/runtime-control-ledger.md",
     );
     expect(resolveStaticFilePath(repoRoot, "/mcp.md")).toContain("/docs/mcp.md");
     expect(resolveStaticFilePath(repoRoot, "/viewer.html?doc=first-success.md")).toContain(
@@ -67,6 +97,9 @@ describe("start-local-experience script helpers", () => {
       );
       expect(resolveStaticFilePath(tempRoot, "/Switchyard/public-proof-pack.md")).toContain(
         "/Switchyard/docs/public-proof-pack.md",
+      );
+      expect(resolveStaticFilePath(tempRoot, "/Switchyard/runtime-control-ledger.md")).toContain(
+        "/Switchyard/docs/runtime-control-ledger.md",
       );
       expect(resolveStaticFilePath(tempRoot, "/Switchyard/mcp.md")).toContain(
         "/Switchyard/docs/mcp.md",

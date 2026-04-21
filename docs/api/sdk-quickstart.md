@@ -59,11 +59,23 @@ const client = createSwitchyardServiceClient({
 
 const providers = await client.listProviders();
 const health = await client.health();
+const runtimeDoctor = await client.runtimeDoctor();
+const runtimePlan = await client.runtimePlan({
+  policyProfile: "official-api-first",
+  requiredCapabilities: ["tool-calling"],
+  allowWebLogin: true,
+});
 const storeReadiness = await client.providerStoreReadiness("chatgpt");
 const liveReadiness = await client.providerLiveReadiness("chatgpt");
 const attachTarget = await client.providerAttachTarget("chatgpt");
 const diagnoseLadder = await client.providerDiagnoseLadder("chatgpt");
 const diagnose = await client.providerDiagnose("chatgpt");
+const doctor = await client.providerDoctor("chatgpt");
+const dispatchPlan = await client.dispatchPlan({
+  provider: "gemini",
+  model: "gemini-2.5-flash",
+  input: "Reply with exactly HELLO and nothing else.",
+});
 
 const invoke = await client.invoke({
   provider: "chatgpt",
@@ -76,11 +88,29 @@ const invoke = await client.invoke({
 
 - `providerStoreReadiness()` 像看“钥匙和证件有没有放进抽屉”
 - `providerLiveReadiness()` 像看“人是不是已经站在正确房门前，而且门把手能转”
+- `runtimeDoctor()` 像看整座 runtime 的总账本，现在它还会带一张 `controlLedger`
+- `runtimePlan()` 像让 runtime 先按任务要求帮你挑 provider/lane/model
 - `providerDiagnose()` 像拿整张体检单
+- `providerDoctor()` 像把“策略脑 + 体检单 + 下一步建议”压成一张 builder receipt
 - `providerDiagnoseLadder()` 像医生给你的下一步处理顺序
+- `invoke.receipt` 像执行回执：
+  - 为什么这样选 lane / provider
+  - 现在应该回到哪条 doctor/plan 路由
+  - 如果继续排障，该走哪张 remediation workflow
 
 这几个 helper 都是 read-only 诊断入口。  
 它们帮助你看清 `store-ready != live-ready`，但不等于把 `CLI` 或 future compat 提前写成今天已支持。
+
+## Local Control Ledger Pattern
+
+如果你现在是在本地 workstation 上做 runtime triage，推荐顺序是：
+
+1. `runtimeDoctor()`
+2. `runtimePlan()`
+3. `providerDoctor(providerId)`
+4. `invoke()` 结果里的 `receipt`
+
+也就是说，先看总账本，再看任务级推荐，再看 provider 单张账单，最后才把 invoke 当成闭环证据。
 
 ## Web Runtime SDK Example
 

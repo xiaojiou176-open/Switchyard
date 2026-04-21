@@ -22,14 +22,18 @@
         },
         {
           "id": "skill-pack",
-          "label": "A skills or automation pack that reads truth surfaces",
+          "label": "A skill pack or automation starter that follows truth surfaces",
           "recommendedScenarios": [
             "runtime-diagnostics-skill",
-            "docs-seo-sync-skill"
+            "docs-seo-sync-skill",
+            "chat-app-runtime-skill",
+            "research-copilot-skill",
+            "compare-runtime-skill",
+            "byok-first-safe-skill"
           ],
           "why": [
-            "Choose a skill pack when you want a bounded recipe for diagnostics or docs truth-sync work.",
-            "Skill packs stay read-only and keep claim escalation fail-closed."
+            "Choose a skill pack when you want a bounded recipe, use-case starter, or truth-surface handoff before widening claims.",
+            "Skill packs keep the first route narrow and still fail-closed even when the eventual host shape is larger."
           ]
         }
       ]
@@ -102,6 +106,50 @@
           "why": [
             "The docs/SEO sync pack is for truth-safe discoverability work, not launch automation.",
             "It keeps human review in the loop before any outward publishing."
+          ]
+        },
+        {
+          "id": "chat-app-runtime-bridge-planning",
+          "label": "Start a chat app runtime bridge without promising a full chat shell",
+          "recommendedScenarios": [
+            "chat-app-runtime-skill"
+          ],
+          "why": [
+            "The chat-app runtime pack is the honest first route when you already have a chat host and need the service-first bridge first.",
+            "It keeps product-shell UI ambition downstream of runtime truth and host handoff."
+          ]
+        },
+        {
+          "id": "research-copilot-grounding",
+          "label": "Ground a research copilot in truth surfaces before synthesis",
+          "recommendedScenarios": [
+            "research-copilot-skill"
+          ],
+          "why": [
+            "The research copilot pack is the right starter when you need truth-surface grounding before any synthesis loop.",
+            "It keeps human review and truthful claim boundaries in place."
+          ]
+        },
+        {
+          "id": "compare-runtime-routes",
+          "label": "Compare runtime routes before choosing a winner",
+          "recommendedScenarios": [
+            "compare-runtime-skill"
+          ],
+          "why": [
+            "The compare-runtime pack is for compare-first route selection, not auto-picking a winner.",
+            "It turns the comparison catalog into a front-door worksheet you can review."
+          ]
+        },
+        {
+          "id": "byok-first-safe-handoff",
+          "label": "Stay BYOK-first with safe invoke boundaries before touching Web/Login",
+          "recommendedScenarios": [
+            "byok-first-safe-skill"
+          ],
+          "why": [
+            "The BYOK-first-safe pack is the honest route when you want provider truth and safe invoke planning before any heavier web-login expansion.",
+            "It keeps secret handling and failover promises out of scope."
           ]
         }
       ]
@@ -382,6 +430,190 @@
         "marketing autopilot",
         "claim escalation without review",
         "launch automation"
+      ]
+    },
+    {
+      "id": "chat-app-runtime-skill",
+      "label": "Start a chat app runtime bridge without promising a full chat shell",
+      "status": "partial",
+      "starterKind": "skill",
+      "recommendedPack": "chat-app-runtime-pack",
+      "bestEntry": "pnpm run switchyard:cli -- skill-pack-route --target chat-app-runtime-pack",
+      "whyThisPack": [
+        "Use this pack when you already have a chat-shaped host and need the service-first runtime bridge before expanding the product shell.",
+        "The first handoff already points at runtime doctor, runtime plan, and provider truth instead of inventing a new shell contract."
+      ],
+      "bestWhen": [
+        "You want a chat-oriented starter that begins at the Switchyard runtime layer.",
+        "You need a front-door use-case pack that stays smaller than a full chat product scaffold."
+      ],
+      "avoidWhen": [
+        "You need a finished chat UI shell or tool-using agent product.",
+        "You need browser/session write automation or hosted control-plane behavior."
+      ],
+      "compareAgainst": [
+        "codex-builder",
+        "research-copilot-skill",
+        "byok-first-safe-skill"
+      ],
+      "recommendedDocs": [
+        "docs/starter-pack-chooser.md",
+        "docs/host-integration-playbooks.md",
+        "docs/api/service-http-reference.md",
+        "starter-packs/skills/chat-app-runtime-pack/README.md"
+      ],
+      "searchKeywords": [
+        "switchyard chat app runtime pack",
+        "switchyard chat runtime starter",
+        "switchyard service first chat bridge"
+      ],
+      "safeClaims": [
+        "chat-app runtime scaffold",
+        "service-first bridge planning pack",
+        "no full product shell"
+      ],
+      "notYetSupported": [
+        "full chat product scaffold",
+        "tool-using agent shell",
+        "browser/session write automation"
+      ]
+    },
+    {
+      "id": "research-copilot-skill",
+      "label": "Ground a research copilot in truth surfaces before synthesis",
+      "status": "partial",
+      "starterKind": "skill",
+      "recommendedPack": "research-copilot-pack",
+      "bestEntry": "pnpm run switchyard:cli -- skill-pack-route --target research-copilot-pack",
+      "whyThisPack": [
+        "Use this pack when you want a research-shaped starter that reads truth surfaces before synthesizing anything outward-facing.",
+        "It keeps human review and truthful support labels in the loop instead of widening into autonomous research."
+      ],
+      "bestWhen": [
+        "You need a research copilot starter grounded in support truth, compat targets, and keyword truth.",
+        "You want a front-door use-case pack that stays read-only and reviewable."
+      ],
+      "avoidWhen": [
+        "You need an autonomous multi-source research loop.",
+        "You want browser writes, citation autopilot, or launch-style automation."
+      ],
+      "compareAgainst": [
+        "docs-seo-sync-skill",
+        "compare-runtime-skill",
+        "runtime-diagnostics-skill"
+      ],
+      "recommendedDocs": [
+        "docs/starter-pack-chooser.md",
+        "docs/host-integration-playbooks.md",
+        "docs/public-surface-support-matrix.md",
+        "starter-packs/skills/research-copilot-pack/README.md"
+      ],
+      "searchKeywords": [
+        "switchyard research copilot pack",
+        "switchyard truth grounded research starter",
+        "switchyard research handoff pack"
+      ],
+      "safeClaims": [
+        "research copilot scaffold",
+        "truth-surface grounding pack",
+        "no autonomous research loop"
+      ],
+      "notYetSupported": [
+        "autonomous multi-source research loop",
+        "citation autopilot",
+        "browser write automation"
+      ]
+    },
+    {
+      "id": "compare-runtime-skill",
+      "label": "Compare runtime routes before choosing a winner",
+      "status": "partial",
+      "starterKind": "skill",
+      "recommendedPack": "compare-runtime-pack",
+      "bestEntry": "pnpm run switchyard:cli -- skill-pack-route --target compare-runtime-pack",
+      "whyThisPack": [
+        "Use this pack when your first job is comparing starter routes and constraints instead of auto-selecting a winner.",
+        "It turns the comparison catalog into a front-door worksheet you can review before committing to a host path."
+      ],
+      "bestWhen": [
+        "You need a compare-first starter for runtime or pack selection.",
+        "You want a front-door use-case pack that keeps tradeoffs explicit and reviewable."
+      ],
+      "avoidWhen": [
+        "You need a benchmark harness or automatic winner selection.",
+        "You are actually trying to jump straight into a host bridge or diagnostics recipe."
+      ],
+      "compareAgainst": [
+        "research-copilot-skill",
+        "docs-seo-sync-skill",
+        "mcp-inspector"
+      ],
+      "recommendedDocs": [
+        "docs/starter-pack-chooser.md",
+        "docs/host-integration-playbooks.md",
+        "catalogs/starter-pack-comparison.json",
+        "starter-packs/skills/compare-runtime-pack/README.md"
+      ],
+      "searchKeywords": [
+        "switchyard compare runtime pack",
+        "switchyard compare starter routes",
+        "switchyard runtime selection worksheet"
+      ],
+      "safeClaims": [
+        "compare-first scaffold",
+        "constraint filter worksheet",
+        "no automatic winner selection"
+      ],
+      "notYetSupported": [
+        "automatic winner selection",
+        "live benchmark automation",
+        "consumer parity scoring"
+      ]
+    },
+    {
+      "id": "byok-first-safe-skill",
+      "label": "Stay BYOK-first with safe invoke boundaries before touching Web/Login",
+      "status": "partial",
+      "starterKind": "skill",
+      "recommendedPack": "byok-first-safe-pack",
+      "bestEntry": "pnpm run switchyard:cli -- skill-pack-route --target byok-first-safe-pack",
+      "whyThisPack": [
+        "Use this pack when you want provider truth and safe invoke planning before expanding into heavier Web/Login recovery work.",
+        "The route keeps BYOK and Web/Login boundaries explicit instead of smearing them into one starter."
+      ],
+      "bestWhen": [
+        "You want a BYOK-first starter that keeps invoke planning and provider grounding explicit.",
+        "You need a front-door use-case pack before deciding whether Web/Login work is even necessary."
+      ],
+      "avoidWhen": [
+        "You need key storage workflows, web-login session repair, or automatic provider failover.",
+        "You want a full chat product shell instead of a safe lane-first starter."
+      ],
+      "compareAgainst": [
+        "chat-app-runtime-skill",
+        "codex-builder",
+        "runtime-diagnostics-skill"
+      ],
+      "recommendedDocs": [
+        "docs/starter-pack-chooser.md",
+        "docs/host-integration-playbooks.md",
+        "docs/api/sdk-quickstart.md",
+        "starter-packs/skills/byok-first-safe-pack/README.md"
+      ],
+      "searchKeywords": [
+        "switchyard byok first safe pack",
+        "switchyard byok runtime starter",
+        "switchyard safe invoke planning"
+      ],
+      "safeClaims": [
+        "BYOK-first scaffold",
+        "safe invoke planning pack",
+        "no web-login recovery claims"
+      ],
+      "notYetSupported": [
+        "key storage workflow",
+        "web-login session recovery",
+        "automatic provider failover"
       ]
     }
   ]

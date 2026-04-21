@@ -537,6 +537,7 @@ describe("Switchyard docs frontdoor contracts", () => {
     const starterExamplesSchema = JSON.parse(read("catalogs/starter-manifest-examples.schema.json"));
     const starterPackIndexJson = JSON.parse(read("starter-packs/index.json"));
     const starterPackIndexSchema = JSON.parse(read("starter-packs/index.schema.json"));
+    const starterPackChooserDoc = read("docs/starter-pack-chooser.md");
     const starterPackChooserJson = JSON.parse(read("catalogs/starter-pack-chooser.json"));
     const starterPackChooserSchema = JSON.parse(read("catalogs/starter-pack-chooser.schema.json"));
     const starterPackComparisonJson = JSON.parse(read("catalogs/starter-pack-comparison.json"));
@@ -555,12 +556,15 @@ describe("Switchyard docs frontdoor contracts", () => {
     const builderKitCatalogSchema = JSON.parse(read("catalogs/builder-kit-catalog.schema.json"));
     const skillPackCatalogJson = JSON.parse(read("catalogs/skill-pack-catalog.json"));
     const skillPackCatalogSchema = JSON.parse(read("catalogs/skill-pack-catalog.schema.json"));
+    const skillPackRoutesJson = JSON.parse(read("catalogs/skill-pack-routes.json"));
+    const skillPackRoutesSchema = JSON.parse(read("catalogs/skill-pack-routes.schema.json"));
     const mcpDocs = read("docs/mcp.md");
     const mcpToolCatalogJson = JSON.parse(read("catalogs/mcp-tool-catalog.json"));
     const mcpToolCatalogSchema = JSON.parse(read("catalogs/mcp-tool-catalog.schema.json"));
     const keywordTruthDoc = read("docs/discoverability-keyword-truth.md");
     const keywordTruthJson = JSON.parse(read("catalogs/discoverability-keyword-truth.json"));
     const keywordTruthSchema = JSON.parse(read("catalogs/discoverability-keyword-truth.schema.json"));
+    const hostPlaybooksDoc = read("docs/host-integration-playbooks.md");
     const hostPlaybooksJson = JSON.parse(read("catalogs/host-integration-playbooks.json"));
     const hostPlaybooksSchema = JSON.parse(read("catalogs/host-integration-playbooks.schema.json"));
     const hostExamplesDoc = read("docs/host-integration-examples.md");
@@ -627,8 +631,89 @@ describe("Switchyard docs frontdoor contracts", () => {
     expect(compatReadme).toContain("fail-closed");
     expect(mcpDocs).toContain("pnpm run switchyard:cli -- mcp-tool-catalog");
     expect(mcpDocs).toContain("catalogs/mcp-tool-catalog.json");
+    expect(mcpDocs).toContain("pnpm run switchyard:cli -- skill-pack-routes");
+    expect(mcpDocs).toContain("switchyard.catalog.skill_pack");
     expect(publicSurfaceCatalogDoc).toContain("catalogs/builder-intent-router.json");
     expect(publicSurfaceCatalogDoc).toContain("pnpm run switchyard:cli -- builder-intent-router");
+    expect(hostPlaybooksDoc).toContain("pnpm run switchyard:cli -- skill-pack-route --target runtime-diagnostics-pack");
+    expect(hostPlaybooksDoc).toContain("switchyard.catalog.skill_pack --target runtime-diagnostics-pack");
+    expect(starterPackChooserDoc).toContain("Use-Case Skill Packs");
+    expect(starterPackChooserDoc).not.toContain("current planned pack-local scaffolds");
+    expect(starterPackChooserDoc).not.toContain("planned starter shapes");
+
+    for (const entry of [
+      {
+        scenarioId: "chat-app-runtime-skill",
+        comparisonId: "chat-app-runtime-skill",
+        packId: "chat-app-runtime-pack",
+      },
+      {
+        scenarioId: "research-copilot-skill",
+        comparisonId: "research-copilot-skill",
+        packId: "research-copilot-pack",
+      },
+      {
+        scenarioId: "compare-runtime-skill",
+        comparisonId: "compare-runtime-skill",
+        packId: "compare-runtime-pack",
+      },
+      {
+        scenarioId: "byok-first-safe-skill",
+        comparisonId: "byok-first-safe-skill",
+        packId: "byok-first-safe-pack",
+      },
+    ]) {
+      expect(starterPackChooserDoc).toContain(entry.packId);
+      expect(starterPackChooserDoc).toContain(
+        `pnpm run switchyard:cli -- skill-pack-route --target ${entry.packId}`,
+      );
+      expect(hostPlaybooksDoc).toContain(
+        `pnpm run switchyard:cli -- skill-pack-route --target ${entry.packId}`,
+      );
+      expect(hostPlaybooksDoc).toContain(
+        `switchyard.catalog.skill_pack --target ${entry.packId}`,
+      );
+      expect(starterPackChooserJson.scenarios).toEqual(
+        expect.arrayContaining([
+          expect.objectContaining({
+            id: entry.scenarioId,
+            status: "partial",
+            recommendedPack: entry.packId,
+            bestEntry: `pnpm run switchyard:cli -- skill-pack-route --target ${entry.packId}`,
+            recommendedDocs: expect.arrayContaining(["docs/host-integration-playbooks.md"]),
+          }),
+        ]),
+      );
+      expect(starterPackComparisonJson.comparisons).toEqual(
+        expect.arrayContaining([
+          expect.objectContaining({
+            id: entry.comparisonId,
+            status: "partial",
+            recommendedPack: entry.packId,
+            recommendedDocs: expect.arrayContaining(["docs/host-integration-playbooks.md"]),
+          }),
+        ]),
+      );
+    }
+
+    expect(starterPackComparisonJson.filters).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({
+          id: "use-case-skill-packs",
+          values: expect.arrayContaining([
+            expect.objectContaining({
+              id: "use-case-skill-pack",
+              comparisonIds: expect.arrayContaining([
+                "chat-app-runtime-skill",
+                "research-copilot-skill",
+                "compare-runtime-skill",
+                "byok-first-safe-skill",
+              ]),
+            }),
+          ]),
+        }),
+      ]),
+    );
     expect(faq).toContain("switchyard.catalog.keyword_truth");
     expect(keywordTruthDoc).toContain("catalogs/discoverability-keyword-truth.json");
     expect(keywordTruthDoc).toContain("pnpm run switchyard:cli -- keyword-truth");
@@ -668,6 +753,8 @@ describe("Switchyard docs frontdoor contracts", () => {
     expect(validateBuilderKitCatalog(builderKitCatalogJson)).toBe(true);
     const validateSkillPackCatalog = ajv.compile(skillPackCatalogSchema);
     expect(validateSkillPackCatalog(skillPackCatalogJson)).toBe(true);
+    const validateSkillPackRoutes = ajv.compile(skillPackRoutesSchema);
+    expect(validateSkillPackRoutes(skillPackRoutesJson)).toBe(true);
     const validateKeywordTruth = ajv.compile(keywordTruthSchema);
     expect(validateKeywordTruth(keywordTruthJson)).toBe(true);
     const validateHostPlaybooks = ajv.compile(hostPlaybooksSchema);
@@ -687,6 +774,9 @@ describe("Switchyard docs frontdoor contracts", () => {
             "builder-kit-catalog-schema",
             "skill-pack-catalog",
             "skill-pack-catalog-schema",
+            "skill-pack-routes",
+            "skill-pack-routes-schema",
+            "skill-pack-route",
             "provider-catalog",
             "starter-manifests",
             "starter-manifests-schema",
@@ -739,8 +829,16 @@ describe("Switchyard docs frontdoor contracts", () => {
     );
     expect(catalogJson.skillPacks).toEqual(
       expect.arrayContaining([
-        expect.objectContaining({ id: "runtime-diagnostics-pack", copyReadyPackPath: "starter-packs/skills/runtime-diagnostics-pack" }),
-        expect.objectContaining({ id: "docs-seo-sync-pack", copyReadyPackPath: "starter-packs/skills/docs-seo-sync-pack" }),
+        expect.objectContaining({
+          id: "runtime-diagnostics-pack",
+          copyReadyPackPath: "starter-packs/skills/runtime-diagnostics-pack",
+          routeCommand: "pnpm run switchyard:cli -- skill-pack-route --target runtime-diagnostics-pack",
+        }),
+        expect.objectContaining({
+          id: "docs-seo-sync-pack",
+          copyReadyPackPath: "starter-packs/skills/docs-seo-sync-pack",
+          routeMcpTool: "switchyard.catalog.skill_pack",
+        }),
       ]),
     );
     expect(catalogJson.hostExamples).toEqual(
@@ -844,11 +942,44 @@ describe("Switchyard docs frontdoor contracts", () => {
     expect(new Set(mcpToolCatalogJson.tools.map((tool: { name: string }) => tool.name)).size).toBe(
       mcpToolCatalogJson.tools.length,
     );
+    expect(skillPackRoutesJson.routes).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({
+          id: "runtime-diagnostics-pack",
+          packPath: "starter-packs/skills/runtime-diagnostics-pack",
+          recommendedMcpTools: expect.arrayContaining([
+            "switchyard.catalog.skill_pack",
+            "switchyard.provider.support_bundle",
+          ]),
+        }),
+        expect.objectContaining({
+          id: "docs-seo-sync-pack",
+          recommendedCliCommands: expect.arrayContaining([
+            "pnpm run switchyard:cli -- keyword-truth --json",
+          ]),
+        }),
+      ]),
+    );
     expect(builderIntentRouterJson.intents).toEqual(
       expect.arrayContaining([
         expect.objectContaining({ id: "support-truth", firstHopDoc: "docs/public-surface-catalog.md" }),
         expect.objectContaining({ id: "keyword-claim-truth", firstHopDoc: "docs/discoverability-keyword-truth.md" }),
         expect.objectContaining({ id: "inspect-read-only-mcp", firstHopDoc: "docs/mcp.md" }),
+        expect.objectContaining({
+          id: "pick-use-case-skill-pack",
+          firstHopDoc: "docs/starter-pack-chooser.md",
+          firstHopCli: "pnpm run switchyard:cli -- starter-pack-chooser",
+          firstHopMcp: "switchyard.catalog.starter_pack_chooser",
+          relatedDocs: expect.arrayContaining([
+            "docs/host-integration-playbooks.md",
+            "catalogs/starter-pack-comparison.json",
+          ]),
+        }),
+        expect.objectContaining({
+          id: "activate-skill-pack",
+          firstHopCli: "pnpm run switchyard:cli -- skill-pack-routes",
+          firstHopMcp: "switchyard.catalog.skill_packs",
+        }),
       ]),
     );
     expect(keywordTruthJson.entries).toEqual(

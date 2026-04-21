@@ -1,0 +1,21 @@
+{
+  "id": "compare-runtime-pack",
+  "status": "planned",
+  "exampleShape": "compare-first-runtime-decision",
+  "example": {
+    "name": "compare-runtime-pack-example",
+    "catalogCommand": "pnpm exec node starter-packs/skills/compare-runtime-pack/smoke.mjs",
+    "steps": [
+      "pnpm exec node starter-packs/skills/compare-runtime-pack/smoke.mjs",
+      "pnpm run switchyard:cli -- starter-pack-comparison --json",
+      "pnpm run switchyard:cli -- starter-pack-filter --target thin-runtime-bridges",
+      "pnpm run switchyard:cli -- starter-pack-filter --target read-only-truth",
+      "cat docs/faq.md"
+    ]
+  },
+  "safeClaims": [
+    "compare-first scaffold",
+    "constraint filter worksheet",
+    "no automatic winner selection"
+  ]
+}

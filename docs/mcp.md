@@ -36,8 +36,10 @@ Without this page, it is easy to confuse:
   - `switchyard.runtime.bootstrap`
   - `switchyard.providers.list`
   - `switchyard.runtime.health`
+  - `switchyard.runtime.doctor`
+  - `switchyard.runtime.plan`
   - `switchyard.auth.status`
-  - provider-scoped status, probe, remediation, current-page, current-console,
+  - provider-scoped status, doctor, probe, remediation, current-page, current-console,
     and current-network
   - provider support-bundle, readiness, attach-target, and diagnose ladder
   - doc-backed catalog truth for:
@@ -45,6 +47,7 @@ Without this page, it is easy to confuse:
     - compat target catalog, schema, and entries
     - builder kit catalog, schema, and entries
     - skill pack catalog, schema, and entries
+    - skill pack route cards
     - provider catalog and provider entry
     - builder kits and skill packs
     - host playbooks and host examples
@@ -81,6 +84,9 @@ entrypoints today are:
   - `pnpm run switchyard:cli -- builder-kit-catalog-schema`
   - `pnpm run switchyard:cli -- skill-pack-catalog`
   - `pnpm run switchyard:cli -- skill-pack-catalog-schema`
+  - `pnpm run switchyard:cli -- skill-pack-routes`
+  - `pnpm run switchyard:cli -- skill-pack-routes-schema`
+  - `pnpm run switchyard:cli -- skill-pack-route --target runtime-diagnostics-pack`
   - `pnpm run switchyard:cli -- mcp-tools`
   - `pnpm run switchyard:cli -- mcp-tool-catalog`
   - `pnpm run switchyard:cli -- mcp-tool-catalog-schema`
@@ -94,6 +100,7 @@ entrypoints today are:
   - `pnpm run switchyard:cli -- starter-pack-scenario --target mcp-inspector`
   - `catalogs/mcp-tool-catalog.json`
   - `catalogs/mcp-tool-catalog.schema.json`
+  - `catalogs/skill-pack-routes.json`
   - `catalogs/public-surface-catalog.json`
 
 If you want a minimal runnable sample instead of assembling a client manually,
@@ -121,6 +128,18 @@ reading current truth, go here next:
 - `switchyard.catalog.host_examples`
 - `switchyard.catalog.host_example`
 
+If you already picked a **skill pack** and your real question is:
+
+> **What is the coordinated CLI + MCP route for this pack?**
+
+go here next:
+
+- `pnpm run switchyard:cli -- skill-pack-routes`
+- `pnpm run switchyard:cli -- skill-pack-route --target runtime-diagnostics-pack`
+- `switchyard.catalog.skill_packs`
+- `switchyard.catalog.skill_pack`
+- [docs/host-integration-playbooks.md](./host-integration-playbooks.md)
+
 ## Fastest Route By Question
 
 Treat this section like a triage desk:
@@ -129,8 +148,11 @@ Treat this section like a triage desk:
   - `switchyard.runtime.bootstrap`
   - `switchyard.providers.list`
   - `switchyard.runtime.health`
+  - `switchyard.runtime.doctor`
+  - `switchyard.runtime.plan`
   - `switchyard.auth.status`
   - `switchyard.provider.status`
+  - `switchyard.provider.doctor`
   - `switchyard.provider.probe`
   - `switchyard.provider.remediation`
   - `switchyard.provider.current_page`

@@ -51,13 +51,82 @@
       ],
       "relatedDocs": [
         "catalogs/starter-pack-comparison.json",
-        "starter-packs/README.md",
+        "docs/host-integration-playbooks.md",
         "starter-packs/README.md"
       ],
       "searchKeywords": [
         "switchyard starter pack chooser",
         "switchyard pick first pack",
         "switchyard builder first hop"
+      ]
+    },
+    {
+      "id": "pick-use-case-skill-pack",
+      "question": "I need a front-door use-case skill pack for chat, research, compare, or BYOK-first work. Which route fits?",
+      "firstHopDoc": "docs/starter-pack-chooser.md",
+      "firstHopCli": "pnpm run switchyard:cli -- starter-pack-chooser",
+      "firstHopMcp": "switchyard.catalog.starter_pack_chooser",
+      "whyThisFirst": [
+        "Start here when you already know you want a use-case skill pack instead of a host bridge or generic truth catalog.",
+        "The chooser now exposes the chat-app, research-copilot, compare-runtime, and BYOK-first-safe packs before handing you off to the exact route card."
+      ],
+      "doNotStartWith": [
+        "docs/compat/README.md",
+        "docs/host-integration-examples.md"
+      ],
+      "truthReminder": [
+        "front-door use-case pack does not mean full product scaffold",
+        "handoff still goes through docs/host-integration-playbooks.md"
+      ],
+      "relatedDocs": [
+        "docs/host-integration-playbooks.md",
+        "catalogs/starter-pack-comparison.json",
+        "starter-packs/README.md"
+      ],
+      "searchKeywords": [
+        "switchyard use case skill pack",
+        "switchyard chat research compare byok starter",
+        "switchyard front door skill pack",
+        "chat-app-runtime-pack",
+        "research-copilot-pack",
+        "compare-runtime-pack",
+        "byok-first-safe-pack"
+      ]
+    },
+    {
+      "id": "activate-skill-pack",
+      "question": "I already picked a skill pack or use-case starter. What is the coordinated CLI + MCP route?",
+      "firstHopDoc": "docs/host-integration-playbooks.md",
+      "firstHopCli": "pnpm run switchyard:cli -- skill-pack-routes",
+      "firstHopMcp": "switchyard.catalog.skill_packs",
+      "whyThisFirst": [
+        "Start here once a skill pack is already chosen and you need the exact CLI plus MCP route card for the next handoff.",
+        "This keeps pack-local work aligned with the landed pack files instead of reconstructing the route by hand."
+      ],
+      "doNotStartWith": [
+        "docs/compat/README.md",
+        "catalogs/starter-pack-comparison.json"
+      ],
+      "truthReminder": [
+        "route cards stay bounded even when the eventual host shape is larger",
+        "coordinated routes do not upgrade support claims"
+      ],
+      "relatedDocs": [
+        "docs/starter-pack-chooser.md",
+        "docs/mcp.md",
+        "docs/public-surface-support-matrix.md",
+        "starter-packs/README.md"
+      ],
+      "searchKeywords": [
+        "switchyard skill pack route",
+        "switchyard skill pack handoff",
+        "switchyard cli mcp skill pack",
+        "runtime-diagnostics-pack",
+        "docs-seo-sync-pack",
+        "chat-app-runtime-pack",
+        "research-copilot-pack",
+        "compare-runtime-pack",
+        "byok-first-safe-pack"
       ]
     },
     {

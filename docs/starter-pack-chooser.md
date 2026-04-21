@@ -27,6 +27,7 @@ pnpm run switchyard:cli -- starter-pack-chooser
 pnpm run switchyard:cli -- starter-pack-chooser-schema
 pnpm run switchyard:cli -- starter-pack-scenario --target codex-builder
 pnpm run switchyard:cli -- starter-pack-scenario --target docs-seo-sync-skill
+pnpm run switchyard:cli -- starter-pack-scenario --target chat-app-runtime-skill
 ```
 
 - `switchyard.catalog.starter_pack_chooser`
@@ -43,6 +44,10 @@ pnpm run switchyard:cli -- starter-pack-scenario --target docs-seo-sync-skill
 | Inspect runtime truth through MCP | `mcp` | read-only runtime inspector over stdio | execution brain / write plane |
 | Build a provider triage recipe | `runtime-diagnostics-pack` | read-only diagnostics and support-bundle recipe | invoke / acquisition write / browser automation |
 | Sync docs or SEO wording to truthful labels | `docs-seo-sync-pack` | discoverability helper with human review built in | marketing autopilot / launch automation |
+| Start a chat app runtime bridge without promising a full chat shell | `chat-app-runtime-pack` | service-first chat runtime starter with a bounded handoff route | full chat product scaffold / tool-using shell |
+| Ground a research copilot in truth surfaces before synthesis | `research-copilot-pack` | truth-grounded research starter with human review still in the loop | autonomous research loop / citation autopilot |
+| Compare runtime routes before choosing a winner | `compare-runtime-pack` | compare-first worksheet that keeps tradeoffs reviewable | automatic winner selection / benchmark autopilot |
+| Stay BYOK-first with safe invoke boundaries before touching Web/Login | `byok-first-safe-pack` | safe lane-first starter for provider truth and invoke planning | key storage workflow / web-login recovery / failover promises |
 
 ## Decision Flow
 
@@ -56,12 +61,20 @@ flowchart TD
     B --> G["Read-only MCP inspector"]
     C --> H["Provider triage recipe"]
     C --> I["Docs or SEO truth-sync recipe"]
+    C --> P["Chat app runtime bridge starter"]
+    C --> Q["Research copilot grounded in truth surfaces"]
+    C --> R["Compare runtime routes before choosing"]
+    C --> S["BYOK-first safe starter"]
     D --> J["Choose `codex`"]
     E --> K["Choose `claude-code`"]
     F --> L["Choose `openclaw`"]
     G --> M["Choose `mcp`"]
     H --> N["Choose `runtime-diagnostics-pack`"]
     I --> O["Choose `docs-seo-sync-pack`"]
+    P --> T["Choose `chat-app-runtime-pack`"]
+    Q --> U["Choose `research-copilot-pack`"]
+    R --> V["Choose `compare-runtime-pack`"]
+    S --> W["Choose `byok-first-safe-pack`"]
 ```
 
 ## What This Page Helps With
@@ -70,6 +83,25 @@ flowchart TD
 - plugin/skills/automation discoverability
 - SEO pages that answer a real route-selection question
 - machine-readable pack selection for local tooling
+
+## Use-Case Skill Packs
+
+These four are now **front-door use-case skill packs**.
+
+They are still bounded, still partial, and still not full product shells. But
+they are no longer hidden as "maybe later" shelf notes. If one of these is your
+first job, it is a legitimate first-row route:
+
+| Use case | Pick this pack | First handoff after choosing |
+| --- | --- | --- |
+| Service-first chat runtime bridge | `chat-app-runtime-pack` | `pnpm run switchyard:cli -- skill-pack-route --target chat-app-runtime-pack` |
+| Truth-grounded research copilot | `research-copilot-pack` | `pnpm run switchyard:cli -- skill-pack-route --target research-copilot-pack` |
+| Compare-first runtime or pack selection | `compare-runtime-pack` | `pnpm run switchyard:cli -- skill-pack-route --target compare-runtime-pack` |
+| BYOK-first safe invoke planning | `byok-first-safe-pack` | `pnpm run switchyard:cli -- skill-pack-route --target byok-first-safe-pack` |
+
+Once you pick one of these packs, move to
+[docs/host-integration-playbooks.md](./host-integration-playbooks.md) for the
+coordinated CLI + MCP handoff instead of reconstructing the route by hand.
 
 ## What It Does Not Mean
 

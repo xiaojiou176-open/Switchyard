@@ -95,22 +95,26 @@
       "requiredInputs": [
         "service runtime base URL",
         "delegation-first request envelope",
+        "read-only preflight truth for bootstrap, health, and dispatch planning",
         "explicit understanding that the OpenClaw product shell stays outside Switchyard"
       ],
       "starterSteps": [
         "Read the OpenClaw compat truth page and upstream boundary reminder first.",
+        "Read the delegation preview and dispatch-plan truth before exposing the helper to builders.",
         "Use the delegation-first runtime bridge instead of copying the product shell.",
         "Keep operator or control-plane expectations outside the starter.",
         "Document the remaining parity gaps before exposing the helper."
       ],
       "outputArtifacts": [
         "delegation-first runtime helper",
+        "delegation preflight receipt",
         "thin adapter README",
         "bounded parity disclaimer"
       ],
       "safeClaims": [
         "partial OpenClaw compatibility",
         "delegation-first bridge",
+        "builder preflight helper",
         "no operator or product-shell parity"
       ],
       "recommendedDocs": [

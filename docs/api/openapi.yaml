@@ -102,6 +102,30 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/GenericObject'
+  /v1/runtime/doctor:
+    get:
+      tags: [discovery]
+      summary: Read the aggregated runtime doctor ledger
+      operationId: getRuntimeDoctor
+      responses:
+        '200':
+          description: Runtime doctor payload
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericObject'
+  /v1/runtime/plan:
+    post:
+      tags: [discovery]
+      summary: Read the current task-centric runtime recommendation
+      operationId: planRuntime
+      responses:
+        '200':
+          description: Runtime plan payload
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericObject'
   /v1/runtime/providers/{providerId}/status:
     get:
       tags: [providers]
@@ -112,6 +136,20 @@ paths:
       responses:
         '200':
           description: Provider status payload
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericObject'
+  /v1/runtime/providers/{providerId}/doctor:
+    get:
+      tags: [providers]
+      summary: Read the unified provider doctor receipt
+      operationId: getProviderDoctor
+      parameters:
+        - $ref: '#/components/parameters/ProviderId'
+      responses:
+        '200':
+          description: Provider doctor payload
           content:
             application/json:
               schema:

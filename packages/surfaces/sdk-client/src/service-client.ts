@@ -5,11 +5,15 @@ import {
   type ServiceProviderCurrentConsoleView,
   type ServiceProviderCurrentNetworkView,
   type ServiceProviderCurrentPageView,
+  type ServiceProviderDoctorView,
   type ServiceProviderDiagnoseStepView,
   type ServiceProviderDebugSupportView,
+  type ServiceRuntimeDoctorView,
+  type ServiceRuntimePlanView,
   type RuntimeBootstrapView,
   type ServiceAuthStatusView,
   type ServiceDiscoveryView,
+  type ServiceRuntimeDispatchPlanView,
   type ServiceProviderProbeView,
   type ServiceProviderRemediationView,
   type ServiceRuntimeRouteCatalog,
@@ -44,6 +48,16 @@ export interface RuntimeInvokeRequest {
   model: string;
   input: string;
   lane?: "web" | "byok";
+}
+
+export interface RuntimeDispatchPlanRequest extends RuntimeInvokeRequest {}
+
+export interface RuntimePlanRequest {
+  requiredCapabilities?: string[];
+  policyProfile?: string;
+  allowWebLogin?: boolean;
+  requireOfficialApi?: boolean;
+  requireToolCalling?: boolean;
 }
 
 export interface RuntimeInvokeResponse {
@@ -131,6 +145,19 @@ export class SwitchyardServiceClient {
     return this.#request<RuntimeHealthResponse>(this.routes.health);
   }
 
+  runtimeDoctor() {
+    return this.#request<{ doctor: ServiceRuntimeDoctorView }>(
+      this.routes.runtimeDoctor,
+    );
+  }
+
+  runtimePlan(request: RuntimePlanRequest = {}) {
+    return this.#request<{ plan: ServiceRuntimePlanView }>(this.routes.runtimePlan, {
+      method: "POST",
+      body: JSON.stringify(request),
+    });
+  }
+
   providerStatus(providerId: ServiceProviderId) {
     return this.#request<ServiceProviderProbeView>(
       buildServiceProviderRouteRefs(providerId, this.#baseUrl()).status,
@@ -140,6 +167,12 @@ export class SwitchyardServiceClient {
   providerProbe(providerId: ServiceProviderId) {
     return this.#request<ServiceProviderProbeView>(
       buildServiceProviderRouteRefs(providerId, this.#baseUrl()).probe,
+    );
+  }
+
+  providerDoctor(providerId: ServiceProviderId) {
+    return this.#request<{ doctor: ServiceProviderDoctorView }>(
+      buildServiceProviderRouteRefs(providerId, this.#baseUrl()).doctor,
     );
   }
 
@@ -222,13 +255,34 @@ export class SwitchyardServiceClient {
   }
 
   invoke(request: RuntimeInvokeRequest) {
+    const payload: RuntimeInvokeRequest = {
+      provider: request.provider,
+      model: request.model,
+      input: request.input,
+      ...(request.lane ? { lane: request.lane } : {}),
+    };
+
     return this.#request<RuntimeInvokeResponse>(this.routes.invoke, {
       method: "POST",
-      body: JSON.stringify({
-        lane: request.lane ?? "web",
-        ...request,
-      }),
+      body: JSON.stringify(payload),
     });
+  }
+
+  dispatchPlan(request: RuntimeDispatchPlanRequest) {
+    const payload: RuntimeDispatchPlanRequest = {
+      provider: request.provider,
+      model: request.model,
+      input: request.input,
+      ...(request.lane ? { lane: request.lane } : {}),
+    };
+
+    return this.#request<{ dispatchPlan: ServiceRuntimeDispatchPlanView }>(
+      this.routes.dispatchPlan,
+      {
+        method: "POST",
+        body: JSON.stringify(payload),
+      },
+    );
   }
 
   #baseUrl() {
@@ -247,6 +301,9 @@ export type {
   ServiceProviderCurrentConsoleView,
   ServiceProviderCurrentNetworkView,
   ServiceProviderCurrentPageView,
+  ServiceProviderDoctorView,
   ServiceProviderDiagnoseStepView,
   ServiceProviderDebugSupportView,
+  ServiceRuntimeDoctorView,
+  ServiceRuntimePlanView,
 };

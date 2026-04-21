@@ -57,6 +57,10 @@ pnpm run switchyard:cli -- starter-pack-scenario --target codex-builder
 | `mcp` | `starter-packs/builders/mcp/` | read-only MCP inspector | `pnpm run starter-pack:mcp` |
 | `runtime-diagnostics-pack` | `starter-packs/skills/runtime-diagnostics-pack/` | read-only provider triage | `pnpm run starter-pack:runtime-diagnostics-pack` |
 | `docs-seo-sync-pack` | `starter-packs/skills/docs-seo-sync-pack/` | truth-safe docs / SEO sync helper | `pnpm run starter-pack:docs-seo-sync-pack` |
+| `chat-app-runtime-pack` | `starter-packs/skills/chat-app-runtime-pack/` | chat host runtime bridge planning pack | `pnpm exec node starter-packs/skills/chat-app-runtime-pack/smoke.mjs` |
+| `research-copilot-pack` | `starter-packs/skills/research-copilot-pack/` | truth-surface-first research copilot scaffold | `pnpm exec node starter-packs/skills/research-copilot-pack/smoke.mjs` |
+| `compare-runtime-pack` | `starter-packs/skills/compare-runtime-pack/` | compare-first runtime decision worksheet | `pnpm exec node starter-packs/skills/compare-runtime-pack/smoke.mjs` |
+| `byok-first-safe-pack` | `starter-packs/skills/byok-first-safe-pack/` | BYOK-first safe invoke planning pack | `pnpm exec node starter-packs/skills/byok-first-safe-pack/smoke.mjs` |
 
 ## 每个 pack 都包含什么
 

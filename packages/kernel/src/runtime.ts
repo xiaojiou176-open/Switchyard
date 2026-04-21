@@ -96,9 +96,15 @@ export class SwitchyardRuntime {
         model: resolvedModel.model,
         surface: request.surface
       }),
+      dispatch: Object.freeze({
+        candidateLanes: laneDecision.candidateLanes,
+        reason: laneDecision.reason,
+        preferredLane: request.preferredLane,
+      }),
       capabilities: providerEntry.capabilities,
       diagnostics: buildRuntimeDiagnostics(request, laneDecision.laneId),
-      consumer: request.consumer
+      consumer: request.consumer,
+      policyProfile: request.policyProfile,
     });
   }
 

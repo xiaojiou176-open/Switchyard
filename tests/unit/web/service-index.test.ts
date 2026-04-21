@@ -173,6 +173,17 @@ describe("service index wiring", () => {
     }));
     const createServiceRuntimeInvoker = vi.fn(() => invokeRuntime);
     const suggestServicePreferredLane = vi.fn(() => "web-login");
+    const resolveServiceRuntimeCredentialStates = vi.fn(() => ({
+      byok: "configured",
+      "web-login": "configured",
+    }));
+    const buildServiceRuntimePolicyHints = vi.fn(() => ({
+      policyProfile: "low-friction",
+      preferredLane: "web-login",
+      requiredCapabilities: ["text-generation"],
+      allowWebLogin: true,
+      strictReadyOnly: false,
+    }));
     const byokRegistry = {
       id: "byok-registry",
     };
@@ -235,7 +246,13 @@ describe("service index wiring", () => {
     vi.doMock("../../../apps/service/src/runtime-kernel.js", () => ({
       createServiceRuntimeKernel,
       createServiceRuntimeInvoker,
+      resolveServiceRuntimeCredentialStates,
       suggestServicePreferredLane,
+      buildServiceRuntimePolicyHints,
+      SERVICE_RUNTIME_POLICY_PROFILES: [
+        { id: "low-friction" },
+        { id: "official-api-first" },
+      ],
     }));
 
     const { createSwitchyardService } = await import(
@@ -272,6 +289,7 @@ describe("service index wiring", () => {
     });
     expect(capturedSurfaceOptions?.invokeRuntime).toBe(invokeRuntime);
     expect(typeof capturedSurfaceOptions?.resolvePreferredLane).toBe("function");
+    expect(typeof capturedSurfaceOptions?.resolveCredentialStates).toBe("function");
 
     const preferredLane = await (
       capturedSurfaceOptions?.resolvePreferredLane as
@@ -284,6 +302,31 @@ describe("service index wiring", () => {
       source: "mocked-context",
     });
     expect(suggestServicePreferredLane).toHaveBeenCalledWith(
+      expect.objectContaining({
+        providerId: "gemini",
+        byokRegistry,
+        webProviderStatuses: [
+          {
+            provider: "gemini",
+            credentialState: "ready",
+          },
+        ],
+        env: expect.objectContaining({
+          SWITCHYARD_GEMINI_API_KEY: "gemini-test-key",
+        }),
+      }),
+    );
+    const credentialStates = await (
+      capturedSurfaceOptions?.resolveCredentialStates as
+        | ((providerId: string) => Promise<Record<string, string> | undefined>)
+        | undefined
+    )?.("gemini");
+
+    expect(credentialStates).toEqual({
+      byok: "configured",
+      "web-login": "configured",
+    });
+    expect(resolveServiceRuntimeCredentialStates).toHaveBeenCalledWith(
       expect.objectContaining({
         providerId: "gemini",
         byokRegistry,

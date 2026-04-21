@@ -8,7 +8,30 @@
       "lane": "byok",
       "authMode": "byok",
       "stabilityTarget": "baseline",
-      "truthfulMeaning": "Supported V1 BYOK provider family on the static catalog."
+      "truthfulMeaning": "Supported V1 BYOK provider family on the static catalog.",
+      "capabilityMatrix": {
+        "text-generation": true,
+        "streaming": true,
+        "tool-calling": true,
+        "image-input": true,
+        "file-input": true,
+        "official-api": true,
+        "web-login": false
+      },
+      "dispatchPolicy": {
+        "kind": "single-lane-provider",
+        "registeredLanes": ["byok"],
+        "defaultLane": "byok",
+        "laneOrder": ["web-login", "byok"],
+        "requiresCredentialStateMap": false,
+        "autoDispatches": false
+      },
+      "doctorEntryPoints": {
+        "serviceRoute": "/v1/runtime/providers/openai/doctor",
+        "cliCommand": "pnpm run switchyard:cli -- provider-doctor --provider openai --json",
+        "mcpTool": "switchyard.provider.doctor",
+        "providerCatalogTarget": "openai"
+      }
     },
     {
       "providerId": "anthropic",
@@ -16,7 +39,30 @@
       "lane": "byok",
       "authMode": "byok",
       "stabilityTarget": "baseline",
-      "truthfulMeaning": "Supported V1 BYOK provider family on the static catalog."
+      "truthfulMeaning": "Supported V1 BYOK provider family on the static catalog.",
+      "capabilityMatrix": {
+        "text-generation": true,
+        "streaming": true,
+        "tool-calling": true,
+        "image-input": true,
+        "file-input": true,
+        "official-api": true,
+        "web-login": false
+      },
+      "dispatchPolicy": {
+        "kind": "single-lane-provider",
+        "registeredLanes": ["byok"],
+        "defaultLane": "byok",
+        "laneOrder": ["web-login", "byok"],
+        "requiresCredentialStateMap": false,
+        "autoDispatches": false
+      },
+      "doctorEntryPoints": {
+        "serviceRoute": "/v1/runtime/providers/anthropic/doctor",
+        "cliCommand": "pnpm run switchyard:cli -- provider-doctor --provider anthropic --json",
+        "mcpTool": "switchyard.provider.doctor",
+        "providerCatalogTarget": "anthropic"
+      }
     },
     {
       "providerId": "gemini",
@@ -24,7 +70,30 @@
       "lane": "byok",
       "authMode": "byok",
       "stabilityTarget": "baseline",
-      "truthfulMeaning": "Supported V1 BYOK provider family on the static catalog."
+      "truthfulMeaning": "Supported V1 BYOK provider family on the static catalog.",
+      "capabilityMatrix": {
+        "text-generation": true,
+        "streaming": false,
+        "tool-calling": true,
+        "image-input": true,
+        "file-input": true,
+        "official-api": true,
+        "web-login": false
+      },
+      "dispatchPolicy": {
+        "kind": "credential-aware-auto-lane",
+        "registeredLanes": ["web-login", "byok"],
+        "defaultLane": "web-login",
+        "laneOrder": ["web-login", "byok"],
+        "requiresCredentialStateMap": true,
+        "autoDispatches": true
+      },
+      "doctorEntryPoints": {
+        "serviceRoute": "/v1/runtime/providers/gemini/doctor",
+        "cliCommand": "pnpm run switchyard:cli -- provider-doctor --provider gemini --json",
+        "mcpTool": "switchyard.provider.doctor",
+        "providerCatalogTarget": "gemini:web-login"
+      }
     },
     {
       "providerId": "xai",
@@ -32,7 +101,30 @@
       "lane": "byok",
       "authMode": "byok",
       "stabilityTarget": "baseline",
-      "truthfulMeaning": "Supported V1 BYOK provider family on the static catalog."
+      "truthfulMeaning": "Supported V1 BYOK provider family on the static catalog.",
+      "capabilityMatrix": {
+        "text-generation": true,
+        "streaming": false,
+        "tool-calling": true,
+        "image-input": false,
+        "file-input": false,
+        "official-api": true,
+        "web-login": false
+      },
+      "dispatchPolicy": {
+        "kind": "single-lane-provider",
+        "registeredLanes": ["byok"],
+        "defaultLane": "byok",
+        "laneOrder": ["web-login", "byok"],
+        "requiresCredentialStateMap": false,
+        "autoDispatches": false
+      },
+      "doctorEntryPoints": {
+        "serviceRoute": "/v1/runtime/providers/xai/doctor",
+        "cliCommand": "pnpm run switchyard:cli -- provider-doctor --provider xai --json",
+        "mcpTool": "switchyard.provider.doctor",
+        "providerCatalogTarget": "xai"
+      }
     },
     {
       "providerId": "openrouter",
@@ -40,7 +132,30 @@
       "lane": "byok",
       "authMode": "byok",
       "stabilityTarget": "baseline",
-      "truthfulMeaning": "Supported V1 BYOK provider family on the static catalog."
+      "truthfulMeaning": "Supported V1 BYOK provider family on the static catalog.",
+      "capabilityMatrix": {
+        "text-generation": true,
+        "streaming": false,
+        "tool-calling": true,
+        "image-input": true,
+        "file-input": true,
+        "official-api": true,
+        "web-login": false
+      },
+      "dispatchPolicy": {
+        "kind": "single-lane-provider",
+        "registeredLanes": ["byok"],
+        "defaultLane": "byok",
+        "laneOrder": ["web-login", "byok"],
+        "requiresCredentialStateMap": false,
+        "autoDispatches": false
+      },
+      "doctorEntryPoints": {
+        "serviceRoute": "/v1/runtime/providers/openrouter/doctor",
+        "cliCommand": "pnpm run switchyard:cli -- provider-doctor --provider openrouter --json",
+        "mcpTool": "switchyard.provider.doctor",
+        "providerCatalogTarget": "openrouter"
+      }
     },
     {
       "providerId": "groq",
@@ -48,7 +163,30 @@
       "lane": "byok",
       "authMode": "byok",
       "stabilityTarget": "baseline",
-      "truthfulMeaning": "Supported V1 BYOK provider family on the static catalog."
+      "truthfulMeaning": "Supported V1 BYOK provider family on the static catalog.",
+      "capabilityMatrix": {
+        "text-generation": true,
+        "streaming": false,
+        "tool-calling": true,
+        "image-input": false,
+        "file-input": false,
+        "official-api": true,
+        "web-login": false
+      },
+      "dispatchPolicy": {
+        "kind": "single-lane-provider",
+        "registeredLanes": ["byok"],
+        "defaultLane": "byok",
+        "laneOrder": ["web-login", "byok"],
+        "requiresCredentialStateMap": false,
+        "autoDispatches": false
+      },
+      "doctorEntryPoints": {
+        "serviceRoute": "/v1/runtime/providers/groq/doctor",
+        "cliCommand": "pnpm run switchyard:cli -- provider-doctor --provider groq --json",
+        "mcpTool": "switchyard.provider.doctor",
+        "providerCatalogTarget": "groq"
+      }
     },
     {
       "providerId": "qwen",
@@ -56,7 +194,30 @@
       "lane": "byok",
       "authMode": "byok",
       "stabilityTarget": "baseline",
-      "truthfulMeaning": "Supported V1 BYOK provider family on the static catalog."
+      "truthfulMeaning": "Supported V1 BYOK provider family on the static catalog.",
+      "capabilityMatrix": {
+        "text-generation": true,
+        "streaming": false,
+        "tool-calling": true,
+        "image-input": true,
+        "file-input": true,
+        "official-api": true,
+        "web-login": false
+      },
+      "dispatchPolicy": {
+        "kind": "credential-aware-auto-lane",
+        "registeredLanes": ["web-login", "byok"],
+        "defaultLane": "web-login",
+        "laneOrder": ["web-login", "byok"],
+        "requiresCredentialStateMap": true,
+        "autoDispatches": true
+      },
+      "doctorEntryPoints": {
+        "serviceRoute": "/v1/runtime/providers/qwen/doctor",
+        "cliCommand": "pnpm run switchyard:cli -- provider-doctor --provider qwen --json",
+        "mcpTool": "switchyard.provider.doctor",
+        "providerCatalogTarget": "qwen:web-login"
+      }
     },
     {
       "providerId": "vertex",
@@ -64,7 +225,30 @@
       "lane": "byok",
       "authMode": "byok",
       "stabilityTarget": "baseline",
-      "truthfulMeaning": "Supported V1 BYOK provider family on the static catalog."
+      "truthfulMeaning": "Supported V1 BYOK provider family on the static catalog.",
+      "capabilityMatrix": {
+        "text-generation": true,
+        "streaming": false,
+        "tool-calling": false,
+        "image-input": true,
+        "file-input": true,
+        "official-api": true,
+        "web-login": false
+      },
+      "dispatchPolicy": {
+        "kind": "single-lane-provider",
+        "registeredLanes": ["byok"],
+        "defaultLane": "byok",
+        "laneOrder": ["web-login", "byok"],
+        "requiresCredentialStateMap": false,
+        "autoDispatches": false
+      },
+      "doctorEntryPoints": {
+        "serviceRoute": "/v1/runtime/providers/vertex/doctor",
+        "cliCommand": "pnpm run switchyard:cli -- provider-doctor --provider vertex --json",
+        "mcpTool": "switchyard.provider.doctor",
+        "providerCatalogTarget": "vertex"
+      }
     },
     {
       "providerId": "bedrock",
@@ -72,7 +256,30 @@
       "lane": "byok",
       "authMode": "byok",
       "stabilityTarget": "baseline",
-      "truthfulMeaning": "Supported V1 BYOK provider family on the static catalog."
+      "truthfulMeaning": "Supported V1 BYOK provider family on the static catalog.",
+      "capabilityMatrix": {
+        "text-generation": true,
+        "streaming": false,
+        "tool-calling": false,
+        "image-input": true,
+        "file-input": true,
+        "official-api": true,
+        "web-login": false
+      },
+      "dispatchPolicy": {
+        "kind": "single-lane-provider",
+        "registeredLanes": ["byok"],
+        "defaultLane": "byok",
+        "laneOrder": ["web-login", "byok"],
+        "requiresCredentialStateMap": false,
+        "autoDispatches": false
+      },
+      "doctorEntryPoints": {
+        "serviceRoute": "/v1/runtime/providers/bedrock/doctor",
+        "cliCommand": "pnpm run switchyard:cli -- provider-doctor --provider bedrock --json",
+        "mcpTool": "switchyard.provider.doctor",
+        "providerCatalogTarget": "bedrock"
+      }
     },
     {
       "providerId": "chatgpt",
@@ -80,7 +287,30 @@
       "lane": "web-login",
       "authMode": "web-login",
       "stabilityTarget": "high-stability",
-      "truthfulMeaning": "Supported V1 Web/Login provider and part of the high-stability trio."
+      "truthfulMeaning": "Supported V1 Web/Login provider and part of the high-stability trio.",
+      "capabilityMatrix": {
+        "text-generation": true,
+        "streaming": true,
+        "tool-calling": true,
+        "image-input": true,
+        "file-input": false,
+        "official-api": false,
+        "web-login": true
+      },
+      "dispatchPolicy": {
+        "kind": "single-lane-provider",
+        "registeredLanes": ["web-login"],
+        "defaultLane": "web-login",
+        "laneOrder": ["web-login", "byok"],
+        "requiresCredentialStateMap": false,
+        "autoDispatches": false
+      },
+      "doctorEntryPoints": {
+        "serviceRoute": "/v1/runtime/providers/chatgpt/doctor",
+        "cliCommand": "pnpm run switchyard:cli -- provider-doctor --provider chatgpt --json",
+        "mcpTool": "switchyard.provider.doctor",
+        "providerCatalogTarget": "chatgpt"
+      }
     },
     {
       "providerId": "gemini",
@@ -88,7 +318,30 @@
       "lane": "web-login",
       "authMode": "web-login",
       "stabilityTarget": "high-stability",
-      "truthfulMeaning": "Supported V1 Web/Login provider and part of the high-stability trio."
+      "truthfulMeaning": "Supported V1 Web/Login provider and part of the high-stability trio.",
+      "capabilityMatrix": {
+        "text-generation": true,
+        "streaming": true,
+        "tool-calling": true,
+        "image-input": true,
+        "file-input": false,
+        "official-api": false,
+        "web-login": true
+      },
+      "dispatchPolicy": {
+        "kind": "credential-aware-auto-lane",
+        "registeredLanes": ["web-login", "byok"],
+        "defaultLane": "web-login",
+        "laneOrder": ["web-login", "byok"],
+        "requiresCredentialStateMap": true,
+        "autoDispatches": true
+      },
+      "doctorEntryPoints": {
+        "serviceRoute": "/v1/runtime/providers/gemini/doctor",
+        "cliCommand": "pnpm run switchyard:cli -- provider-doctor --provider gemini --json",
+        "mcpTool": "switchyard.provider.doctor",
+        "providerCatalogTarget": "gemini:web-login"
+      }
     },
     {
       "providerId": "claude",
@@ -96,7 +349,30 @@
       "lane": "web-login",
       "authMode": "web-login",
       "stabilityTarget": "high-stability",
-      "truthfulMeaning": "Supported V1 Web/Login provider and part of the high-stability trio."
+      "truthfulMeaning": "Supported V1 Web/Login provider and part of the high-stability trio.",
+      "capabilityMatrix": {
+        "text-generation": true,
+        "streaming": true,
+        "tool-calling": true,
+        "image-input": true,
+        "file-input": false,
+        "official-api": false,
+        "web-login": true
+      },
+      "dispatchPolicy": {
+        "kind": "single-lane-provider",
+        "registeredLanes": ["web-login"],
+        "defaultLane": "web-login",
+        "laneOrder": ["web-login", "byok"],
+        "requiresCredentialStateMap": false,
+        "autoDispatches": false
+      },
+      "doctorEntryPoints": {
+        "serviceRoute": "/v1/runtime/providers/claude/doctor",
+        "cliCommand": "pnpm run switchyard:cli -- provider-doctor --provider claude --json",
+        "mcpTool": "switchyard.provider.doctor",
+        "providerCatalogTarget": "claude"
+      }
     },
     {
       "providerId": "grok",
@@ -104,7 +380,30 @@
       "lane": "web-login",
       "authMode": "web-login",
       "stabilityTarget": "baseline",
-      "truthfulMeaning": "Supported V1 Web/Login provider at the baseline stability tier."
+      "truthfulMeaning": "Supported V1 Web/Login provider at the baseline stability tier.",
+      "capabilityMatrix": {
+        "text-generation": true,
+        "streaming": true,
+        "tool-calling": true,
+        "image-input": false,
+        "file-input": false,
+        "official-api": false,
+        "web-login": true
+      },
+      "dispatchPolicy": {
+        "kind": "single-lane-provider",
+        "registeredLanes": ["web-login"],
+        "defaultLane": "web-login",
+        "laneOrder": ["web-login", "byok"],
+        "requiresCredentialStateMap": false,
+        "autoDispatches": false
+      },
+      "doctorEntryPoints": {
+        "serviceRoute": "/v1/runtime/providers/grok/doctor",
+        "cliCommand": "pnpm run switchyard:cli -- provider-doctor --provider grok --json",
+        "mcpTool": "switchyard.provider.doctor",
+        "providerCatalogTarget": "grok"
+      }
     },
     {
       "providerId": "qwen",
@@ -112,7 +411,30 @@
       "lane": "web-login",
       "authMode": "web-login",
       "stabilityTarget": "baseline",
-      "truthfulMeaning": "Supported V1 Web/Login provider at the baseline stability tier."
+      "truthfulMeaning": "Supported V1 Web/Login provider at the baseline stability tier.",
+      "capabilityMatrix": {
+        "text-generation": true,
+        "streaming": true,
+        "tool-calling": true,
+        "image-input": true,
+        "file-input": false,
+        "official-api": false,
+        "web-login": true
+      },
+      "dispatchPolicy": {
+        "kind": "credential-aware-auto-lane",
+        "registeredLanes": ["web-login", "byok"],
+        "defaultLane": "web-login",
+        "laneOrder": ["web-login", "byok"],
+        "requiresCredentialStateMap": true,
+        "autoDispatches": true
+      },
+      "doctorEntryPoints": {
+        "serviceRoute": "/v1/runtime/providers/qwen/doctor",
+        "cliCommand": "pnpm run switchyard:cli -- provider-doctor --provider qwen --json",
+        "mcpTool": "switchyard.provider.doctor",
+        "providerCatalogTarget": "qwen:web-login"
+      }
     }
   ]
 }

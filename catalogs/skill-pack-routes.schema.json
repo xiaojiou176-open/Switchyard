@@ -1,0 +1,115 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/xiaojiou176-open/Switchyard/catalogs/skill-pack-routes.schema.json",
+  "title": "Switchyard Skill Pack Routes",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "$schema",
+    "routeVersion",
+    "routes"
+  ],
+  "properties": {
+    "$schema": {
+      "type": "string"
+    },
+    "routeVersion": {
+      "type": "integer",
+      "minimum": 1
+    },
+    "routes": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/route"
+      }
+    }
+  },
+  "$defs": {
+    "status": {
+      "type": "string",
+      "enum": [
+        "supported now",
+        "partial",
+        "planned",
+        "research only",
+        "not now"
+      ]
+    },
+    "stringArray": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
+    },
+    "route": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "status",
+        "routeSummary",
+        "bestEntry",
+        "catalogCommand",
+        "routeMcpTool",
+        "packPath",
+        "packFiles",
+        "recommendedCliCommands",
+        "recommendedMcpTools",
+        "recommendedDocs",
+        "handoffChecks",
+        "notYetSupported"
+      ],
+      "properties": {
+        "id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "status": {
+          "$ref": "#/$defs/status"
+        },
+        "routeSummary": {
+          "type": "string",
+          "minLength": 1
+        },
+        "bestEntry": {
+          "type": "string",
+          "minLength": 1
+        },
+        "catalogCommand": {
+          "type": "string",
+          "minLength": 1
+        },
+        "routeMcpTool": {
+          "type": "string",
+          "minLength": 1
+        },
+        "packPath": {
+          "type": "string",
+          "minLength": 1
+        },
+        "packFiles": {
+          "$ref": "#/$defs/stringArray"
+        },
+        "recommendedCliCommands": {
+          "$ref": "#/$defs/stringArray"
+        },
+        "recommendedMcpTools": {
+          "$ref": "#/$defs/stringArray"
+        },
+        "recommendedDocs": {
+          "$ref": "#/$defs/stringArray"
+        },
+        "handoffChecks": {
+          "$ref": "#/$defs/stringArray"
+        },
+        "safeClaims": {
+          "$ref": "#/$defs/stringArray"
+        },
+        "notYetSupported": {
+          "$ref": "#/$defs/stringArray"
+        }
+      }
+    }
+  }
+}

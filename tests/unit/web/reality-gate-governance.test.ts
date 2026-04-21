@@ -256,6 +256,22 @@ describe("reality gate governance helpers", () => {
           provider: "chatgpt",
         },
       ],
+      frontdoorGovernance: {
+        passed: true,
+        expectedSkillPackIds: [
+          "runtime-diagnostics-pack",
+          "docs-seo-sync-pack",
+          "chat-app-runtime-pack",
+          "research-copilot-pack",
+          "compare-runtime-pack",
+          "byok-first-safe-pack",
+        ],
+        missingFromChooser: [],
+        missingFromComparison: [],
+        missingFromRouter: [],
+        missingFromChooserDoc: [],
+        missingFromPlaybooksDoc: [],
+      },
     });
 
     expect(report.overallStatus).toBe("success");
@@ -266,5 +282,205 @@ describe("reality gate governance helpers", () => {
       status: "pass",
     });
     expect(report.m1KernelAlphaRealityGate).toBe("pass");
+    expect(report.truthAlignment.alignedProviderCount).toBe(2);
+    expect(report.truthAlignment.blockedProviderCount).toBe(0);
+    expect(report.truthAlignment.frontdoorGovernance).toEqual({
+      passed: true,
+      expectedSkillPackIds: [
+        "runtime-diagnostics-pack",
+        "docs-seo-sync-pack",
+        "chat-app-runtime-pack",
+        "research-copilot-pack",
+        "compare-runtime-pack",
+        "byok-first-safe-pack",
+      ],
+      missingFromChooser: [],
+      missingFromComparison: [],
+      missingFromRouter: [],
+      missingFromChooserDoc: [],
+      missingFromPlaybooksDoc: [],
+    });
+  });
+
+  it("builds a provider-aligned truth summary that points back to runtime doctor commands", async () => {
+    const { buildTruthAlignmentSummary } = await import("../../../scripts/run-reality-gate.mjs");
+
+    const summary = buildTruthAlignmentSummary(
+      {
+        status: "success",
+        provider: "gemini",
+      },
+      [
+        {
+          status: "external-blocker",
+          provider: "claude",
+          classification: "account-action-required",
+        },
+      ],
+    );
+
+    expect(summary).toEqual({
+      source: "reality-gate-live-results",
+      alignedProviderCount: 2,
+      blockedProviderCount: 1,
+      providers: [
+        {
+          provider: "gemini",
+          story: "dispatchable",
+          classification: undefined,
+          runtimeDoctorCommand:
+            "pnpm run switchyard:cli -- provider-doctor --provider gemini --json",
+        },
+        {
+          provider: "claude",
+          story: "blocked",
+          classification: "account-action-required",
+          runtimeDoctorCommand:
+            "pnpm run switchyard:cli -- provider-doctor --provider claude --json",
+        },
+      ],
+    });
+  });
+
+  it("turns front-door drift into a repo-owned governance failure", async () => {
+    const { buildRealityGateReport } = await import("../../../scripts/run-reality-gate.mjs");
+
+    const report = buildRealityGateReport({
+      internalGate: [
+        { name: "typecheck", exitCode: 0 },
+        { name: "test", exitCode: 0 },
+        { name: "build", exitCode: 0 },
+      ],
+      geminiByok: {
+        status: "success",
+        provider: "gemini",
+      },
+      webLogin: [
+        {
+          status: "success",
+          provider: "chatgpt",
+        },
+      ],
+      frontdoorGovernance: {
+        passed: false,
+        expectedSkillPackIds: [
+          "runtime-diagnostics-pack",
+          "docs-seo-sync-pack",
+          "chat-app-runtime-pack",
+          "research-copilot-pack",
+          "compare-runtime-pack",
+          "byok-first-safe-pack",
+        ],
+        missingFromChooser: ["chat-app-runtime-pack"],
+        missingFromComparison: ["research-copilot-pack"],
+        missingFromRouter: ["compare-runtime-pack"],
+        missingFromChooserDoc: ["byok-first-safe-pack"],
+        missingFromPlaybooksDoc: ["chat-app-runtime-pack"],
+      },
+    });
+
+    expect(report.overallStatus).toBe("failure");
+    expect(report.exitCode).toBe(1);
+    expect(report.repoOwnedGate).toEqual({
+      passed: false,
+      verdict: "fail",
+      status: "failure",
+    });
+    expect(report.truthAlignment.frontdoorGovernance.passed).toBe(false);
+    expect(report.failures).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({
+          provider: "frontdoor-governance",
+          reason: "frontdoor-truth-drift",
+          classification: "contract-drift",
+        }),
+      ]),
+    );
+  });
+
+  it("builds a front-door governance summary from landed skill-pack routes and front-door surfaces", async () => {
+    const { buildFrontdoorGovernanceSummary } = await import("../../../scripts/run-reality-gate.mjs");
+
+    const summary = buildFrontdoorGovernanceSummary({
+      skillPackRoutes: {
+        routes: [
+          { id: "runtime-diagnostics-pack" },
+          { id: "docs-seo-sync-pack" },
+          { id: "chat-app-runtime-pack" },
+        ],
+      },
+      starterPackChooser: {
+        scenarios: [
+          {
+            starterKind: "skill",
+            recommendedPack: "runtime-diagnostics-pack",
+          },
+          {
+            starterKind: "skill",
+            recommendedPack: "chat-app-runtime-pack",
+          },
+        ],
+      },
+      starterPackComparison: {
+        comparisons: [
+          {
+            starterKind: "skill",
+            recommendedPack: "runtime-diagnostics-pack",
+          },
+        ],
+      },
+      builderIntentRouter: {
+        intents: [
+          {
+            id: "route-runtime-diagnostics-pack",
+            question: "Use runtime-diagnostics-pack",
+          },
+        ],
+      },
+      starterPackChooserDoc: "runtime-diagnostics-pack chat-app-runtime-pack",
+      hostIntegrationPlaybooksDoc: "runtime-diagnostics-pack docs-seo-sync-pack",
+    });
+
+    expect(summary).toEqual({
+      passed: false,
+      expectedSkillPackIds: [
+        "runtime-diagnostics-pack",
+        "docs-seo-sync-pack",
+        "chat-app-runtime-pack",
+      ],
+      missingFromChooser: ["docs-seo-sync-pack"],
+      missingFromComparison: ["docs-seo-sync-pack", "chat-app-runtime-pack"],
+      missingFromRouter: ["docs-seo-sync-pack", "chat-app-runtime-pack"],
+      missingFromChooserDoc: ["docs-seo-sync-pack"],
+      missingFromPlaybooksDoc: ["chat-app-runtime-pack"],
+    });
+  });
+
+  it("keeps the current repo front-door skill-pack surfaces aligned", async () => {
+    const {
+      buildFrontdoorGovernanceSummary,
+      loadFrontdoorGovernanceInputs,
+    } = await import("../../../scripts/run-reality-gate.mjs");
+
+    const summary = buildFrontdoorGovernanceSummary(
+      loadFrontdoorGovernanceInputs(),
+    );
+
+    expect(summary).toEqual({
+      passed: true,
+      expectedSkillPackIds: [
+        "runtime-diagnostics-pack",
+        "docs-seo-sync-pack",
+        "chat-app-runtime-pack",
+        "research-copilot-pack",
+        "compare-runtime-pack",
+        "byok-first-safe-pack",
+      ],
+      missingFromChooser: [],
+      missingFromComparison: [],
+      missingFromRouter: [],
+      missingFromChooserDoc: [],
+      missingFromPlaybooksDoc: [],
+    });
   });
 });

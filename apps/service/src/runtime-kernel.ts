@@ -9,9 +9,12 @@ import {
 } from "../../../packages/kernel/src/index.js";
 import type {
   AuthMode,
+  CapabilityId,
+  CredentialState as RuntimeCredentialState,
   LaneId,
   ProviderId,
   RuntimeRequest,
+  RuntimePolicyProfileId,
 } from "../../../packages/contracts/src/index.js";
 import type { ByokProviderRegistry } from "../../../packages/lanes/byok/src/index.js";
 import type {
@@ -77,6 +80,68 @@ export const SERVICE_RUNTIME_LANE_ORDER = Object.freeze([
   "web-login",
   "byok",
 ] as const satisfies readonly LaneId[]);
+
+export interface ServiceRuntimePolicyProfile {
+  readonly id: RuntimePolicyProfileId;
+  readonly label: string;
+  readonly summary: string;
+}
+
+export const SERVICE_RUNTIME_POLICY_PROFILES = Object.freeze([
+  {
+    id: "reliability-first",
+    label: "Reliability First",
+    summary:
+      "Prefer the most dependable runtime path, biasing toward BYOK when it exists.",
+  },
+  {
+    id: "official-api-first",
+    label: "Official API First",
+    summary:
+      "Prefer providers that satisfy official-api capability and stay on the BYOK lane when possible.",
+  },
+  {
+    id: "web-ok",
+    label: "Web OK",
+    summary:
+      "Treat Web/Login as an explicitly acceptable runtime path and prefer it when it is ready.",
+  },
+  {
+    id: "low-friction",
+    label: "Low Friction",
+    summary:
+      "Take the easiest currently dispatchable lane without hiding blockers or widening support claims.",
+  },
+  {
+    id: "strict-fail-closed",
+    label: "Strict Fail Closed",
+    summary:
+      "Only recommend lanes that look fully ready right now, refusing degraded shortcuts.",
+  },
+] as const satisfies readonly ServiceRuntimePolicyProfile[]);
+
+export interface ServiceRuntimePolicyHints {
+  readonly policyProfile: RuntimePolicyProfileId;
+  readonly preferredLane?: LaneId;
+  readonly requiredCapabilities: readonly CapabilityId[];
+  readonly allowWebLogin: boolean;
+  readonly strictReadyOnly: boolean;
+}
+
+export function resolveServiceRuntimePolicyProfile(
+  profile?: string,
+): RuntimePolicyProfileId {
+  if (
+    profile === "reliability-first" ||
+    profile === "official-api-first" ||
+    profile === "web-ok" ||
+    profile === "strict-fail-closed"
+  ) {
+    return profile;
+  }
+
+  return "low-friction";
+}
 
 function toByokAuthModes(): readonly AuthMode[] {
   return ["api-key"] as const;
@@ -173,12 +238,26 @@ export function createServiceRuntimeKernel(options: {
   });
 }
 
-function isWebLaneReady(status: ProviderStatusView | undefined): boolean {
-  return (
-    status?.credentialState === "ready" ||
-    status?.credentialState === "expiring" ||
-    status?.credentialState === "refreshable-but-degraded"
-  );
+function mapWebCredentialStateToRuntimeCredentialState(
+  state: ProviderStatusView["credentialState"] | undefined,
+): RuntimeCredentialState | undefined {
+  switch (state) {
+    case "ready":
+      return "configured";
+    case "expiring":
+    case "refreshable-but-degraded":
+      return "refreshable-degraded";
+    case "missing":
+      return "missing";
+    case "expired":
+      return "expired";
+    case "provider-unavailable":
+      return "invalid";
+    case "user-action-required":
+      return "user-action-required";
+    default:
+      return undefined;
+  }
 }
 
 function isByokLaneReady(
@@ -195,23 +274,54 @@ function isByokLaneReady(
   return hasRequiredCredential(env, registration.credential);
 }
 
+export function resolveServiceRuntimeCredentialStates(options: {
+  providerId: ProviderId;
+  byokRegistry: ByokProviderRegistry;
+  webProviderStatuses: readonly ProviderStatusView[];
+  env: Record<string, string | undefined>;
+}): Partial<Record<LaneId, RuntimeCredentialState>> {
+  const credentialStates: Partial<Record<LaneId, RuntimeCredentialState>> = {};
+
+  if (options.byokRegistry.get(options.providerId as never)) {
+    credentialStates.byok = isByokLaneReady(
+      options.providerId,
+      options.byokRegistry,
+      options.env,
+    )
+      ? "configured"
+      : "missing";
+  }
+
+  const webStatus = options.webProviderStatuses.find(
+    (provider) => provider.provider === (options.providerId as WebProviderId),
+  );
+  const webCredentialState = mapWebCredentialStateToRuntimeCredentialState(
+    webStatus?.credentialState,
+  );
+
+  if (webCredentialState) {
+    credentialStates["web-login"] = webCredentialState;
+  }
+
+  return credentialStates;
+}
+
 export function suggestServicePreferredLane(options: {
   providerId: ProviderId;
   byokRegistry: ByokProviderRegistry;
   webProviderStatuses: readonly ProviderStatusView[];
   env: Record<string, string | undefined>;
 }): LaneId | undefined {
-  const byokReady = isByokLaneReady(
-    options.providerId,
-    options.byokRegistry,
-    options.env,
-  );
-  const webStatus = options.webProviderStatuses.find(
-    (provider) => provider.provider === (options.providerId as WebProviderId),
-  );
-  const webReady = isWebLaneReady(webStatus);
+  const credentialStates = resolveServiceRuntimeCredentialStates(options);
+  const byokState = credentialStates.byok;
+  const webState = credentialStates["web-login"];
+  const byokReady =
+    byokState === "configured" || byokState === "refreshable-degraded";
+  const webReady =
+    webState === "configured" || webState === "refreshable-degraded";
+  const webKnown = webState !== undefined;
 
-  if (webStatus && webStatus.credentialState !== "missing") {
+  if (webReady && !byokReady) {
     return "web-login";
   }
 
@@ -219,11 +329,95 @@ export function suggestServicePreferredLane(options: {
     return "byok";
   }
 
-  if (webReady && !byokReady) {
+  if (webReady && byokReady) {
     return "web-login";
   }
 
+  if (webKnown && !webReady && byokReady) {
+    return "byok";
+  }
+
+  if (webKnown && !webReady && !byokReady) {
+    return undefined;
+  }
+
+  if (byokReady) {
+    return "byok";
+  }
+
+  if (webReady) {
+    return "web-login";
+  }
+
+  if (options.webProviderStatuses.some(
+    (provider) => provider.provider === (options.providerId as WebProviderId),
+  )) {
+    return undefined;
+  }
+
+  if (options.byokRegistry.get(options.providerId as never)) {
+    return "byok";
+  }
+
   return undefined;
+}
+
+export function buildServiceRuntimePolicyHints(options: {
+  providerId: ProviderId;
+  policyProfile?: string;
+  byokRegistry: ByokProviderRegistry;
+  webProviderStatuses: readonly ProviderStatusView[];
+  env: Record<string, string | undefined>;
+}): ServiceRuntimePolicyHints {
+  const policyProfile = resolveServiceRuntimePolicyProfile(options.policyProfile);
+  const suggestedLane = suggestServicePreferredLane(options);
+  const hasByok = Boolean(options.byokRegistry.get(options.providerId as never));
+  const hasWeb = options.webProviderStatuses.some(
+    (provider) => provider.provider === (options.providerId as WebProviderId),
+  );
+
+  switch (policyProfile) {
+    case "reliability-first":
+      return {
+        policyProfile,
+        preferredLane: hasByok ? "byok" : suggestedLane,
+        requiredCapabilities: ["text-generation"],
+        allowWebLogin: true,
+        strictReadyOnly: false,
+      };
+    case "official-api-first":
+      return {
+        policyProfile,
+        preferredLane: hasByok ? "byok" : suggestedLane,
+        requiredCapabilities: ["text-generation", "official-api"],
+        allowWebLogin: false,
+        strictReadyOnly: false,
+      };
+    case "web-ok":
+      return {
+        policyProfile,
+        preferredLane: hasWeb ? "web-login" : suggestedLane,
+        requiredCapabilities: ["text-generation"],
+        allowWebLogin: true,
+        strictReadyOnly: false,
+      };
+    case "strict-fail-closed":
+      return {
+        policyProfile,
+        preferredLane: hasByok ? "byok" : suggestedLane,
+        requiredCapabilities: ["text-generation"],
+        allowWebLogin: true,
+        strictReadyOnly: true,
+      };
+    default:
+      return {
+        policyProfile: "low-friction",
+        preferredLane: suggestedLane,
+        requiredCapabilities: ["text-generation"],
+        allowWebLogin: true,
+        strictReadyOnly: false,
+      };
+  }
 }
 
 function jsonResponse(status: number, body: unknown): ServiceSurfaceResponse {

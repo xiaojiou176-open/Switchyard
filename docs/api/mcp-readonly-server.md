@@ -35,8 +35,11 @@ This page documents the committed MCP slice that exists today.
 - `switchyard.runtime.bootstrap`
 - `switchyard.providers.list`
 - `switchyard.runtime.health`
+- `switchyard.runtime.doctor`
+- `switchyard.runtime.plan`
 - `switchyard.auth.status`
 - `switchyard.provider.status`
+- `switchyard.provider.doctor`
 - `switchyard.provider.probe`
 - `switchyard.provider.remediation`
 - `switchyard.provider.current_page`
@@ -71,6 +74,9 @@ This page documents the committed MCP slice that exists today.
 - `switchyard.catalog.skill_pack_catalog_schema`
 - `switchyard.catalog.skill_packs`
 - `switchyard.catalog.skill_pack`
+- `switchyard.catalog.skill_pack_routes`
+- `switchyard.catalog.skill_pack_routes_schema`
+- `switchyard.catalog.skill_pack_route`
 - `switchyard.catalog.starter_manifests`
 - `switchyard.catalog.starter_manifests_schema`
 - `switchyard.catalog.starter_examples`
@@ -150,10 +156,15 @@ pnpm run switchyard:mcp -- --base-url http://127.0.0.1:4010
 ```bash
 pnpm run test:mcp:smoke
 pnpm run switchyard:cli -- mcp-tools --json
+pnpm run switchyard:cli -- runtime-doctor --json
+pnpm run switchyard:cli -- runtime-plan --json
 pnpm run switchyard:cli -- compat-target-catalog --json
 pnpm run switchyard:cli -- builder-kit-catalog --json
 pnpm run switchyard:cli -- skill-pack-catalog --json
+pnpm run switchyard:cli -- skill-pack-routes --json
+pnpm run switchyard:cli -- skill-pack-route --target runtime-diagnostics-pack --json
 pnpm run switchyard:cli -- mcp-tool-catalog --json
+pnpm run switchyard:cli -- provider-doctor --provider chatgpt --json
 ```
 
 这里第一条现在不只是“工具注册单测”。
@@ -173,8 +184,12 @@ pnpm run switchyard:cli -- mcp-tool-catalog --json
 
 - 我想查某个 provider 现在能不能用：
   - 先看 `switchyard.provider.status`
+  - 想把 policy / dispatch / remediation 一次对齐时先看 `switchyard.provider.doctor`
   - 再看 `switchyard.provider.probe`
   - 需要更细诊断时用 `switchyard.provider.support_bundle`
+- 我想先看整座 runtime 的总账本或任务级推荐：
+  - 先看 `switchyard.runtime.doctor`
+  - 再看 `switchyard.runtime.plan`
 - 我想知道 repo 现在到底对外暴露了哪些 surface / compat target：
   - 先看 `switchyard.catalog.surface_catalog`
   - 再看 `switchyard.catalog.compat_target_catalog`
@@ -182,6 +197,7 @@ pnpm run switchyard:cli -- mcp-tool-catalog --json
 - 我想选 starter pack / builder path：
   - 如果你只想看 builder kits 自己的目录卡，先看 `switchyard.catalog.builder_kit_catalog`
   - 如果你只想看 skill packs 自己的目录卡，先看 `switchyard.catalog.skill_pack_catalog`
+  - 如果你想看一条 skill pack 到 CLI/MCP 的 route card，先看 `switchyard.catalog.skill_pack_route`
   - 如果第一站都还没想清楚，先看 `switchyard.catalog.builder_intent_router`
   - 先看 `switchyard.catalog.starter_pack_chooser`
   - 再看 `switchyard.catalog.starter_pack_comparison`

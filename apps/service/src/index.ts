@@ -27,8 +27,11 @@ import {
   type WebLiveProofRunner,
 } from "./default-web-live-proofs.js";
 import {
+  buildServiceRuntimePolicyHints,
   createServiceRuntimeKernel,
   createServiceRuntimeInvoker,
+  resolveServiceRuntimeCredentialStates,
+  SERVICE_RUNTIME_POLICY_PROFILES,
   suggestServicePreferredLane,
 } from "./runtime-kernel.js";
 import {
@@ -267,6 +270,36 @@ export function createSwitchyardService(options: SwitchyardServiceOptions = {}) 
               env: runtimeEnv,
             })
         : undefined,
+    resolveCredentialStates:
+      "registry" in byokClient &&
+      byokClient.registry &&
+      "registry" in lane &&
+      lane.registry
+        ? async (providerId) =>
+            resolveServiceRuntimeCredentialStates({
+              providerId,
+              byokRegistry: byokClient.registry,
+              webProviderStatuses: await lane.authStatus(context),
+              env: runtimeEnv,
+            })
+        : undefined,
+    resolvePolicyHints:
+      "registry" in byokClient &&
+      byokClient.registry &&
+      "registry" in lane &&
+      lane.registry
+        ? async (providerId, policyProfile) =>
+            buildServiceRuntimePolicyHints({
+              providerId,
+              policyProfile,
+              byokRegistry: byokClient.registry,
+              webProviderStatuses: await lane.authStatus(context),
+              env: runtimeEnv,
+            })
+        : undefined,
+    availablePolicyProfiles: SERVICE_RUNTIME_POLICY_PROFILES.map(
+      (profile) => profile.id,
+    ),
     byokClient,
     serviceName: options.serviceName,
     ownerUserId: options.ownerUserId,

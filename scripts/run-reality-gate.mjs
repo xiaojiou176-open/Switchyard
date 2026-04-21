@@ -1,7 +1,7 @@
 import "./load-local-env.mjs";
 
 import { spawnSync } from "node:child_process";
-import { mkdirSync, writeFileSync } from "node:fs";
+import { mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import { dirname, join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 
@@ -119,6 +119,96 @@ export function summarizeLiveStatuses(geminiByok, webLogin) {
   };
 }
 
+export function buildTruthAlignmentSummary(geminiByok, webLogin) {
+  const allResults = [geminiByok, ...webLogin].filter(Boolean);
+  const providers = allResults.map((result) => ({
+    provider: result.provider ?? "gemini",
+    story: result.status === "success" ? "dispatchable" : "blocked",
+    classification:
+      resolveWorkspaceClassification(result) ??
+      result.classification ??
+      undefined,
+    runtimeDoctorCommand: `pnpm run switchyard:cli -- provider-doctor --provider ${result.provider ?? "gemini"} --json`,
+  }));
+
+  return {
+    source: "reality-gate-live-results",
+    alignedProviderCount: providers.length,
+    blockedProviderCount: providers.filter((provider) => provider.story === "blocked").length,
+    providers,
+  };
+}
+
+function readJson(relativePath, rootDir = repoRoot) {
+  return JSON.parse(readFileSync(resolve(rootDir, relativePath), "utf8"));
+}
+
+function readText(relativePath, rootDir = repoRoot) {
+  return readFileSync(resolve(rootDir, relativePath), "utf8");
+}
+
+export function buildFrontdoorGovernanceSummary({
+  skillPackRoutes,
+  starterPackChooser,
+  starterPackComparison,
+  builderIntentRouter,
+  starterPackChooserDoc,
+  hostIntegrationPlaybooksDoc,
+}) {
+  const expectedSkillPackIds = Array.from(
+    new Set((skillPackRoutes?.routes ?? []).map((route) => route.id).filter(Boolean)),
+  );
+  const chooserPacks = new Set(
+    (starterPackChooser?.scenarios ?? [])
+      .filter((scenario) => scenario.starterKind === "skill")
+      .map((scenario) => scenario.recommendedPack)
+      .filter(Boolean),
+  );
+  const comparisonPacks = new Set(
+    (starterPackComparison?.comparisons ?? [])
+      .filter((comparison) => comparison.starterKind === "skill")
+      .map((comparison) => comparison.recommendedPack)
+      .filter(Boolean),
+  );
+  const routerText = JSON.stringify(builderIntentRouter ?? {});
+  const chooserDocText = `${starterPackChooserDoc ?? ""}`;
+  const playbooksDocText = `${hostIntegrationPlaybooksDoc ?? ""}`;
+
+  const missingFromChooser = expectedSkillPackIds.filter((id) => !chooserPacks.has(id));
+  const missingFromComparison = expectedSkillPackIds.filter((id) => !comparisonPacks.has(id));
+  const missingFromRouter = expectedSkillPackIds.filter((id) => !routerText.includes(id));
+  const missingFromChooserDoc = expectedSkillPackIds.filter((id) => !chooserDocText.includes(id));
+  const missingFromPlaybooksDoc = expectedSkillPackIds.filter(
+    (id) => !playbooksDocText.includes(id),
+  );
+
+  return {
+    passed:
+      missingFromChooser.length === 0 &&
+      missingFromComparison.length === 0 &&
+      missingFromRouter.length === 0 &&
+      missingFromChooserDoc.length === 0 &&
+      missingFromPlaybooksDoc.length === 0,
+    expectedSkillPackIds,
+    missingFromChooser,
+    missingFromComparison,
+    missingFromRouter,
+    missingFromChooserDoc,
+    missingFromPlaybooksDoc,
+  };
+}
+
+export function loadFrontdoorGovernanceInputs(rootDir = repoRoot) {
+  return {
+    skillPackRoutes: readJson("catalogs/skill-pack-routes.json", rootDir),
+    starterPackChooser: readJson("catalogs/starter-pack-chooser.json", rootDir),
+    starterPackComparison: readJson("catalogs/starter-pack-comparison.json", rootDir),
+    builderIntentRouter: readJson("catalogs/builder-intent-router.json", rootDir),
+    starterPackChooserDoc: readText("docs/starter-pack-chooser.md", rootDir),
+    hostIntegrationPlaybooksDoc: readText("docs/host-integration-playbooks.md", rootDir),
+  };
+}
+
 export async function runWebLoginReality({
   env = process.env,
   runWebLoginLiveVerificationFn = runWebLoginLiveVerification,
@@ -157,10 +247,37 @@ export async function runWebLoginReality({
   }
 }
 
-export function buildRealityGateReport({ internalGate, geminiByok, webLogin }) {
+export function buildRealityGateReport({
+  internalGate,
+  geminiByok,
+  webLogin,
+  frontdoorGovernance = {
+    passed: true,
+    expectedSkillPackIds: [],
+    missingFromChooser: [],
+    missingFromComparison: [],
+    missingFromRouter: [],
+    missingFromChooserDoc: [],
+    missingFromPlaybooksDoc: [],
+  },
+}) {
   const internalGatePassed = internalGate.every((step) => step.exitCode === 0);
-  const { summary, externalBlockers, failures } = summarizeLiveStatuses(geminiByok, webLogin);
-  const repoOwnedPassed = internalGatePassed && summary.failureCount === 0;
+  const { summary, externalBlockers, failures: liveFailures } = summarizeLiveStatuses(geminiByok, webLogin);
+  const governanceFailures = frontdoorGovernance.passed
+    ? []
+    : [
+        {
+          provider: "frontdoor-governance",
+          reason: "frontdoor-truth-drift",
+          classification: "contract-drift",
+          failureStage: "truth-surface",
+          summary:
+            "Starter-pack frontdoor surfaces drifted apart: chooser/comparison/router/docs no longer agree on the landed skill-pack routes.",
+        },
+      ];
+  const failures = [...governanceFailures, ...liveFailures];
+  const repoOwnedPassed =
+    internalGatePassed && summary.failureCount === 0 && frontdoorGovernance.passed;
   const repoOwnedVerdict = repoOwnedPassed ? "pass" : "fail";
   const repoOwnedStatus = !repoOwnedPassed
     ? "failure"
@@ -169,7 +286,7 @@ export function buildRealityGateReport({ internalGate, geminiByok, webLogin }) {
       : "pass";
   const overallStatus = !internalGatePassed
     ? "failure"
-    : summary.failureCount > 0
+    : summary.failureCount > 0 || !frontdoorGovernance.passed
       ? "failure"
       : summary.externalBlockerCount > 0
         ? "external-blocker"
@@ -193,6 +310,10 @@ export function buildRealityGateReport({ internalGate, geminiByok, webLogin }) {
       geminiByok,
       webLogin,
       summary,
+    },
+    truthAlignment: {
+      ...buildTruthAlignmentSummary(geminiByok, webLogin),
+      frontdoorGovernance,
     },
     externalBlockers,
     failures,
@@ -247,6 +368,9 @@ async function main() {
     internalGate,
     geminiByok,
     webLogin,
+    frontdoorGovernance: buildFrontdoorGovernanceSummary(
+      loadFrontdoorGovernanceInputs(),
+    ),
   });
 
   persistRealityGateReport(report);

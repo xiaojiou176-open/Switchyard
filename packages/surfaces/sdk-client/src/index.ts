@@ -13,10 +13,13 @@ export {
   type ServiceProviderCurrentNetworkView,
   type ServiceProviderCurrentPageView,
   type ServiceProviderDebugSupportView,
+  type ServiceRuntimeDoctorView,
+  type ServiceRuntimePlanView,
   type ServiceProviderLiveReadinessView,
   type ServiceProviderStoreReadinessView,
   type RuntimeHealthResponse,
   type RuntimeInvokeRequest,
+  type RuntimePlanRequest,
   type RuntimeInvokeResponse,
   type SwitchyardServiceClientOptions,
 } from './service-client.js';

@@ -1,4 +1,5 @@
 [
+  "pnpm run switchyard:cli -- skill-pack-route --target runtime-diagnostics-pack --json",
   "pnpm run switchyard:cli -- provider-status --provider chatgpt --json",
   "pnpm run switchyard:cli -- provider-diagnose --provider chatgpt --json",
   "pnpm run switchyard:cli -- provider-support-bundle --provider chatgpt --json"

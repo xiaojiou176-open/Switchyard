@@ -22,7 +22,28 @@
           "label": "Skill",
           "comparisonIds": [
             "runtime-diagnostics-skill",
-            "docs-seo-sync-skill"
+            "docs-seo-sync-skill",
+            "chat-app-runtime-skill",
+            "research-copilot-skill",
+            "compare-runtime-skill",
+            "byok-first-safe-skill"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "use-case-skill-packs",
+      "label": "Use-case starters",
+      "field": "recommendedPack",
+      "values": [
+        {
+          "id": "use-case-skill-pack",
+          "label": "Use-case skill packs",
+          "comparisonIds": [
+            "chat-app-runtime-skill",
+            "research-copilot-skill",
+            "compare-runtime-skill",
+            "byok-first-safe-skill"
           ]
         }
       ]
@@ -38,7 +59,9 @@
           "comparisonIds": [
             "codex-builder",
             "claude-code-builder",
-            "openclaw-builder"
+            "openclaw-builder",
+            "chat-app-runtime-skill",
+            "byok-first-safe-skill"
           ]
         }
       ]
@@ -54,7 +77,9 @@
           "comparisonIds": [
             "mcp-inspector",
             "runtime-diagnostics-skill",
-            "docs-seo-sync-skill"
+            "docs-seo-sync-skill",
+            "research-copilot-skill",
+            "compare-runtime-skill"
           ]
         }
       ]
@@ -97,7 +122,11 @@
           "label": "No host family",
           "comparisonIds": [
             "runtime-diagnostics-skill",
-            "docs-seo-sync-skill"
+            "docs-seo-sync-skill",
+            "chat-app-runtime-skill",
+            "research-copilot-skill",
+            "compare-runtime-skill",
+            "byok-first-safe-skill"
           ]
         }
       ]
@@ -113,7 +142,9 @@
           "comparisonIds": [
             "codex-builder",
             "claude-code-builder",
-            "openclaw-builder"
+            "openclaw-builder",
+            "chat-app-runtime-skill",
+            "byok-first-safe-skill"
           ]
         },
         {
@@ -134,7 +165,9 @@
           "id": "docs-truth-sync",
           "label": "Docs truth sync",
           "comparisonIds": [
-            "docs-seo-sync-skill"
+            "docs-seo-sync-skill",
+            "research-copilot-skill",
+            "compare-runtime-skill"
           ]
         }
       ]
@@ -403,6 +436,182 @@
         "marketing autopilot",
         "claim escalation without review",
         "launch automation"
+      ]
+    },
+    {
+      "id": "chat-app-runtime-skill",
+      "label": "Start a chat app runtime bridge without promising a full chat shell",
+      "status": "partial",
+      "starterKind": "skill",
+      "recommendedPack": "chat-app-runtime-pack",
+      "hostFamily": "none",
+      "firstSuccessMode": "runtime-invoke",
+      "readOnly": false,
+      "needsRuntimeInvoke": true,
+      "needsMcpTransport": false,
+      "bestEntry": "pnpm run switchyard:cli -- skill-pack-route --target chat-app-runtime-pack",
+      "smokeCommand": "pnpm run starter-pack:chat-app-runtime-pack",
+      "copyReadyPackPath": "starter-packs/skills/chat-app-runtime-pack",
+      "compareAgainst": [
+        "codex-builder",
+        "research-copilot-skill",
+        "byok-first-safe-skill"
+      ],
+      "recommendedDocs": [
+        "docs/starter-pack-chooser.md",
+        "catalogs/starter-pack-comparison.json",
+        "docs/host-integration-playbooks.md",
+        "starter-packs/skills/chat-app-runtime-pack/README.md"
+      ],
+      "bestWhen": [
+        "You already have a chat-shaped host and need the service-first runtime bridge first.",
+        "You want a use-case starter that stays smaller than a full chat product shell."
+      ],
+      "avoidWhen": [
+        "You need a finished chat UI shell or tool-using agent product.",
+        "You need browser/session write automation or hosted control-plane behavior."
+      ],
+      "safeClaims": [
+        "chat-app runtime scaffold",
+        "service-first bridge planning pack",
+        "no full product shell"
+      ],
+      "notYetSupported": [
+        "full chat product scaffold",
+        "tool-using agent shell",
+        "browser/session write automation"
+      ]
+    },
+    {
+      "id": "research-copilot-skill",
+      "label": "Ground a research copilot in truth surfaces before synthesis",
+      "status": "partial",
+      "starterKind": "skill",
+      "recommendedPack": "research-copilot-pack",
+      "hostFamily": "none",
+      "firstSuccessMode": "docs-truth-sync",
+      "readOnly": true,
+      "needsRuntimeInvoke": false,
+      "needsMcpTransport": false,
+      "bestEntry": "pnpm run switchyard:cli -- skill-pack-route --target research-copilot-pack",
+      "smokeCommand": "pnpm run starter-pack:research-copilot-pack",
+      "copyReadyPackPath": "starter-packs/skills/research-copilot-pack",
+      "compareAgainst": [
+        "docs-seo-sync-skill",
+        "compare-runtime-skill",
+        "runtime-diagnostics-skill"
+      ],
+      "recommendedDocs": [
+        "docs/starter-pack-chooser.md",
+        "catalogs/starter-pack-comparison.json",
+        "docs/host-integration-playbooks.md",
+        "starter-packs/skills/research-copilot-pack/README.md"
+      ],
+      "bestWhen": [
+        "You need truth-surface grounding before synthesizing research output.",
+        "You want a use-case starter that stays read-only and reviewable."
+      ],
+      "avoidWhen": [
+        "You need an autonomous multi-source research loop.",
+        "You want browser writes, citation autopilot, or launch automation."
+      ],
+      "safeClaims": [
+        "research copilot scaffold",
+        "truth-surface grounding pack",
+        "no autonomous research loop"
+      ],
+      "notYetSupported": [
+        "autonomous multi-source research loop",
+        "citation autopilot",
+        "browser write automation"
+      ]
+    },
+    {
+      "id": "compare-runtime-skill",
+      "label": "Compare runtime routes before choosing a winner",
+      "status": "partial",
+      "starterKind": "skill",
+      "recommendedPack": "compare-runtime-pack",
+      "hostFamily": "none",
+      "firstSuccessMode": "docs-truth-sync",
+      "readOnly": true,
+      "needsRuntimeInvoke": false,
+      "needsMcpTransport": false,
+      "bestEntry": "pnpm run switchyard:cli -- skill-pack-route --target compare-runtime-pack",
+      "smokeCommand": "pnpm run starter-pack:compare-runtime-pack",
+      "copyReadyPackPath": "starter-packs/skills/compare-runtime-pack",
+      "compareAgainst": [
+        "research-copilot-skill",
+        "docs-seo-sync-skill",
+        "mcp-inspector"
+      ],
+      "recommendedDocs": [
+        "docs/starter-pack-chooser.md",
+        "catalogs/starter-pack-comparison.json",
+        "docs/host-integration-playbooks.md",
+        "starter-packs/skills/compare-runtime-pack/README.md"
+      ],
+      "bestWhen": [
+        "You need to compare starter routes and constraints before choosing a host path.",
+        "You want tradeoffs to stay explicit and reviewable instead of auto-picking a winner."
+      ],
+      "avoidWhen": [
+        "You need benchmark automation or automatic winner selection.",
+        "You are actually trying to jump straight into a host bridge or diagnostics recipe."
+      ],
+      "safeClaims": [
+        "compare-first scaffold",
+        "constraint filter worksheet",
+        "no automatic winner selection"
+      ],
+      "notYetSupported": [
+        "automatic winner selection",
+        "live benchmark automation",
+        "consumer parity scoring"
+      ]
+    },
+    {
+      "id": "byok-first-safe-skill",
+      "label": "Stay BYOK-first with safe invoke boundaries before touching Web/Login",
+      "status": "partial",
+      "starterKind": "skill",
+      "recommendedPack": "byok-first-safe-pack",
+      "hostFamily": "none",
+      "firstSuccessMode": "runtime-invoke",
+      "readOnly": false,
+      "needsRuntimeInvoke": true,
+      "needsMcpTransport": false,
+      "bestEntry": "pnpm run switchyard:cli -- skill-pack-route --target byok-first-safe-pack",
+      "smokeCommand": "pnpm run starter-pack:byok-first-safe-pack",
+      "copyReadyPackPath": "starter-packs/skills/byok-first-safe-pack",
+      "compareAgainst": [
+        "chat-app-runtime-skill",
+        "codex-builder",
+        "runtime-diagnostics-skill"
+      ],
+      "recommendedDocs": [
+        "docs/starter-pack-chooser.md",
+        "catalogs/starter-pack-comparison.json",
+        "docs/host-integration-playbooks.md",
+        "starter-packs/skills/byok-first-safe-pack/README.md"
+      ],
+      "bestWhen": [
+        "You want a BYOK-first starter that keeps safe invoke planning and provider grounding explicit.",
+        "You need to decide whether Web/Login work is even necessary before widening scope."
+      ],
+      "avoidWhen": [
+        "You need key storage workflows, web-login session repair, or automatic provider failover.",
+        "You want a full chat product shell instead of a safe lane-first starter."
+      ],
+      "safeClaims": [
+        "BYOK-first scaffold",
+        "safe invoke planning pack",
+        "no web-login recovery claims"
+      ],
+      "notYetSupported": [
+        "key storage workflow",
+        "web-login session recovery",
+        "automatic provider failover"
       ]
     }
   ]

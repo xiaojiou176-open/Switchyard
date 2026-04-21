@@ -89,6 +89,18 @@
           "type": "string",
           "minLength": 1
         },
+        "routeCommand": {
+          "type": "string",
+          "minLength": 1
+        },
+        "routeCatalogPath": {
+          "type": "string",
+          "minLength": 1
+        },
+        "routeMcpTool": {
+          "type": "string",
+          "minLength": 1
+        },
         "backingSurfaces": {
           "$ref": "#/$defs/stringArray"
         },

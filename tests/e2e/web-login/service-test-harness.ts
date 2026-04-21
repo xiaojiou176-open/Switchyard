@@ -3,6 +3,28 @@ import {
   type SwitchyardServiceOptions,
 } from "../../../apps/service/src/index.js";
 
+const ISOLATED_E2E_RUNTIME_ENV: Record<string, string | undefined> = {
+  OPENAI_API_KEY: undefined,
+  ANTHROPIC_API_KEY: undefined,
+  SWITCHYARD_GEMINI_API_KEY: undefined,
+  GEMINI_API_KEY: undefined,
+  GOOGLE_API_KEY: undefined,
+  XAI_API_KEY: undefined,
+  OPENROUTER_API_KEY: undefined,
+  GROQ_API_KEY: undefined,
+  QWEN_API_KEY: undefined,
+  DASHSCOPE_API_KEY: undefined,
+  GOOGLE_VERTEX_API_KEY: undefined,
+  GOOGLE_VERTEX_PROJECT: undefined,
+  GOOGLE_VERTEX_LOCATION: undefined,
+  GOOGLE_VERTEX_BASE_URL: undefined,
+  GOOGLE_APPLICATION_CREDENTIALS: undefined,
+  AWS_ACCESS_KEY_ID: undefined,
+  AWS_SECRET_ACCESS_KEY: undefined,
+  AWS_REGION: undefined,
+  AWS_BEDROCK_BASE_URL: undefined,
+};
+
 const PORT_STATE_KEY = "__switchyardE2ePortState";
 const E2E_PORT_BASE = 38_080;
 const E2E_PORT_BLOCK_SIZE = 200;
@@ -43,9 +65,29 @@ function allocateE2EServicePort(): number {
 export function startSwitchyardE2EService(
   options: SwitchyardServiceOptions = {},
 ) {
+  const {
+    runtimeEnv,
+    liveProofEnv,
+    useLocalWebAuthStore,
+    ...rest
+  } = options;
   const port = options.port ?? allocateE2EServicePort();
   const baseUrl = `${E2E_URL_PREFIX}${port}`;
-  const service = createSwitchyardService(options);
+  const service = createSwitchyardService({
+    ...rest,
+    useLocalWebAuthStore: useLocalWebAuthStore ?? false,
+    runtimeEnv: {
+      ...ISOLATED_E2E_RUNTIME_ENV,
+      ...runtimeEnv,
+    },
+    liveProofEnv: liveProofEnv
+      ? {
+          ...ISOLATED_E2E_RUNTIME_ENV,
+          ...liveProofEnv,
+        }
+      : undefined,
+    port,
+  });
   inMemoryServices.set(baseUrl, service);
 
   return {

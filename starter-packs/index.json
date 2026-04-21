@@ -106,7 +106,7 @@
       "safeClaims": [
         "partial OpenClaw compatibility",
         "delegation-first bridge",
-        "fail-closed adapter starter"
+        "fail-closed adapter starter with preflight"
       ],
       "notYetSupported": [
         "operator control-plane parity",
@@ -225,6 +225,146 @@
         "marketing autopilot",
         "claim escalation without review",
         "launch automation"
+      ]
+    },
+    {
+      "kind": "skill",
+      "id": "chat-app-runtime-pack",
+      "status": "planned",
+      "packPath": "starter-packs/skills/chat-app-runtime-pack",
+      "readmePath": "starter-packs/skills/chat-app-runtime-pack/README.md",
+      "templatePath": "starter-packs/skills/chat-app-runtime-pack/template.json",
+      "templateEntryPath": "starter-packs/skills/chat-app-runtime-pack/template.entry.json",
+      "examplePath": "starter-packs/skills/chat-app-runtime-pack/example.json",
+      "exampleEntryPath": "starter-packs/skills/chat-app-runtime-pack/example.entry.json",
+      "smokeScriptPath": "starter-packs/skills/chat-app-runtime-pack/smoke.mjs",
+      "smokeCommand": "pnpm exec node starter-packs/skills/chat-app-runtime-pack/smoke.mjs",
+      "extraAssetPaths": [
+        "starter-packs/skills/chat-app-runtime-pack/steps.json"
+      ],
+      "packFiles": [
+        "starter-packs/skills/chat-app-runtime-pack/README.md",
+        "starter-packs/skills/chat-app-runtime-pack/template.json",
+        "starter-packs/skills/chat-app-runtime-pack/template.entry.json",
+        "starter-packs/skills/chat-app-runtime-pack/example.json",
+        "starter-packs/skills/chat-app-runtime-pack/example.entry.json",
+        "starter-packs/skills/chat-app-runtime-pack/steps.json",
+        "starter-packs/skills/chat-app-runtime-pack/smoke.mjs"
+      ],
+      "safeClaims": [
+        "chat-app runtime scaffold",
+        "service-first bridge planning pack",
+        "no full product shell"
+      ],
+      "notYetSupported": [
+        "full chat product scaffold",
+        "tool-using agent shell",
+        "browser/session write automation"
+      ]
+    },
+    {
+      "kind": "skill",
+      "id": "research-copilot-pack",
+      "status": "planned",
+      "packPath": "starter-packs/skills/research-copilot-pack",
+      "readmePath": "starter-packs/skills/research-copilot-pack/README.md",
+      "templatePath": "starter-packs/skills/research-copilot-pack/template.json",
+      "templateEntryPath": "starter-packs/skills/research-copilot-pack/template.entry.json",
+      "examplePath": "starter-packs/skills/research-copilot-pack/example.json",
+      "exampleEntryPath": "starter-packs/skills/research-copilot-pack/example.entry.json",
+      "smokeScriptPath": "starter-packs/skills/research-copilot-pack/smoke.mjs",
+      "smokeCommand": "pnpm exec node starter-packs/skills/research-copilot-pack/smoke.mjs",
+      "extraAssetPaths": [
+        "starter-packs/skills/research-copilot-pack/steps.json"
+      ],
+      "packFiles": [
+        "starter-packs/skills/research-copilot-pack/README.md",
+        "starter-packs/skills/research-copilot-pack/template.json",
+        "starter-packs/skills/research-copilot-pack/template.entry.json",
+        "starter-packs/skills/research-copilot-pack/example.json",
+        "starter-packs/skills/research-copilot-pack/example.entry.json",
+        "starter-packs/skills/research-copilot-pack/steps.json",
+        "starter-packs/skills/research-copilot-pack/smoke.mjs"
+      ],
+      "safeClaims": [
+        "research copilot scaffold",
+        "truth-surface grounding pack",
+        "no autonomous research loop"
+      ],
+      "notYetSupported": [
+        "autonomous multi-source research loop",
+        "citation autopilot",
+        "browser write automation"
+      ]
+    },
+    {
+      "kind": "skill",
+      "id": "compare-runtime-pack",
+      "status": "planned",
+      "packPath": "starter-packs/skills/compare-runtime-pack",
+      "readmePath": "starter-packs/skills/compare-runtime-pack/README.md",
+      "templatePath": "starter-packs/skills/compare-runtime-pack/template.json",
+      "templateEntryPath": "starter-packs/skills/compare-runtime-pack/template.entry.json",
+      "examplePath": "starter-packs/skills/compare-runtime-pack/example.json",
+      "exampleEntryPath": "starter-packs/skills/compare-runtime-pack/example.entry.json",
+      "smokeScriptPath": "starter-packs/skills/compare-runtime-pack/smoke.mjs",
+      "smokeCommand": "pnpm exec node starter-packs/skills/compare-runtime-pack/smoke.mjs",
+      "extraAssetPaths": [
+        "starter-packs/skills/compare-runtime-pack/steps.json"
+      ],
+      "packFiles": [
+        "starter-packs/skills/compare-runtime-pack/README.md",
+        "starter-packs/skills/compare-runtime-pack/template.json",
+        "starter-packs/skills/compare-runtime-pack/template.entry.json",
+        "starter-packs/skills/compare-runtime-pack/example.json",
+        "starter-packs/skills/compare-runtime-pack/example.entry.json",
+        "starter-packs/skills/compare-runtime-pack/steps.json",
+        "starter-packs/skills/compare-runtime-pack/smoke.mjs"
+      ],
+      "safeClaims": [
+        "compare-first scaffold",
+        "constraint filter worksheet",
+        "no automatic winner selection"
+      ],
+      "notYetSupported": [
+        "automatic winner selection",
+        "live benchmark automation",
+        "consumer parity scoring"
+      ]
+    },
+    {
+      "kind": "skill",
+      "id": "byok-first-safe-pack",
+      "status": "planned",
+      "packPath": "starter-packs/skills/byok-first-safe-pack",
+      "readmePath": "starter-packs/skills/byok-first-safe-pack/README.md",
+      "templatePath": "starter-packs/skills/byok-first-safe-pack/template.json",
+      "templateEntryPath": "starter-packs/skills/byok-first-safe-pack/template.entry.json",
+      "examplePath": "starter-packs/skills/byok-first-safe-pack/example.json",
+      "exampleEntryPath": "starter-packs/skills/byok-first-safe-pack/example.entry.json",
+      "smokeScriptPath": "starter-packs/skills/byok-first-safe-pack/smoke.mjs",
+      "smokeCommand": "pnpm exec node starter-packs/skills/byok-first-safe-pack/smoke.mjs",
+      "extraAssetPaths": [
+        "starter-packs/skills/byok-first-safe-pack/steps.json"
+      ],
+      "packFiles": [
+        "starter-packs/skills/byok-first-safe-pack/README.md",
+        "starter-packs/skills/byok-first-safe-pack/template.json",
+        "starter-packs/skills/byok-first-safe-pack/template.entry.json",
+        "starter-packs/skills/byok-first-safe-pack/example.json",
+        "starter-packs/skills/byok-first-safe-pack/example.entry.json",
+        "starter-packs/skills/byok-first-safe-pack/steps.json",
+        "starter-packs/skills/byok-first-safe-pack/smoke.mjs"
+      ],
+      "safeClaims": [
+        "BYOK-first scaffold",
+        "safe invoke planning pack",
+        "no web-login recovery claims"
+      ],
+      "notYetSupported": [
+        "key storage workflow",
+        "web-login session recovery",
+        "automatic provider failover"
       ]
     }
   ]

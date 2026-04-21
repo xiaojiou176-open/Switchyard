@@ -4,8 +4,9 @@
   "exampleShape": "read-only-runtime-diagnostics",
   "example": {
     "name": "runtime-diagnostics-pack-example",
-    "catalogCommand": "pnpm run switchyard:cli -- skill-pack --target runtime-diagnostics-pack --json",
+    "catalogCommand": "pnpm run switchyard:cli -- skill-pack-route --target runtime-diagnostics-pack --json",
     "steps": [
+      "pnpm run switchyard:cli -- skill-pack-route --target runtime-diagnostics-pack --json",
       "pnpm run switchyard:cli -- provider-status --provider chatgpt --json",
       "pnpm run switchyard:cli -- provider-diagnose --provider chatgpt --json",
       "pnpm run switchyard:cli -- provider-support-bundle --provider chatgpt --json"

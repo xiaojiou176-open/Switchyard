@@ -1,0 +1,26 @@
+{
+  "$schema": "../../../catalogs/starter-manifest-templates.schema.json",
+  "manifestVersion": 1,
+  "builderTemplates": [],
+  "skillTemplates": [
+    {
+      "id": "compare-runtime-pack",
+      "status": "planned",
+      "templateShape": "compare-first-runtime-decision",
+      "manifest": {
+        "starterTarget": "compare-runtime-pack",
+        "catalogCommand": "pnpm exec node starter-packs/skills/compare-runtime-pack/smoke.mjs",
+        "safeClaims": [
+          "compare-first scaffold",
+          "constraint filter worksheet",
+          "runtime tradeoff framing"
+        ],
+        "notYetSupported": [
+          "automatic winner selection",
+          "live benchmark automation",
+          "consumer parity scoring"
+        ]
+      }
+    }
+  ]
+}
