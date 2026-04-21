@@ -58,7 +58,7 @@ If a desired borrowing is not explicitly allowed above, treat it as forbidden.
 
 Switchyard now has a fixed design contract stack:
 
-1. `.agents/internal-docs/contracts/design-mother-strategy.md` defines the canonical donor boundary.
+1. The private maintainer-only design mother strategy contract defines the canonical donor boundary.
 2. `design-system/MASTER.md` is the root operational master for repo design
    assets.
 3. `design-system/switchyard-auth-portal/MASTER.md` and

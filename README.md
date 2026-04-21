@@ -101,7 +101,8 @@ The heavier shelves still exist, but they are not first-row front door pages:
 - testing/governance reference pages
 
 The old Wave 1 working packs were relocated out of the public docs plane, and
-the real working copies now live under `.agents/internal-docs/wave1/`.
+the real working copies now live in a private maintainer-only `.agents/` shelf
+that is intentionally not tracked in the public repo history.
 
 ## 30-Second Version
 
@@ -343,12 +344,11 @@ public warehouse list.
 
 ### Internal-only working packs
 
-- Switchyard's internal truth shelves now live under
-  `.agents/internal-docs/adr/`, `.agents/internal-docs/contracts/`,
-  `.agents/internal-docs/blueprints/`, and `.agents/internal-docs/product/`;
-  they stay intentionally deeper than the public front door.
-- `.agents/internal-docs/testing/`
-- Wave 1 contract/evidence packs continue to live under `.agents/internal-docs/wave1/`.
+- Switchyard keeps its maintainer-only contracts, ledgers, and working packs in
+  a private local `.agents/` shelf when present in the maintainer workspace.
+- That shelf is intentionally **not** part of the public repo history.
+- Public readers should rely on the first-row docs, proof pack, API reference,
+  and runbook surfaces instead of expecting private maintainer files to exist.
 
 ## Truth Rules
 

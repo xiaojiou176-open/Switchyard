@@ -21,7 +21,8 @@ Keep these public, but one shelf deeper:
 
 Contract shelves, blueprints, and packet/accounting pages still matter, but
 they are not the first stop for a new reader. The old Wave 1 working packs also
-now live outside the public docs plane under `.agents/internal-docs/wave1/`.
+now live outside the public docs plane in a private maintainer-only `.agents/`
+shelf.
 
 ## One-Line Verdict
 
@@ -102,7 +103,8 @@ Use these pages:
 
 Do **not** treat packet/accounting pages or Wave 1 working packs as first-row
 landing pages. Packet accounting is a deeper public shelf, while the Wave 1
-contract/evidence packs now live under `.agents/internal-docs/wave1/`.
+contract/evidence packs now live in a private maintainer-only `.agents/`
+shelf.
 
 ## Current Live Truth For This Workspace
 

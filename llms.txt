@@ -60,8 +60,7 @@ Important docs:
   - examples/hosts/index.json
   - examples/hosts/index.schema.json
   - docs/compat/README.md
-  - .agents/internal-docs/product/v1-brief.md
-  - .agents/internal-docs/product/scope-and-nongoals.md
+  - private maintainer-only planning shelf when present locally
   - docs/mcp.md
   - docs/provider-runtime-catalog.md
   - catalogs/provider-runtime-catalog.json
@@ -77,7 +76,7 @@ Important docs:
 - docs/faq.md
 - docs/glossary.md
 - docs/i18n.md
-- .agents/internal-docs/testing/testing-pyramid.md
+- private maintainer-only testing/governance notes when present locally
 - docs/discoverability-keyword-truth.md
 - catalogs/discoverability-keyword-truth.json
 - catalogs/discoverability-keyword-truth.schema.json

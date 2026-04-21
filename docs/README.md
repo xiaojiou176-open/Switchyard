@@ -72,7 +72,8 @@ If you only need the next truthful route, choose one:
   - [docs/runbooks/dev-bootstrap.md](./runbooks/dev-bootstrap.md)
 
 The old Wave 1 working packs were relocated out of the public docs plane, and
-the working copies now live under `.agents/internal-docs/wave1/`.
+the working copies now live in a private maintainer-only `.agents/` shelf that
+is intentionally not tracked in the public repo history.
 
 ## Front Row Rules
 
@@ -118,24 +119,21 @@ machine-readable shelf, instead of turning this atlas back into a file cabinet.
 
 ## Internal Truth Shelves
 
-These remain part of the repo's truth system, but they are not first-row public
-landing pages:
+Switchyard still uses maintainer-only contracts, ledgers, and working packs in
+a private local `.agents/` shelf when that shelf exists in the maintainer
+workspace.
 
-- `.agents/internal-docs/adr/*`
-- `.agents/internal-docs/contracts/*`
-- `.agents/internal-docs/blueprints/*`
-- `.agents/internal-docs/product/*`
-- `.agents/internal-docs/testing/testing-pyramid.md`
-- packet/accounting pages such as `submission-packet-ledger`
+That shelf is intentionally **not** part of the public repo history, so it is
+not a first-row public landing surface and should not be treated as one.
 
-Current working packs that already moved out of the public docs plane live
-under `.agents/internal-docs/`, including:
+If you need the public truth system, stay on:
 
-- `.agents/internal-docs/wave1/*`
-- `.agents/internal-docs/wave5/wave5-thin-compat-starter.md`
-- `.agents/internal-docs/compare/*`
-- `.agents/internal-docs/mcp/mcp-listings-cockpit.md`
-- `.agents/internal-docs/distribution/submission-packet-ledger.md`
+- `README.md`
+- `docs/index.html`
+- `docs/public-proof-pack.md`
+- `docs/public-distribution-ledger.md`
+- `docs/api/service-http-reference.md`
+- `docs/runbooks/dev-bootstrap.md`
 
 ## Truthfulness Rules
 

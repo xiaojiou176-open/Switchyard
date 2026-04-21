@@ -29,7 +29,7 @@
 ## Use It With
 
 - [docs/compat/openclaw.md](../../../docs/compat/openclaw.md)
-- [.agents/internal-docs/blueprints/openclaw-zero-token-adoption-ledger.md](../../../.agents/internal-docs/blueprints/openclaw-zero-token-adoption-ledger.md)
+- [docs/runbooks/dev-bootstrap.md](../../../docs/runbooks/dev-bootstrap.md)
 - [starter-packs/builders/openclaw/README.md](../../../starter-packs/builders/openclaw/README.md)
 - [examples/hosts/openclaw/README.md](../../../examples/hosts/openclaw/README.md)
 

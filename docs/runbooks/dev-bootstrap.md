@@ -60,7 +60,7 @@
 
 如果你要看完整 5-layer 总图，先看：
 
-- [.agents/internal-docs/testing/testing-pyramid.md](../../.agents/internal-docs/testing/testing-pyramid.md)
+- private maintainer-only testing/governance notes when they exist locally
 - [README.md](../../README.md)
 
 ---
@@ -381,17 +381,17 @@ pnpm run reseed:isolated-chrome-root -- --json
 在跑任何命令前，先读：
 
 1. `README.md`
-2. `.agents/internal-docs/product/v1-brief.md`
-3. `.agents/internal-docs/product/scope-and-nongoals.md`
-4. `.agents/internal-docs/adr/0001-v1-boundary-and-lane-model.md`
-5. `.agents/internal-docs/adr/0002-external-repo-adoption-matrix.md`
-6. `.agents/internal-docs/adr/0003-upstream-relationship-openclaw-zero-token.md`
-7. `.agents/internal-docs/adr/0004-architecture-skeleton-monorepo.md`
-8. `.agents/internal-docs/contracts/provider-runtime-contract.md`
-9. `.agents/internal-docs/contracts/auth-accounts-and-credentials.md`
-10. `.agents/internal-docs/contracts/service-and-sdk-surfaces.md`
-11. `.agents/internal-docs/blueprints/v1-delivery-plan.md`
-12. `.agents/Tasks/TASK_BOARD-2026-03-29-switchyard-bootstrap.md`
+2. `docs/media/30-second-overview.md`
+3. `docs/first-success.md`
+4. `docs/public-proof-pack.md`
+5. `docs/public-distribution-ledger.md`
+6. `docs/api/service-http-reference.md`
+7. `docs/api/openapi.yaml`
+8. `docs/api/web-login-acquisition.md`
+9. `docs/api/error-diagnostics-reference.md`
+10. `docs/public-surface-support-matrix.md`
+
+如果你在私有维护者工作区里还有一份本地 `.agents/` 棚架，可以再读那份本地私有合同；但这份 public runbook 不再把它当成公开仓的硬前置。
 
 如果这些没读够，就不要开工写代码。
 
