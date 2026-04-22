@@ -49,6 +49,8 @@ import {
   buildServiceDiscoveryViews,
   buildServiceProviderProbeView,
   buildServiceProviderRemediationView,
+  buildServiceRuntimePolicyPackCatalog,
+  buildServiceRuntimePolicyPackView,
   buildServiceRemediationSummary,
   buildServiceRouteCatalog,
   type ServiceProviderDoctorView,
@@ -824,6 +826,12 @@ export class SwitchyardHttpSurface {
       displayName: provider?.displayName ?? displayName,
       activePolicyProfile: doctorRequest?.policyProfile,
       availablePolicyProfiles: [...this.availablePolicyProfiles],
+      activePolicyPack: buildServiceRuntimePolicyPackView(
+        doctorRequest?.policyProfile ?? "low-friction",
+      ),
+      availablePolicyPacks: buildServiceRuntimePolicyPackCatalog(
+        this.availablePolicyProfiles,
+      ),
       policy,
       dispatchPlan,
       alignment,
@@ -1027,6 +1035,7 @@ export class SwitchyardHttpSurface {
 
     return {
       policyProfile,
+      activePolicyPack: buildServiceRuntimePolicyPackView(policyProfile),
       requiredCapabilities: mergedCapabilities,
       recommendations,
       blockers,

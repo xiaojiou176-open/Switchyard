@@ -89,11 +89,15 @@ const invoke = await client.invoke({
 - `providerStoreReadiness()` 像看“钥匙和证件有没有放进抽屉”
 - `providerLiveReadiness()` 像看“人是不是已经站在正确房门前，而且门把手能转”
 - `runtimeDoctor()` 像看整座 runtime 的总账本，现在它还会带一张 `controlLedger`
+  - 也会带 `activePolicyPack / availablePolicyPacks`
+  - 让 builder 知道当前策略包偏向哪条 lane、是否要求 official API、是否 strict fail-closed
 - `runtimePlan()` 像让 runtime 先按任务要求帮你挑 provider/lane/model
+  - 也会把当前 `activePolicyPack` 一起带回来
 - `providerDiagnose()` 像拿整张体检单
 - `providerDoctor()` 像把“策略脑 + 体检单 + 下一步建议”压成一张 builder receipt
 - `providerDiagnoseLadder()` 像医生给你的下一步处理顺序
 - `invoke.receipt` 像执行回执：
+  - 当前 `activePolicyPack` 到底是谁
   - 为什么这样选 lane / provider
   - 现在应该回到哪条 doctor/plan 路由
   - 如果继续排障，该走哪张 remediation workflow

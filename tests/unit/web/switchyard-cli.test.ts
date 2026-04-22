@@ -52,6 +52,10 @@ describe("switchyard CLI starter", () => {
     client.listProviders.mockResolvedValue([{ providerId: "chatgpt" }]);
     client.runtimeDoctor.mockResolvedValue({
       doctor: {
+        activePolicyPack: {
+          id: "low-friction",
+          label: "Low Friction",
+        },
         summary: {
           blockingProviders: ["claude"],
         },
@@ -59,6 +63,10 @@ describe("switchyard CLI starter", () => {
     });
     client.runtimePlan.mockResolvedValue({
       plan: {
+        activePolicyPack: {
+          id: "official-api-first",
+          label: "Official API First",
+        },
         policyProfile: "low-friction",
         recommended: {
           providerId: "chatgpt",
@@ -67,6 +75,10 @@ describe("switchyard CLI starter", () => {
     });
     client.providerDoctor.mockResolvedValue({
       doctor: {
+        activePolicyPack: {
+          id: "low-friction",
+          label: "Low Friction",
+        },
         providerId: "chatgpt",
         alignment: {
           story: "blocked",
@@ -139,6 +151,10 @@ describe("switchyard CLI starter", () => {
       command: "runtime-doctor",
       result: {
         doctor: {
+          activePolicyPack: {
+            id: "low-friction",
+            label: "Low Friction",
+          },
           summary: {
             blockingProviders: ["claude"],
           },
@@ -149,6 +165,10 @@ describe("switchyard CLI starter", () => {
       command: "runtime-plan",
       result: {
         plan: {
+          activePolicyPack: {
+            id: "official-api-first",
+            label: "Official API First",
+          },
           policyProfile: "low-friction",
           recommended: {
             providerId: "chatgpt",
@@ -161,6 +181,10 @@ describe("switchyard CLI starter", () => {
       provider: "chatgpt",
       result: {
         doctor: {
+          activePolicyPack: {
+            id: "low-friction",
+            label: "Low Friction",
+          },
           providerId: "chatgpt",
           alignment: {
             story: "blocked",

@@ -2119,6 +2119,17 @@ describe("Switchyard HTTP surface", () => {
     const payload = (await response.json()) as {
       doctor: {
         providerId: string;
+        activePolicyPack: {
+          id: string;
+          label: string;
+          summary: string;
+          preferredLaneBias: string;
+          strictReadyOnly: boolean;
+        };
+        availablePolicyPacks: Array<{
+          id: string;
+          label: string;
+        }>;
         policy: {
           providerId: string;
           registeredLanes: string[];
@@ -2144,6 +2155,22 @@ describe("Switchyard HTTP surface", () => {
 
     expect(response.status).toBe(200);
     expect(payload.doctor.providerId).toBe("gemini");
+    expect(payload.doctor.activePolicyPack).toEqual(
+      expect.objectContaining({
+        id: "low-friction",
+        label: "Low Friction",
+        preferredLaneBias: "auto",
+        strictReadyOnly: false,
+      }),
+    );
+    expect(payload.doctor.availablePolicyPacks).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({
+          id: "official-api-first",
+          label: "Official API First",
+        }),
+      ]),
+    );
     expect(payload.doctor.policy.providerId).toBe("gemini");
     expect(payload.doctor.policy.registeredLanes).toEqual(["web-login", "byok"]);
     expect(payload.doctor.policy.dispatchPolicy.kind).toBe(
@@ -2194,6 +2221,17 @@ describe("Switchyard HTTP surface", () => {
           readyProviders: string[];
           dispatchableCount: number;
         };
+        activePolicyPack: {
+          id: string;
+          label: string;
+          summary: string;
+          preferredLaneBias: string;
+          strictReadyOnly: boolean;
+        };
+        availablePolicyPacks: Array<{
+          id: string;
+          label: string;
+        }>;
         strongestNextSteps: string[];
         controlLedger: {
           routes: {
@@ -2229,6 +2267,26 @@ describe("Switchyard HTTP surface", () => {
     };
 
     expect(response.status).toBe(200);
+    expect(payload.doctor.activePolicyPack).toEqual(
+      expect.objectContaining({
+        id: "low-friction",
+        label: "Low Friction",
+        preferredLaneBias: "auto",
+        strictReadyOnly: false,
+      }),
+    );
+    expect(payload.doctor.availablePolicyPacks).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({
+          id: "reliability-first",
+          label: "Reliability First",
+        }),
+        expect.objectContaining({
+          id: "strict-fail-closed",
+          label: "Strict Fail Closed",
+        }),
+      ]),
+    );
     expect(payload.doctor.summary.blockingProviders).toContain("claude");
     expect(payload.doctor.summary.dispatchableCount).toBeGreaterThan(0);
     expect(payload.doctor.controlLedger.routes).toEqual({
@@ -2315,6 +2373,13 @@ describe("Switchyard HTTP surface", () => {
     const payload = (await response.json()) as {
       plan: {
         policyProfile: string;
+        activePolicyPack: {
+          id: string;
+          label: string;
+          summary: string;
+          preferredLaneBias: string;
+          strictReadyOnly: boolean;
+        };
         recommended?: {
           providerId: string;
           laneId: string;
@@ -2328,6 +2393,14 @@ describe("Switchyard HTTP surface", () => {
 
     expect(response.status).toBe(200);
     expect(payload.plan.policyProfile).toBe("official-api-first");
+    expect(payload.plan.activePolicyPack).toEqual(
+      expect.objectContaining({
+        id: "official-api-first",
+        label: "Official API First",
+        preferredLaneBias: "byok",
+        strictReadyOnly: false,
+      }),
+    );
     expect(payload.plan.recommended).toEqual(
       expect.objectContaining({
         providerId: "openai",
@@ -2581,6 +2654,13 @@ describe("Switchyard HTTP surface", () => {
       text: string;
       receipt?: {
         policyProfile: string;
+        activePolicyPack: {
+          id: string;
+          label: string;
+          summary: string;
+          preferredLaneBias: string;
+          strictReadyOnly: boolean;
+        };
         providerId: string;
         laneId: string;
         doctorRoute: string;
@@ -2608,6 +2688,11 @@ describe("Switchyard HTTP surface", () => {
     expect(payload.receipt).toEqual(
       expect.objectContaining({
         policyProfile: "official-api-first",
+        activePolicyPack: expect.objectContaining({
+          id: "official-api-first",
+          label: "Official API First",
+          preferredLaneBias: "byok",
+        }),
         providerId: "gemini",
         laneId: "byok",
         doctorRoute: "/v1/runtime/providers/gemini/doctor",

@@ -177,6 +177,10 @@ describe("Switchyard service client", () => {
           async json() {
             return {
               doctor: {
+                activePolicyPack: {
+                  id: "low-friction",
+                  label: "Low Friction",
+                },
                 summary: {
                   blockingProviders: ["claude"],
                 },
@@ -202,6 +206,10 @@ describe("Switchyard service client", () => {
           async json() {
             return {
               plan: {
+                activePolicyPack: {
+                  id: "reliability-first",
+                  label: "Reliability First",
+                },
                 policyProfile: "reliability-first",
                 recommended: {
                   providerId: "chatgpt",
@@ -228,7 +236,15 @@ describe("Switchyard service client", () => {
     });
 
     expect(runtimeDoctor.doctor.summary.blockingProviders).toEqual(["claude"]);
+    expect(runtimeDoctor.doctor.activePolicyPack).toEqual({
+      id: "low-friction",
+      label: "Low Friction",
+    });
     expect(runtimePlan.plan.policyProfile).toBe("reliability-first");
+    expect(runtimePlan.plan.activePolicyPack).toEqual({
+      id: "reliability-first",
+      label: "Reliability First",
+    });
     expect(runtimePlan.plan.recommended).toBeTruthy();
     expect(runtimePlan.plan.recommended?.providerId).toBe("chatgpt");
   });

@@ -113,6 +113,10 @@ curl http://127.0.0.1:4010/v1/runtime/doctor
 - 哪些 provider 现在可 dispatch
 - 哪些 provider 还 blocked
 - 当前最值得先跑的下一步 CLI
+- `activePolicyPack`
+  - 当前 runtime 正在按哪一张策略包看世界
+- `availablePolicyPacks`
+  - 所有公开可选的策略包目录，不再只是几段 profile id
 - `controlLedger`
   - 一张更像本地 control shell 的 ledger：
   - `runtime doctor / runtime plan / invoke / auth portal` 这些聚合入口
@@ -198,6 +202,10 @@ curl http://127.0.0.1:4010/v1/runtime/plan \
 
 - 先给任务要求
 - 再让 runtime 帮你推荐 provider / lane / model
+- 同时把当前 `activePolicyPack` 一起返回，让 builder 知道：
+  - 这张策略包偏向哪条 lane
+  - 它是否要求 official API
+  - 它会不会拒绝 degraded runtime shortcuts
 - 如果后面要继续做本地排障或选择收敛，先回到 `runtime doctor`
 
 ## Error Model
@@ -224,6 +232,7 @@ curl http://127.0.0.1:4010/v1/runtime/plan \
 
 - `receipt`
   - `policyProfile`
+  - `activePolicyPack`
   - `providerId / laneId / requestedModel`
   - `doctorRoute`
   - `lineage`
