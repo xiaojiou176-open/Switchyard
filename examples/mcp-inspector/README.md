@@ -11,6 +11,7 @@
 - MCP server 能起
 - tool inventory 能列
 - `runtime.health` 真的能读
+- `provider.doctor` 也能过一次真实 stdio roundtrip
 
 ## 运行
 
@@ -34,7 +35,8 @@ pnpm run example:mcp-inspector
 2. 用真实 MCP client 连接 stdio
 3. 列出全部 tool names
 4. 调一次 `switchyard.runtime.health`
-5. 再调一次 `switchyard.catalog.mcp_tools`
+5. 调一次 `switchyard.provider.doctor`
+6. 再调一次 `switchyard.catalog.mcp_tools`
 
 ## 它证明什么
 

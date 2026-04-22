@@ -164,6 +164,24 @@ describe("example package-script entrypoints", () => {
           return;
         }
 
+        if (request.url === "/v1/runtime/providers/chatgpt/doctor") {
+          response.end(
+            JSON.stringify({
+              doctor: {
+                providerId: "chatgpt",
+                activePolicyPack: {
+                  id: "low-friction",
+                  label: "Low Friction",
+                },
+                alignment: {
+                  story: "dispatchable",
+                },
+              },
+            }),
+          );
+          return;
+        }
+
         response.statusCode = 404;
         response.end(JSON.stringify({ error: "not-found" }));
       });
@@ -188,6 +206,23 @@ describe("example package-script entrypoints", () => {
             readOnly: boolean;
             result: { lane: string; totals: { ready: number } };
           };
+          providerDoctor: {
+            command: string;
+            provider: string;
+            readOnly: boolean;
+            result: {
+              doctor: {
+                providerId: string;
+                activePolicyPack: {
+                  id: string;
+                  label: string;
+                };
+                alignment: {
+                  story: string;
+                };
+              };
+            };
+          };
           catalogTools: Record<string, unknown>;
         };
 
@@ -202,6 +237,25 @@ describe("example package-script entrypoints", () => {
           command: "health",
           readOnly: true,
         });
+        expect(output.providerDoctor).toEqual(
+          expect.objectContaining({
+            command: "provider-doctor",
+            provider: "chatgpt",
+            readOnly: true,
+            result: expect.objectContaining({
+              doctor: expect.objectContaining({
+                providerId: "chatgpt",
+                activePolicyPack: {
+                  id: "low-friction",
+                  label: "Low Friction",
+                },
+                alignment: {
+                  story: "dispatchable",
+                },
+              }),
+            }),
+          }),
+        );
         expect(output.runtimeHealth.result).toMatchObject({
           lane: "web",
           totals: expect.objectContaining({
@@ -213,6 +267,7 @@ describe("example package-script entrypoints", () => {
           readOnly: true,
         });
         expect(requests).toContain("GET /v1/runtime/health");
+        expect(requests).toContain("GET /v1/runtime/providers/chatgpt/doctor");
       } finally {
         await new Promise<void>((resolveClose) => service.close(() => resolveClose()));
       }
