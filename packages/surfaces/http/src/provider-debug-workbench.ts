@@ -230,11 +230,12 @@ function renderDiagnosticTray(
   description: string,
   body: string,
   options?: {
+    id?: string;
     open?: boolean;
     badge?: string;
   },
 ): string {
-  return `<details class="diagnostic-tray"${options?.open ? " open" : ""}>
+  return `<details class="diagnostic-tray"${options?.id ? ` id="${escapeHtml(options.id)}"` : ""}${options?.open ? " open" : ""}>
     <summary>
       <span class="diagnostic-tray-copy">
         ${options?.badge ? `<span class="diagnostic-tray-badge">${escapeHtml(options.badge)}</span>` : ""}
@@ -254,6 +255,7 @@ function renderEvidenceStack(
   currentPageDiagnostic: string,
   currentConsoleDiagnostic: string,
   currentNetworkDiagnostic: string,
+  blockedFlow = false,
 ): string {
   const firstDiagnoseStep = debug.diagnoseLadder[0];
   const evidencePeek = [
@@ -351,6 +353,8 @@ function renderEvidenceStack(
             </ol>
           </section>`,
           {
+            id: "diagnose-ladder-tray",
+            open: blockedFlow,
             badge: "Repair order",
           },
         )}
@@ -604,6 +608,7 @@ export function renderProviderDebugWorkbench(
   const nextStepCommand = nextAction?.command;
   const nextStepCommandLabel = truthFocus ? "Rerun after the blocker clears" : "Next check";
   const primaryWorkbenchActionLabel = truthFocus ? "Open repair ladder" : "Open browser evidence";
+  const primaryWorkbenchActionHref = truthFocus ? "#diagnose-ladder-tray" : "#evidence-stack";
   const runtimeSummary = truthFocus?.runtimeSummary ?? debug.auth.statusSummary;
   const currentBrowserSummary =
     sharedDiagnostic.repeatedRaw &&
@@ -1344,7 +1349,7 @@ export function renderProviderDebugWorkbench(
           <h1>${escapeHtml(debug.providerDisplayName)} browser readiness</h1>
           <p class="hero-intro">Start with one question: <strong>does this browser still look usable</strong>? This page compares saved session material with the current browser page, and it never invents green lights from missing evidence.</p>
       <div class="hero-actions">
-            <a class="pill-link ${nextStepTone === "ok" ? "pill-link-primary" : "pill-link-warning"}" href="#evidence-stack">${escapeHtml(primaryWorkbenchActionLabel)}</a>
+            <a class="pill-link ${nextStepTone === "ok" ? "pill-link-primary" : "pill-link-warning"}" href="${escapeHtml(primaryWorkbenchActionHref)}">${escapeHtml(primaryWorkbenchActionLabel)}</a>
             <a class="pill-link pill-link-quiet" href="${escapeHtml(authPortalRoute)}">Back to auth portal</a>
             <a class="pill-link pill-link-quiet" href="${escapeHtml(debug.routes.debugSupportBundle)}" target="_blank" rel="noopener">Open support bundle</a>
           </div>
@@ -1403,6 +1408,7 @@ export function renderProviderDebugWorkbench(
         currentPageDiagnostic,
         currentConsoleDiagnostic,
         currentNetworkDiagnostic,
+        Boolean(truthFocus),
       )}
     </main>
   </body>

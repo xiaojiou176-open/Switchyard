@@ -26,8 +26,8 @@ The bootstrap runbook stays public, but demoted:
 
 - `docs/runbooks/dev-bootstrap.md`
 
-The old Wave 1 working packs now live in a private maintainer-only `.agents/`
-shelf and are not part of this route.
+The old Wave 1 working packs now live in a private maintainer-only shelf and
+are not part of this route.
 
 In plain English:
 

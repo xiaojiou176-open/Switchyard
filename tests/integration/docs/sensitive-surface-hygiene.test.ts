@@ -61,6 +61,24 @@ describe("Switchyard sensitive surface hygiene", () => {
     expect(violations).toEqual([]);
   });
 
+  it("keeps maintainer-only shelves out of the current git history", () => {
+    const historyListing = execFileSync(
+      "git",
+      ["log", "--all", "--name-only", "--pretty=format:"],
+      {
+        cwd: repoRoot,
+        encoding: "utf8",
+      },
+    );
+
+    expect(historyListing).not.toMatch(/^\.agents\//mu);
+    expect(historyListing).not.toMatch(/^docs\/adr\//mu);
+    expect(historyListing).not.toMatch(/^docs\/contracts\//mu);
+    expect(historyListing).not.toMatch(/^docs\/product\//mu);
+    expect(historyListing).not.toMatch(/^docs\/blueprints\//mu);
+    expect(historyListing).not.toMatch(/^docs\/compare\//mu);
+  });
+
   it("keeps tracked text content free of real secret formats and host absolute paths", () => {
     const trackedFiles = listTrackedFiles().filter(
       (file) =>

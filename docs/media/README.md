@@ -15,7 +15,7 @@ Then come here when you want a faster visual pass or a presentation-ready asset.
 | Asset | Type | Use it when | Open |
 | --- | --- | --- | --- |
 | 30-second overview | text brief | you need the fastest product sentence | [Open](./30-second-overview.md) |
-| Remotion promo package | programmable video source | you want the current promo source and render path | [Open](./remotion-switchyard-promo/README.md) |
+| Remotion promo package | programmable video source | you want the current promo source and render path | [Open](../../media/remotion-switchyard-promo/README.md) |
 
 ## Current Media Truth
 

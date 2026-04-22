@@ -136,6 +136,8 @@ describe("provider debug workbench render", () => {
     expect(html).toContain("Current page: human-verification-required");
     expect(html).toContain("Open trays");
     expect(html).toContain("Open repair ladder");
+    expect(html).toContain('href="#diagnose-ladder-tray"');
+    expect(html).toContain('id="diagnose-ladder-tray"');
     expect(html).toContain("Next repair step:");
     expect(html).not.toContain("<strong>technical status</strong> <code>ready</code>");
   });

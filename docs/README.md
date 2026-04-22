@@ -71,11 +71,13 @@ If you only need the next truthful route, choose one:
   - [docs/media/README.md](./media/README.md)
 - I need local bootstrap or workstation-bound reality
   - [docs/runbooks/dev-bootstrap.md](./runbooks/dev-bootstrap.md)
-  - [docs/runtime-control-ledger.md](./runtime-control-ledger.md)
 
 The old Wave 1 working packs were relocated out of the public docs plane, and
-the working copies now live in a private maintainer-only `.agents/` shelf that
-is intentionally not tracked in the public repo history.
+the working copies now live in a private maintainer-only shelf that is
+intentionally not tracked in the public repo history.
+
+The local control ledger still exists, but it is not a normal public docs stop.
+Use it only after the local runtime is already up.
 
 ## Front Row Rules
 
@@ -124,7 +126,7 @@ machine-readable shelf, instead of turning this atlas back into a file cabinet.
 ## Internal Truth Shelves
 
 Switchyard still uses maintainer-only contracts, ledgers, and working packs in
-a private local `.agents/` shelf when that shelf exists in the maintainer
+a private local maintainer shelf when that shelf exists in the maintainer
 workspace.
 
 That shelf is intentionally **not** part of the public repo history, so it is

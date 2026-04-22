@@ -64,7 +64,7 @@ describe("start-local-experience script helpers", () => {
       "/docs/public-proof-pack.md",
     );
     expect(resolveStaticFilePath(repoRoot, "/runtime-control-ledger.md")).toContain(
-      "/docs/runtime-control-ledger.md",
+      "/runtime-control-ledger.md",
     );
     expect(resolveStaticFilePath(repoRoot, "/mcp.md")).toContain("/docs/mcp.md");
     expect(resolveStaticFilePath(repoRoot, "/viewer.html?doc=first-success.md")).toContain(
@@ -99,7 +99,7 @@ describe("start-local-experience script helpers", () => {
         "/Switchyard/docs/public-proof-pack.md",
       );
       expect(resolveStaticFilePath(tempRoot, "/Switchyard/runtime-control-ledger.md")).toContain(
-        "/Switchyard/docs/runtime-control-ledger.md",
+        "/Switchyard/runtime-control-ledger.md",
       );
       expect(resolveStaticFilePath(tempRoot, "/Switchyard/mcp.md")).toContain(
         "/Switchyard/docs/mcp.md",

@@ -51,8 +51,10 @@ That file is the thin entrypoint into the full design contract stack:
 
 Today the truthful public story is:
 
-- **Primary public front door**: the GitHub Pages docs atlas plus this root
-  README
+- **Single public router**: the GitHub Pages docs front door at
+  [docs/index.html](./docs/index.html)
+- **Root README role**: repo sentence, trust boundary, and the shortest
+  truthful repo-native route
 - **Primary repo-native runtime surface**: `apps/service/` and the
   service/runtime HTTP contract
 - **Secondary machine-readable surface**:
@@ -86,7 +88,7 @@ Switchyard now treats the public front door as **English-first**.
 | find the builder workflow / AI workflow route | [docs/README.md](./docs/README.md) |
 | open promo or presentation assets | [docs/media/README.md](./docs/media/README.md) |
 | bootstrap a local workstation or inspect workstation-bound reality | [docs/runbooks/dev-bootstrap.md](./docs/runbooks/dev-bootstrap.md) |
-| browse the public docs front row | [docs/index.html](./docs/index.html) and [docs/README.md](./docs/README.md) |
+| browse the single public router first | [docs/index.html](./docs/index.html) |
 
 If you are touching Switchyard for the first time, stop there.
 
@@ -101,8 +103,8 @@ The heavier shelves still exist, but they are not first-row front door pages:
 - testing/governance reference pages
 
 The old Wave 1 working packs were relocated out of the public docs plane, and
-the real working copies now live in a private maintainer-only `.agents/` shelf
-that is intentionally not tracked in the public repo history.
+the real working copies now live in a private maintainer-only shelf that is
+intentionally not tracked in the public repo history.
 
 ## 30-Second Version
 
@@ -276,7 +278,7 @@ flowchart LR
 ## Proof And Reality Truth
 
 Live/browser outcomes are important, but they are **proof / runbook truth for a
-credentialed workstation**, not the stable repo identity.
+single credentialed workstation**, not the stable repo identity.
 
 That means:
 
@@ -354,7 +356,7 @@ public warehouse list.
 ### Internal-only working packs
 
 - Switchyard keeps its maintainer-only contracts, ledgers, and working packs in
-  a private local `.agents/` shelf when present in the maintainer workspace.
+  a private local maintainer shelf when present in the maintainer workspace.
 - That shelf is intentionally **not** part of the public repo history.
 - Public readers should rely on the first-row docs, proof pack, API reference,
   and runbook surfaces instead of expecting private maintainer files to exist.
@@ -373,7 +375,8 @@ public warehouse list.
 
 - Do not publish cookie bundles, browser profiles, or other credential
   materials.
-- `.runtime-cache/`, `.agents/`, and `.env*` stay out of public release
+- `.runtime-cache/`, maintainer-only shelves, and `.env*` stay out of public
+  release
   surfaces.
 - Repo-local cleanup only applies to Switchyard-owned runtime artifacts, never
   to machine-wide caches or other apps.

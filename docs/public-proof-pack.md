@@ -21,8 +21,7 @@ Keep these public, but one shelf deeper:
 
 Contract shelves, blueprints, and packet/accounting pages still matter, but
 they are not the first stop for a new reader. The old Wave 1 working packs also
-now live outside the public docs plane in a private maintainer-only `.agents/`
-shelf.
+now live outside the public docs plane in a private maintainer-only shelf.
 
 ## One-Line Verdict
 
@@ -103,23 +102,20 @@ Use these pages:
 
 Do **not** treat packet/accounting pages or Wave 1 working packs as first-row
 landing pages. Packet accounting is a deeper public shelf, while the Wave 1
-contract/evidence packs now live in a private maintainer-only `.agents/`
-shelf.
+contract/evidence packs now live in a private maintainer-only shelf.
 
 ## Current Live Truth For This Workspace
 
 This section must stay conservative because live reality is never a repo
 constant.
 
-For the current credentialed workstation, the front door should sync to this
-wording instead of copying an old scorecard:
+For the current credentialed workstation, the front door should stay at this
+level of honesty instead of copying a dated scorecard:
 
-- `repo-side gate = green`
-- fresh `pnpm run verify:service-live` currently stops at
-  `Claude = account-action-required`
-- the current workspace external blocker pack is now just `Claude`
-- detailed aggregate wording belongs in credentialed-workstation proof, not in
-  every front-door page
+- `repo-side gate = green` is a repo-owned verdict
+- workstation-specific blockers belong to local proof or runbook receipts
+- detailed provider names, current browser states, and one-machine external
+  tails should not be copied into every first-row public page
 
 In plain English:
 

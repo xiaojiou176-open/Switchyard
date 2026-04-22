@@ -83,8 +83,8 @@ describe('auth portal shell', () => {
 
     const html = renderAuthPortalShell(model);
 
-    expect(html).toContain('Switchyard Auth Portal');
-    expect(html).toContain('Local-first shell');
+    expect(html).toContain('Switchyard Web/Login Access');
+    expect(html).toContain('Local-first Web/Login access');
     expect(html).toContain('No shared credential pool');
     expect(html).toContain('Skip to main content');
     expect(html).toContain('Inspect current browser');
@@ -123,6 +123,9 @@ describe('auth portal shell', () => {
     expect(html).toContain('data-acquisition-mode="managed-browser"');
     expect(html).toContain('data-acquisition-mode="existing-browser-session"');
     expect(html).toContain('auth-portal-feedback');
+    expect(html).toContain('Reload current summary');
+    expect(html).toContain('data-portal-reload="true"');
+    expect(html).not.toContain('window.setTimeout(() => window.location.reload(), 500)');
     expect(html).not.toContain('&quot;authPortal&quot;');
     expect(html).toContain('payload.acquisition ?? {}');
     expect(html).toContain('syncProviderDrawerFromHash');

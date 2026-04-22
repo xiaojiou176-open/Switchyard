@@ -22,8 +22,8 @@ If the question becomes local bootstrap or workstation-bound reality, open
 deeper than the first-row product route.
 
 Wave 1 working packs no longer belong in the public docs plane. They now live
-in a private maintainer-only `.agents/` shelf that is intentionally not part of
-the public repo history.
+in a private maintainer-only shelf that is intentionally not part of the public
+repo history.
 
 ## Current Rule
 

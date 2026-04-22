@@ -210,7 +210,7 @@ export function buildAuthPortalShellModel(
   const workflows = summarizeAuthRuntimeViews(sections.flatMap((section) => section.cards)).workflowSummary;
 
   return {
-    title: options.title ?? 'Switchyard Auth Portal',
+    title: options.title ?? 'Switchyard Web/Login Access',
     mode: 'local-first',
     generatedAt: options.generatedAt ?? new Date().toISOString(),
     trustBoundary:
@@ -1343,6 +1343,16 @@ async function callJson(url, body = {}) {
   return { response, payload };
 }
 
+document.addEventListener('click', (event) => {
+  const button = event.target.closest('button[data-portal-reload]');
+
+  if (!button) {
+    return;
+  }
+
+  window.location.reload();
+});
+
 document.addEventListener('click', async (event) => {
   const button = event.target.closest('button[data-action-id]');
 
@@ -1425,18 +1435,19 @@ document.addEventListener('click', async (event) => {
         replaceProvider(routeCatalog.providerAcquisitionCaptureTemplate, providerId)
       );
       const acquisitionStatus = payload.acquisition?.status;
+      const reloadButton =
+        acquisitionStatus === 'success' || acquisitionStatus === 'refreshable-but-degraded'
+          ? '<button class="action action-secondary" data-portal-reload="true" type="button">Reload current summary</button>'
+          : '';
       setFeedback(
         acquisitionStatus === 'refreshable-but-degraded'
           ? 'Browser capture stored with follow-up'
           : 'Current browser captured',
         payload.acquisition?.summary ?? 'Switchyard stored the current browser handoff record.',
         payload.acquisition?.storePath ?? '',
-        '',
+        reloadButton,
         acquisitionStatus === 'refreshable-but-degraded' ? 'warning' : 'success'
       );
-      if (acquisitionStatus === 'success' || acquisitionStatus === 'refreshable-but-degraded') {
-        window.setTimeout(() => window.location.reload(), 500);
-      }
       setActionBusy(button, false);
       return;
     }
@@ -1462,18 +1473,19 @@ document.addEventListener('click', async (event) => {
       : {};
     const { payload } = await callJson(button.dataset.captureUrl, captureBody);
     const acquisitionStatus = payload.acquisition?.status;
+    const reloadButton =
+      acquisitionStatus === 'success' || acquisitionStatus === 'refreshable-but-degraded'
+        ? '<button class="action action-secondary" data-portal-reload="true" type="button">Reload current summary</button>'
+        : '';
     setFeedback(
       acquisitionStatus === 'refreshable-but-degraded'
         ? 'Browser capture stored with follow-up'
         : 'Current browser captured',
       payload.acquisition?.summary ?? 'Switchyard stored the current browser handoff record.',
       payload.acquisition?.storePath ?? '',
-      '',
+      reloadButton,
       acquisitionStatus === 'refreshable-but-degraded' ? 'warning' : 'success'
     );
-    if (acquisitionStatus === 'success' || acquisitionStatus === 'refreshable-but-degraded') {
-      window.setTimeout(() => window.location.reload(), 500);
-    }
   } catch (error) {
     setFeedback('Browser capture could not finish', error instanceof Error ? error.message : 'Unknown capture failure.', '', '', 'danger');
   } finally {
@@ -2623,7 +2635,7 @@ export function renderAuthPortalShell(model: AuthPortalShellModel): string {
     <main id="auth-portal-main">
       <section class="hero">
         <div class="hero-copy">
-          <p class="eyebrow">Local-first provider access</p>
+          <p class="eyebrow">Local-first Web/Login access</p>
           <h1>${escapeHtml(model.title)}</h1>
           <p>Start with one question: <strong>who is ready now</strong>, <strong>who needs owner action</strong>, and <strong>who still needs you to finish the browser login before this page can be trusted</strong>.</p>
           ${renderHeroFirstCallStrip(model)}
@@ -2634,7 +2646,7 @@ export function renderAuthPortalShell(model: AuthPortalShellModel): string {
             </div>
             <div class="hero-secondary-actions">
               <a class="action action-ghost action-link" href="#auth-portal-provider-drawers">Open provider details</a>
-              <a class="action action-ghost action-link" href="#section-byok">Check BYOK slots</a>
+              <a class="action action-ghost action-link" href="#section-byok">Review BYOK later</a>
             </div>
           </div>
         </div>
