@@ -2,12 +2,14 @@ import type { IncomingMessage, ServerResponse } from "node:http";
 
 import type { GenerateTextRequest } from "../../sdk-client/src/index.js";
 import { CAPABILITY_IDS } from "../../../contracts/src/index.js";
+import {
+  SwitchyardContractError,
+} from "../../../contracts/src/index.js";
 import type {
   CapabilityId,
   RuntimePolicyProfileId,
   CredentialState as RuntimeCredentialState,
   RuntimeRequest,
-  SwitchyardContractError,
 } from "../../../contracts/src/index.js";
 import type {
   ServiceInvokeFailure,
@@ -386,16 +388,24 @@ function normalizeAcquisitionRequestBody(body: unknown): AcquisitionRequestBody 
 }
 
 function normalizePolicyProfile(value: unknown): RuntimePolicyProfileId {
+  if (value === undefined || value === null) {
+    return "low-friction";
+  }
+
   if (
     value === "reliability-first" ||
     value === "official-api-first" ||
     value === "web-ok" ||
-    value === "strict-fail-closed"
+    value === "strict-fail-closed" ||
+    value === "low-friction"
   ) {
     return value;
   }
 
-  return "low-friction";
+  throw new SwitchyardContractError(
+    "routing-failed",
+    `Unknown policyProfile "${String(value)}". Supported values: reliability-first, official-api-first, web-ok, low-friction, strict-fail-closed.`,
+  );
 }
 
 function normalizeRequestedCapabilities(value: unknown): CapabilityId[] {
@@ -1035,7 +1045,17 @@ export class SwitchyardHttpSurface {
 
     return {
       policyProfile,
-      activePolicyPack: buildServiceRuntimePolicyPackView(policyProfile),
+      activePolicyPack: buildServiceRuntimePolicyPackView(policyProfile, {
+        requiresOfficialApi: requireOfficialApi,
+        allowWebLogin,
+        strictReadyOnly: policyProfile === "strict-fail-closed",
+        requiredCapabilities: Array.from(
+          new Set([
+            ...buildServiceRuntimePolicyPackView(policyProfile).requiredCapabilities,
+            ...mergedCapabilities,
+          ]),
+        ),
+      }),
       requiredCapabilities: mergedCapabilities,
       recommendations,
       blockers,
@@ -1474,7 +1494,22 @@ export class SwitchyardHttpSurface {
         });
       }
 
-      const runtimeRequest = await this.buildRuntimeRequest(body);
+      let runtimeRequest: RuntimeRequest | undefined;
+
+      try {
+        runtimeRequest = await this.buildRuntimeRequest(body);
+      } catch (error) {
+        if (
+          error &&
+          typeof error === "object" &&
+          "diagnostic" in error &&
+          typeof (error as { diagnostic?: { code?: string } }).diagnostic?.code === "string"
+        ) {
+          return this.renderContractErrorResponse(error as SwitchyardContractError);
+        }
+
+        throw error;
+      }
 
       if (!this.runtime || !runtimeRequest) {
         return jsonResponse(503, {
@@ -1554,7 +1589,22 @@ export class SwitchyardHttpSurface {
         });
       }
 
-      const plan = await this.buildRuntimePlanView(body);
+      let plan: ServiceRuntimePlanView | undefined;
+
+      try {
+        plan = await this.buildRuntimePlanView(body);
+      } catch (error) {
+        if (
+          error &&
+          typeof error === "object" &&
+          "diagnostic" in error &&
+          typeof (error as { diagnostic?: { code?: string } }).diagnostic?.code === "string"
+        ) {
+          return this.renderContractErrorResponse(error as SwitchyardContractError);
+        }
+
+        throw error;
+      }
 
       if (!plan) {
         return jsonResponse(503, {
@@ -1729,7 +1779,26 @@ export class SwitchyardHttpSurface {
         });
       }
 
-      const runtimeRequest = await this.buildRuntimeRequest(body, "byok");
+      let runtimeRequest: RuntimeRequest | undefined;
+
+      try {
+        runtimeRequest = await this.buildRuntimeRequest(body, "byok");
+      } catch (error) {
+        if (
+          error &&
+          typeof error === "object" &&
+          "diagnostic" in error &&
+          typeof (error as { diagnostic?: { code?: string } }).diagnostic?.code === "string"
+        ) {
+          return this.renderContractErrorResponse(
+            error as SwitchyardContractError,
+            undefined,
+            "byok",
+          );
+        }
+
+        throw error;
+      }
 
       if (!this.runtime || !runtimeRequest || !this.invokeRuntime) {
         return this.handleByokInvoke({
@@ -1775,7 +1844,22 @@ export class SwitchyardHttpSurface {
         });
       }
 
-      const runtimeRequest = await this.buildRuntimeRequest(body);
+      let runtimeRequest: RuntimeRequest | undefined;
+
+      try {
+        runtimeRequest = await this.buildRuntimeRequest(body);
+      } catch (error) {
+        if (
+          error &&
+          typeof error === "object" &&
+          "diagnostic" in error &&
+          typeof (error as { diagnostic?: { code?: string } }).diagnostic?.code === "string"
+        ) {
+          return this.renderContractErrorResponse(error as SwitchyardContractError);
+        }
+
+        throw error;
+      }
 
       try {
         if (this.runtime && runtimeRequest && this.invokeRuntime) {

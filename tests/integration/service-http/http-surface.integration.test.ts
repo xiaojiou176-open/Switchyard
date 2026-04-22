@@ -2378,7 +2378,10 @@ describe("Switchyard HTTP surface", () => {
           label: string;
           summary: string;
           preferredLaneBias: string;
+          requiresOfficialApi: boolean;
+          allowWebLogin: boolean;
           strictReadyOnly: boolean;
+          requiredCapabilities: string[];
         };
         recommended?: {
           providerId: string;
@@ -2398,7 +2401,14 @@ describe("Switchyard HTTP surface", () => {
         id: "official-api-first",
         label: "Official API First",
         preferredLaneBias: "byok",
+        requiresOfficialApi: true,
+        allowWebLogin: true,
         strictReadyOnly: false,
+        requiredCapabilities: expect.arrayContaining([
+          "text-generation",
+          "tool-calling",
+          "official-api",
+        ]),
       }),
     );
     expect(payload.plan.recommended).toEqual(
@@ -2415,6 +2425,82 @@ describe("Switchyard HTTP surface", () => {
         }),
       ]),
     );
+  });
+
+  it("surfaces effective policy-pack overlays on runtime-plan instead of echoing only the base profile label", async () => {
+    const service = createTestService({
+      useLocalWebAuthStore: false,
+      runtimeEnv: {
+        SWITCHYARD_OPENAI_API_KEY: "openai-test-key",
+        OPENAI_API_KEY: "openai-test-key",
+      },
+      providerSessions: {
+        chatgpt: {
+          state: "ready",
+          runtimeReadiness: "ready",
+          validationState: "validated",
+          presence: "present",
+        },
+      },
+    });
+
+    const response = await postSurface(service, "/v1/runtime/plan", {
+      policyProfile: "low-friction",
+      requireOfficialApi: true,
+      requireToolCalling: true,
+      allowWebLogin: false,
+    });
+
+    const payload = (await response.json()) as {
+      plan: {
+        policyProfile: string;
+        activePolicyPack: {
+          id: string;
+          label: string;
+          requiresOfficialApi: boolean;
+          allowWebLogin: boolean;
+          requiredCapabilities: string[];
+        };
+      };
+    };
+
+    expect(response.status).toBe(200);
+    expect(payload.plan.policyProfile).toBe("low-friction");
+    expect(payload.plan.activePolicyPack).toEqual(
+      expect.objectContaining({
+        id: "low-friction",
+        label: "Low Friction",
+        preferredLaneBias: "auto",
+        requiresOfficialApi: true,
+        allowWebLogin: false,
+        requiredCapabilities: expect.arrayContaining([
+          "text-generation",
+          "tool-calling",
+          "official-api",
+        ]),
+      }),
+    );
+  });
+
+  it("rejects unknown policy profiles instead of silently falling back to low-friction on runtime-plan", async () => {
+    const service = createTestService({
+      useLocalWebAuthStore: false,
+    });
+
+    const response = await postSurface(service, "/v1/runtime/plan", {
+      policyProfile: "totally-unknown-profile",
+    });
+
+    const payload = (await response.json()) as {
+      error: {
+        type: string;
+        message: string;
+      };
+    };
+
+    expect(response.status).toBe(400);
+    expect(payload.error.type).toBe("routing-failed");
+    expect(payload.error.message).toContain("Unknown policyProfile");
   });
 
   it("serves a BYOK invoke through the explicit byok route alias", async () => {
@@ -2659,7 +2745,10 @@ describe("Switchyard HTTP surface", () => {
           label: string;
           summary: string;
           preferredLaneBias: string;
+          requiresOfficialApi: boolean;
+          allowWebLogin: boolean;
           strictReadyOnly: boolean;
+          requiredCapabilities: string[];
         };
         providerId: string;
         laneId: string;
@@ -2692,6 +2781,12 @@ describe("Switchyard HTTP surface", () => {
           id: "official-api-first",
           label: "Official API First",
           preferredLaneBias: "byok",
+          requiresOfficialApi: true,
+          allowWebLogin: false,
+          requiredCapabilities: expect.arrayContaining([
+            "text-generation",
+            "official-api",
+          ]),
         }),
         providerId: "gemini",
         laneId: "byok",
@@ -2715,6 +2810,30 @@ describe("Switchyard HTTP surface", () => {
         }),
       }),
     );
+  });
+
+  it("rejects unknown policy profiles on the generic invoke route instead of silently widening to low-friction", async () => {
+    const service = createTestService({
+      useLocalWebAuthStore: false,
+    });
+
+    const response = await postSurface(service, "/v1/runtime/invoke", {
+      provider: "gemini",
+      model: "gemini-2.5-flash",
+      input: "hello",
+      policyProfile: "totally-unknown-profile",
+    });
+
+    const payload = (await response.json()) as {
+      error: {
+        type: string;
+        message: string;
+      };
+    };
+
+    expect(response.status).toBe(400);
+    expect(payload.error.type).toBe("routing-failed");
+    expect(payload.error.message).toContain("Unknown policyProfile");
   });
 
   it("keeps dispatch-plan, probe, remediation, and live proof on the same story", async () => {

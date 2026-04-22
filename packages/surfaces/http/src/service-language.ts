@@ -87,6 +87,7 @@ export interface ServiceRuntimePolicyPackView {
   requiresOfficialApi: boolean;
   allowWebLogin: boolean;
   strictReadyOnly: boolean;
+  requiredCapabilities: CapabilityId[];
 }
 
 export const SERVICE_RUNTIME_POLICY_PACKS = Object.freeze([
@@ -99,6 +100,7 @@ export const SERVICE_RUNTIME_POLICY_PACKS = Object.freeze([
     requiresOfficialApi: false,
     allowWebLogin: true,
     strictReadyOnly: false,
+    requiredCapabilities: ["text-generation"],
   },
   {
     id: "official-api-first",
@@ -109,6 +111,7 @@ export const SERVICE_RUNTIME_POLICY_PACKS = Object.freeze([
     requiresOfficialApi: true,
     allowWebLogin: false,
     strictReadyOnly: false,
+    requiredCapabilities: ["text-generation", "official-api"],
   },
   {
     id: "web-ok",
@@ -119,6 +122,7 @@ export const SERVICE_RUNTIME_POLICY_PACKS = Object.freeze([
     requiresOfficialApi: false,
     allowWebLogin: true,
     strictReadyOnly: false,
+    requiredCapabilities: ["text-generation"],
   },
   {
     id: "low-friction",
@@ -129,6 +133,7 @@ export const SERVICE_RUNTIME_POLICY_PACKS = Object.freeze([
     requiresOfficialApi: false,
     allowWebLogin: true,
     strictReadyOnly: false,
+    requiredCapabilities: ["text-generation"],
   },
   {
     id: "strict-fail-closed",
@@ -139,16 +144,34 @@ export const SERVICE_RUNTIME_POLICY_PACKS = Object.freeze([
     requiresOfficialApi: false,
     allowWebLogin: true,
     strictReadyOnly: true,
+    requiredCapabilities: ["text-generation"],
   },
 ] as const satisfies readonly ServiceRuntimePolicyPackView[]);
 
 export function buildServiceRuntimePolicyPackView(
   profileId: RuntimePolicyProfileId = "low-friction",
+  overrides: Partial<
+    Pick<
+      ServiceRuntimePolicyPackView,
+      | "preferredLaneBias"
+      | "requiresOfficialApi"
+      | "allowWebLogin"
+      | "strictReadyOnly"
+      | "requiredCapabilities"
+    >
+  > = {},
 ): ServiceRuntimePolicyPackView {
-  return (
+  const basePolicyPack =
     SERVICE_RUNTIME_POLICY_PACKS.find((policyPack) => policyPack.id === profileId) ??
-    SERVICE_RUNTIME_POLICY_PACKS.find((policyPack) => policyPack.id === "low-friction")!
-  );
+    SERVICE_RUNTIME_POLICY_PACKS.find((policyPack) => policyPack.id === "low-friction")!;
+
+  return {
+    ...basePolicyPack,
+    ...overrides,
+    requiredCapabilities: [
+      ...(overrides.requiredCapabilities ?? basePolicyPack.requiredCapabilities),
+    ],
+  };
 }
 
 export function buildServiceRuntimePolicyPackCatalog(

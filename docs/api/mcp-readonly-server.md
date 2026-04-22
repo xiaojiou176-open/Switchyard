@@ -191,6 +191,7 @@ pnpm run switchyard:cli -- provider-doctor --provider chatgpt --json
   - 先看 `switchyard.runtime.doctor`
   - 再看 `switchyard.runtime.plan`
   - 这两条现在也会带 `activePolicyPack`，告诉你当前策略包偏向哪条 lane、是否要求 official API、是否 strict fail-closed
+  - 如果 planner request 叠加了额外约束，`activePolicyPack` 反映的是 effective policy
 - 我想知道 repo 现在到底对外暴露了哪些 surface / compat target：
   - 先看 `switchyard.catalog.surface_catalog`
   - 再看 `switchyard.catalog.compat_target_catalog`
