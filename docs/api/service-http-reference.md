@@ -206,6 +206,8 @@ curl http://127.0.0.1:4010/v1/runtime/plan \
   - 这张策略包偏向哪条 lane
   - 它是否要求 official API
   - 它会不会拒绝 degraded runtime shortcuts
+  - 如果这次请求额外叠加了 `allowWebLogin / requireOfficialApi / requireToolCalling`
+    这类 planner flags，`activePolicyPack` 反映的是 **effective policy**，不是只回显裸 `policyProfile`
 - 如果后面要继续做本地排障或选择收敛，先回到 `runtime doctor`
 
 ## Error Model
@@ -220,6 +222,10 @@ curl http://127.0.0.1:4010/v1/runtime/plan \
 - `provider-unavailable`
 - `session-incomplete`
 - `refreshable-but-degraded`
+- `routing-failed`
+
+如果你传了未知的 `policyProfile`，当前 surface 会显式返回
+`400 + routing-failed`，而不是静默降级成 `low-friction`。
 
 生活化理解：
 

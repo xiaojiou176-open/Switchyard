@@ -93,6 +93,8 @@ const invoke = await client.invoke({
   - 让 builder 知道当前策略包偏向哪条 lane、是否要求 official API、是否 strict fail-closed
 - `runtimePlan()` 像让 runtime 先按任务要求帮你挑 provider/lane/model
   - 也会把当前 `activePolicyPack` 一起带回来
+  - 如果这次请求叠加了 `requireOfficialApi / requireToolCalling / allowWebLogin`
+    这类 planner flags，`activePolicyPack` 代表的是这次请求真正生效的 policy
 - `providerDiagnose()` 像拿整张体检单
 - `providerDoctor()` 像把“策略脑 + 体检单 + 下一步建议”压成一张 builder receipt
 - `providerDiagnoseLadder()` 像医生给你的下一步处理顺序
@@ -101,6 +103,9 @@ const invoke = await client.invoke({
   - 为什么这样选 lane / provider
   - 现在应该回到哪条 doctor/plan 路由
   - 如果继续排障，该走哪张 remediation workflow
+
+如果传了未知 `policyProfile`，service client 当前会收到明确的 `400` 错误，
+而不是被静默放宽成 `low-friction`。
 
 这几个 helper 都是 read-only 诊断入口。  
 它们帮助你看清 `store-ready != live-ready`，但不等于把 `CLI` 或 future compat 提前写成今天已支持。
