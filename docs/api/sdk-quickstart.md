@@ -95,6 +95,8 @@ const invoke = await client.invoke({
   - 也会把当前 `activePolicyPack` 一起带回来
   - 如果这次请求叠加了 `requireOfficialApi / requireToolCalling / allowWebLogin`
     这类 planner flags，`activePolicyPack` 代表的是这次请求真正生效的 policy
+- `dispatchPlan()` 现在也会带 `activePolicyPack`
+  - 让 builder 在真正执行前先看清这次请求的 effective policy
 - `providerDiagnose()` 像拿整张体检单
 - `providerDoctor()` 像把“策略脑 + 体检单 + 下一步建议”压成一张 builder receipt
 - `providerDiagnoseLadder()` 像医生给你的下一步处理顺序
@@ -104,7 +106,8 @@ const invoke = await client.invoke({
   - 现在应该回到哪条 doctor/plan 路由
   - 如果继续排障，该走哪张 remediation workflow
 
-如果传了未知 `policyProfile`，service client 当前会收到明确的 `400` 错误，
+如果传了未知 `policyProfile`，service client 当前会在
+`runtimePlan / dispatchPlan / invoke / byok invoke` 这些入口上收到明确的 `400` 错误，
 而不是被静默放宽成 `low-friction`。
 
 这几个 helper 都是 read-only 诊断入口。  

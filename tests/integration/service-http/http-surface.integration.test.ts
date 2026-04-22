@@ -2084,6 +2084,14 @@ describe("Switchyard HTTP surface", () => {
     const payload = (await response.json()) as {
       dispatchPlan: {
         policyProfile?: string;
+        activePolicyPack?: {
+          id: string;
+          label: string;
+          preferredLaneBias: string;
+          requiresOfficialApi: boolean;
+          allowWebLogin: boolean;
+          requiredCapabilities: string[];
+        };
         selectedLane: string;
         dispatchable: boolean;
       };
@@ -2091,8 +2099,45 @@ describe("Switchyard HTTP surface", () => {
 
     expect(response.status).toBe(200);
     expect(payload.dispatchPlan.policyProfile).toBe("official-api-first");
+    expect(payload.dispatchPlan.activePolicyPack).toEqual(
+      expect.objectContaining({
+        id: "official-api-first",
+        label: "Official API First",
+        preferredLaneBias: "byok",
+        requiresOfficialApi: true,
+        allowWebLogin: false,
+        requiredCapabilities: expect.arrayContaining([
+          "text-generation",
+          "official-api",
+        ]),
+      }),
+    );
     expect(payload.dispatchPlan.selectedLane).toBe("byok");
     expect(payload.dispatchPlan.dispatchable).toBe(true);
+  });
+
+  it("rejects unknown policy profiles on dispatch-plan instead of silently falling back to low-friction", async () => {
+    const service = createTestService({
+      useLocalWebAuthStore: false,
+    });
+
+    const response = await postSurface(service, "/v1/runtime/dispatch-plan", {
+      provider: "gemini",
+      model: "gemini-2.5-flash",
+      input: "hello",
+      policyProfile: "totally-unknown-profile",
+    });
+
+    const payload = (await response.json()) as {
+      error: {
+        type: string;
+        message: string;
+      };
+    };
+
+    expect(response.status).toBe(400);
+    expect(payload.error.type).toBe("routing-failed");
+    expect(payload.error.message).toContain("Unknown policyProfile");
   });
 
   it("exposes a provider doctor route that unifies policy, dispatch, and remediation truth", async () => {
@@ -2537,6 +2582,15 @@ describe("Switchyard HTTP surface", () => {
       provider: string;
       model: string;
       text: string;
+      receipt?: {
+        policyProfile: string;
+        activePolicyPack: {
+          id: string;
+          label: string;
+          preferredLaneBias: string;
+          allowWebLogin: boolean;
+        };
+      };
     };
 
     expect(response.status).toBe(200);
@@ -2544,6 +2598,44 @@ describe("Switchyard HTTP surface", () => {
     expect(payload.provider).toBe("gemini");
     expect(payload.model).toBe("gemini-2.5-flash");
     expect(payload.text).toBe("SWITCHYARD_BYOK_ALIAS_OK");
+    expect(payload.receipt).toEqual(
+      expect.objectContaining({
+        policyProfile: "low-friction",
+        activePolicyPack: expect.objectContaining({
+          id: "low-friction",
+          label: "Low Friction",
+          preferredLaneBias: "byok",
+          allowWebLogin: false,
+        }),
+      }),
+    );
+  });
+
+  it("rejects unknown policy profiles on the explicit BYOK route instead of silently widening to low-friction", async () => {
+    const service = createTestService({
+      useLocalWebAuthStore: false,
+      runtimeEnv: {
+        SWITCHYARD_GEMINI_API_KEY: "gemini-test-key",
+      },
+    });
+
+    const response = await postSurface(service, "/v1/runtime/byok/invoke", {
+      provider: "gemini",
+      model: "gemini-2.5-flash",
+      input: "hello",
+      policyProfile: "totally-unknown-profile",
+    });
+
+    const payload = (await response.json()) as {
+      error: {
+        type: string;
+        message: string;
+      };
+    };
+
+    expect(response.status).toBe(400);
+    expect(payload.error.type).toBe("routing-failed");
+    expect(payload.error.message).toContain("Unknown policyProfile");
   });
 
   it("returns a structured missing-credential error for BYOK service invoke", async () => {

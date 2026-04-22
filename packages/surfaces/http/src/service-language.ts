@@ -238,6 +238,7 @@ export interface ServiceRuntimeDispatchPlanView {
   providerId: string;
   requestedModel: string;
   policyProfile?: RuntimePolicyProfileId;
+  activePolicyPack?: ServiceRuntimePolicyPackView;
   selectedLane?: "byok" | "web-login";
   preferredLane?: "byok" | "web-login";
   dispatchReason?: RuntimeDispatchReason;
@@ -1324,7 +1325,9 @@ export function buildServiceInvokeReceiptView(args: {
   const routes = buildServiceRouteCatalog();
   return {
     policyProfile: args.policyProfile,
-    activePolicyPack: buildServiceRuntimePolicyPackView(args.policyProfile),
+    activePolicyPack:
+      args.dispatchPlan.activePolicyPack ??
+      buildServiceRuntimePolicyPackView(args.policyProfile),
     providerId: args.dispatchPlan.providerId,
     laneId: args.dispatchPlan.selectedLane ?? "web-login",
     modelId: args.dispatchPlan.requestedModel.split("/").slice(1).join("/") || args.dispatchPlan.requestedModel,

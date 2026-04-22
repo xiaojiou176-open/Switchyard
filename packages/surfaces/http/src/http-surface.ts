@@ -669,11 +669,31 @@ export class SwitchyardHttpSurface {
       blockerClassification: verdict.blockerClassification,
       blockerSummary: verdict.blockerSummary,
     };
-
-    return applyServicePolicyProfileToDispatchPlan({
+    const appliedDispatchPlan = applyServicePolicyProfileToDispatchPlan({
       policyProfile: dispatchPlan.policyProfile ?? "low-friction",
       dispatchPlan,
     });
+
+    return {
+      ...appliedDispatchPlan,
+      activePolicyPack: buildServiceRuntimePolicyPackView(
+        appliedDispatchPlan.policyProfile ?? "low-friction",
+        {
+          preferredLaneBias:
+            request.preferredLane === "byok" || request.preferredLane === "web-login"
+              ? request.preferredLane
+              : undefined,
+          requiresOfficialApi: request.requiredCapabilities?.includes("official-api"),
+          allowWebLogin:
+            request.preferredLane === "byok" ? false : undefined,
+          strictReadyOnly:
+            appliedDispatchPlan.policyProfile === "strict-fail-closed",
+          requiredCapabilities: request.requiredCapabilities
+            ? [...request.requiredCapabilities]
+            : undefined,
+        },
+      ),
+    };
   }
 
   private async buildProviderDoctorRequest(

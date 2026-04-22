@@ -166,6 +166,9 @@ curl http://127.0.0.1:4010/v1/runtime/dispatch-plan \
 - 当前 provider 在 `BYOK / Web/Login` 两条 lane 里有哪些候选
 - 现在 service-first runtime 会选哪条 lane
 - 这个选择是来自 `preferred-lane` 还是当前 `credentialStates`
+- `dispatchPlan.activePolicyPack`
+  - 这次请求真正生效的策略包是什么
+  - 它已经吸收了本次请求叠加的约束，而不只是裸 `policyProfile`
 
 ## Example: Provider Doctor
 
@@ -224,8 +227,8 @@ curl http://127.0.0.1:4010/v1/runtime/plan \
 - `refreshable-but-degraded`
 - `routing-failed`
 
-如果你传了未知的 `policyProfile`，当前 surface 会显式返回
-`400 + routing-failed`，而不是静默降级成 `low-friction`。
+如果你传了未知的 `policyProfile`，当前 `runtime plan / dispatch-plan / invoke / byok invoke`
+都会显式返回 `400 + routing-failed`，而不是静默降级成 `low-friction`。
 
 生活化理解：
 

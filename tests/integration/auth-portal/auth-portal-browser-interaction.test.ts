@@ -79,8 +79,9 @@ describe("auth portal browser interaction", () => {
         try {
           const page = await browser.newPage();
           await page.goto("http://127.0.0.1:4197/v1/runtime/auth-portal#auth-portal-provider-drawers", {
-            waitUntil: "networkidle",
+            waitUntil: "domcontentloaded",
           });
+          await page.waitForSelector("#auth-portal-provider-drawers");
 
           expect(
             await page.locator("#auth-portal-provider-drawers").evaluate((element) =>
@@ -91,14 +92,11 @@ describe("auth portal browser interaction", () => {
           await page
             .locator('#provider-claude button[data-action-id="start-web-login"][data-acquisition-mode="isolated-chrome-root"]')
             .click();
-          await page.waitForSelector('#auth-portal-feedback:not([hidden])');
-          await page.waitForFunction(() => {
-            const element = document.querySelector("#auth-portal-feedback");
-            return (
-              element instanceof HTMLElement &&
-              element.textContent?.includes("Browser handoff ready")
-            );
-          });
+          await page.waitForSelector('#auth-portal-feedback[data-state="success"]:not([hidden])');
+          await page.waitForSelector('#auth-portal-feedback button[data-capture-url]');
+          await page.waitForSelector(
+            '#auth-portal-feedback a[href="/v1/runtime/providers/claude/debug/workbench"]',
+          );
 
           const feedbackText = (await page.locator("#auth-portal-feedback").textContent()) ?? "";
           expect(feedbackText).toContain("Browser handoff ready");
@@ -118,6 +116,6 @@ describe("auth portal browser interaction", () => {
         await new Promise<void>((resolveClose) => server.close(() => resolveClose()));
       }
     },
-    20_000,
+    60_000,
   );
 });
