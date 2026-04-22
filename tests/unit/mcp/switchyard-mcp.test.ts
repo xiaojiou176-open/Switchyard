@@ -75,6 +75,10 @@ describe("switchyard MCP surface", () => {
     client.listProviders.mockResolvedValue([{ providerId: "chatgpt" }]);
     client.runtimeDoctor.mockResolvedValue({
       doctor: {
+        activePolicyPack: {
+          id: "low-friction",
+          label: "Low Friction",
+        },
         summary: {
           blockingProviders: ["claude"],
         },
@@ -82,6 +86,10 @@ describe("switchyard MCP surface", () => {
     });
     client.runtimePlan.mockResolvedValue({
       plan: {
+        activePolicyPack: {
+          id: "official-api-first",
+          label: "Official API First",
+        },
         policyProfile: "low-friction",
         recommended: {
           providerId: "chatgpt",
@@ -90,6 +98,10 @@ describe("switchyard MCP surface", () => {
     });
     client.providerDoctor.mockResolvedValue({
       doctor: {
+        activePolicyPack: {
+          id: "low-friction",
+          label: "Low Friction",
+        },
         providerId: "chatgpt",
         alignment: {
           story: "blocked",
@@ -139,6 +151,10 @@ describe("switchyard MCP surface", () => {
       provider: undefined,
       result: {
         doctor: {
+          activePolicyPack: {
+            id: "low-friction",
+            label: "Low Friction",
+          },
           summary: {
             blockingProviders: ["claude"],
           },
@@ -162,6 +178,10 @@ describe("switchyard MCP surface", () => {
       provider: undefined,
       result: {
         plan: {
+          activePolicyPack: {
+            id: "official-api-first",
+            label: "Official API First",
+          },
           policyProfile: "low-friction",
           recommended: {
             providerId: "chatgpt",
@@ -187,6 +207,10 @@ describe("switchyard MCP surface", () => {
       provider: "chatgpt",
       result: {
         doctor: {
+          activePolicyPack: {
+            id: "low-friction",
+            label: "Low Friction",
+          },
           providerId: "chatgpt",
           alignment: {
             story: "blocked",

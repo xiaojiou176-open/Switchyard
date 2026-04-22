@@ -79,6 +79,84 @@ export interface ServiceProviderRouteRefs {
   debugWorkbench: string;
 }
 
+export interface ServiceRuntimePolicyPackView {
+  id: RuntimePolicyProfileId;
+  label: string;
+  summary: string;
+  preferredLaneBias: "byok" | "web-login" | "auto";
+  requiresOfficialApi: boolean;
+  allowWebLogin: boolean;
+  strictReadyOnly: boolean;
+}
+
+export const SERVICE_RUNTIME_POLICY_PACKS = Object.freeze([
+  {
+    id: "reliability-first",
+    label: "Reliability First",
+    summary:
+      "Prefer the most dependable runtime path, biasing toward BYOK when it exists.",
+    preferredLaneBias: "byok",
+    requiresOfficialApi: false,
+    allowWebLogin: true,
+    strictReadyOnly: false,
+  },
+  {
+    id: "official-api-first",
+    label: "Official API First",
+    summary:
+      "Prefer providers that satisfy official-api capability and stay on the BYOK lane when possible.",
+    preferredLaneBias: "byok",
+    requiresOfficialApi: true,
+    allowWebLogin: false,
+    strictReadyOnly: false,
+  },
+  {
+    id: "web-ok",
+    label: "Web OK",
+    summary:
+      "Treat Web/Login as an explicitly acceptable runtime path and prefer it when it is ready.",
+    preferredLaneBias: "web-login",
+    requiresOfficialApi: false,
+    allowWebLogin: true,
+    strictReadyOnly: false,
+  },
+  {
+    id: "low-friction",
+    label: "Low Friction",
+    summary:
+      "Take the easiest currently dispatchable lane without hiding blockers or widening support claims.",
+    preferredLaneBias: "auto",
+    requiresOfficialApi: false,
+    allowWebLogin: true,
+    strictReadyOnly: false,
+  },
+  {
+    id: "strict-fail-closed",
+    label: "Strict Fail Closed",
+    summary:
+      "Only recommend lanes that look fully ready right now, refusing degraded shortcuts.",
+    preferredLaneBias: "byok",
+    requiresOfficialApi: false,
+    allowWebLogin: true,
+    strictReadyOnly: true,
+  },
+] as const satisfies readonly ServiceRuntimePolicyPackView[]);
+
+export function buildServiceRuntimePolicyPackView(
+  profileId: RuntimePolicyProfileId = "low-friction",
+): ServiceRuntimePolicyPackView {
+  return (
+    SERVICE_RUNTIME_POLICY_PACKS.find((policyPack) => policyPack.id === profileId) ??
+    SERVICE_RUNTIME_POLICY_PACKS.find((policyPack) => policyPack.id === "low-friction")!
+  );
+}
+
+export function buildServiceRuntimePolicyPackCatalog(
+  profileIds: readonly RuntimePolicyProfileId[],
+): ServiceRuntimePolicyPackView[] {
+  return profileIds.map((profileId) => buildServiceRuntimePolicyPackView(profileId));
+}
+
 export interface ServiceDiscoveryView {
   providerId: ProviderStatusView['provider'];
   providerDisplayName: ProviderStatusView['displayName'];
@@ -201,6 +279,8 @@ export interface ServiceProviderDoctorView {
   displayName: string;
   activePolicyProfile?: RuntimePolicyProfileId;
   availablePolicyProfiles?: RuntimePolicyProfileId[];
+  activePolicyPack?: ServiceRuntimePolicyPackView;
+  availablePolicyPacks?: ServiceRuntimePolicyPackView[];
   policy: ServiceProviderPolicyView;
   dispatchPlan: ServiceRuntimeDispatchPlanView;
   alignment: ServiceProviderDoctorAlignmentView;
@@ -239,6 +319,8 @@ export interface ServiceRuntimeDoctorView {
   generatedAt: string;
   activePolicyProfile: RuntimePolicyProfileId;
   availablePolicyProfiles: RuntimePolicyProfileId[];
+  activePolicyPack: ServiceRuntimePolicyPackView;
+  availablePolicyPacks: ServiceRuntimePolicyPackView[];
   summary: {
     totalProviders: number;
     dispatchableCount: number;
@@ -272,6 +354,7 @@ export interface ServiceRuntimePlanCandidateView {
 
 export interface ServiceRuntimePlanView {
   policyProfile: RuntimePolicyProfileId;
+  activePolicyPack: ServiceRuntimePolicyPackView;
   requiredCapabilities: CapabilityId[];
   recommendations: ServiceRuntimePlanCandidateView[];
   blockers: string[];
@@ -280,6 +363,7 @@ export interface ServiceRuntimePlanView {
 
 export interface ServiceInvokeReceiptView {
   policyProfile: RuntimePolicyProfileId;
+  activePolicyPack: ServiceRuntimePolicyPackView;
   providerId: string;
   laneId: "byok" | "web-login";
   modelId: string;
@@ -1189,6 +1273,10 @@ export function buildServiceRuntimeDoctorView(args: {
     generatedAt: new Date().toISOString(),
     activePolicyProfile: args.activePolicyProfile,
     availablePolicyProfiles: [...args.availablePolicyProfiles],
+    activePolicyPack: buildServiceRuntimePolicyPackView(args.activePolicyProfile),
+    availablePolicyPacks: buildServiceRuntimePolicyPackCatalog(
+      args.availablePolicyProfiles,
+    ),
     summary: {
       totalProviders: args.providers.length,
       dispatchableCount: readyProviders.length,
@@ -1213,6 +1301,7 @@ export function buildServiceInvokeReceiptView(args: {
   const routes = buildServiceRouteCatalog();
   return {
     policyProfile: args.policyProfile,
+    activePolicyPack: buildServiceRuntimePolicyPackView(args.policyProfile),
     providerId: args.dispatchPlan.providerId,
     laneId: args.dispatchPlan.selectedLane ?? "web-login",
     modelId: args.dispatchPlan.requestedModel.split("/").slice(1).join("/") || args.dispatchPlan.requestedModel,

@@ -184,12 +184,13 @@ pnpm run switchyard:cli -- provider-doctor --provider chatgpt --json
 
 - 我想查某个 provider 现在能不能用：
   - 先看 `switchyard.provider.status`
-  - 想把 policy / dispatch / remediation 一次对齐时先看 `switchyard.provider.doctor`
+  - 想把 `policy pack / dispatch / remediation` 一次对齐时先看 `switchyard.provider.doctor`
   - 再看 `switchyard.provider.probe`
   - 需要更细诊断时用 `switchyard.provider.support_bundle`
 - 我想先看整座 runtime 的总账本或任务级推荐：
   - 先看 `switchyard.runtime.doctor`
   - 再看 `switchyard.runtime.plan`
+  - 这两条现在也会带 `activePolicyPack`，告诉你当前策略包偏向哪条 lane、是否要求 official API、是否 strict fail-closed
 - 我想知道 repo 现在到底对外暴露了哪些 surface / compat target：
   - 先看 `switchyard.catalog.surface_catalog`
   - 再看 `switchyard.catalog.compat_target_catalog`

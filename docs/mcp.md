@@ -164,6 +164,10 @@ Treat this section like a triage desk:
   - `switchyard.provider.diagnose_ladder`
   - `switchyard.provider.support_bundle`
   - `switchyard.provider.diagnose`
+
+These runtime and provider doctor routes now also expose `activePolicyPack`,
+so the read-only MCP surface can explain the current routing policy in human
+terms instead of only returning a bare `policyProfile` id.
 - if you need surface, compat, or provider truth:
   - `switchyard.catalog.surface_catalog`
   - `switchyard.catalog.surface_catalog_schema`

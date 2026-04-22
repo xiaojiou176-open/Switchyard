@@ -34,6 +34,12 @@ try {
   const runtimeHealth = await client.callTool({
     name: "switchyard.runtime.health",
   });
+  const providerDoctor = await client.callTool({
+    name: "switchyard.provider.doctor",
+    arguments: {
+      provider: "chatgpt",
+    },
+  });
   const catalogTools = await client.callTool({
     name: "switchyard.catalog.mcp_tools",
   });
@@ -46,6 +52,7 @@ try {
     safeClaims: starter.manifest.safeClaims,
     availableTools: tools.tools.map((tool) => tool.name),
     runtimeHealth: runtimeHealth.structuredContent,
+    providerDoctor: providerDoctor.structuredContent,
     catalogTools: catalogTools.structuredContent,
   });
 } finally {
