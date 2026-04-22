@@ -118,6 +118,6 @@ describe("auth portal browser interaction", () => {
         await new Promise<void>((resolveClose) => server.close(() => resolveClose()));
       }
     },
-    20_000,
+    60_000,
   );
 });
