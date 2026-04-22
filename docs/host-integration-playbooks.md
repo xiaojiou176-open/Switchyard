@@ -1,26 +1,17 @@
-# Switchyard Host Integration Playbooks
+# Switchyard Builder Integration Hub
 
-If `starter-pack-chooser` answers:
-
-> **Which pack should I start with?**
-
-then this page answers:
-
-> **Once I picked the pack, what is the first host-integration move?**
+This page is the thin public handoff once you already know the route.
 
 In plain English:
 
-- the starter-pack index is the warehouse map
-- the chooser is the front desk
-- this page is the move-in handbook
+- [docs/starter-pack-chooser.md](./starter-pack-chooser.md) helps you choose
+  the first pack
+- this page tells you the honest next move after that choice
+- [examples/hosts/README.md](../examples/hosts/README.md) is the runnable
+  host-local shelf when you need concrete config or a smoke path
 
-It does not claim any host already has full support. It organizes the landed
-narrow slices into clearer host playbooks.
-
-One important clarification:
-
-- if your chosen route is a **host pack**, use the host rows below
-- if your chosen route is a **skill pack**, use the coordinated skill-pack route cards instead of inventing a new handoff by hand
+This page does **not** upgrade compatibility claims. It only keeps the public
+builder handoff narrow and coordinated.
 
 ## Machine-Readable Source
 
@@ -46,7 +37,21 @@ pnpm run switchyard:cli -- skill-pack-route --target runtime-diagnostics-pack
 - `switchyard.catalog.skill_packs`
 - `switchyard.catalog.skill_pack`
 
-## Skill Pack Handoff
+## If You Picked A Builder Pack
+
+Use this hub as the handoff map, then move into the runnable host-local shelf:
+
+| Route | Best next move | Smallest honest success | Do not claim |
+| --- | --- | --- | --- |
+| `codex` | [examples/hosts/codex/README.md](../examples/hosts/codex/README.md) | one text-only request reaches `/v1/runtime/invoke` | tool/worktree/MCP parity |
+| `claude-code` | [examples/hosts/claude-code/README.md](../examples/hosts/claude-code/README.md) | one message-shaped payload reaches the runtime | terminal/tool/approval parity |
+| `openclaw` | [examples/hosts/openclaw/README.md](../examples/hosts/openclaw/README.md) | one delegation-shaped request reaches the runtime after the preflight read | operator/product-shell parity |
+| `mcp` | [examples/hosts/mcp/README.md](../examples/hosts/mcp/README.md) | one MCP client lists tools and reads health | execution brain / write plane |
+
+If you want the whole runnable host shelf first, open
+[examples/hosts/README.md](../examples/hosts/README.md).
+
+## If You Picked A Skill Pack
 
 If the chooser already landed on a skill pack, this is the honest next step:
 
@@ -62,24 +67,20 @@ If the chooser already landed on a skill pack, this is the honest next step:
 These route cards do **not** upgrade support claims. They only keep the pack,
 CLI, and MCP entrypoints aligned.
 
-## Quick Pick
+## If You Need Truth Before Wiring
 
-| Host | Start here | What first success means | Do not claim |
-| --- | --- | --- | --- |
-| `codex` | `starter-packs/builders/codex/` | one text-only request reaches `/v1/runtime/invoke` | tool/worktree/MCP parity |
-| `claude-code` | `starter-packs/builders/claude-code/` | one message-shaped payload reaches the runtime | terminal/tool/approval parity |
-| `openclaw` | `starter-packs/builders/openclaw/` | one delegation-shaped request reaches the runtime after a bootstrap/health/dispatch preflight read | operator/product-shell parity |
-| `mcp` | `starter-packs/builders/mcp/` | one MCP client lists tools and reads health | execution brain / write plane |
+If your real question is still "what is actually public and supported," stop
+here and open the catalog hub first:
 
-For the `openclaw` route, the more honest first move now is:
-
-> Read the preflight first, then fire the first delegation invoke.
+- [docs/public-surface-catalog.md](./public-surface-catalog.md)
+- [catalogs/public-surface-catalog.json](../catalogs/public-surface-catalog.json)
+- [catalogs/provider-runtime-catalog.json](../catalogs/provider-runtime-catalog.json)
 
 ## Related Pages
 
 - [docs/starter-pack-chooser.md](./starter-pack-chooser.md)
-- [docs/host-integration-examples.md](./host-integration-examples.md)
 - [docs/public-surface-catalog.md](./public-surface-catalog.md)
 - [docs/mcp.md](./mcp.md)
 - [starter-packs/README.md](../starter-packs/README.md)
 - [examples/README.md](../examples/README.md)
+- [examples/hosts/README.md](../examples/hosts/README.md)

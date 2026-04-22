@@ -130,6 +130,7 @@ export default defineConfig({
         'tests/integration/docs/frontdoor-docs.test.ts',
         'tests/integration/docs/governance-drift.test.ts',
         'tests/integration/docs/package-ready-distribution.test.ts',
+        'tests/integration/docs/public-plane-v2-closeout.test.ts',
         'tests/integration/docs/public-surface-interaction-audit.test.ts',
         'tests/integration/docs/public-surface-markdown-link-audit.test.ts',
         'tests/integration/docs/public-surface-route-audit.test.ts',

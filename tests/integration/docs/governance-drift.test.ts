@@ -39,18 +39,20 @@ describe("Switchyard docs and design governance drift contracts", () => {
     const authPortalMaster = read("design-system/switchyard-auth-portal/MASTER.md");
     const debugWorkbenchMaster = read("design-system/switchyard-debug-cockpit/MASTER.md");
 
-    expect(stitchDesign).toContain("`Linear` is the primary mother for authenticated app/runtime/workbench");
-    expect(stitchDesign).toContain("`Mintlify` is restricted to docs/public knowledge surfaces only");
-    expect(stitchDesign).toContain("CLI and MCP are read-only inspection companions, not an execution brain");
-    expect(stitchDesign).toContain("private maintainer-only design mother strategy contract");
+    expect(stitchDesign).toContain("Generated design output must follow:");
+    expect(stitchDesign).toContain("`design-system/MASTER.md`");
+    expect(stitchDesign).toContain("must not");
+    expect(stitchDesign).not.toContain("private maintainer-only design mother strategy contract");
 
-    expect(designMaster).toContain("| Auth portal shell and first screen | `design-system/switchyard-auth-portal/MASTER.md` | `Linear` | `Raycast` utility chrome only | no `Mintlify` shell, no Raycast-as-shell |");
-    expect(designMaster).toContain("| Debug cockpit shell and evidence flow | `design-system/switchyard-debug-cockpit/MASTER.md` | `Linear` | `Raycast` utility chrome only | no `Mintlify` shell, no desktop-launcher personality |");
-    expect(designMaster).toContain("| README / docs front door / public help/reference | outside this wave | `Mintlify` | `Linear` restraint for proof cards | not a target for the current implementation slice |");
-    expect(donorLedger).toContain("## [Confirmed] Surface Ledger");
-    expect(donorLedger).toContain("| Auth portal shell | `design-system/switchyard-auth-portal/MASTER.md` | `Linear` |");
-    expect(donorLedger).toContain("| Debug cockpit shell | `design-system/switchyard-debug-cockpit/MASTER.md` | `Linear` |");
-    expect(donorLedger).toContain("| Public docs and help surfaces | `private local-only design mother strategy contract` | `Mintlify` |");
+    expect(designMaster).toContain("## Surface Families");
+    expect(designMaster).toContain("| Runtime shells | dense-but-calm operator shell |");
+    expect(designMaster).toContain("| Public docs/help surfaces | answer-first editorial routing |");
+    expect(designMaster).toContain("## Maintainer-Only Detail");
+    expect(designMaster).not.toContain("private maintainer-only design mother strategy contract");
+    expect(donorLedger).toContain("# Switchyard Public Donor Boundary Ledger");
+    expect(donorLedger).toContain("| Runtime/operator shells |");
+    expect(donorLedger).toContain("| Public docs/help surfaces |");
+    expect(donorLedger).not.toContain("| Auth portal shell |");
 
     expect(authPortalMaster).toContain("| Page shell | `Linear` | dark operational shell, dense-but-calm grouping, border-led structure, sustained readability | no `Mintlify` page shell, no `Raycast` launcher feel as the full page identity |");
     expect(authPortalMaster).toContain("| Quick actions or command-like entrypoints | `Raycast` utility chrome only | keyboard hints, compact quick actions, transient command grammar | must stay secondary to the page shell, must not become the primary navigation model |");
@@ -95,11 +97,9 @@ describe("Switchyard docs and design governance drift contracts", () => {
     expect(llms).not.toContain("docs/compat-target-catalog.md");
     expect(llms).not.toContain("docs/mcp-tool-catalog.md");
 
-    expect(llms).toContain("catalogs/builder-intent-router.json");
-    expect(llms).toContain("catalogs/builder-journeys.json");
-    expect(llms).toContain("catalogs/starter-pack-comparison.json");
-    expect(llms).toContain("catalogs/compat-target-catalog.json");
-    expect(llms).toContain("catalogs/mcp-tool-catalog.json");
+    expect(llms).toContain("catalogs/public-surface-catalog.json");
+    expect(llms).toContain("catalogs/provider-runtime-catalog.json");
+    expect(llms).toContain("catalogs/discoverability-keyword-truth.json");
 
     expect(read("catalogs/builder-intent-router.schema.json")).toContain(
       "Switchyard Builder Intent Router",

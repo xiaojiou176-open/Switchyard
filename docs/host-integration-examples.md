@@ -1,18 +1,18 @@
-# Switchyard Host Integration Examples
+# Switchyard Host Example Foyer
 
-Treat this page as:
-
-> **What should the first host-local config look like once I picked a starter
-> pack, and what is the smallest first success?**
+This page is the thin public wrapper for runnable host-local examples.
 
 In plain English:
 
-- the chooser is the front desk
-- `starter-packs/` is the crate of reusable parts
-- this page is the wiring diagram you copy into your own host
+- choose the route first:
+  - [docs/starter-pack-chooser.md](./starter-pack-chooser.md)
+- confirm the next move:
+  - [docs/host-integration-playbooks.md](./host-integration-playbooks.md)
+- copy or run the concrete host-local shape here:
+  - [examples/hosts/README.md](../examples/hosts/README.md)
 
-It does not create a new product layer. It turns the current thin compat, MCP,
-and builder truth into copy-ready host-local examples.
+This page is **not** another front desk. It is the foyer for concrete host
+example assets.
 
 ## Machine-Readable Source
 
@@ -32,15 +32,6 @@ pnpm run switchyard:cli -- host-example --target mcp
 - `switchyard.catalog.host_examples_schema`
 - `switchyard.catalog.host_example`
 
-## Runnable Example Commands
-
-```bash
-pnpm run example:host-codex
-pnpm run example:host-claude-code
-pnpm run example:host-openclaw
-pnpm run example:host-mcp
-```
-
 ## Quick Pick
 
 | If your host is... | Start here | Why | Do not expect |
@@ -50,15 +41,13 @@ pnpm run example:host-mcp
 | `OpenClaw` | [examples/hosts/openclaw/README.md](../examples/hosts/openclaw/README.md) | delegation-first host config plus preflight snapshot and one bounded invoke smoke | product-shell parity |
 | `MCP client` | [examples/hosts/mcp/README.md](../examples/hosts/mcp/README.md) | read-only stdio client wiring plus one bounded MCP smoke | execution brain / write plane |
 
-## What These Examples Help With
+## What This Page Helps With
 
 - host-local first-run wiring
 - copy-paste config examples for builder hosts
-- preflight-first runtime checks before the first delegated turn
 - bounded runnable glue for one first-success check
-- SEO/discoverability pages that answer concrete builder questions
 
-## What These Examples Do Not Mean
+## What This Page Does Not Mean
 
 These examples do **not** mean:
 
@@ -69,10 +58,3 @@ These examples do **not** mean:
 
 They are only the current thin, partial, fail-closed builder surfaces turned
 into host-local runnable glue and config examples.
-
-## Related Pages
-
-- [docs/starter-pack-chooser.md](./starter-pack-chooser.md)
-- [examples/README.md](../examples/README.md)
-- [examples/hosts/README.md](../examples/hosts/README.md)
-- [starter-packs/README.md](../starter-packs/README.md)

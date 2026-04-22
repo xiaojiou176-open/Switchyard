@@ -6,12 +6,9 @@ Current truth:
 - Supports BYOK + Web/Login as the only V1 supply lanes.
 - Stable repo identity is `shared provider runtime for AI apps`, not a chat product, hosted control plane, or raw upstream fork.
 - Primary repo-native surfaces today are the service/runtime front door and the read-only MCP descriptor at `packages/surfaces/mcp/server.json`.
-- Secondary public packet today is `distribution/claude-marketplace/plugins/switchyard-builder-suite/skills/runtime-diagnostics/`.
-- Current outward claims stay at `partial thin compat`, `partial read-only MCP surface`, `copy-ready starter packs`, and `docs-first builder front door`.
-- Later lanes remain documented but not live by default: marketplace-compatible bundle rollout, npm or registry publication, Docker/runtime catalog publication, and broader consumer compat publication.
+- Current outward claims stay at `partial thin compat`, `partial read-only MCP surface`, `copy-ready starter packs`, and a docs-first builder front door.
 - Live verification depends on local end-user credentials and browser session materials on the current machine.
-- Live verification remains workstation-bound. Any `verify:*live` or `reality:gate` result is proof/runbook truth for one credentialed environment, not permanent public identity.
-- `auth-status ready` only means local materials are present; it does not replace a fresh live rerun.
+- Live verification is workstation-bound. Any `verify:*live` or `reality:gate` result is proof/runbook truth for one credentialed environment, not permanent public identity.
 
 Compatibility status:
 - Codex compatibility: public `partial`; thin fail-closed runtime adapter is landed, but there is no tool/MCP/worktree parity claim.
@@ -20,63 +17,38 @@ Compatibility status:
 - CLI starter: public `partial`; read-only builder/runtime helper is landed, but it is not an execution brain or distribution commitment.
 - MCP adapter/server surface: public `partial`; a committed read-only MCP server/tool surface is landed, but it is not an execution brain and not a full consumer-parity backend.
 
-Important docs:
-- First-row public routes:
-  - README.md
-  - docs/index.html
-  - docs/README.md
-  - docs/media/30-second-overview.md
-  - docs/first-success.md
-  - docs/public-proof-pack.md
-  - docs/public-distribution-ledger.md
-  - docs/api/service-http-reference.md
-  - docs/api/openapi.yaml
-  - docs/api/sdk-quickstart.md
-  - docs/api/mcp-readonly-server.md
-  - docs/api/error-diagnostics-reference.md
-  - docs/api/web-login-acquisition.md
-- Deeper public shelves:
-  - docs/public-surface-support-matrix.md
-  - docs/public-surface-catalog.md
-  - catalogs/public-surface-catalog.json
-  - catalogs/public-surface-catalog.schema.json
-  - catalogs/starter-manifest-templates.schema.json
-  - catalogs/starter-manifest-examples.schema.json
-  - examples/README.md
-  - starter-packs/README.md
-  - docs/starter-pack-chooser.md
-  - catalogs/starter-pack-chooser.json
-  - catalogs/starter-pack-chooser.schema.json
-  - catalogs/starter-pack-comparison.json
-  - catalogs/starter-pack-comparison.schema.json
-  - catalogs/builder-journeys.json
-  - catalogs/builder-journeys.schema.json
-  - catalogs/builder-intent-router.json
-  - catalogs/builder-intent-router.schema.json
-  - docs/host-integration-playbooks.md
-  - catalogs/host-integration-playbooks.json
-  - catalogs/host-integration-playbooks.schema.json
-  - docs/host-integration-examples.md
-  - examples/hosts/index.json
-  - examples/hosts/index.schema.json
-  - docs/compat/README.md
-  - private maintainer-only planning shelf when present locally
-  - docs/mcp.md
-  - docs/provider-runtime-catalog.md
-  - catalogs/provider-runtime-catalog.json
-  - catalogs/provider-runtime-catalog.schema.json
-  - catalogs/compat-target-catalog.json
-  - catalogs/compat-target-catalog.schema.json
-  - catalogs/builder-kit-catalog.json
-  - catalogs/builder-kit-catalog.schema.json
-  - catalogs/skill-pack-catalog.json
-  - catalogs/skill-pack-catalog.schema.json
-  - catalogs/mcp-tool-catalog.json
-  - catalogs/mcp-tool-catalog.schema.json
+First-row public routes:
+- README.md
+- docs/index.html
+- docs/README.md
+- docs/media/30-second-overview.md
+- docs/first-success.md
+- docs/public-proof-pack.md
+- docs/public-distribution-ledger.md
+- docs/api/service-http-reference.md
+- docs/api/openapi.yaml
+
+Builder and truth hubs:
+- docs/public-surface-support-matrix.md
+- docs/public-surface-catalog.md
+- catalogs/public-surface-catalog.json
+- catalogs/provider-runtime-catalog.json
+- docs/starter-pack-chooser.md
+- docs/host-integration-playbooks.md
+- starter-packs/README.md
+- examples/README.md
+- examples/hosts/README.md
+- examples/hosts/index.json
+- docs/mcp.md
+- docs/compat/README.md
+- docs/discoverability-keyword-truth.md
+- catalogs/discoverability-keyword-truth.json
+
+Helper pages:
+- docs/api/sdk-quickstart.md
+- docs/api/mcp-readonly-server.md
+- docs/api/error-diagnostics-reference.md
+- docs/api/web-login-acquisition.md
 - docs/faq.md
 - docs/glossary.md
 - docs/i18n.md
-- private maintainer-only testing/governance notes when present locally
-- docs/discoverability-keyword-truth.md
-- catalogs/discoverability-keyword-truth.json
-- catalogs/discoverability-keyword-truth.schema.json

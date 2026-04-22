@@ -69,13 +69,23 @@ describe("public surface interaction audit", () => {
       const rootServer = await startDocsStaticServer({
         rootDir: repoRoot,
         host: "127.0.0.1",
-        port: 4195,
+        port: 0,
       });
       const projectServer = await startDocsStaticServer({
         rootDir: tempRoot,
         host: "127.0.0.1",
-        port: 4196,
+        port: 0,
       });
+
+      const rootAddress = rootServer.address();
+      if (!rootAddress || typeof rootAddress === "string") {
+        throw new Error("Expected root docs front door test server to expose a TCP port.");
+      }
+
+      const projectAddress = projectServer.address();
+      if (!projectAddress || typeof projectAddress === "string") {
+        throw new Error("Expected project-site docs front door test server to expose a TCP port.");
+      }
 
       try {
         const browser = await launchChromiumForUiTest();
@@ -83,8 +93,8 @@ describe("public surface interaction audit", () => {
           const page = await browser.newPage();
 
           for (const [baseUrl, prefix] of [
-            ["http://127.0.0.1:4195/", ""],
-            ["http://127.0.0.1:4196/Switchyard/", "/Switchyard"],
+            [`http://127.0.0.1:${rootAddress.port}/`, ""],
+            [`http://127.0.0.1:${projectAddress.port}/Switchyard/`, "/Switchyard"],
           ] as const) {
             for (const route of routeChecks) {
               await page.goto(baseUrl, { waitUntil: "networkidle" });

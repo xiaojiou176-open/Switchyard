@@ -41,11 +41,10 @@ If you are changing UI, UX, or public-surface copy/IA, open
 
 That file is the thin entrypoint into the full design contract stack:
 
-- root design truth and donor boundary
+- root design truth and surface boundary
 - `design-system/MASTER.md`
 - page masters for `auth-portal` and the debug workbench
-- `design-system/DONOR_ABSORPTION_LEDGER.md`
-- `.stitch/DESIGN.md`
+- any maintainer-only review packets that exist outside the public repo plane
 
 ## Current Public Boundary
 
@@ -342,7 +341,7 @@ deeper shelves rather than the default first stop.
   - [examples/README.md](./examples/README.md)
   - [starter-packs/README.md](./starter-packs/README.md)
   - [docs/host-integration-playbooks.md](./docs/host-integration-playbooks.md)
-  - [docs/host-integration-examples.md](./docs/host-integration-examples.md)
+  - [examples/hosts/README.md](./examples/hosts/README.md)
   - the paired machine-readable catalogs that these routers point to, now kept
     under [`catalogs/`](./catalogs/)
 - Public support truth

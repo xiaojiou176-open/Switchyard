@@ -34,7 +34,7 @@
 
 - [examples/hosts/index.json](./index.json)
 - [examples/hosts/index.schema.json](./index.schema.json)
-- [docs/host-integration-examples.md](../../docs/host-integration-examples.md)
+- [docs/host-integration-playbooks.md](../../docs/host-integration-playbooks.md)
 
 ## Important Boundary
 

@@ -101,7 +101,9 @@ first job, it is a legitimate first-row route:
 
 Once you pick one of these packs, move to
 [docs/host-integration-playbooks.md](./host-integration-playbooks.md) for the
-coordinated CLI + MCP handoff instead of reconstructing the route by hand.
+coordinated CLI + MCP handoff, then open
+[examples/hosts/README.md](../examples/hosts/README.md) only if you need a
+runnable host-local example.
 
 ## What It Does Not Mean
 
@@ -119,6 +121,6 @@ This chooser is **not**:
 - [starter-packs/README.md](../starter-packs/README.md)
 - [catalogs/starter-pack-comparison.json](../catalogs/starter-pack-comparison.json)
 - [docs/host-integration-playbooks.md](./host-integration-playbooks.md)
-- [docs/host-integration-examples.md](./host-integration-examples.md)
+- [examples/hosts/README.md](../examples/hosts/README.md)
 - [docs/public-surface-catalog.md](./public-surface-catalog.md)
 - [docs/discoverability-keyword-truth.md](./discoverability-keyword-truth.md)

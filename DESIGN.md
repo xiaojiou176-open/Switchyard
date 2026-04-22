@@ -1,9 +1,9 @@
 # Switchyard Design Front Door
 
-This file is the single front door for Switchyard design work.
+This file is the single public front door for Switchyard design work.
 
-It exists so future changes do not depend on chat memory, private taste, or
-half-remembered screenshots before touching a governed surface.
+It exists so future changes do not depend on chat memory or private taste before
+touching a governed surface.
 
 ## Product Truth
 
@@ -33,16 +33,14 @@ order:
 3. the matching page master
    - `design-system/switchyard-auth-portal/MASTER.md`
    - `design-system/switchyard-debug-cockpit/MASTER.md`
-4. `design-system/DONOR_ABSORPTION_LEDGER.md`
-5. `.stitch/DESIGN.md`
 
 If a change does not fit this stack, update the governing contract first.
 
 ## Donor Boundary
 
-Switchyard uses three doctrine donors only.
+Switchyard uses a fixed donor boundary:
 
-| Surface family | Primary donor | Allowed secondary | What it is for |
+| Surface family | Primary donor posture | Allowed secondary | What it is for |
 | --- | --- | --- | --- |
 | Authenticated runtime shells | `Linear` | `Raycast` utility chrome only | dense-but-calm operator surfaces, verdict-first hierarchy, long-session readability |
 | Docs and public knowledge surfaces | `Mintlify` | `Linear` proof restraint only | answer-first docs routing, reading rhythm, reference clarity |
@@ -50,36 +48,10 @@ Switchyard uses three doctrine donors only.
 
 Hard freeze:
 
-- Do not inherit donor product identity.
-- Do not inherit donor category worldview.
-- Do not use `Mintlify` as the runtime shell.
-- Do not use `Raycast` as the page identity.
-- Do not reopen donor choice through screenshots or prompt wording.
-
-## Real Absorption Scope
-
-The active donor doctrine comes from the extracted design archives for:
-
-- `linear.app`
-- `mintlify`
-- `raycast`
-
-Switchyard treats those as doctrine donors, not runtime or product mothers.
-
-That means Switchyard may absorb:
-
-- layout grammar
-- hierarchy
-- typography rules
-- color restraint
-- utility chrome patterns
-
-Switchyard may not absorb:
-
-- hosted SaaS worldview
-- launcher-product identity
-- docs-product identity inside authenticated shells
-- decorative redesign with no product-truth payoff
+- do not inherit donor product identity
+- do not inherit donor category worldview
+- do not use `Mintlify` as the runtime shell
+- do not use `Raycast` as the page identity
 
 ## Governed Surfaces
 
@@ -91,16 +63,13 @@ These are the main surfaces currently under active design contract:
 - public help/reference shelves
 - read-only runtime companion entrypoints
 
-The detailed, row-by-row approval matrix lives in
-`design-system/DONOR_ABSORPTION_LEDGER.md`.
-
 ## Anti-Drift Questions
 
 Before landing a UI or public-surface change, answer all of these with `yes`:
 
 1. Does the page still tell the truth about what Switchyard is and is not?
-2. Does the surface still read like the right room:
-   runtime shell, docs router, or utility chrome?
+2. Does the surface still read like the right room: runtime shell, docs router,
+   or utility chrome?
 3. Did the change stay inside the donor boundary already approved for that
    surface?
 4. Does the first screen reduce cognitive load instead of adding decorative
@@ -109,3 +78,9 @@ Before landing a UI or public-surface change, answer all of these with `yes`:
 
 If any answer is `no`, stop and update the governing contract before styling
 further.
+
+## Maintainer-Only Detail
+
+If a future review packet needs more design doctrine than this public front
+door exposes, that detail belongs in a maintainer-only shelf outside the public
+repo plane.

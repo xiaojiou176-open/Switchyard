@@ -1,19 +1,19 @@
 # Switchyard Public Surface Catalog
 
-This page explains the **machine-readable public catalog** for Switchyard.
+This page is the thin human-readable hub for Switchyard's machine-readable
+public truth.
 
-Think of it as two things at once:
+Think of it as:
 
-- the human-readable signboard for which public surfaces are real today
-- the machine-readable directory for the current surface, compat, builder-kit,
-  skill-pack, provider, and MCP truth
+- the signboard for what public surfaces are real today
+- the shortest route into the JSON catalogs that tools should actually consume
 
-It is **not** the marketing page.
-It is also **not** a promise that every future surface is already supported.
+It is **not** a marketing page, and it does **not** quietly rewrite future
+ambition into current support.
 
 ## Current Honest Role
 
-Today the catalog should be read like this:
+Today the outward catalog should still be read like this:
 
 - `CLI` = `partial`
 - `MCP` = `partial`
@@ -23,55 +23,34 @@ Today the catalog should be read like this:
 
 In plain English:
 
-> There is now a stable outward catalog that tools can consume directly.
-> That catalog describes current truth boundaries. It does not quietly rewrite
-> future ambitions into present support.
-
-If you are here to choose the right route:
-
-- surface/support truth
-  - start with this catalog
-- keyword and discoverability truth
-  - go to [docs/discoverability-keyword-truth.md](./discoverability-keyword-truth.md)
-- first route by question
-  - start with [docs/starter-pack-chooser.md](./starter-pack-chooser.md) for the public first hop
-  - use [catalogs/builder-intent-router.json](../catalogs/builder-intent-router.json) or
-    `pnpm run switchyard:cli -- builder-intent-router` for the machine-readable router
-- starter-pack choice
-  - go to [docs/starter-pack-chooser.md](./starter-pack-chooser.md) or
-    [catalogs/builder-journeys.json](../catalogs/builder-journeys.json)
-- package/listing truth
-  - go to [docs/public-distribution-ledger.md](./public-distribution-ledger.md)
+> The catalog is the truth-first directory for current boundaries.
+> It exists so humans and tools can consume the same honest support surface.
 
 ## Machine-Readable Sources
 
-### JSON catalogs
+Start with these public catalogs:
 
 - [catalogs/public-surface-catalog.json](../catalogs/public-surface-catalog.json)
 - [catalogs/public-surface-catalog.schema.json](../catalogs/public-surface-catalog.schema.json)
 - [catalogs/public-distribution-ledger.json](../catalogs/public-distribution-ledger.json)
 - [catalogs/public-distribution-ledger.schema.json](../catalogs/public-distribution-ledger.schema.json)
 
-This JSON layer currently covers:
-
-- public surface truth
-- thin compat target truth
-- builder kit truth
-- skill pack truth
-- provider runtime truth
-- current MCP truth
-- read-only CLI command inventory
-
-If you only need one slice instead of the aggregate catalog, read these directly:
+If you need a narrower slice, read these directly:
 
 - [catalogs/compat-target-catalog.json](../catalogs/compat-target-catalog.json)
-- [catalogs/compat-target-catalog.schema.json](../catalogs/compat-target-catalog.schema.json)
 - [catalogs/builder-kit-catalog.json](../catalogs/builder-kit-catalog.json)
-- [catalogs/builder-kit-catalog.schema.json](../catalogs/builder-kit-catalog.schema.json)
 - [catalogs/skill-pack-catalog.json](../catalogs/skill-pack-catalog.json)
-- [catalogs/skill-pack-catalog.schema.json](../catalogs/skill-pack-catalog.schema.json)
+- [catalogs/builder-intent-router.json](../catalogs/builder-intent-router.json)
+- [catalogs/builder-journeys.json](../catalogs/builder-journeys.json)
+- [catalogs/starter-pack-comparison.json](../catalogs/starter-pack-comparison.json)
+- [catalogs/provider-runtime-catalog.json](../catalogs/provider-runtime-catalog.json)
+- [catalogs/provider-runtime-catalog.schema.json](../catalogs/provider-runtime-catalog.schema.json)
 
-## Read-Only CLI Access
+There is no separate provider-runtime markdown wrapper required to understand
+the public provider directory. The JSON catalog is the public source of truth
+for provider ids, lanes, and stability targets.
+
+## Read-Only Access
 
 ```bash
 pnpm run switchyard:cli -- surface-catalog
@@ -79,30 +58,12 @@ pnpm run switchyard:cli -- surface-catalog-schema
 pnpm run switchyard:cli -- public-distribution-ledger
 pnpm run switchyard:cli -- public-distribution-ledger-schema
 pnpm run switchyard:cli -- compat-target-catalog
-pnpm run switchyard:cli -- compat-target-catalog-schema
-pnpm run switchyard:cli -- compat-targets
-pnpm run switchyard:cli -- compat-target --target codex
 pnpm run switchyard:cli -- builder-kit-catalog
-pnpm run switchyard:cli -- builder-kit-catalog-schema
-pnpm run switchyard:cli -- builder-kits
 pnpm run switchyard:cli -- skill-pack-catalog
-pnpm run switchyard:cli -- skill-pack-catalog-schema
-pnpm run switchyard:cli -- skill-packs
-pnpm run switchyard:cli -- host-playbooks
-pnpm run switchyard:cli -- host-examples
-pnpm run switchyard:cli -- builder-journeys
+pnpm run switchyard:cli -- provider-catalog
+pnpm run switchyard:cli -- provider-entry --target gemini:web-login
 pnpm run switchyard:cli -- builder-intent-router
 pnpm run switchyard:cli -- keyword-truth
-pnpm run switchyard:cli -- provider-catalog
-pnpm run switchyard:cli -- starter-manifests
-pnpm run switchyard:cli -- starter-examples
-pnpm run switchyard:cli -- starter-pack-index
-pnpm run switchyard:cli -- starter-pack-chooser
-pnpm run switchyard:cli -- starter-pack-comparison
-pnpm run switchyard:cli -- mcp-status
-pnpm run switchyard:cli -- mcp-tools
-pnpm run switchyard:cli -- mcp-tool-catalog
-pnpm run switchyard:cli -- mcp-tool-catalog-schema
 pnpm run switchyard:mcp -- --base-url http://127.0.0.1:4010
 ```
 
@@ -111,42 +72,34 @@ without hard-coding it.
 
 ## Read-Only MCP Access
 
-The same catalog truth is also readable from the read-only MCP surface:
+The same catalog truth is readable from the read-only MCP surface:
 
 - `switchyard.catalog.surface_catalog`
-- `switchyard.catalog.surface_catalog_schema`
 - `switchyard.catalog.public_distribution_ledger`
-- `switchyard.catalog.public_distribution_ledger_schema`
-- `switchyard.catalog.distribution_surfaces`
-- `switchyard.catalog.distribution_surface`
 - `switchyard.catalog.compat_target_catalog`
-- `switchyard.catalog.compat_target_catalog_schema`
 - `switchyard.catalog.provider_catalog`
 - `switchyard.catalog.provider_entry`
 - `switchyard.catalog.builder_kit_catalog`
-- `switchyard.catalog.builder_kit_catalog_schema`
 - `switchyard.catalog.skill_pack_catalog`
-- `switchyard.catalog.skill_pack_catalog_schema`
-- `switchyard.catalog.host_playbooks`
-- `switchyard.catalog.host_playbook`
 - `switchyard.catalog.builder_journeys`
 - `switchyard.catalog.builder_intent_router`
 - `switchyard.catalog.keyword_truth`
 - `switchyard.catalog.mcp_status`
 - `switchyard.catalog.mcp_tools`
 
-## Builder And Skills Routes
+## Builder Routes
 
-If you need more than raw status and want a concrete builder route, open:
+If you need a human-facing route instead of raw JSON:
 
-- [catalogs/builder-kit-catalog.json](../catalogs/builder-kit-catalog.json)
-- [catalogs/skill-pack-catalog.json](../catalogs/skill-pack-catalog.json)
-- [starter-packs/README.md](../starter-packs/README.md)
-- [docs/starter-pack-chooser.md](./starter-pack-chooser.md)
-- [catalogs/starter-pack-comparison.json](../catalogs/starter-pack-comparison.json)
-- [catalogs/builder-journeys.json](../catalogs/builder-journeys.json)
-- [docs/host-integration-playbooks.md](./host-integration-playbooks.md)
-- [docs/host-integration-examples.md](./host-integration-examples.md)
+- choose the pack first:
+  - [docs/starter-pack-chooser.md](./starter-pack-chooser.md)
+- then open the builder handoff hub:
+  - [docs/host-integration-playbooks.md](./host-integration-playbooks.md)
+- then copy a runnable host-local shape if needed:
+  - [examples/hosts/README.md](../examples/hosts/README.md)
+
+If you need keyword or discoverability truth instead of support truth, go to
+[docs/discoverability-keyword-truth.md](./discoverability-keyword-truth.md).
 
 ## Truth Rules
 
@@ -160,5 +113,5 @@ Use this catalog to stop four common mistakes:
 ## Decision Summary
 
 > The public surface catalog is a truth-first directory, not a hype page.
-> It exists so humans and tools can read the same current boundary and make the
-> same honest claim.
+> It is intentionally thinner than the underlying JSON family so the public
+> docs plane stays narrow while tools still have a full machine-readable shelf.
