@@ -111,7 +111,6 @@ describe("Switchyard service client", () => {
       expect.objectContaining({
         method: "POST",
         body: JSON.stringify({
-          lane: "web",
           provider: "chatgpt",
           model: "gpt-4o",
           input: "Say hello",
@@ -120,6 +119,118 @@ describe("Switchyard service client", () => {
     );
     expect(result?.ok).toBe(true);
     expect(result?.outputText).toBe("SERVICE_OK");
+  });
+
+  test("requests a runtime dispatch plan without forcing a lane override", async () => {
+    const fetchMock = vi.fn(async () => ({
+      ok: true,
+      status: 200,
+      async json() {
+        return {
+          dispatchPlan: {
+            providerId: "gemini",
+            requestedModel: "gemini/gemini-2.5-flash",
+            selectedLane: "byok",
+            candidateLanes: ["web-login", "byok"],
+            preferredLane: "byok",
+            dispatchReason: "preferred-lane",
+            credentialStates: {
+              byok: "configured",
+              "web-login": "user-action-required",
+            },
+          },
+        };
+      },
+    }));
+
+    const client = createSwitchyardServiceClient({
+      baseUrl: "http://127.0.0.1:4317",
+      fetch: fetchMock as unknown as typeof fetch,
+    });
+
+    const dispatchPlan = await client.dispatchPlan({
+      provider: "gemini",
+      model: "gemini-2.5-flash",
+      input: "Say hello",
+    });
+
+    expect(fetchMock).toHaveBeenCalledWith(
+      "http://127.0.0.1:4317/v1/runtime/dispatch-plan",
+      expect.objectContaining({
+        method: "POST",
+        body: JSON.stringify({
+          provider: "gemini",
+          model: "gemini-2.5-flash",
+          input: "Say hello",
+        }),
+      }),
+    );
+    expect(dispatchPlan.dispatchPlan.selectedLane).toBe("byok");
+  });
+
+  test("reads runtime doctor and runtime plan payloads through stable service routes", async () => {
+    const fetchMock = vi.fn(async (input: string, init?: RequestInit) => {
+      if (input.endsWith("/v1/runtime/doctor")) {
+        return {
+          ok: true,
+          status: 200,
+          async json() {
+            return {
+              doctor: {
+                summary: {
+                  blockingProviders: ["claude"],
+                },
+              },
+            };
+          },
+        };
+      }
+
+      if (input.endsWith("/v1/runtime/plan")) {
+        expect(init?.method).toBe("POST");
+        expect(init?.body).toBe(
+          JSON.stringify({
+            requiredCapabilities: ["tool-calling"],
+            policyProfile: "reliability-first",
+            allowWebLogin: true,
+          }),
+        );
+
+        return {
+          ok: true,
+          status: 200,
+          async json() {
+            return {
+              plan: {
+                policyProfile: "reliability-first",
+                recommended: {
+                  providerId: "chatgpt",
+                },
+              },
+            };
+          },
+        };
+      }
+
+      throw new Error(`Unexpected request ${input}`);
+    });
+
+    const client = createSwitchyardServiceClient({
+      baseUrl: "http://127.0.0.1:4317",
+      fetch: fetchMock as unknown as typeof fetch,
+    });
+
+    const runtimeDoctor = await client.runtimeDoctor();
+    const runtimePlan = await client.runtimePlan({
+      requiredCapabilities: ["tool-calling"],
+      policyProfile: "reliability-first",
+      allowWebLogin: true,
+    });
+
+    expect(runtimeDoctor.doctor.summary.blockingProviders).toEqual(["claude"]);
+    expect(runtimePlan.plan.policyProfile).toBe("reliability-first");
+    expect(runtimePlan.plan.recommended).toBeTruthy();
+    expect(runtimePlan.plan.recommended?.providerId).toBe("chatgpt");
   });
 
   test("covers health, auth, provider route helpers, and request error payloads", async () => {
@@ -202,6 +313,24 @@ describe("Switchyard service client", () => {
                 credentialState: "missing",
                 sessionPresence: "missing",
                 degradedInvocationPolicy: "allow-with-warning",
+              },
+            };
+          },
+        };
+      }
+
+      if (input.includes("/providers/chatgpt/doctor")) {
+        return {
+          ok: true,
+          status: 200,
+          async json() {
+            return {
+              doctor: {
+                providerId: "chatgpt",
+                alignment: {
+                  story: "blocked",
+                  blockerClassification: "session-incomplete",
+                },
               },
             };
           },
@@ -342,6 +471,7 @@ describe("Switchyard service client", () => {
     const attachTarget = await client.providerAttachTarget("chatgpt");
     const diagnoseLadder = await client.providerDiagnoseLadder("chatgpt");
     const diagnose = await client.providerDiagnose("chatgpt");
+    const doctor = await client.providerDoctor("chatgpt");
 
     await expect(
       client.captureProviderAcquisition("chatgpt", { mode: "managed-browser" }),
@@ -371,6 +501,10 @@ describe("Switchyard service client", () => {
     expect(attachTarget.available).toBe(true);
     expect(diagnoseLadder[0]?.id).toBe("repair-session");
     expect(diagnose.liveReadiness.status).toBe("live-blocked");
+    expect(doctor.doctor.alignment.story).toBe("blocked");
+    expect(doctor.doctor.alignment.blockerClassification).toBe(
+      "session-incomplete",
+    );
     expect(fetchMock).toHaveBeenCalledWith(
       "http://127.0.0.1:4317/v1/runtime/providers/chatgpt/acquisition/start",
       expect.objectContaining({

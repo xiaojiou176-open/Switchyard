@@ -35,6 +35,8 @@ describe("copy-ready starter packs", () => {
     const builderKitCatalogSchema = readJson("catalogs/builder-kit-catalog.schema.json");
     const skillPackCatalog = readJson("catalogs/skill-pack-catalog.json");
     const skillPackCatalogSchema = readJson("catalogs/skill-pack-catalog.schema.json");
+    const skillPackRoutes = readJson("catalogs/skill-pack-routes.json");
+    const skillPackRoutesSchema = readJson("catalogs/skill-pack-routes.schema.json");
     const templates = readJson("catalogs/starter-manifest-templates.json");
     const examples = readJson("catalogs/starter-manifest-examples.json");
     const starterPacksReadme = readFileSync(resolve(repoRoot, "starter-packs/README.md"), "utf8");
@@ -42,16 +44,22 @@ describe("copy-ready starter packs", () => {
     const starterPackIndexSchema = readJson("starter-packs/index.schema.json");
     const starterPackChooser = readJson("catalogs/starter-pack-chooser.json");
     const starterPackChooserSchema = readJson("catalogs/starter-pack-chooser.schema.json");
+    const starterPackComparison = readJson("catalogs/starter-pack-comparison.json");
+    const starterPackComparisonSchema = readJson("catalogs/starter-pack-comparison.schema.json");
     const ajv = new Ajv2020({ strict: false });
     const validateBuilderKitCatalog = ajv.compile(builderKitCatalogSchema);
     const validateSkillPackCatalog = ajv.compile(skillPackCatalogSchema);
+    const validateSkillPackRoutes = ajv.compile(skillPackRoutesSchema);
     const validateStarterPackIndex = ajv.compile(starterPackIndexSchema);
     const validateStarterPackChooser = ajv.compile(starterPackChooserSchema);
+    const validateStarterPackComparison = ajv.compile(starterPackComparisonSchema);
 
     expect(validateBuilderKitCatalog(builderKitCatalog)).toBe(true);
     expect(validateSkillPackCatalog(skillPackCatalog)).toBe(true);
+    expect(validateSkillPackRoutes(skillPackRoutes)).toBe(true);
     expect(validateStarterPackIndex(starterPackIndex)).toBe(true);
     expect(validateStarterPackChooser(starterPackChooser)).toBe(true);
+    expect(validateStarterPackComparison(starterPackComparison)).toBe(true);
     expect(starterPacksReadme).toContain("catalogs/starter-manifest-templates*.json");
     expect(starterPacksReadme).toContain("catalogs/starter-manifest-examples*.json");
     expect(starterPacksReadme).not.toContain("docs/starter-manifest-templates*.json");
@@ -81,7 +89,14 @@ describe("copy-ready starter packs", () => {
       );
     }
 
-    for (const id of ["runtime-diagnostics-pack", "docs-seo-sync-pack"]) {
+    for (const id of [
+      "runtime-diagnostics-pack",
+      "docs-seo-sync-pack",
+      "chat-app-runtime-pack",
+      "research-copilot-pack",
+      "compare-runtime-pack",
+      "byok-first-safe-pack",
+    ]) {
       const packPath = `starter-packs/skills/${id}`;
       const entry = catalog.skillPacks.find((item: { id: string }) => item.id === id);
       const skillPackEntry = skillPackCatalog.packs.find((item: { id: string }) => item.id === id);
@@ -101,6 +116,17 @@ describe("copy-ready starter packs", () => {
       expect(readJson(`${packPath}/example.json`).skillExamples[0]).toEqual(
         examples.skillExamples.find((item: { id: string }) => item.id === id),
       );
+
+      const routeEntry = skillPackRoutes.routes.find((item: { id: string }) => item.id === id);
+      expect(routeEntry?.packPath).toBe(packPath);
+      expect(routeEntry?.catalogCommand).toBe(
+        `pnpm run switchyard:cli -- skill-pack --target ${id} --json`,
+      );
+      expect(routeEntry?.recommendedMcpTools).toContain("switchyard.catalog.skill_pack");
+
+      for (const relativePath of routeEntry?.packFiles ?? []) {
+        expect(existsSync(resolve(repoRoot, relativePath))).toBe(true);
+      }
     }
 
     for (const scenario of starterPackChooser.scenarios as Array<{
@@ -128,6 +154,78 @@ describe("copy-ready starter packs", () => {
         expect(existsSync(resolve(repoRoot, path))).toBe(true);
       }
     }
+
+    for (const entry of [
+      {
+        scenarioId: "chat-app-runtime-skill",
+        comparisonId: "chat-app-runtime-skill",
+        packId: "chat-app-runtime-pack",
+      },
+      {
+        scenarioId: "research-copilot-skill",
+        comparisonId: "research-copilot-skill",
+        packId: "research-copilot-pack",
+      },
+      {
+        scenarioId: "compare-runtime-skill",
+        comparisonId: "compare-runtime-skill",
+        packId: "compare-runtime-pack",
+      },
+      {
+        scenarioId: "byok-first-safe-skill",
+        comparisonId: "byok-first-safe-skill",
+        packId: "byok-first-safe-pack",
+      },
+    ]) {
+      const scenario = starterPackChooser.scenarios.find(
+        (item: { id: string }) => item.id === entry.scenarioId,
+      );
+      const comparison = starterPackComparison.comparisons.find(
+        (item: { id: string }) => item.id === entry.comparisonId,
+      );
+
+      expect(scenario).toEqual(
+        expect.objectContaining({
+          id: entry.scenarioId,
+          status: "partial",
+          starterKind: "skill",
+          recommendedPack: entry.packId,
+          bestEntry: `pnpm run switchyard:cli -- skill-pack-route --target ${entry.packId}`,
+        }),
+      );
+      expect(scenario?.recommendedDocs).toContain("docs/host-integration-playbooks.md");
+      expect(comparison).toEqual(
+        expect.objectContaining({
+          id: entry.comparisonId,
+          status: "partial",
+          starterKind: "skill",
+          recommendedPack: entry.packId,
+          smokeCommand: `pnpm run starter-pack:${entry.packId}`,
+          copyReadyPackPath: `starter-packs/skills/${entry.packId}`,
+        }),
+      );
+      expect(comparison?.recommendedDocs).toContain("docs/host-integration-playbooks.md");
+    }
+
+    const useCaseSkillFilter = starterPackComparison.filters.find(
+      (entry: { id: string }) => entry.id === "use-case-skill-packs",
+    );
+    expect(useCaseSkillFilter).toEqual(
+      expect.objectContaining({
+        field: "recommendedPack",
+        values: expect.arrayContaining([
+          expect.objectContaining({
+            id: "use-case-skill-pack",
+            comparisonIds: expect.arrayContaining([
+              "chat-app-runtime-skill",
+              "research-copilot-skill",
+              "compare-runtime-skill",
+              "byok-first-safe-skill",
+            ]),
+          }),
+        ]),
+      }),
+    );
   });
 
   it("runs the builder runtime packs against a mock invoke runtime", async () => {
@@ -269,6 +367,13 @@ describe("copy-ready starter packs", () => {
       expect(output).toEqual(
         expect.objectContaining({
           starterPackId: "runtime-diagnostics-pack",
+          route: expect.objectContaining({
+            id: "runtime-diagnostics-pack",
+            recommendedMcpTools: expect.arrayContaining([
+              "switchyard.catalog.skill_pack",
+              "switchyard.provider.support_bundle",
+            ]),
+          }),
           provider: "chatgpt",
           status: expect.objectContaining({ providerId: "chatgpt" }),
           probe: expect.objectContaining({ status: "ok" }),
@@ -289,6 +394,12 @@ describe("copy-ready starter packs", () => {
     expect(output).toEqual(
       expect.objectContaining({
         starterPackId: "docs-seo-sync-pack",
+        route: expect.objectContaining({
+          id: "docs-seo-sync-pack",
+          recommendedCliCommands: expect.arrayContaining([
+            "pnpm run switchyard:cli -- keyword-truth --json",
+          ]),
+        }),
         publicSurfaceCount: expect.any(Number),
         compatTargetCount: expect.any(Number),
         keywordTruthHasSwitchyard: true,

@@ -58,9 +58,15 @@ This page documents the current `service-first` HTTP surface.
 - `GET /v1/runtime/auth-portal`
 - `GET /v1/runtime/auth-status`
 - `GET /v1/runtime/health`
+- `GET /v1/runtime/doctor`
+
+### Task-centric planning
+
+- `POST /v1/runtime/plan`
 
 ### Provider-specific status and remediation
 
+- `GET /v1/runtime/providers/{providerId}/doctor`
 - `GET /v1/runtime/providers/{providerId}/status`
 - `GET /v1/runtime/providers/{providerId}/probe`
 - `GET /v1/runtime/providers/{providerId}/remediation`
@@ -82,6 +88,7 @@ truth surfaces. It is a diagnosis bench, not a control plane.
 
 - `POST /v1/runtime/invoke`
 - `POST /v1/runtime/byok/invoke`
+- `POST /v1/runtime/dispatch-plan`
 
 ## Example: Runtime Discovery
 
@@ -94,6 +101,24 @@ curl http://127.0.0.1:4010/v1/runtime/providers
 - 5 个 Web/Login providers
 - provider models
 - 每个 provider 的 status / probe / remediation routes
+
+## Example: Runtime Doctor
+
+```bash
+curl http://127.0.0.1:4010/v1/runtime/doctor
+```
+
+这条路由像总账本：
+
+- 哪些 provider 现在可 dispatch
+- 哪些 provider 还 blocked
+- 当前最值得先跑的下一步 CLI
+- `controlLedger`
+  - 一张更像本地 control shell 的 ledger：
+  - `runtime doctor / runtime plan / invoke / auth portal` 这些聚合入口
+  - dispatchable providers
+  - blocked providers
+  - remediation workflows
 
 ## Example: Web/Login Invocation
 
@@ -120,6 +145,61 @@ curl http://127.0.0.1:4010/v1/runtime/byok/invoke \
   }'
 ```
 
+## Example: Dispatch Plan
+
+```bash
+curl http://127.0.0.1:4010/v1/runtime/dispatch-plan \
+  -H 'content-type: application/json' \
+  -d '{
+    "provider": "gemini",
+    "model": "gemini-2.5-flash",
+    "input": "Reply with exactly HELLO and nothing else."
+  }'
+```
+
+这条路由的作用不是直接执行，而是先回答：
+
+- 当前 provider 在 `BYOK / Web/Login` 两条 lane 里有哪些候选
+- 现在 service-first runtime 会选哪条 lane
+- 这个选择是来自 `preferred-lane` 还是当前 `credentialStates`
+
+## Example: Provider Doctor
+
+```bash
+curl http://127.0.0.1:4010/v1/runtime/providers/gemini/doctor
+```
+
+这条路由更像一张 builder-facing 对账单：
+
+- `policy`
+  - 当前 provider/lane 的 capability matrix 和 dispatch policy
+- `dispatchPlan`
+  - 现在 runtime 会不会 dispatch，选哪条 lane，为什么
+- `alignment`
+  - dispatch、remediation、runtimeCanInvoke 现在是不是在说同一件事
+- `receipt`
+  - 下一步最值得跑的 CLI / MCP 只读入口
+  - 标准化 remediation workflow
+
+## Example: Runtime Plan
+
+```bash
+curl http://127.0.0.1:4010/v1/runtime/plan \
+  -H 'content-type: application/json' \
+  -d '{
+    "policyProfile": "official-api-first",
+    "requiredCapabilities": ["tool-calling"],
+    "allowWebLogin": true,
+    "requireOfficialApi": true
+  }'
+```
+
+这条路由不是“给定 provider 再选 lane”，而是：
+
+- 先给任务要求
+- 再让 runtime 帮你推荐 provider / lane / model
+- 如果后面要继续做本地排障或选择收敛，先回到 `runtime doctor`
+
 ## Error Model
 
 当前最重要的错误语义是：
@@ -137,6 +217,27 @@ curl http://127.0.0.1:4010/v1/runtime/byok/invoke \
 
 > 这套 API 不会假装“服务坏了”来掩盖“你还没登录”。
 > 它会尽量把“钥匙没带”“门没开”“上游临时不可用”区分开。
+
+## Invoke Receipt
+
+当前 `/v1/runtime/invoke` 返回的结果，除了文本/结构化输出之外，还会带：
+
+- `receipt`
+  - `policyProfile`
+  - `providerId / laneId / requestedModel`
+  - `doctorRoute`
+  - `lineage`
+    - `runtimeDoctorRoute`
+    - `runtimePlanRoute`
+    - `dispatchPlanRoute`
+    - `providerDoctorRoute`
+  - `readinessSnapshot`
+  - `remediationWorkflow`
+
+可以把它理解成：
+
+> 这不是“调用完就没了”的一次性响应，  
+> 而是把“为什么这样调、下一步去哪看、如果失败先怎么排”一起压回来了。
 
 ## Not Included Yet
 

@@ -24,6 +24,20 @@
       "readOnlyHint": true
     },
     {
+      "name": "switchyard.runtime.doctor",
+      "title": "Switchyard Runtime Doctor",
+      "providerScoped": false,
+      "route": "/v1/runtime/doctor",
+      "readOnlyHint": true
+    },
+    {
+      "name": "switchyard.runtime.plan",
+      "title": "Switchyard Runtime Plan",
+      "providerScoped": false,
+      "route": "/v1/runtime/plan",
+      "readOnlyHint": true
+    },
+    {
       "name": "switchyard.auth.status",
       "title": "Switchyard Auth Status",
       "providerScoped": false,
@@ -35,6 +49,13 @@
       "title": "Switchyard Provider Status",
       "providerScoped": true,
       "route": "/v1/runtime/providers/:provider/status",
+      "readOnlyHint": true
+    },
+    {
+      "name": "switchyard.provider.doctor",
+      "title": "Switchyard Provider Doctor",
+      "providerScoped": true,
+      "route": "/v1/runtime/providers/:provider/doctor",
       "readOnlyHint": true
     },
     {

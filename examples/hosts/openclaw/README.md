@@ -8,6 +8,7 @@
 
 - 想保留 delegation-first 请求形状
 - 想快速看到 host-local request envelope 怎么写
+- 想在第一次 invoke 前先读一次 preflight truth
 
 它不适合：
 
@@ -25,6 +26,13 @@
 ```bash
 pnpm run example:host-openclaw
 ```
+
+默认输出会先给你：
+
+- request preview
+- provider doctor receipt
+- 尝试读取的 runtime preflight snapshot
+- 再给一发 bounded invoke 的结果
 
 ## Related Surfaces
 

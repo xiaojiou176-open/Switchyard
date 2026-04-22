@@ -18,7 +18,32 @@
   - Web/Login runtime boundaries
   - auth/session design
   - thin HTTP/runtime seams
-  - a delegation-first thin adapter at `packages/consumers/openclaw/src/index.ts`
+  - a delegation-first builder wedge at `packages/consumers/openclaw/src/index.ts`
+
+## Builder-Facing Landed Slice
+
+The honest story today is no longer just "one invoke can pass through."
+
+This builder wedge now also exposes four useful but still tightly bounded
+surfaces:
+
+- `previewDelegation()`
+  - inspect how the request will be normalized before handing it to the runtime
+- `readDispatchPlan()`
+  - read the runtime's current lane and credential-state dispatch decision
+- `bootstrapDelegation()` + `healthDelegation()`
+  - read runtime frontdoor and health truth before the first delegation shot
+- `preflightDelegation()`
+  - collect preview, bootstrap, health, and dispatch-plan into one builder preflight view
+
+The current wedge now also has one more useful read-only surface:
+
+- `readProviderDoctor()`
+  - read one provider-scoped doctor receipt that already aligns policy, dispatch, remediation, and next-step builder guidance
+
+That means this `OpenClaw` compat route is no longer only a razor-thin
+"call `/invoke` once" bridge. It is now closer to a real builder wedge while
+still staying fail-closed.
 
 ## What Is Not Landed
 
@@ -39,5 +64,4 @@ It carries a much larger product world:
 So this page needs to say something very specific:
 
 > this repo is no longer pure research-only thinking,
-> but it is still only fail-closed thin compat, not OpenClaw product-shell
-> parity
+> but it is still fail-closed builder compat, not OpenClaw product-shell parity

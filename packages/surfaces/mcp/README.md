@@ -16,8 +16,10 @@
 ## What It Exposes
 
 - runtime health
-- provider status / remediation / support bundle summaries
+- runtime doctor / task-centric runtime plan
+- provider doctor / status / remediation / support bundle summaries
 - public surface / compat / builder-kit / skill-pack / starter-pack catalogs
+- coordinated skill-pack route cards
 - keyword truth / builder journey / host playbook / MCP tool inventory
 
 ## What It Does Not Claim
@@ -50,6 +52,9 @@ switchyard-mcp --base-url http://127.0.0.1:4010
 
 - 本地 stdio surface
   - `pnpm run switchyard:mcp -- --base-url http://127.0.0.1:4010`
+- skill-pack route card
+  - `switchyard.catalog.skill_pack`
+  - read the chosen skill pack entry first, then follow its route pointers
 - host example route
   - 先看 [examples/hosts/mcp/README.md](../../../examples/hosts/mcp/README.md)
 - 当前还不能说

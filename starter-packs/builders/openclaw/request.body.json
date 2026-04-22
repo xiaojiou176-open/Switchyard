@@ -2,5 +2,5 @@
   "provider": "chatgpt",
   "model": "chatgpt/gpt-4o",
   "lane": "web",
-  "input": "Give me the current provider remediation summary."
+  "input": "Give me the current provider readiness summary before I delegate the next turn."
 }

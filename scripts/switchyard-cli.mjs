@@ -123,6 +123,14 @@ const skillPackCatalogSchemaPath = resolve(
   repoRoot,
   "catalogs/skill-pack-catalog.schema.json",
 );
+const skillPackRoutesPath = resolve(
+  repoRoot,
+  "catalogs/skill-pack-routes.json",
+);
+const skillPackRoutesSchemaPath = resolve(
+  repoRoot,
+  "catalogs/skill-pack-routes.schema.json",
+);
 const providerRuntimeCatalogPath = resolve(
   repoRoot,
   "catalogs/provider-runtime-catalog.json",
@@ -149,7 +157,7 @@ const mcpToolCatalogSchemaPath = resolve(
 );
 
 const COMMAND_HELP =
-  "providers, health, auth-status, provider-status, provider-probe, provider-remediation, provider-current-page, provider-current-console, provider-current-network, provider-store-readiness, provider-live-readiness, provider-attach-target, provider-diagnose-ladder, provider-support-bundle, provider-diagnose, surface-catalog, surface-catalog-schema, public-distribution-ledger, public-distribution-ledger-schema, distribution-surfaces, distribution-surface, compat-target-catalog, compat-target-catalog-schema, compat-targets, compat-target, builder-kit-catalog, builder-kit-catalog-schema, builder-kits, builder-kit, skill-pack-catalog, skill-pack-catalog-schema, skill-packs, skill-pack, host-playbooks, host-playbooks-schema, host-playbook, host-examples, host-examples-schema, host-example, builder-journeys, builder-journeys-schema, builder-journey, builder-intent-router, builder-intent-router-schema, builder-intent, keyword-truth, keyword-truth-schema, keyword-entry, starter-manifests, starter-manifests-schema, starter-examples, starter-examples-schema, starter-pack-index, starter-pack-index-schema, starter-pack-entry, starter-pack-chooser, starter-pack-chooser-schema, starter-pack-scenario, starter-pack-comparison, starter-pack-comparison-schema, starter-pack-filter, builder-template, builder-example, skill-template, skill-example, provider-catalog, provider-catalog-schema, provider-entry, mcp-status, mcp-tools, mcp-tool-catalog, mcp-tool-catalog-schema, mcp-tool";
+  "providers, health, runtime-doctor, runtime-plan, auth-status, provider-status, provider-doctor, provider-probe, provider-remediation, provider-current-page, provider-current-console, provider-current-network, provider-store-readiness, provider-live-readiness, provider-attach-target, provider-diagnose-ladder, provider-support-bundle, provider-diagnose, surface-catalog, surface-catalog-schema, public-distribution-ledger, public-distribution-ledger-schema, distribution-surfaces, distribution-surface, compat-target-catalog, compat-target-catalog-schema, compat-targets, compat-target, builder-kit-catalog, builder-kit-catalog-schema, builder-kits, builder-kit, skill-pack-catalog, skill-pack-catalog-schema, skill-packs, skill-pack, skill-pack-routes, skill-pack-routes-schema, skill-pack-route, host-playbooks, host-playbooks-schema, host-playbook, host-examples, host-examples-schema, host-example, builder-journeys, builder-journeys-schema, builder-journey, builder-intent-router, builder-intent-router-schema, builder-intent, keyword-truth, keyword-truth-schema, keyword-entry, starter-manifests, starter-manifests-schema, starter-examples, starter-examples-schema, starter-pack-index, starter-pack-index-schema, starter-pack-entry, starter-pack-chooser, starter-pack-chooser-schema, starter-pack-scenario, starter-pack-comparison, starter-pack-comparison-schema, starter-pack-filter, builder-template, builder-example, skill-template, skill-example, provider-catalog, provider-catalog-schema, provider-entry, mcp-status, mcp-tools, mcp-tool-catalog, mcp-tool-catalog-schema, mcp-tool";
 
 export function resolveCliBaseUrl(env = process.env, explicitBaseUrl) {
   const override = explicitBaseUrl?.trim();
@@ -166,6 +174,11 @@ export function parseCliArgs(argv = process.argv.slice(2)) {
     provider: undefined,
     target: undefined,
     baseUrl: undefined,
+    policyProfile: undefined,
+    requiredCapabilities: [],
+    allowWebLogin: undefined,
+    requireOfficialApi: false,
+    requireToolCalling: false,
     json: false,
   };
 
@@ -216,6 +229,48 @@ export function parseCliArgs(argv = process.argv.slice(2)) {
 
     if (arg === "--json") {
       options.json = true;
+      continue;
+    }
+
+    if (arg === "--profile") {
+      options.policyProfile = argv[index + 1];
+      index += 1;
+      continue;
+    }
+
+    if (arg.startsWith("--profile=")) {
+      options.policyProfile = arg.slice("--profile=".length);
+      continue;
+    }
+
+    if (arg === "--capability") {
+      options.requiredCapabilities.push(argv[index + 1]);
+      index += 1;
+      continue;
+    }
+
+    if (arg.startsWith("--capability=")) {
+      options.requiredCapabilities.push(arg.slice("--capability=".length));
+      continue;
+    }
+
+    if (arg === "--allow-web-login") {
+      options.allowWebLogin = true;
+      continue;
+    }
+
+    if (arg === "--no-web-login") {
+      options.allowWebLogin = false;
+      continue;
+    }
+
+    if (arg === "--require-official-api") {
+      options.requireOfficialApi = true;
+      continue;
+    }
+
+    if (arg === "--require-tool-calling") {
+      options.requireToolCalling = true;
       continue;
     }
 
@@ -341,6 +396,14 @@ function readSkillPackCatalogSchema() {
   return JSON.parse(readFileSync(skillPackCatalogSchemaPath, "utf8"));
 }
 
+function readSkillPackRoutes() {
+  return JSON.parse(readFileSync(skillPackRoutesPath, "utf8"));
+}
+
+function readSkillPackRoutesSchema() {
+  return JSON.parse(readFileSync(skillPackRoutesSchemaPath, "utf8"));
+}
+
 function readProviderRuntimeCatalog() {
   return JSON.parse(readFileSync(providerRuntimeCatalogPath, "utf8"));
 }
@@ -449,6 +512,21 @@ function requireBuilderIntent(routerDocument, target, command) {
   if (!result) {
     throw new Error(
       `Unknown builder intent "${value}". Use one of: ${routerDocument.intents
+        .map((entry) => entry.id)
+        .join(", ")}.`,
+    );
+  }
+
+  return result;
+}
+
+function requireSkillPackRoute(routeDocument, target, command) {
+  const value = requireTarget(target, command);
+  const result = routeDocument.routes.find((entry) => entry.id === value);
+
+  if (!result) {
+    throw new Error(
+      `Unknown skill pack route "${value}". Use one of: ${routeDocument.routes
         .map((entry) => entry.id)
         .join(", ")}.`,
     );
@@ -583,9 +661,10 @@ export function createReadonlyCliClient(options) {
   const fetchFn = options.fetch ?? fetch;
   const defaultHeaders = options.headers ?? {};
 
-  async function request(path) {
+  async function request(path, init = {}) {
     const response = await fetchFn(withBaseUrl(baseUrl, path), {
       headers: new Headers(defaultHeaders),
+      ...init,
     });
     const payload = await response.json();
 
@@ -613,6 +692,15 @@ export function createReadonlyCliClient(options) {
     },
     health() {
       return request("/v1/runtime/health");
+    },
+    runtimeDoctor() {
+      return request("/v1/runtime/doctor").then((payload) => payload.doctor);
+    },
+    runtimePlan(requestBody = {}) {
+      return request("/v1/runtime/plan", {
+        method: "POST",
+        body: JSON.stringify(requestBody),
+      }).then((payload) => payload.plan);
     },
     providerStatus(provider) {
       const normalizedProvider = this.normalizeProvider(provider);
@@ -711,6 +799,8 @@ export async function runSwitchyardCli(options, client) {
   const builderKitCatalogSchema = readBuilderKitCatalogSchema();
   const skillPackCatalog = readSkillPackCatalog();
   const skillPackCatalogSchema = readSkillPackCatalogSchema();
+  const skillPackRoutes = readSkillPackRoutes();
+  const skillPackRoutesSchema = readSkillPackRoutesSchema();
   const providerRuntimeCatalog = readProviderRuntimeCatalog();
   const providerRuntimeCatalogSchema = readProviderRuntimeCatalogSchema();
   const keywordTruth = readKeywordTruth();
@@ -868,6 +958,24 @@ export async function runSwitchyardCli(options, client) {
         command,
         target,
         result,
+      };
+    }
+    case "skill-pack-routes":
+      return {
+        command,
+        result: skillPackRoutes,
+      };
+    case "skill-pack-routes-schema":
+      return {
+        command,
+        result: skillPackRoutesSchema,
+      };
+    case "skill-pack-route": {
+      const target = requireTarget(options.target, command);
+      return {
+        command,
+        target,
+        result: requireSkillPackRoute(skillPackRoutes, target, command),
       };
     }
     case "host-playbooks":
@@ -1175,12 +1283,46 @@ export async function runSwitchyardCli(options, client) {
         command,
         result: await client.health(),
       };
+    case "runtime-doctor":
+      return {
+        command,
+        result: await client.runtimeDoctor(),
+      };
+    case "runtime-plan":
+      return {
+        command,
+        result: await client.runtimePlan({
+          ...(options.policyProfile
+            ? { policyProfile: options.policyProfile }
+            : {}),
+          ...(options.requiredCapabilities.length > 0
+            ? { requiredCapabilities: options.requiredCapabilities }
+            : {}),
+          ...(typeof options.allowWebLogin === "boolean"
+            ? { allowWebLogin: options.allowWebLogin }
+            : {}),
+          ...(options.requireOfficialApi
+            ? { requireOfficialApi: true }
+            : {}),
+          ...(options.requireToolCalling
+            ? { requireToolCalling: true }
+            : {}),
+        }),
+      };
     case "provider-status": {
       const provider = requireProvider(options.provider, command);
       return {
         command,
         provider,
         result: await client.providerStatus(provider),
+      };
+    }
+    case "provider-doctor": {
+      const provider = requireProvider(options.provider, command);
+      return {
+        command,
+        provider,
+        result: await client.providerDoctor(provider),
       };
     }
     case "provider-probe": {

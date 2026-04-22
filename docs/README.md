@@ -66,10 +66,12 @@ If you only need the next truthful route, choose one:
   - [starter pack chooser](./starter-pack-chooser.md)
   - [surface catalog](./public-surface-catalog.md)
   - [MCP front door](./mcp.md)
+  - [host integration playbooks](./host-integration-playbooks.md) once the pack is already chosen and you need the coordinated next move
 - I need promo or presentation assets
   - [docs/media/README.md](./media/README.md)
 - I need local bootstrap or workstation-bound reality
   - [docs/runbooks/dev-bootstrap.md](./runbooks/dev-bootstrap.md)
+  - [docs/runtime-control-ledger.md](./runtime-control-ledger.md)
 
 The old Wave 1 working packs were relocated out of the public docs plane, and
 the working copies now live in a private maintainer-only `.agents/` shelf that
@@ -112,6 +114,8 @@ not presented as the default tour:
   - machine-readable surface, skill-pack, builder-kit, and MCP truth
 - [MCP front door](./mcp.md)
   - read-only MCP front door once the question is explicitly about MCP
+- [docs/host-integration-playbooks.md](./host-integration-playbooks.md)
+  - host wiring and skill-pack handoff page once the route is already chosen
 
 If you need every catalog, schema, or machine-readable companion, use the repo
 tree or CLI surfaces, with the root-level [`catalogs/`](../catalogs/) as the

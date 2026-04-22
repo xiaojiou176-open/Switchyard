@@ -284,6 +284,15 @@
         "copyReadyPackPath": {
           "type": "string"
         },
+        "routeCommand": {
+          "type": "string"
+        },
+        "routeCatalogPath": {
+          "type": "string"
+        },
+        "routeMcpTool": {
+          "type": "string"
+        },
         "backingSurfaces": {
           "$ref": "#/$defs/stringArray"
         },
@@ -409,7 +418,10 @@
         "lane",
         "authMode",
         "stabilityTarget",
-        "truthfulMeaning"
+        "truthfulMeaning",
+        "capabilityMatrix",
+        "dispatchPolicy",
+        "doctorEntryPoints"
       ],
       "properties": {
         "providerId": {
@@ -429,6 +441,88 @@
         },
         "truthfulMeaning": {
           "type": "string"
+        },
+        "capabilityMatrix": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "text-generation",
+            "streaming",
+            "tool-calling",
+            "image-input",
+            "file-input",
+            "official-api",
+            "web-login"
+          ],
+          "properties": {
+            "text-generation": { "type": "boolean" },
+            "streaming": { "type": "boolean" },
+            "tool-calling": { "type": "boolean" },
+            "image-input": { "type": "boolean" },
+            "file-input": { "type": "boolean" },
+            "official-api": { "type": "boolean" },
+            "web-login": { "type": "boolean" }
+          }
+        },
+        "dispatchPolicy": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "kind",
+            "registeredLanes",
+            "defaultLane",
+            "laneOrder",
+            "requiresCredentialStateMap",
+            "autoDispatches"
+          ],
+          "properties": {
+            "kind": {
+              "type": "string",
+              "enum": [
+                "single-lane-provider",
+                "credential-aware-auto-lane"
+              ]
+            },
+            "registeredLanes": {
+              "$ref": "#/$defs/stringArray"
+            },
+            "defaultLane": {
+              "type": "string"
+            },
+            "laneOrder": {
+              "$ref": "#/$defs/stringArray"
+            },
+            "requiresCredentialStateMap": {
+              "type": "boolean"
+            },
+            "autoDispatches": {
+              "type": "boolean"
+            }
+          }
+        },
+        "doctorEntryPoints": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "serviceRoute",
+            "cliCommand",
+            "mcpTool",
+            "providerCatalogTarget"
+          ],
+          "properties": {
+            "serviceRoute": {
+              "type": "string"
+            },
+            "cliCommand": {
+              "type": "string"
+            },
+            "mcpTool": {
+              "type": "string"
+            },
+            "providerCatalogTarget": {
+              "type": "string"
+            }
+          }
         }
       }
     }

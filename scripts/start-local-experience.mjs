@@ -55,9 +55,24 @@ export function buildExperienceUrls({
   return {
     serviceBaseUrl,
     authPortalUrl: `${serviceBaseUrl}/v1/runtime/auth-portal`,
+    runtimeDoctorUrl: `${serviceBaseUrl}/v1/runtime/doctor`,
+    runtimePlanUrl: `${serviceBaseUrl}/v1/runtime/plan`,
     chatgptWorkbenchUrl: `${serviceBaseUrl}/v1/runtime/providers/chatgpt/debug/workbench`,
     docsFrontDoorUrl: `${docsBaseUrl}/`,
+    runtimeControlLedgerUrl: `${docsBaseUrl}/runtime-control-ledger.md`,
   };
+}
+
+export function formatReadyExperienceLines(urls) {
+  return [
+    `  - Runtime WebUI: ${urls.authPortalUrl}`,
+    `  - Runtime doctor: ${urls.runtimeDoctorUrl}`,
+    `  - Runtime plan: ${urls.runtimePlanUrl}`,
+    `  - ChatGPT workbench: ${urls.chatgptWorkbenchUrl}`,
+    `  - Docs front door: ${urls.docsFrontDoorUrl}`,
+    `  - Doctor-first control ledger: ${urls.runtimeControlLedgerUrl}`,
+    "  - Press Ctrl+C to stop both local servers.",
+  ];
 }
 
 export function resolveStaticFilePath(rootDir, requestPath) {
@@ -256,10 +271,9 @@ export async function main({
   }
 
   stdout.write("[local-experience] Local experience is ready:\n");
-  stdout.write(`  - Runtime WebUI: ${urls.authPortalUrl}\n`);
-  stdout.write(`  - ChatGPT workbench: ${urls.chatgptWorkbenchUrl}\n`);
-  stdout.write(`  - Docs front door: ${urls.docsFrontDoorUrl}\n`);
-  stdout.write("  - Press Ctrl+C to stop both local servers.\n");
+  for (const line of formatReadyExperienceLines(urls)) {
+    stdout.write(`${line}\n`);
+  }
 
   await new Promise((resolvePromise, rejectPromise) => {
     serviceProcess.once("exit", async (code, signal) => {

@@ -12,8 +12,11 @@ const repoRoot = resolve(dirname(fileURLToPath(import.meta.url)), "../../..");
 const client = {
   listProviders: vi.fn(),
   health: vi.fn(),
+  runtimeDoctor: vi.fn(),
+  runtimePlan: vi.fn(),
   authStatus: vi.fn(),
   providerStatus: vi.fn(),
+  providerDoctor: vi.fn(),
   providerProbe: vi.fn(),
   providerRemediation: vi.fn(),
   providerCurrentPage: vi.fn(),
@@ -70,6 +73,29 @@ describe("switchyard MCP surface", () => {
 
   it("dispatches read-only runtime tools through the shared service client", async () => {
     client.listProviders.mockResolvedValue([{ providerId: "chatgpt" }]);
+    client.runtimeDoctor.mockResolvedValue({
+      doctor: {
+        summary: {
+          blockingProviders: ["claude"],
+        },
+      },
+    });
+    client.runtimePlan.mockResolvedValue({
+      plan: {
+        policyProfile: "low-friction",
+        recommended: {
+          providerId: "chatgpt",
+        },
+      },
+    });
+    client.providerDoctor.mockResolvedValue({
+      doctor: {
+        providerId: "chatgpt",
+        alignment: {
+          story: "blocked",
+        },
+      },
+    });
     client.providerSupportBundle.mockResolvedValue({
       providerId: "chatgpt",
       attachTarget: { available: true },
@@ -103,6 +129,70 @@ describe("switchyard MCP surface", () => {
       command: "health",
       provider: undefined,
       result: { totals: { total: 5 } },
+    });
+
+    await expect(
+      runSwitchyardMcpTool("switchyard.runtime.doctor", undefined, client as never),
+    ).resolves.toEqual({
+      readOnly: true,
+      command: "runtime-doctor",
+      provider: undefined,
+      result: {
+        doctor: {
+          summary: {
+            blockingProviders: ["claude"],
+          },
+        },
+      },
+    });
+
+    await expect(
+      runSwitchyardMcpTool(
+        "switchyard.runtime.plan",
+        {
+          policyProfile: "official-api-first",
+          requiredCapabilities: ["tool-calling"],
+          allowWebLogin: false,
+        },
+        client as never,
+      ),
+    ).resolves.toEqual({
+      readOnly: true,
+      command: "runtime-plan",
+      provider: undefined,
+      result: {
+        plan: {
+          policyProfile: "low-friction",
+          recommended: {
+            providerId: "chatgpt",
+          },
+        },
+      },
+    });
+    expect(client.runtimePlan).toHaveBeenCalledWith({
+      policyProfile: "official-api-first",
+      requiredCapabilities: ["tool-calling"],
+      allowWebLogin: false,
+    });
+
+    await expect(
+      runSwitchyardMcpTool(
+        "switchyard.provider.doctor",
+        { provider: "chatgpt" },
+        client as never,
+      ),
+    ).resolves.toEqual({
+      readOnly: true,
+      command: "provider-doctor",
+      provider: "chatgpt",
+      result: {
+        doctor: {
+          providerId: "chatgpt",
+          alignment: {
+            story: "blocked",
+          },
+        },
+      },
     });
 
     await expect(
@@ -1193,6 +1283,24 @@ describe("switchyard MCP surface", () => {
     await expect(
       runSwitchyardMcpTool(
         "switchyard.catalog.skill_pack",
+        { target: "runtime-diagnostics-pack" },
+        client as never,
+      ),
+    ).resolves.toEqual(
+      expect.objectContaining({
+        readOnly: true,
+        command: "skill-pack",
+        result: expect.objectContaining({
+          id: "runtime-diagnostics-pack",
+          routeCommand: "pnpm run switchyard:cli -- skill-pack-route --target runtime-diagnostics-pack",
+          routeMcpTool: "switchyard.catalog.skill_pack",
+        }),
+      }),
+    );
+
+    await expect(
+      runSwitchyardMcpTool(
+        "switchyard.catalog.skill_pack",
         { target: "mystery" },
         client as never,
       ),
@@ -1477,6 +1585,30 @@ describe("switchyard MCP surface", () => {
             result: expect.arrayContaining([
               expect.objectContaining({ id: "runtime-diagnostics-pack" }),
             ]),
+          }),
+        );
+
+        const skillPackResult = await mcpClient.callTool({
+          name: "switchyard.catalog.skill_pack",
+          arguments: { target: "runtime-diagnostics-pack" },
+        });
+        const skillPackStructured = skillPackResult.structuredContent as {
+          command: string;
+          result: {
+            id: string;
+            routeCommand: string;
+            routeMcpTool: string;
+          };
+        };
+
+        expect(skillPackStructured).toEqual(
+          expect.objectContaining({
+            command: "skill-pack",
+            result: expect.objectContaining({
+              id: "runtime-diagnostics-pack",
+              routeCommand: "pnpm run switchyard:cli -- skill-pack-route --target runtime-diagnostics-pack",
+              routeMcpTool: "switchyard.catalog.skill_pack",
+            }),
           }),
         );
 

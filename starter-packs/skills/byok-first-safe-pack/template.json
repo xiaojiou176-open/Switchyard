@@ -1,0 +1,26 @@
+{
+  "$schema": "../../../catalogs/starter-manifest-templates.schema.json",
+  "manifestVersion": 1,
+  "builderTemplates": [],
+  "skillTemplates": [
+    {
+      "id": "byok-first-safe-pack",
+      "status": "planned",
+      "templateShape": "byok-first-safe-runtime",
+      "manifest": {
+        "starterTarget": "byok-first-safe-pack",
+        "catalogCommand": "pnpm exec node starter-packs/skills/byok-first-safe-pack/smoke.mjs",
+        "safeClaims": [
+          "BYOK-first scaffold",
+          "safe invoke planning pack",
+          "provider-lane grounding"
+        ],
+        "notYetSupported": [
+          "key storage workflow",
+          "web-login session recovery",
+          "automatic provider failover"
+        ]
+      }
+    }
+  ]
+}

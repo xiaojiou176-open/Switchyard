@@ -47,13 +47,14 @@ pnpm run example:host-mcp
 | --- | --- | --- | --- |
 | `Codex` | [examples/hosts/codex/README.md](../examples/hosts/codex/README.md) | Responses-style runtime bridge config plus one bounded invoke smoke | tool/worktree parity |
 | `Claude Code` | [examples/hosts/claude-code/README.md](../examples/hosts/claude-code/README.md) | message/runtime bridge config plus one bounded invoke smoke | terminal/tool parity |
-| `OpenClaw` | [examples/hosts/openclaw/README.md](../examples/hosts/openclaw/README.md) | delegation-first host config plus one bounded invoke smoke | product-shell parity |
+| `OpenClaw` | [examples/hosts/openclaw/README.md](../examples/hosts/openclaw/README.md) | delegation-first host config plus preflight snapshot and one bounded invoke smoke | product-shell parity |
 | `MCP client` | [examples/hosts/mcp/README.md](../examples/hosts/mcp/README.md) | read-only stdio client wiring plus one bounded MCP smoke | execution brain / write plane |
 
 ## What These Examples Help With
 
 - host-local first-run wiring
 - copy-paste config examples for builder hosts
+- preflight-first runtime checks before the first delegated turn
 - bounded runnable glue for one first-success check
 - SEO/discoverability pages that answer concrete builder questions
 

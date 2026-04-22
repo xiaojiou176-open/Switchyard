@@ -1950,6 +1950,400 @@ describe("Switchyard HTTP surface", () => {
     expect(payload.text).toBe("SWITCHYARD_KERNEL_BYOK_OK");
   });
 
+  it("keeps dual-lane providers on BYOK when the web lane exists but is not currently usable", async () => {
+    const fetchSpy = async () => ({
+      ok: true,
+      status: 200,
+      json: async () => ({
+        candidates: [
+          {
+            content: {
+              parts: [{ text: "SWITCHYARD_BYOK_RECOVERY_OK" }],
+            },
+          },
+        ],
+      }),
+    });
+
+    const service = createTestService({
+      useLocalWebAuthStore: false,
+      runtimeEnv: {
+        SWITCHYARD_GEMINI_API_KEY: "gemini-test-key",
+      },
+      providerSessions: {
+        gemini: {
+          state: "user-action-required",
+          runtimeReadiness: "blocked",
+          validationState: "failed",
+          presence: "present",
+        },
+      },
+      liveProofFetch: fetchSpy as typeof fetch,
+    });
+
+    const response = await postSurface(service, "/v1/runtime/invoke", {
+      provider: "gemini",
+      model: "gemini-2.5-flash",
+      input: "Reply with exactly SWITCHYARD_BYOK_RECOVERY_OK",
+    });
+
+    const payload = (await response.json()) as {
+      lane: string;
+      provider: string;
+      model: string;
+      text: string;
+    };
+
+    expect(response.status).toBe(200);
+    expect(payload.lane).toBe("byok");
+    expect(payload.provider).toBe("gemini");
+    expect(payload.model).toBe("gemini-2.5-flash");
+    expect(payload.text).toBe("SWITCHYARD_BYOK_RECOVERY_OK");
+  });
+
+  it("exposes a runtime dispatch plan route with lane readiness and selected lane truth", async () => {
+    const service = createTestService({
+      useLocalWebAuthStore: false,
+      runtimeEnv: {
+        SWITCHYARD_GEMINI_API_KEY: "gemini-test-key",
+      },
+      providerSessions: {
+        gemini: {
+          state: "user-action-required",
+          runtimeReadiness: "blocked",
+          validationState: "failed",
+          presence: "present",
+        },
+      },
+    });
+
+    const response = await postSurface(service, "/v1/runtime/dispatch-plan", {
+      provider: "gemini",
+      model: "gemini-2.5-flash",
+      input: "Reply with exactly HELLO",
+    });
+
+    const payload = (await response.json()) as {
+      dispatchPlan: {
+        providerId: string;
+        requestedModel: string;
+        selectedLane: string;
+        candidateLanes: string[];
+        preferredLane?: string;
+        dispatchReason: string;
+        credentialStates: Record<string, string>;
+        dispatchable: boolean;
+        blocked: boolean;
+        runtimeCanInvoke?: boolean;
+        remediationState?: string;
+        blockerClassification?: string;
+      };
+    };
+
+    expect(response.status).toBe(200);
+    expect(payload.dispatchPlan.providerId).toBe("gemini");
+    expect(payload.dispatchPlan.requestedModel).toBe("gemini/gemini-2.5-flash");
+    expect(payload.dispatchPlan.selectedLane).toBe("byok");
+    expect(payload.dispatchPlan.candidateLanes).toEqual(["web-login", "byok"]);
+    expect(payload.dispatchPlan.preferredLane).toBe("byok");
+    expect(payload.dispatchPlan.dispatchReason).toBe("preferred-lane");
+    expect(payload.dispatchPlan.credentialStates).toEqual({
+      byok: "configured",
+      "web-login": "user-action-required",
+    });
+    expect(payload.dispatchPlan.dispatchable).toBe(true);
+    expect(payload.dispatchPlan.blocked).toBe(false);
+    expect(payload.dispatchPlan.runtimeCanInvoke).toBe(true);
+    expect(payload.dispatchPlan.remediationState).toBe("configured");
+    expect(payload.dispatchPlan.blockerClassification).toBeUndefined();
+  });
+
+  it("respects policy profiles on dispatch-plan and keeps the selected lane in the response receipt", async () => {
+    const service = createTestService({
+      useLocalWebAuthStore: false,
+      runtimeEnv: {
+        SWITCHYARD_GEMINI_API_KEY: "gemini-test-key",
+      },
+      providerSessions: {
+        gemini: {
+          state: "ready",
+          runtimeReadiness: "ready",
+          validationState: "validated",
+          presence: "present",
+        },
+      },
+    });
+
+    const response = await postSurface(service, "/v1/runtime/dispatch-plan", {
+      provider: "gemini",
+      model: "gemini-2.5-flash",
+      input: "Reply with exactly HELLO",
+      policyProfile: "official-api-first",
+    });
+
+    const payload = (await response.json()) as {
+      dispatchPlan: {
+        policyProfile?: string;
+        selectedLane: string;
+        dispatchable: boolean;
+      };
+    };
+
+    expect(response.status).toBe(200);
+    expect(payload.dispatchPlan.policyProfile).toBe("official-api-first");
+    expect(payload.dispatchPlan.selectedLane).toBe("byok");
+    expect(payload.dispatchPlan.dispatchable).toBe(true);
+  });
+
+  it("exposes a provider doctor route that unifies policy, dispatch, and remediation truth", async () => {
+    const service = createTestService({
+      useLocalWebAuthStore: false,
+      runtimeEnv: {
+        SWITCHYARD_GEMINI_API_KEY: "gemini-test-key",
+      },
+      providerSessions: {
+        gemini: {
+          state: "user-action-required",
+          runtimeReadiness: "blocked",
+          validationState: "failed",
+          presence: "present",
+        },
+      },
+    });
+
+    const response = await getSurface(
+      service,
+      "/v1/runtime/providers/gemini/doctor",
+    );
+
+    const payload = (await response.json()) as {
+      doctor: {
+        providerId: string;
+        policy: {
+          providerId: string;
+          registeredLanes: string[];
+          dispatchPolicy: {
+            kind: string;
+          };
+        };
+        dispatchPlan: {
+          selectedLane: string;
+          dispatchable: boolean;
+          blockerClassification?: string;
+        };
+        alignment: {
+          story: string;
+          runtimeCanInvoke: boolean;
+          remediationState?: string;
+        };
+        receipt: {
+          recommendedCliCommands: string[];
+        };
+      };
+    };
+
+    expect(response.status).toBe(200);
+    expect(payload.doctor.providerId).toBe("gemini");
+    expect(payload.doctor.policy.providerId).toBe("gemini");
+    expect(payload.doctor.policy.registeredLanes).toEqual(["web-login", "byok"]);
+    expect(payload.doctor.policy.dispatchPolicy.kind).toBe(
+      "credential-aware-auto-lane",
+    );
+    expect(payload.doctor.dispatchPlan.selectedLane).toBe("byok");
+    expect(payload.doctor.dispatchPlan.dispatchable).toBe(true);
+    expect(payload.doctor.dispatchPlan.blockerClassification).toBeUndefined();
+    expect(payload.doctor.alignment.story).toBe("dispatchable");
+    expect(payload.doctor.alignment.runtimeCanInvoke).toBe(true);
+    expect(payload.doctor.alignment.remediationState).toBe("configured");
+    expect(payload.doctor.receipt.recommendedCliCommands).toContain(
+      "pnpm run switchyard:cli -- provider-doctor --provider gemini --json",
+    );
+  });
+
+  it("exposes a runtime doctor route that aggregates provider doctors into one runtime ledger", async () => {
+    const service = createTestService({
+      useLocalWebAuthStore: false,
+      runtimeEnv: {
+        SWITCHYARD_GEMINI_API_KEY: "gemini-test-key",
+      },
+      providerSessions: {
+        chatgpt: {
+          state: "ready",
+          runtimeReadiness: "ready",
+          validationState: "validated",
+          presence: "present",
+        },
+        claude: {
+          state: "user-action-required",
+          runtimeReadiness: "blocked",
+          validationState: "failed",
+          presence: "present",
+          requiredUserAction: "Claude account payment is past due.",
+          persistenceAudit: {
+            workspaceClassification: "account-action-required",
+          } as never,
+        },
+      },
+    });
+
+    const response = await getSurface(service, "/v1/runtime/doctor");
+    const payload = (await response.json()) as {
+      doctor: {
+        summary: {
+          blockingProviders: string[];
+          readyProviders: string[];
+          dispatchableCount: number;
+        };
+        strongestNextSteps: string[];
+        controlLedger: {
+          routes: {
+            runtimeDoctor: string;
+            runtimePlan: string;
+            invoke: string;
+            authPortal: string;
+          };
+          dispatchableProviders: Array<{
+            providerId: string;
+            doctorRoute: string;
+            selectedLane?: string;
+          }>;
+          blockedProviders: Array<{
+            providerId: string;
+            blockerClassification?: string;
+            doctorRoute: string;
+          }>;
+          remediationWorkflows: Array<{
+            providerId: string;
+            story: string;
+            steps: Array<{
+              id: string;
+              cliCommand?: string;
+            }>;
+          }>;
+        };
+        providers: Array<{
+          providerId: string;
+          alignment: { story: string };
+        }>;
+      };
+    };
+
+    expect(response.status).toBe(200);
+    expect(payload.doctor.summary.blockingProviders).toContain("claude");
+    expect(payload.doctor.summary.dispatchableCount).toBeGreaterThan(0);
+    expect(payload.doctor.controlLedger.routes).toEqual({
+      runtimeDoctor: "/v1/runtime/doctor",
+      runtimePlan: "/v1/runtime/plan",
+      invoke: "/v1/runtime/invoke",
+      authPortal: "/v1/runtime/auth-portal",
+    });
+    expect(payload.doctor.controlLedger.dispatchableProviders).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({
+          providerId: "gemini",
+          doctorRoute: "/v1/runtime/providers/gemini/doctor",
+          selectedLane: "byok",
+        }),
+      ]),
+    );
+    expect(payload.doctor.controlLedger.blockedProviders).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({
+          providerId: "claude",
+          blockerClassification: "account-action-required",
+          doctorRoute: "/v1/runtime/providers/claude/doctor",
+        }),
+      ]),
+    );
+    expect(payload.doctor.controlLedger.remediationWorkflows).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({
+          providerId: "claude",
+          story: "blocked",
+          steps: expect.arrayContaining([
+            expect.objectContaining({
+              id: "inspect-provider-doctor",
+              cliCommand:
+                "pnpm run switchyard:cli -- provider-doctor --provider claude --json",
+            }),
+          ]),
+        }),
+      ]),
+    );
+    expect(payload.doctor.providers).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({
+          providerId: "gemini",
+          alignment: expect.objectContaining({
+            story: "dispatchable",
+          }),
+        }),
+        expect.objectContaining({
+          providerId: "claude",
+          alignment: expect.objectContaining({
+            story: "blocked",
+          }),
+        }),
+      ]),
+    );
+  });
+
+  it("exposes a task-centric runtime plan route with ranked recommendations", async () => {
+    const service = createTestService({
+      useLocalWebAuthStore: false,
+      runtimeEnv: {
+        SWITCHYARD_OPENAI_API_KEY: "openai-test-key",
+        OPENAI_API_KEY: "openai-test-key",
+      },
+      providerSessions: {
+        chatgpt: {
+          state: "ready",
+          runtimeReadiness: "ready",
+          validationState: "validated",
+          presence: "present",
+        },
+      },
+    });
+
+    const response = await postSurface(service, "/v1/runtime/plan", {
+      requiredCapabilities: ["tool-calling"],
+      policyProfile: "official-api-first",
+      allowWebLogin: true,
+      requireOfficialApi: true,
+    });
+
+    const payload = (await response.json()) as {
+      plan: {
+        policyProfile: string;
+        recommended?: {
+          providerId: string;
+          laneId: string;
+        };
+        recommendations: Array<{
+          providerId: string;
+          laneId: string;
+        }>;
+      };
+    };
+
+    expect(response.status).toBe(200);
+    expect(payload.plan.policyProfile).toBe("official-api-first");
+    expect(payload.plan.recommended).toEqual(
+      expect.objectContaining({
+        providerId: "openai",
+        laneId: "byok",
+      }),
+    );
+    expect(payload.plan.recommendations).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({
+          providerId: "openai",
+          laneId: "byok",
+        }),
+      ]),
+    );
+  });
+
   it("serves a BYOK invoke through the explicit byok route alias", async () => {
     const fetchSpy = async () => ({
       ok: true,
@@ -2150,5 +2544,319 @@ describe("Switchyard HTTP surface", () => {
         message: "Provider is currently unavailable.",
       },
     });
+  });
+
+  it("returns an invoke receipt that captures selection reason, policy profile, and doctor links", async () => {
+    const fetchSpy = async () => ({
+      ok: true,
+      status: 200,
+      json: async () => ({
+        candidates: [
+          {
+            content: {
+              parts: [{ text: "SWITCHYARD_RECEIPT_OK" }],
+            },
+          },
+        ],
+      }),
+    });
+
+    const service = createTestService({
+      useLocalWebAuthStore: false,
+      runtimeEnv: {
+        SWITCHYARD_GEMINI_API_KEY: "gemini-test-key",
+      },
+      liveProofFetch: fetchSpy as typeof fetch,
+    });
+
+    const response = await postSurface(service, "/v1/runtime/invoke", {
+      provider: "gemini",
+      model: "gemini-2.5-flash",
+      input: "Reply with exactly SWITCHYARD_RECEIPT_OK",
+      policyProfile: "official-api-first",
+    });
+
+    const payload = (await response.json()) as {
+      lane: string;
+      text: string;
+      receipt?: {
+        policyProfile: string;
+        providerId: string;
+        laneId: string;
+        doctorRoute: string;
+        dispatchReason?: string;
+        lineage: {
+          runtimeDoctorRoute: string;
+          runtimePlanRoute: string;
+          dispatchPlanRoute: string;
+          providerDoctorRoute: string;
+        };
+        remediationWorkflow: {
+          providerId: string;
+          story: string;
+          steps: Array<{
+            id: string;
+            cliCommand?: string;
+          }>;
+        };
+      };
+    };
+
+    expect(response.status).toBe(200);
+    expect(payload.lane).toBe("byok");
+    expect(payload.text).toBe("SWITCHYARD_RECEIPT_OK");
+    expect(payload.receipt).toEqual(
+      expect.objectContaining({
+        policyProfile: "official-api-first",
+        providerId: "gemini",
+        laneId: "byok",
+        doctorRoute: "/v1/runtime/providers/gemini/doctor",
+        lineage: {
+          runtimeDoctorRoute: "/v1/runtime/doctor",
+          runtimePlanRoute: "/v1/runtime/plan",
+          dispatchPlanRoute: "/v1/runtime/dispatch-plan",
+          providerDoctorRoute: "/v1/runtime/providers/gemini/doctor",
+        },
+        remediationWorkflow: expect.objectContaining({
+          providerId: "gemini",
+          story: "dispatchable",
+          steps: expect.arrayContaining([
+            expect.objectContaining({
+              id: "inspect-provider-doctor",
+              cliCommand:
+                "pnpm run switchyard:cli -- provider-doctor --provider gemini --json",
+            }),
+          ]),
+        }),
+      }),
+    );
+  });
+
+  it("keeps dispatch-plan, probe, remediation, and live proof on the same story", async () => {
+    const service = createTestService({
+      useLocalWebAuthStore: false,
+      runtimeEnv: {
+        SWITCHYARD_WEB_CHATGPT_COOKIE_BUNDLE: "chatgpt-cookie",
+        SWITCHYARD_WEB_CHATGPT_USER_AGENT: "chatgpt-agent",
+        SWITCHYARD_WEB_GEMINI_COOKIE_BUNDLE: "gemini-cookie",
+        SWITCHYARD_WEB_GEMINI_USER_AGENT: "gemini-agent",
+        SWITCHYARD_WEB_QWEN_COOKIE_BUNDLE: "qwen-cookie",
+        SWITCHYARD_WEB_QWEN_USER_AGENT: "qwen-agent",
+      },
+      providerSessions: {
+        chatgpt: {
+          state: "ready",
+          runtimeReadiness: "ready",
+          validationState: "validated",
+          presence: "present",
+        },
+        gemini: {
+          state: "ready",
+          runtimeReadiness: "ready",
+          validationState: "validated",
+          presence: "present",
+        },
+        claude: {
+          state: "user-action-required",
+          runtimeReadiness: "blocked",
+          validationState: "stale",
+          presence: "present",
+          requiredUserAction:
+            "Claude account payment is past due and needs an explicit account action.",
+          persistenceAudit: {
+            workspaceClassification: "account-action-required",
+          } as never,
+        },
+        grok: {
+          state: "user-action-required",
+          runtimeReadiness: "blocked",
+          validationState: "stale",
+          presence: "present",
+          requiredUserAction:
+            "Finish the Grok browser sign-in flow before live traffic can continue.",
+          persistenceAudit: {
+            workspaceClassification: "session-incomplete",
+          } as never,
+        },
+        qwen: {
+          state: "ready",
+          runtimeReadiness: "ready",
+          validationState: "validated",
+          presence: "present",
+        },
+      },
+      liveProofRunners: {
+        chatgpt: async () =>
+          ({
+            status: "success",
+            provider: "chatgpt",
+            probeUrl: "https://chatgpt.com/api/auth/session",
+            finalUrl: "https://chatgpt.com/api/auth/session",
+            responseStatus: 200,
+            responseKind: "json",
+            signal: "chatgpt-session",
+            summary: "ChatGPT auth probe succeeded.",
+            envStatus: [],
+          }) as never,
+        gemini: async () =>
+          ({
+            status: "success",
+            provider: "gemini",
+            probeUrl: "https://gemini.google.com/app",
+            finalUrl: "https://gemini.google.com/app",
+            responseStatus: 200,
+            responseKind: "html",
+            signal: "gemini-workspace",
+            summary: "Gemini workspace looked authenticated.",
+            envStatus: [],
+          }) as never,
+        claude: async () =>
+          ({
+            status: "external-blocker",
+            provider: "claude",
+            blocker: "missing-web-session-material",
+            classification: "account-action-required",
+            probeUrl: "https://claude.ai/api/organizations",
+            envStatus: [],
+            missingEnvNames: [],
+            rerunCommand: "pnpm run verify:web-login-live",
+          }) as never,
+        grok: async () =>
+          ({
+            status: "failure",
+            provider: "grok",
+            classification: "session-incomplete",
+            probeUrl: "https://grok.com",
+            finalUrl: "https://grok.com/",
+            reason: "probe-unexpected-body",
+            diagnostic: "Grok is still on a public landing page.",
+            summary: "Grok session is incomplete.",
+            envStatus: [],
+          }) as never,
+        qwen: async () =>
+          ({
+            status: "success",
+            provider: "qwen",
+            probeUrl: "https://chat.qwen.ai/api/v2/chats/new",
+            finalUrl: "https://chat.qwen.ai/api/v2/chats/new",
+            responseStatus: 200,
+            responseKind: "json",
+            signal: "qwen-chat",
+            summary: "Qwen bootstrap succeeded.",
+            envStatus: [],
+          }) as never,
+      },
+    });
+
+    const cases = [
+      {
+        provider: "chatgpt",
+        model: "gpt-4o",
+        expectedDispatchable: true,
+        expectedClassification: undefined,
+        expectedRemediationState: "ready",
+      },
+      {
+        provider: "gemini",
+        model: "gemini-2.5-pro",
+        expectedDispatchable: true,
+        expectedClassification: undefined,
+        expectedRemediationState: "ready",
+      },
+      {
+        provider: "claude",
+        model: "claude-sonnet-4-6",
+        expectedDispatchable: false,
+        expectedClassification: "account-action-required",
+        expectedRemediationState: "user-action-required",
+      },
+      {
+        provider: "grok",
+        model: "grok-3",
+        expectedDispatchable: false,
+        expectedClassification: "session-incomplete",
+        expectedRemediationState: "user-action-required",
+      },
+      {
+        provider: "qwen",
+        model: "qwen3.5-plus",
+        expectedDispatchable: true,
+        expectedClassification: undefined,
+        expectedRemediationState: "ready",
+      },
+    ] as const;
+
+    for (const testCase of cases) {
+      const dispatch = await postSurface(service, "/v1/runtime/dispatch-plan", {
+        provider: testCase.provider,
+        model: testCase.model,
+        input: "Reply with exactly HELLO and nothing else.",
+      });
+      const probe = await getSurface(
+        service,
+        `/v1/runtime/providers/${testCase.provider}/probe`,
+      );
+      const remediation = await getSurface(
+        service,
+        `/v1/runtime/providers/${testCase.provider}/remediation`,
+      );
+
+      const dispatchPayload = (await dispatch.json()) as {
+        dispatchPlan: {
+          dispatchable: boolean;
+          blocked: boolean;
+          runtimeCanInvoke?: boolean;
+          blockerClassification?: string;
+          remediationState?: string;
+        };
+      };
+      const probePayload = (await probe.json()) as {
+        probe: {
+          runtime: { canInvoke: boolean };
+          liveProof?: { status: string };
+        };
+      };
+      const remediationPayload = (await remediation.json()) as {
+        remediation: {
+          available: boolean;
+          state: string;
+        };
+      };
+
+      expect(dispatch.status).toBe(200);
+      expect(probe.status).toBe(200);
+      expect(remediation.status).toBe(200);
+
+      expect(dispatchPayload.dispatchPlan.dispatchable).toBe(
+        testCase.expectedDispatchable,
+      );
+      expect(dispatchPayload.dispatchPlan.blocked).toBe(
+        !testCase.expectedDispatchable,
+      );
+      expect(dispatchPayload.dispatchPlan.runtimeCanInvoke).toBe(
+        probePayload.probe.runtime.canInvoke,
+      );
+      expect(dispatchPayload.dispatchPlan.dispatchable).toBe(
+        probePayload.probe.runtime.canInvoke,
+      );
+      expect(dispatchPayload.dispatchPlan.dispatchable).toBe(
+        remediationPayload.remediation.available,
+      );
+      expect(dispatchPayload.dispatchPlan.remediationState).toBe(
+        testCase.expectedRemediationState,
+      );
+      expect(remediationPayload.remediation.state).toBe(
+        testCase.expectedRemediationState,
+      );
+      expect(dispatchPayload.dispatchPlan.blockerClassification).toBe(
+        testCase.expectedClassification,
+      );
+
+      if (probePayload.probe.liveProof?.status === "success") {
+        expect(dispatchPayload.dispatchPlan.dispatchable).toBe(true);
+      } else if (probePayload.probe.liveProof) {
+        expect(dispatchPayload.dispatchPlan.blocked).toBe(true);
+      }
+    }
   });
 });

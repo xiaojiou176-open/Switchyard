@@ -6,10 +6,10 @@
     "provider": "chatgpt",
     "lane": "web",
     "model": "gpt-4o",
-    "input": "Return the current remediation summary."
+    "input": "Return the current provider readiness summary before delegation."
   },
   "safeClaims": [
     "partial OpenClaw host example",
-    "delegation-first config"
+    "delegation-first config with preflight"
   ]
 }

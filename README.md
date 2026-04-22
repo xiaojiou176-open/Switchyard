@@ -150,11 +150,20 @@ one, use:
 pnpm run start:local-experience
 ```
 
+or, if you want the same local-first shell narrated as a runtime appliance:
+
+```bash
+pnpm run start:runtime-appliance
+```
+
 That command starts the local runtime plus a static docs front door and prints
 the ready-to-open URLs for:
 
 - `auth-portal`
+- `runtime doctor`
+- `runtime plan`
 - `ChatGPT` debug workbench
+- `doctor-first control ledger`
 - `docs front door`
 
 ## Why Switchyard Exists

@@ -3,8 +3,11 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 const client = {
   listProviders: vi.fn(),
   health: vi.fn(),
+  runtimeDoctor: vi.fn(),
+  runtimePlan: vi.fn(),
   authStatus: vi.fn(),
   providerStatus: vi.fn(),
+  providerDoctor: vi.fn(),
   providerProbe: vi.fn(),
   providerRemediation: vi.fn(),
   providerCurrentPage: vi.fn(),
@@ -47,6 +50,29 @@ describe("switchyard CLI starter", () => {
 
   it("dispatches read-only provider commands through the shared service client", async () => {
     client.listProviders.mockResolvedValue([{ providerId: "chatgpt" }]);
+    client.runtimeDoctor.mockResolvedValue({
+      doctor: {
+        summary: {
+          blockingProviders: ["claude"],
+        },
+      },
+    });
+    client.runtimePlan.mockResolvedValue({
+      plan: {
+        policyProfile: "low-friction",
+        recommended: {
+          providerId: "chatgpt",
+        },
+      },
+    });
+    client.providerDoctor.mockResolvedValue({
+      doctor: {
+        providerId: "chatgpt",
+        alignment: {
+          story: "blocked",
+        },
+      },
+    });
     client.providerSupportBundle.mockResolvedValue({
       providerId: "chatgpt",
       attachTarget: { available: true },
@@ -59,6 +85,25 @@ describe("switchyard CLI starter", () => {
 
     const providers = await runSwitchyardCli(
       { command: "providers" },
+      client,
+    );
+    const runtimeDoctor = await runSwitchyardCli(
+      { command: "runtime-doctor" },
+      client,
+    );
+    const runtimePlan = await runSwitchyardCli(
+      {
+        command: "runtime-plan",
+        policyProfile: "official-api-first",
+        requiredCapabilities: ["tool-calling"],
+        allowWebLogin: false,
+        requireOfficialApi: true,
+        requireToolCalling: true,
+      },
+      client,
+    );
+    const doctor = await runSwitchyardCli(
+      { command: "provider-doctor", provider: "chatgpt" },
       client,
     );
     const supportBundle = await runSwitchyardCli(
@@ -89,6 +134,39 @@ describe("switchyard CLI starter", () => {
     expect(providers).toEqual({
       command: "providers",
       result: [{ providerId: "chatgpt" }],
+    });
+    expect(runtimeDoctor).toEqual({
+      command: "runtime-doctor",
+      result: {
+        doctor: {
+          summary: {
+            blockingProviders: ["claude"],
+          },
+        },
+      },
+    });
+    expect(runtimePlan).toEqual({
+      command: "runtime-plan",
+      result: {
+        plan: {
+          policyProfile: "low-friction",
+          recommended: {
+            providerId: "chatgpt",
+          },
+        },
+      },
+    });
+    expect(doctor).toEqual({
+      command: "provider-doctor",
+      provider: "chatgpt",
+      result: {
+        doctor: {
+          providerId: "chatgpt",
+          alignment: {
+            story: "blocked",
+          },
+        },
+      },
     });
     expect(supportBundle).toEqual({
       command: "provider-support-bundle",
@@ -133,6 +211,17 @@ describe("switchyard CLI starter", () => {
       result: [{ id: "check-store", status: "completed" }],
     });
     expect(client.listProviders).toHaveBeenCalledTimes(1);
+    expect(client.runtimeDoctor).toHaveBeenCalledTimes(1);
+    expect(client.runtimePlan).toHaveBeenCalledTimes(1);
+    expect(client.runtimePlan).toHaveBeenCalledWith({
+      policyProfile: "official-api-first",
+      requiredCapabilities: ["tool-calling"],
+      allowWebLogin: false,
+      requireOfficialApi: true,
+      requireToolCalling: true,
+    });
+    expect(client.providerDoctor).toHaveBeenCalledTimes(1);
+    expect(client.providerDoctor).toHaveBeenCalledWith("chatgpt");
     expect(client.providerSupportBundle).toHaveBeenCalledTimes(6);
     expect(client.providerSupportBundle).toHaveBeenCalledWith("chatgpt");
   });
@@ -164,7 +253,36 @@ describe("switchyard CLI starter", () => {
       provider: "chatgpt",
       target: "codex",
       baseUrl: "http://127.0.0.1:4010/",
+      policyProfile: undefined,
+      requiredCapabilities: [],
+      allowWebLogin: undefined,
+      requireOfficialApi: false,
+      requireToolCalling: false,
       json: true,
+    });
+
+    expect(
+      parseCliArgs([
+        "runtime-plan",
+        "--profile",
+        "official-api-first",
+        "--capability",
+        "tool-calling",
+        "--no-web-login",
+        "--require-official-api",
+        "--require-tool-calling",
+      ]),
+    ).toEqual({
+      command: "runtime-plan",
+      provider: undefined,
+      target: undefined,
+      baseUrl: undefined,
+      policyProfile: "official-api-first",
+      requiredCapabilities: ["tool-calling"],
+      allowWebLogin: false,
+      requireOfficialApi: true,
+      requireToolCalling: true,
+      json: false,
     });
   });
 
@@ -185,6 +303,9 @@ describe("switchyard CLI starter", () => {
                 "builder-kit",
                 "skill-packs",
                 "skill-pack",
+                "skill-pack-routes",
+                "skill-pack-routes-schema",
+                "skill-pack-route",
                 "host-playbooks",
                 "host-playbook",
                 "host-examples",
@@ -464,6 +585,63 @@ describe("switchyard CLI starter", () => {
       }),
     });
 
+    await expect(runSwitchyardCli({ command: "skill-pack-routes" }, client)).resolves.toEqual({
+      command: "skill-pack-routes",
+      result: expect.objectContaining({
+        routes: expect.arrayContaining([
+          expect.objectContaining({
+            id: "runtime-diagnostics-pack",
+            bestEntry: "pnpm run switchyard:cli -- skill-pack-route --target runtime-diagnostics-pack",
+            recommendedMcpTools: expect.arrayContaining([
+              "switchyard.catalog.skill_pack",
+              "switchyard.provider.diagnose",
+            ]),
+          }),
+          expect.objectContaining({
+            id: "docs-seo-sync-pack",
+            recommendedCliCommands: expect.arrayContaining([
+              "pnpm run switchyard:cli -- keyword-truth --json",
+            ]),
+          }),
+        ]),
+      }),
+    });
+
+    await expect(
+      runSwitchyardCli({ command: "skill-pack-routes-schema" }, client),
+    ).resolves.toEqual({
+      command: "skill-pack-routes-schema",
+      result: expect.objectContaining({
+        title: "Switchyard Skill Pack Routes",
+        required: expect.arrayContaining([
+          "routeVersion",
+          "routes",
+        ]),
+      }),
+    });
+
+    await expect(
+      runSwitchyardCli(
+        { command: "skill-pack-route", target: "runtime-diagnostics-pack" },
+        client,
+      ),
+    ).resolves.toEqual({
+      command: "skill-pack-route",
+      target: "runtime-diagnostics-pack",
+      result: expect.objectContaining({
+        id: "runtime-diagnostics-pack",
+        packPath: "starter-packs/skills/runtime-diagnostics-pack",
+        recommendedCliCommands: expect.arrayContaining([
+          "pnpm run switchyard:cli -- provider-status --provider chatgpt --json",
+          "pnpm run switchyard:cli -- provider-support-bundle --provider chatgpt --json",
+        ]),
+        recommendedMcpTools: expect.arrayContaining([
+          "switchyard.catalog.skill_pack",
+          "switchyard.provider.support_bundle",
+        ]),
+      }),
+    });
+
     await expect(runSwitchyardCli({ command: "host-playbooks" }, client)).resolves.toEqual({
       command: "host-playbooks",
       result: expect.arrayContaining([
@@ -655,8 +833,18 @@ describe("switchyard CLI starter", () => {
     await expect(runSwitchyardCli({ command: "provider-catalog" }, client)).resolves.toEqual({
       command: "provider-catalog",
       result: expect.arrayContaining([
-        expect.objectContaining({ providerId: "chatgpt", lane: "web-login" }),
-        expect.objectContaining({ providerId: "openai", lane: "byok" }),
+        expect.objectContaining({
+          providerId: "chatgpt",
+          lane: "web-login",
+          capabilityMatrix: expect.any(Object),
+          dispatchPolicy: expect.any(Object),
+        }),
+        expect.objectContaining({
+          providerId: "openai",
+          lane: "byok",
+          capabilityMatrix: expect.any(Object),
+          dispatchPolicy: expect.any(Object),
+        }),
       ]),
     });
 
@@ -682,6 +870,16 @@ describe("switchyard CLI starter", () => {
       result: expect.objectContaining({
         providerId: "chatgpt",
         stabilityTarget: "high-stability",
+        capabilityMatrix: expect.objectContaining({
+          "text-generation": true,
+        }),
+        dispatchPolicy: expect.objectContaining({
+          kind: "single-lane-provider",
+        }),
+        doctorEntryPoints: expect.objectContaining({
+          cliCommand:
+            "pnpm run switchyard:cli -- provider-doctor --provider chatgpt --json",
+        }),
       }),
     });
 
@@ -697,6 +895,9 @@ describe("switchyard CLI starter", () => {
         providerId: "gemini",
         lane: "web-login",
         stabilityTarget: "high-stability",
+        dispatchPolicy: expect.objectContaining({
+          kind: "credential-aware-auto-lane",
+        }),
       }),
     });
 
@@ -1047,6 +1248,10 @@ describe("switchyard CLI starter", () => {
     ).rejects.toThrow('Unknown skill pack "mystery"');
 
     await expect(
+      runSwitchyardCli({ command: "skill-pack-route", target: "mystery" }, client),
+    ).rejects.toThrow('Unknown skill pack route "mystery"');
+
+    await expect(
       runSwitchyardCli({ command: "provider-entry", target: "mystery" }, client),
     ).rejects.toThrow('Unknown provider entry "mystery"');
 
@@ -1237,10 +1442,40 @@ describe("switchyard CLI starter", () => {
   });
 
   it("covers readonly client success branches for provider routes", async () => {
-    const fetchMock = vi.fn(async (url: string) => ({
+    const fetchMock = vi.fn(async (url: string, init?: RequestInit) => ({
       ok: true,
       status: 200,
       async json() {
+        if (url.endsWith("/doctor")) {
+          return {
+            doctor: {
+              summary: {
+                blockingProviders: ["claude"],
+              },
+            },
+          };
+        }
+
+        if (url.endsWith("/plan")) {
+          expect(init?.method).toBe("POST");
+          expect(init?.body).toBe(
+            JSON.stringify({
+              policyProfile: "official-api-first",
+              requiredCapabilities: ["tool-calling"],
+              requireOfficialApi: true,
+            }),
+          );
+
+          return {
+            plan: {
+              policyProfile: "official-api-first",
+              recommended: {
+                providerId: "chatgpt",
+              },
+            },
+          };
+        }
+
         if (url.endsWith("/providers")) {
           return {
             discovery: {
@@ -1344,6 +1579,23 @@ describe("switchyard CLI starter", () => {
         unavailable: 0,
       },
       generatedAt: "2026-04-03T00:00:00.000Z",
+    });
+    await expect(readonlyClient.runtimeDoctor()).resolves.toEqual({
+      summary: {
+        blockingProviders: ["claude"],
+      },
+    });
+    await expect(
+      readonlyClient.runtimePlan({
+        policyProfile: "official-api-first",
+        requiredCapabilities: ["tool-calling"],
+        requireOfficialApi: true,
+      }),
+    ).resolves.toEqual({
+      policyProfile: "official-api-first",
+      recommended: {
+        providerId: "chatgpt",
+      },
     });
     await expect(readonlyClient.providerStatus("chatgpt")).resolves.toEqual({
       providerId: "chatgpt",

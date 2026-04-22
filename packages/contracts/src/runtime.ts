@@ -17,6 +17,7 @@ export interface RuntimeRequest {
   readonly credentialStates?: Partial<Record<LaneId, CredentialState>>;
   readonly requiredCapabilities?: readonly CapabilityId[];
   readonly consumer?: ConsumerContext;
+  readonly policyProfile?: RuntimePolicyProfileId;
 }
 
 export interface RuntimeSelection {
@@ -26,9 +27,27 @@ export interface RuntimeSelection {
   readonly surface: SurfaceId;
 }
 
+export type RuntimeDispatchReason =
+  | 'single-compatible-lane'
+  | 'preferred-lane'
+  | 'lane-order';
+
+export type RuntimePolicyProfileId =
+  | 'reliability-first'
+  | 'official-api-first'
+  | 'web-ok'
+  | 'low-friction'
+  | 'strict-fail-closed';
+
 export interface RuntimeInvocationPlan {
   readonly selection: RuntimeSelection;
+  readonly dispatch: {
+    readonly candidateLanes: readonly LaneId[];
+    readonly reason: RuntimeDispatchReason;
+    readonly preferredLane?: LaneId;
+  };
   readonly capabilities: CapabilityMatrix;
   readonly diagnostics: readonly DiagnosticRecord[];
   readonly consumer?: ConsumerContext;
+  readonly policyProfile?: RuntimePolicyProfileId;
 }

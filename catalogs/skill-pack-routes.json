@@ -1,0 +1,287 @@
+{
+  "$schema": "./skill-pack-routes.schema.json",
+  "routeVersion": 1,
+  "routes": [
+    {
+      "id": "runtime-diagnostics-pack",
+      "status": "partial",
+      "routeSummary": "One route card that ties the diagnostics skill pack to the exact CLI and MCP truth surfaces it already depends on.",
+      "bestEntry": "pnpm run switchyard:cli -- skill-pack-route --target runtime-diagnostics-pack",
+      "catalogCommand": "pnpm run switchyard:cli -- skill-pack --target runtime-diagnostics-pack --json",
+      "routeMcpTool": "switchyard.catalog.skill_pack",
+      "packPath": "starter-packs/skills/runtime-diagnostics-pack",
+      "packFiles": [
+        "starter-packs/skills/runtime-diagnostics-pack/README.md",
+        "starter-packs/skills/runtime-diagnostics-pack/steps.json",
+        "starter-packs/skills/runtime-diagnostics-pack/example.json",
+        "starter-packs/skills/runtime-diagnostics-pack/smoke.mjs"
+      ],
+      "recommendedCliCommands": [
+        "pnpm run switchyard:cli -- provider-status --provider chatgpt --json",
+        "pnpm run switchyard:cli -- provider-diagnose --provider chatgpt --json",
+        "pnpm run switchyard:cli -- provider-support-bundle --provider chatgpt --json"
+      ],
+      "recommendedMcpTools": [
+        "switchyard.catalog.skill_pack",
+        "switchyard.provider.status",
+        "switchyard.provider.diagnose",
+        "switchyard.provider.support_bundle"
+      ],
+      "recommendedDocs": [
+        "docs/mcp.md",
+        "docs/public-surface-support-matrix.md",
+        "docs/host-integration-playbooks.md",
+        "starter-packs/skills/runtime-diagnostics-pack/README.md"
+      ],
+      "handoffChecks": [
+        "Keep every step read-only.",
+        "Escalate missing browser or login state as an explicit blocker instead of invoking providers.",
+        "Do not claim execution-brain or write-plane parity."
+      ],
+      "safeClaims": [
+        "read-only diagnostics route",
+        "skill pack plus CLI plus MCP coordination",
+        "bounded provider triage helper"
+      ],
+      "notYetSupported": [
+        "invoke",
+        "acquisition write",
+        "browser automation",
+        "execution-brain parity"
+      ]
+    },
+    {
+      "id": "docs-seo-sync-pack",
+      "status": "partial",
+      "routeSummary": "One route card that ties the docs/SEO truth-sync pack to the exact read-only catalog and keyword surfaces it should use.",
+      "bestEntry": "pnpm run switchyard:cli -- skill-pack-route --target docs-seo-sync-pack",
+      "catalogCommand": "pnpm run switchyard:cli -- skill-pack --target docs-seo-sync-pack --json",
+      "routeMcpTool": "switchyard.catalog.skill_pack",
+      "packPath": "starter-packs/skills/docs-seo-sync-pack",
+      "packFiles": [
+        "starter-packs/skills/docs-seo-sync-pack/README.md",
+        "starter-packs/skills/docs-seo-sync-pack/steps.json",
+        "starter-packs/skills/docs-seo-sync-pack/example.json",
+        "starter-packs/skills/docs-seo-sync-pack/smoke.mjs"
+      ],
+      "recommendedCliCommands": [
+        "pnpm run switchyard:cli -- surface-catalog --json",
+        "pnpm run switchyard:cli -- keyword-truth --json",
+        "pnpm run switchyard:cli -- skill-pack-route --target docs-seo-sync-pack --json"
+      ],
+      "recommendedMcpTools": [
+        "switchyard.catalog.skill_pack",
+        "switchyard.catalog.surface_catalog",
+        "switchyard.catalog.keyword_truth"
+      ],
+      "recommendedDocs": [
+        "docs/mcp.md",
+        "docs/public-surface-support-matrix.md",
+        "docs/host-integration-playbooks.md",
+        "starter-packs/skills/docs-seo-sync-pack/README.md"
+      ],
+      "handoffChecks": [
+        "Keep partial and research-only labels intact.",
+        "Route outward copy changes through human review before publication.",
+        "Do not turn keyword truth into marketing autopilot."
+      ],
+      "safeClaims": [
+        "truth-sync route",
+        "discoverability helper",
+        "human-reviewed outward wording only"
+      ],
+      "notYetSupported": [
+        "marketing autopilot",
+        "claim escalation without review",
+        "launch automation"
+      ]
+    },
+    {
+      "id": "chat-app-runtime-pack",
+      "status": "planned",
+      "routeSummary": "One route card that ties a chat-app runtime starter to the current service/runtime truth surfaces without promising a full chat product shell.",
+      "bestEntry": "pnpm run switchyard:cli -- skill-pack-route --target chat-app-runtime-pack",
+      "catalogCommand": "pnpm run switchyard:cli -- skill-pack --target chat-app-runtime-pack --json",
+      "routeMcpTool": "switchyard.catalog.skill_pack",
+      "packPath": "starter-packs/skills/chat-app-runtime-pack",
+      "packFiles": [
+        "starter-packs/skills/chat-app-runtime-pack/README.md",
+        "starter-packs/skills/chat-app-runtime-pack/steps.json",
+        "starter-packs/skills/chat-app-runtime-pack/example.json",
+        "starter-packs/skills/chat-app-runtime-pack/smoke.mjs"
+      ],
+      "recommendedCliCommands": [
+        "pnpm run switchyard:cli -- runtime-doctor --json",
+        "pnpm run switchyard:cli -- runtime-plan --json",
+        "pnpm run switchyard:cli -- provider-catalog --json"
+      ],
+      "recommendedMcpTools": [
+        "switchyard.catalog.skill_pack",
+        "switchyard.runtime.doctor",
+        "switchyard.runtime.plan",
+        "switchyard.catalog.provider_catalog"
+      ],
+      "recommendedDocs": [
+        "docs/api/service-http-reference.md",
+        "docs/api/sdk-quickstart.md",
+        "docs/public-surface-support-matrix.md",
+        "starter-packs/skills/chat-app-runtime-pack/README.md"
+      ],
+      "handoffChecks": [
+        "Keep the pack focused on runtime bridge shape, not product-shell UI.",
+        "Use doctor or planner truth before widening claims.",
+        "Do not promise browser/session write automation."
+      ],
+      "safeClaims": [
+        "chat-app runtime scaffold",
+        "service-first bridge planning pack",
+        "no full product shell"
+      ],
+      "notYetSupported": [
+        "full chat product scaffold",
+        "tool-using agent shell",
+        "browser/session write automation"
+      ]
+    },
+    {
+      "id": "research-copilot-pack",
+      "status": "planned",
+      "routeSummary": "One route card that ties a research copilot starter to truth surfaces first so synthesis stays human-reviewed and fail-closed.",
+      "bestEntry": "pnpm run switchyard:cli -- skill-pack-route --target research-copilot-pack",
+      "catalogCommand": "pnpm run switchyard:cli -- skill-pack --target research-copilot-pack --json",
+      "routeMcpTool": "switchyard.catalog.skill_pack",
+      "packPath": "starter-packs/skills/research-copilot-pack",
+      "packFiles": [
+        "starter-packs/skills/research-copilot-pack/README.md",
+        "starter-packs/skills/research-copilot-pack/steps.json",
+        "starter-packs/skills/research-copilot-pack/example.json",
+        "starter-packs/skills/research-copilot-pack/smoke.mjs"
+      ],
+      "recommendedCliCommands": [
+        "pnpm run switchyard:cli -- surface-catalog --json",
+        "pnpm run switchyard:cli -- compat-targets --json",
+        "pnpm run switchyard:cli -- keyword-truth --json"
+      ],
+      "recommendedMcpTools": [
+        "switchyard.catalog.skill_pack",
+        "switchyard.catalog.surface_catalog",
+        "switchyard.catalog.compat_targets",
+        "switchyard.catalog.keyword_truth"
+      ],
+      "recommendedDocs": [
+        "docs/public-surface-support-matrix.md",
+        "docs/discoverability-keyword-truth.md",
+        "docs/public-surface-catalog.md",
+        "starter-packs/skills/research-copilot-pack/README.md"
+      ],
+      "handoffChecks": [
+        "Read truth surfaces before synthesis.",
+        "Keep human review in the loop for any outward claim.",
+        "Do not widen into browser writes or autonomous research loops."
+      ],
+      "safeClaims": [
+        "research copilot scaffold",
+        "truth-surface grounding pack",
+        "no autonomous research loop"
+      ],
+      "notYetSupported": [
+        "autonomous multi-source research loop",
+        "citation autopilot",
+        "browser write automation"
+      ]
+    },
+    {
+      "id": "compare-runtime-pack",
+      "status": "planned",
+      "routeSummary": "One route card that ties compare-first runtime selection to the existing starter-pack comparison and filter truth instead of auto-picking a winner.",
+      "bestEntry": "pnpm run switchyard:cli -- skill-pack-route --target compare-runtime-pack",
+      "catalogCommand": "pnpm run switchyard:cli -- skill-pack --target compare-runtime-pack --json",
+      "routeMcpTool": "switchyard.catalog.skill_pack",
+      "packPath": "starter-packs/skills/compare-runtime-pack",
+      "packFiles": [
+        "starter-packs/skills/compare-runtime-pack/README.md",
+        "starter-packs/skills/compare-runtime-pack/steps.json",
+        "starter-packs/skills/compare-runtime-pack/example.json",
+        "starter-packs/skills/compare-runtime-pack/smoke.mjs"
+      ],
+      "recommendedCliCommands": [
+        "pnpm run switchyard:cli -- starter-pack-comparison --json",
+        "pnpm run switchyard:cli -- starter-pack-filter --target thin-runtime-bridges",
+        "pnpm run switchyard:cli -- starter-pack-filter --target read-only-truth"
+      ],
+      "recommendedMcpTools": [
+        "switchyard.catalog.skill_pack",
+        "switchyard.catalog.starter_pack_comparison",
+        "switchyard.catalog.starter_pack_filter"
+      ],
+      "recommendedDocs": [
+        "docs/starter-pack-chooser.md",
+        "docs/faq.md",
+        "docs/public-surface-catalog.md",
+        "starter-packs/skills/compare-runtime-pack/README.md"
+      ],
+      "handoffChecks": [
+        "Keep compare logic explicit and reviewable.",
+        "Do not auto-select a winner.",
+        "Do not mistake comparison for parity proof."
+      ],
+      "safeClaims": [
+        "compare-first scaffold",
+        "constraint filter worksheet",
+        "no automatic winner selection"
+      ],
+      "notYetSupported": [
+        "automatic winner selection",
+        "live benchmark automation",
+        "consumer parity scoring"
+      ]
+    },
+    {
+      "id": "byok-first-safe-pack",
+      "status": "planned",
+      "routeSummary": "One route card that keeps a BYOK-first starter grounded in provider truth and safe invoke planning before any web-login expansion.",
+      "bestEntry": "pnpm run switchyard:cli -- skill-pack-route --target byok-first-safe-pack",
+      "catalogCommand": "pnpm run switchyard:cli -- skill-pack --target byok-first-safe-pack --json",
+      "routeMcpTool": "switchyard.catalog.skill_pack",
+      "packPath": "starter-packs/skills/byok-first-safe-pack",
+      "packFiles": [
+        "starter-packs/skills/byok-first-safe-pack/README.md",
+        "starter-packs/skills/byok-first-safe-pack/steps.json",
+        "starter-packs/skills/byok-first-safe-pack/example.json",
+        "starter-packs/skills/byok-first-safe-pack/smoke.mjs"
+      ],
+      "recommendedCliCommands": [
+        "pnpm run switchyard:cli -- provider-catalog --json",
+        "pnpm run switchyard:cli -- runtime-plan --json",
+        "pnpm run switchyard:cli -- runtime-doctor --json"
+      ],
+      "recommendedMcpTools": [
+        "switchyard.catalog.skill_pack",
+        "switchyard.catalog.provider_catalog",
+        "switchyard.runtime.plan",
+        "switchyard.runtime.doctor"
+      ],
+      "recommendedDocs": [
+        "docs/api/sdk-quickstart.md",
+        "docs/api/service-http-reference.md",
+        "docs/public-surface-support-matrix.md",
+        "starter-packs/skills/byok-first-safe-pack/README.md"
+      ],
+      "handoffChecks": [
+        "Keep BYOK and web-login boundaries explicit.",
+        "Do not widen into secret storage promises.",
+        "Do not promise automatic provider failover."
+      ],
+      "safeClaims": [
+        "BYOK-first scaffold",
+        "safe invoke planning pack",
+        "no web-login recovery claims"
+      ],
+      "notYetSupported": [
+        "key storage workflow",
+        "web-login session recovery",
+        "automatic provider failover"
+      ]
+    }
+  ]
+}

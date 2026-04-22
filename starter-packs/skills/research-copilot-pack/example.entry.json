@@ -1,0 +1,21 @@
+{
+  "id": "research-copilot-pack",
+  "status": "planned",
+  "exampleShape": "research-copilot-grounding",
+  "example": {
+    "name": "research-copilot-pack-example",
+    "catalogCommand": "pnpm exec node starter-packs/skills/research-copilot-pack/smoke.mjs",
+    "steps": [
+      "pnpm exec node starter-packs/skills/research-copilot-pack/smoke.mjs",
+      "pnpm run switchyard:cli -- surface-catalog --json",
+      "pnpm run switchyard:cli -- compat-targets --json",
+      "pnpm run switchyard:cli -- keyword-truth --json",
+      "cat docs/public-surface-support-matrix.md"
+    ]
+  },
+  "safeClaims": [
+    "research copilot scaffold",
+    "truth-surface grounding pack",
+    "no autonomous research loop"
+  ]
+}

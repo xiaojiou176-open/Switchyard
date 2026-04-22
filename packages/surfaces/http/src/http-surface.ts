@@ -1,7 +1,14 @@
 import type { IncomingMessage, ServerResponse } from "node:http";
 
 import type { GenerateTextRequest } from "../../sdk-client/src/index.js";
-import type { RuntimeRequest, SwitchyardContractError } from "../../../contracts/src/index.js";
+import { CAPABILITY_IDS } from "../../../contracts/src/index.js";
+import type {
+  CapabilityId,
+  RuntimePolicyProfileId,
+  CredentialState as RuntimeCredentialState,
+  RuntimeRequest,
+  SwitchyardContractError,
+} from "../../../contracts/src/index.js";
 import type {
   ServiceInvokeFailure,
   ServiceInvokeResult,
@@ -24,19 +31,31 @@ import type {
 } from "../../../lanes/web/src/index.js";
 import type { WebLaneContext } from "../../../lanes/web/src/index.js";
 import { WebLoginLane } from "../../../lanes/web/src/index.js";
-import type { ProviderId } from "../../../contracts/src/index.js";
+import type { LaneId, ProviderId } from "../../../contracts/src/index.js";
 import type { SwitchyardRuntime } from "../../../kernel/src/index.js";
 import {
   SERVICE_AUTH_PORTAL_METADATA,
   SERVICE_SURFACE_METADATA,
+  applyServicePolicyProfileToDispatchPlan,
+  buildServiceInvokeReceiptView,
   buildRuntimeBootstrapView,
   buildServiceAuthStatusView,
+  buildServiceDispatchPlanVerdict,
+  buildServiceProviderDoctorAlignment,
+  buildServiceProviderDoctorReceipt,
   buildServiceProviderDebugSupportView,
+  buildServiceProviderPolicyView,
+  buildServiceProviderRouteRefs,
   buildServiceDiscoveryViews,
   buildServiceProviderProbeView,
   buildServiceProviderRemediationView,
   buildServiceRemediationSummary,
-  buildServiceRouteCatalog
+  buildServiceRouteCatalog,
+  type ServiceProviderDoctorView,
+  type ServiceRuntimeDoctorView,
+  type ServiceRuntimeDispatchPlanView,
+  type ServiceRuntimePlanView,
+  buildServiceRuntimeDoctorView,
 } from "./service-language.js";
 
 export interface SwitchyardHttpSurfaceOptions {
@@ -50,6 +69,20 @@ export interface SwitchyardHttpSurfaceOptions {
   resolvePreferredLane?: (
     providerId: ProviderId,
   ) => Promise<"byok" | "web-login" | undefined>;
+  resolveCredentialStates?: (
+    providerId: ProviderId,
+  ) => Promise<Partial<Record<"byok" | "web-login", RuntimeCredentialState>> | undefined>;
+  resolvePolicyHints?: (
+    providerId: ProviderId,
+    policyProfile?: string,
+  ) => Promise<{
+    policyProfile: RuntimePolicyProfileId;
+    preferredLane?: LaneId;
+    requiredCapabilities: readonly CapabilityId[];
+    allowWebLogin: boolean;
+    strictReadyOnly: boolean;
+  }>;
+  availablePolicyProfiles?: readonly RuntimePolicyProfileId[];
   serviceName?: string;
   ownerUserId?: string;
   byokClient?: {
@@ -209,6 +242,26 @@ function normalizeProviderPath(
   return {};
 }
 
+function normalizeProviderDoctorPath(
+  pathname: string,
+): { provider?: ProviderId } {
+  const parts = pathname.split("/").filter(Boolean);
+
+  if (
+    parts.length === 5 &&
+    parts[0] === "v1" &&
+    parts[1] === "runtime" &&
+    parts[2] === "providers" &&
+    parts[4] === "doctor"
+  ) {
+    return {
+      provider: parts[3] as ProviderId,
+    };
+  }
+
+  return {};
+}
+
 function normalizeAcquisitionPath(
   pathname: string,
 ): { provider?: WebProviderId; action?: "start" | "capture" } {
@@ -330,12 +383,39 @@ function normalizeAcquisitionRequestBody(body: unknown): AcquisitionRequestBody 
   return request;
 }
 
+function normalizePolicyProfile(value: unknown): RuntimePolicyProfileId {
+  if (
+    value === "reliability-first" ||
+    value === "official-api-first" ||
+    value === "web-ok" ||
+    value === "strict-fail-closed"
+  ) {
+    return value;
+  }
+
+  return "low-friction";
+}
+
+function normalizeRequestedCapabilities(value: unknown): CapabilityId[] {
+  if (!Array.isArray(value)) {
+    return [];
+  }
+
+  return value.filter((entry): entry is CapabilityId =>
+    typeof entry === "string" &&
+    (CAPABILITY_IDS as readonly string[]).includes(entry),
+  );
+}
+
 export class SwitchyardHttpSurface {
   private readonly webLane: WebLoginLane;
   private readonly context: WebLaneContext;
   private readonly runtime?: SwitchyardRuntime;
   private readonly invokeRuntime?: SwitchyardHttpSurfaceOptions["invokeRuntime"];
   private readonly resolvePreferredLane?: SwitchyardHttpSurfaceOptions["resolvePreferredLane"];
+  private readonly resolveCredentialStates?: SwitchyardHttpSurfaceOptions["resolveCredentialStates"];
+  private readonly resolvePolicyHints?: SwitchyardHttpSurfaceOptions["resolvePolicyHints"];
+  private readonly availablePolicyProfiles: readonly RuntimePolicyProfileId[];
   private readonly serviceName: string;
   private readonly ownerUserId: string;
   private readonly byokClient?: SwitchyardHttpSurfaceOptions["byokClient"];
@@ -364,6 +444,15 @@ export class SwitchyardHttpSurface {
     this.runtime = options.runtime;
     this.invokeRuntime = options.invokeRuntime;
     this.resolvePreferredLane = options.resolvePreferredLane;
+    this.resolveCredentialStates = options.resolveCredentialStates;
+    this.resolvePolicyHints = options.resolvePolicyHints;
+    this.availablePolicyProfiles = options.availablePolicyProfiles ?? [
+      "reliability-first",
+      "official-api-first",
+      "web-ok",
+      "low-friction",
+      "strict-fail-closed",
+    ];
     this.serviceName = options.serviceName ?? "switchyard-service";
     this.ownerUserId = options.ownerUserId ?? "local-user";
     this.byokClient = options.byokClient;
@@ -386,6 +475,53 @@ export class SwitchyardHttpSurface {
     }
   }
 
+  private renderContractErrorResponse(
+    error: SwitchyardContractError,
+    request?: RuntimeRequest,
+    explicitLane?: "byok" | "web-login",
+  ): SurfaceResponse {
+    const lane = explicitLane ?? request?.preferredLane;
+
+    if (lane === "byok") {
+      return jsonResponse(this.mapContractErrorStatus(error), {
+        surface: SERVICE_SURFACE_METADATA,
+        routes: buildServiceRouteCatalog(),
+        lane: "byok",
+        error: {
+          message: error.message,
+          type: error.diagnostic.code,
+          diagnostics: [error.diagnostic],
+        },
+      });
+    }
+
+    if (
+      lane === "web-login" ||
+      request?.credentialStates?.["web-login"] !== undefined
+    ) {
+      return jsonResponse(this.mapContractErrorStatus(error), {
+        surface: SERVICE_SURFACE_METADATA,
+        authPortal: SERVICE_AUTH_PORTAL_METADATA,
+        routes: buildServiceRouteCatalog(),
+        error: {
+          message: error.message,
+          type: error.diagnostic.code,
+          diagnostics: [error.diagnostic],
+        },
+      });
+    }
+
+    return jsonResponse(this.mapContractErrorStatus(error), {
+      surface: SERVICE_SURFACE_METADATA,
+      routes: buildServiceRouteCatalog(),
+      error: {
+        message: error.message,
+        type: error.diagnostic.code,
+        diagnostics: [error.diagnostic],
+      },
+    });
+  }
+
   private async buildRuntimeRequest(
     body: Record<string, unknown>,
     preferredLaneOverride?: "byok" | "web-login",
@@ -397,10 +533,32 @@ export class SwitchyardHttpSurface {
     const provider = body.provider;
     const model = body.model;
     const lane = body.lane;
+    const registeredLanes =
+      this.runtime && typeof this.runtime.listProviders === "function"
+        ? this.runtime
+            .listProviders()
+            .filter((entry) => entry.providerId === (provider as ProviderId))
+            .map((entry) => entry.laneId)
+        : [];
 
     if (typeof provider !== "string" || typeof model !== "string") {
       return undefined;
     }
+
+    const policyProfile = normalizePolicyProfile(body.policyProfile);
+    const requestedCapabilities = normalizeRequestedCapabilities(
+      body.requiredCapabilities,
+    );
+    const policyHints =
+      this.resolvePolicyHints
+        ? await this.resolvePolicyHints(provider as ProviderId, policyProfile)
+        : {
+            policyProfile,
+            preferredLane: undefined,
+            requiredCapabilities: ["text-generation"] as const,
+            allowWebLogin: true,
+            strictReadyOnly: false,
+          };
 
     const preferredLane =
       preferredLaneOverride ??
@@ -408,7 +566,13 @@ export class SwitchyardHttpSurface {
         ? "byok"
         : lane === "web"
           ? "web-login"
-          : undefined);
+          : policyHints.preferredLane);
+    const shouldAttachCredentialStates =
+      !preferredLane && registeredLanes.length > 1;
+    const credentialStates =
+      shouldAttachCredentialStates && this.resolveCredentialStates
+        ? await this.resolveCredentialStates(provider as ProviderId)
+        : undefined;
 
     return {
       surface: "service",
@@ -419,7 +583,488 @@ export class SwitchyardHttpSurface {
         (this.resolvePreferredLane
           ? await this.resolvePreferredLane(provider as ProviderId)
           : undefined),
-      requiredCapabilities: ["text-generation"],
+      credentialStates,
+      requiredCapabilities: Array.from(
+        new Set([
+          ...policyHints.requiredCapabilities,
+          ...requestedCapabilities,
+        ]),
+      ),
+      policyProfile: policyHints.policyProfile,
+    };
+  }
+
+  private buildDispatchPlanView(
+    request: RuntimeRequest,
+    selection?: {
+      readonly laneId: "byok" | "web-login";
+      readonly candidateLanes: readonly ("byok" | "web-login")[];
+      readonly reason: ServiceRuntimeDispatchPlanView["dispatchReason"];
+      readonly modelReference?: string;
+    },
+    options: {
+      credentialStates?: Partial<Record<"byok" | "web-login", RuntimeCredentialState>>;
+      provider?: ProviderStatusView;
+      policyProfile?: RuntimePolicyProfileId;
+    } = {},
+  ): ServiceRuntimeDispatchPlanView {
+    const providerId = request.providerId ?? "unknown-provider";
+    const requestedModel =
+      typeof selection?.modelReference === "string"
+        ? selection.modelReference
+        : typeof request.modelReference === "string"
+        ? request.modelReference.includes("/")
+          ? request.modelReference
+          : `${providerId}/${request.modelReference}`
+        : `${providerId}/unknown-model`;
+    const registeredLanes =
+      this.runtime && typeof this.runtime.listProviders === "function"
+        ? this.runtime
+            .listProviders()
+            .filter((provider) => provider.providerId === providerId)
+            .map((provider) => provider.laneId as "byok" | "web-login")
+            .sort((left, right) => {
+              const leftIndex =
+                this.runtime?.laneOrder.indexOf(left) ?? Number.MAX_SAFE_INTEGER;
+              const rightIndex =
+                this.runtime?.laneOrder.indexOf(right) ?? Number.MAX_SAFE_INTEGER;
+              return leftIndex - rightIndex;
+            })
+        : [];
+
+    const credentialStates = {
+      ...(options.credentialStates ?? request.credentialStates ?? {}),
+    };
+    const verdict = buildServiceDispatchPlanVerdict({
+      selectedLane: selection?.laneId,
+      credentialStates,
+      provider: options.provider,
+    });
+
+    const dispatchPlan = {
+      providerId,
+      requestedModel,
+      policyProfile: options.policyProfile ?? request.policyProfile,
+      selectedLane: selection?.laneId,
+      preferredLane: request.preferredLane,
+      dispatchReason: selection?.reason,
+      candidateLanes: [...(selection?.candidateLanes ?? registeredLanes)],
+      credentialStates,
+      dispatchable: verdict.dispatchable,
+      blocked: verdict.blocked,
+      runtimeCanInvoke: verdict.runtimeCanInvoke,
+      remediationState: verdict.remediationState,
+      blockerClassification: verdict.blockerClassification,
+      blockerSummary: verdict.blockerSummary,
+    };
+
+    return applyServicePolicyProfileToDispatchPlan({
+      policyProfile: dispatchPlan.policyProfile ?? "low-friction",
+      dispatchPlan,
+    });
+  }
+
+  private async buildProviderDoctorRequest(
+    providerId: ProviderId,
+    options: {
+      policyProfile?: RuntimePolicyProfileId;
+      requiredCapabilities?: readonly CapabilityId[];
+    } = {},
+  ): Promise<RuntimeRequest | undefined> {
+    if (!this.runtime) {
+      return undefined;
+    }
+
+    const policyHints =
+      this.resolvePolicyHints
+        ? await this.resolvePolicyHints(providerId, options.policyProfile)
+        : {
+            policyProfile: normalizePolicyProfile(options.policyProfile),
+            preferredLane: undefined,
+            requiredCapabilities: ["text-generation"] as const,
+            allowWebLogin: true,
+            strictReadyOnly: false,
+          };
+
+    return {
+      surface: "service",
+      providerId,
+      preferredLane:
+        policyHints.preferredLane ??
+        (this.resolvePreferredLane
+          ? await this.resolvePreferredLane(providerId)
+          : undefined),
+      credentialStates: this.resolveCredentialStates
+        ? await this.resolveCredentialStates(providerId)
+        : undefined,
+      requiredCapabilities: Array.from(
+        new Set([
+          ...policyHints.requiredCapabilities,
+          ...(options.requiredCapabilities ?? []),
+        ]),
+      ),
+      policyProfile: policyHints.policyProfile,
+    };
+  }
+
+  private async loadProviderDebugSupport(provider: ProviderStatusView) {
+    return this.debugSupportRunners[provider.provider]
+      ? await this.debugSupportRunners[provider.provider]!(provider)
+      : buildServiceProviderDebugSupportView(provider, this.ownerUserId);
+  }
+
+  private async buildProviderDoctorView(
+    providerId: ProviderId,
+    options: {
+      policyProfile?: RuntimePolicyProfileId;
+      requiredCapabilities?: readonly CapabilityId[];
+    } = {},
+  ): Promise<ServiceProviderDoctorView | undefined> {
+    if (!this.runtime) {
+      return undefined;
+    }
+
+    const registeredEntries = this.runtime
+      .listProviders()
+      .filter((entry) => entry.providerId === providerId)
+      .map((entry) => ({
+        displayName: entry.displayName,
+        laneId: entry.laneId as "byok" | "web-login",
+        authModes: entry.authModes,
+        defaultModel: entry.defaultModel?.canonical,
+        recommendedModel: entry.recommendedModel?.canonical,
+        capabilityMatrix: entry.capabilities,
+        diagnosticsStatus: entry.diagnosticsStatus,
+        catalogSource: entry.catalogSource,
+      }));
+
+    const providers = await this.webLane.authStatus(this.context);
+    const provider = providers.find(
+      (entry) => entry.provider === (providerId as WebProviderId),
+    );
+
+    if (registeredEntries.length === 0 && !provider) {
+      return undefined;
+    }
+
+    const displayName =
+      provider?.displayName ??
+      registeredEntries[0]?.displayName ??
+      providerId;
+    const policy = buildServiceProviderPolicyView({
+      providerId,
+      displayName: provider?.displayName ?? displayName,
+      registeredEntries,
+      runtimeLaneOrder: this.runtime.laneOrder as readonly ("byok" | "web-login")[],
+    });
+    const doctorRequest = await this.buildProviderDoctorRequest(providerId, options);
+    const credentialStates = doctorRequest?.credentialStates;
+    let dispatchPlan = doctorRequest
+      ? this.buildDispatchPlanView(doctorRequest, undefined, {
+          credentialStates,
+          provider,
+          policyProfile: doctorRequest.policyProfile,
+        })
+      : undefined;
+
+    if (doctorRequest) {
+      try {
+        const plan = this.runtime.prepareInvocation(doctorRequest);
+        dispatchPlan = this.buildDispatchPlanView(
+          doctorRequest,
+          {
+            laneId: plan.selection.laneId,
+            candidateLanes: plan.dispatch.candidateLanes as readonly (
+              | "byok"
+              | "web-login"
+            )[],
+            reason: plan.dispatch.reason,
+            modelReference: plan.selection.model.canonical,
+          },
+          {
+            credentialStates,
+            provider,
+            policyProfile: doctorRequest.policyProfile,
+          },
+        );
+      } catch (error) {
+        if (
+          !error ||
+          typeof error !== "object" ||
+          !("diagnostic" in error)
+        ) {
+          throw error;
+        }
+      }
+    }
+
+    const probe = provider
+      ? buildServiceProviderProbeView(provider, this.ownerUserId)
+      : undefined;
+    const remediation = provider
+      ? buildServiceProviderRemediationView(provider, this.ownerUserId)
+      : undefined;
+    const diagnose = provider
+      ? await this.loadProviderDebugSupport(provider)
+      : undefined;
+
+    if (!dispatchPlan) {
+      return undefined;
+    }
+
+    const alignment = buildServiceProviderDoctorAlignment({
+      dispatchPlan,
+      probe,
+      remediation,
+      diagnose,
+    });
+
+    return {
+      providerId,
+      displayName: provider?.displayName ?? displayName,
+      activePolicyProfile: doctorRequest?.policyProfile,
+      availablePolicyProfiles: [...this.availablePolicyProfiles],
+      policy,
+      dispatchPlan,
+      alignment,
+      receipt: buildServiceProviderDoctorReceipt({
+        providerId,
+        alignment,
+        policy,
+        routes: buildServiceProviderRouteRefs(
+          providerId as WebProviderId,
+        ),
+        hasDiagnose: Boolean(diagnose),
+      }),
+      probe,
+      remediation,
+      diagnose,
+      routes: buildServiceProviderRouteRefs(
+        providerId as WebProviderId,
+      ),
+    };
+  }
+
+  private async buildRuntimeDoctorView(
+    policyProfile: RuntimePolicyProfileId = "low-friction",
+  ): Promise<ServiceRuntimeDoctorView | undefined> {
+    if (!this.runtime) {
+      return undefined;
+    }
+
+    const providerIds = Array.from(
+      new Set(this.runtime.listProviders().map((entry) => entry.providerId)),
+    ) as ProviderId[];
+    const providers = (
+      await Promise.all(
+        providerIds.map((providerId) =>
+          this.buildProviderDoctorView(providerId, {
+            policyProfile,
+          }),
+        ),
+      )
+    ).filter(Boolean) as ServiceProviderDoctorView[];
+
+    return buildServiceRuntimeDoctorView({
+      activePolicyProfile: policyProfile,
+      availablePolicyProfiles: [...this.availablePolicyProfiles],
+      providers,
+    });
+  }
+
+  private scorePlannedDoctor(args: {
+    doctor: ServiceProviderDoctorView;
+    policyProfile: RuntimePolicyProfileId;
+    preferHighStability: boolean;
+    requireOfficialApi: boolean;
+  }) {
+    const selectedBinding = args.doctor.policy.laneBindings.find(
+      (binding) => binding.laneId === args.doctor.dispatchPlan.selectedLane,
+    );
+    let score = args.doctor.alignment.story === "dispatchable" ? 100 : 10;
+    const reasons = [];
+
+    if (args.doctor.alignment.story === "dispatchable") {
+      reasons.push("dispatchable-now");
+    } else {
+      reasons.push("currently-blocked");
+    }
+
+    if (selectedBinding?.capabilityMatrix["official-api"]?.supported) {
+      score += 20;
+      reasons.push("official-api");
+    }
+
+    if (selectedBinding?.laneId === "byok") {
+      score += 10;
+      reasons.push("byok-lane");
+    }
+
+    if (args.policyProfile === "web-ok" && selectedBinding?.laneId === "web-login") {
+      score += 15;
+      reasons.push("web-ok-profile");
+    }
+
+    if (
+      args.policyProfile === "official-api-first" &&
+      selectedBinding?.capabilityMatrix["official-api"]?.supported
+    ) {
+      score += 25;
+      reasons.push("official-api-first-profile");
+    }
+
+    if (
+      args.policyProfile === "reliability-first" &&
+      selectedBinding?.laneId === "byok"
+    ) {
+      score += 15;
+      reasons.push("reliability-first-profile");
+    }
+
+    if (args.policyProfile === "strict-fail-closed" && args.doctor.dispatchPlan.dispatchable) {
+      score += 10;
+      reasons.push("strict-fail-closed");
+    }
+
+    if (
+      args.preferHighStability &&
+      args.doctor.probe?.stabilityTarget === "high"
+    ) {
+      score += 10;
+      reasons.push("high-stability");
+    }
+
+    if (
+      args.requireOfficialApi &&
+      !selectedBinding?.capabilityMatrix["official-api"]?.supported
+    ) {
+      score -= 50;
+    }
+
+    return { score, reasons };
+  }
+
+  private async buildRuntimePlanView(
+    body: Record<string, unknown>,
+  ): Promise<ServiceRuntimePlanView | undefined> {
+    if (!this.runtime) {
+      return undefined;
+    }
+
+    const policyProfile = normalizePolicyProfile(body.policyProfile);
+    const requiredCapabilities = normalizeRequestedCapabilities(
+      body.requiredCapabilities,
+    );
+    const requireToolCalling = body.requireToolCalling === true;
+    const requireOfficialApi = body.requireOfficialApi === true;
+    const allowWebLogin = body.allowWebLogin !== false;
+    const preferHighStability = body.preferStability === "high-stability";
+    const mergedCapabilities = Array.from(
+      new Set([
+        ...requiredCapabilities,
+        ...(requireToolCalling ? (["tool-calling"] as CapabilityId[]) : []),
+        ...(requireOfficialApi ? (["official-api"] as CapabilityId[]) : []),
+      ]),
+    );
+    const providerIds = Array.from(
+      new Set(this.runtime.listProviders().map((entry) => entry.providerId)),
+    ) as ProviderId[];
+    const blockers: string[] = [];
+    const recommendations = (
+      await Promise.all(
+        providerIds.map(async (providerId) => {
+          const doctor = await this.buildProviderDoctorView(providerId, {
+            policyProfile,
+            requiredCapabilities: mergedCapabilities,
+          });
+
+          if (!doctor) {
+            return undefined;
+          }
+
+          const selectedBinding = doctor.policy.laneBindings.find(
+            (binding) => binding.laneId === doctor.dispatchPlan.selectedLane,
+          );
+
+          if (!allowWebLogin && doctor.dispatchPlan.selectedLane === "web-login") {
+            blockers.push(
+              `${providerId}: web-login is disallowed by the current planner request.`,
+            );
+            return undefined;
+          }
+
+          if (!selectedBinding) {
+            blockers.push(`${providerId}: no selected lane binding was resolved.`);
+            return undefined;
+          }
+
+          const { score, reasons } = this.scorePlannedDoctor({
+            doctor,
+            policyProfile,
+            preferHighStability,
+            requireOfficialApi,
+          });
+
+          return {
+            providerId,
+            displayName: doctor.displayName,
+            laneId: selectedBinding.laneId,
+            modelId:
+              selectedBinding.recommendedModel?.split("/").slice(1).join("/") ??
+              selectedBinding.defaultModel?.split("/").slice(1).join("/") ??
+              doctor.dispatchPlan.requestedModel.split("/").slice(1).join("/") ??
+              "unknown-model",
+            dispatchable: doctor.dispatchPlan.dispatchable,
+            score,
+            reasons,
+            doctorRoute: doctor.policy.doctorEntryPoints.serviceRoute,
+          };
+        }),
+      )
+    ).filter(Boolean) as ServiceRuntimePlanView["recommendations"];
+
+    recommendations.sort((left, right) => right.score - left.score);
+
+    return {
+      policyProfile,
+      requiredCapabilities: mergedCapabilities,
+      recommendations,
+      blockers,
+      recommended: recommendations[0],
+    };
+  }
+
+  private async renderInvokeResultWithReceipt(
+    result: ServiceInvokeResult | ServiceSurfaceResponse,
+    request: RuntimeRequest,
+  ): Promise<SurfaceResponse> {
+    if (isServiceSurfaceResponse(result)) {
+      return result;
+    }
+
+    const rendered = renderInvokeResult(result);
+    const doctor = request.providerId
+      ? await this.buildProviderDoctorView(request.providerId, {
+          policyProfile: request.policyProfile,
+          requiredCapabilities: request.requiredCapabilities,
+        })
+      : undefined;
+
+    if (!doctor || typeof rendered.body !== "object" || rendered.body === null) {
+      return rendered;
+    }
+
+    return {
+      ...rendered,
+      body: {
+        ...(rendered.body as Record<string, unknown>),
+        receipt: buildServiceInvokeReceiptView({
+          policyProfile: request.policyProfile ?? "low-friction",
+          dispatchPlan: doctor.dispatchPlan,
+          doctorRoute: doctor.policy.doctorEntryPoints.serviceRoute,
+          suggestedNextStep: doctor.receipt.recommendedCliCommands[0],
+        }),
+      },
     };
   }
 
@@ -777,6 +1422,27 @@ export class SwitchyardHttpSurface {
       });
     }
 
+    if (method === "GET" && pathname === "/v1/runtime/doctor") {
+      const doctor = await this.buildRuntimeDoctorView();
+
+      if (!doctor) {
+        return jsonResponse(503, {
+          surface: SERVICE_SURFACE_METADATA,
+          routes: buildServiceRouteCatalog(),
+          error: {
+            message: "Runtime doctor is not configured in the current service.",
+            type: "provider-unavailable",
+          },
+        });
+      }
+
+      return jsonResponse(200, {
+        surface: SERVICE_SURFACE_METADATA,
+        routes: buildServiceRouteCatalog(),
+        doctor,
+      });
+    }
+
     if (
       method === "GET" &&
       (pathname === "/v1/runtime/bootstrap" || pathname === "/v1/runtime/entrypoint")
@@ -787,6 +1453,136 @@ export class SwitchyardHttpSurface {
         200,
         buildRuntimeBootstrapView(providers, health, this.serviceName, this.ownerUserId),
       );
+    }
+
+    if (method === "POST" && pathname === "/v1/runtime/dispatch-plan") {
+      if (!isObject(body)) {
+        return jsonResponse(400, {
+          error: {
+            message: "Expected a JSON object request body.",
+            type: "invalid_request_error",
+          },
+        });
+      }
+
+      const runtimeRequest = await this.buildRuntimeRequest(body);
+
+      if (!this.runtime || !runtimeRequest) {
+        return jsonResponse(503, {
+          surface: SERVICE_SURFACE_METADATA,
+          routes: buildServiceRouteCatalog(),
+          error: {
+            message: "Runtime lane planning is not configured in the current service.",
+            type: "provider-unavailable",
+          },
+        });
+      }
+
+      const providerId = runtimeRequest.providerId;
+      const providers = providerId
+        ? await this.webLane.authStatus(this.context)
+        : [];
+      const provider =
+        providerId
+          ? providers.find((entry) => entry.provider === (providerId as WebProviderId))
+          : undefined;
+      const credentialStates = providerId && this.resolveCredentialStates
+        ? await this.resolveCredentialStates(providerId)
+        : runtimeRequest.credentialStates;
+
+      try {
+        const plan = this.runtime.prepareInvocation(runtimeRequest);
+
+        return jsonResponse(200, {
+          surface: SERVICE_SURFACE_METADATA,
+          routes: buildServiceRouteCatalog(),
+          dispatchPlan: this.buildDispatchPlanView(runtimeRequest, {
+            laneId: plan.selection.laneId,
+            candidateLanes: plan.dispatch.candidateLanes as readonly ("byok" | "web-login")[],
+            reason: plan.dispatch.reason,
+          }, {
+            credentialStates,
+            provider,
+            policyProfile: runtimeRequest.policyProfile,
+          }),
+        });
+      } catch (error) {
+        if (
+          error &&
+          typeof error === "object" &&
+          "diagnostic" in error &&
+          typeof (error as { diagnostic?: { code?: string } }).diagnostic?.code === "string"
+        ) {
+          const contractError = error as SwitchyardContractError;
+
+          return jsonResponse(this.mapContractErrorStatus(contractError), {
+            surface: SERVICE_SURFACE_METADATA,
+            routes: buildServiceRouteCatalog(),
+            dispatchPlan: this.buildDispatchPlanView(runtimeRequest, undefined, {
+              credentialStates,
+              provider,
+              policyProfile: runtimeRequest.policyProfile,
+            }),
+            error: {
+              message: contractError.message,
+              type: contractError.diagnostic.code,
+              diagnostics: [contractError.diagnostic],
+            },
+          });
+        }
+
+        throw error;
+      }
+    }
+
+    if (method === "POST" && pathname === "/v1/runtime/plan") {
+      if (!isObject(body)) {
+        return jsonResponse(400, {
+          error: {
+            message: "Expected a JSON object request body.",
+            type: "invalid_request_error",
+          },
+        });
+      }
+
+      const plan = await this.buildRuntimePlanView(body);
+
+      if (!plan) {
+        return jsonResponse(503, {
+          surface: SERVICE_SURFACE_METADATA,
+          routes: buildServiceRouteCatalog(),
+          error: {
+            message: "Runtime planner is not configured in the current service.",
+            type: "provider-unavailable",
+          },
+        });
+      }
+
+      return jsonResponse(200, {
+        surface: SERVICE_SURFACE_METADATA,
+        routes: buildServiceRouteCatalog(),
+        plan,
+      });
+    }
+
+    const providerDoctorPath = normalizeProviderDoctorPath(pathname);
+    if (method === "GET" && providerDoctorPath.provider) {
+      const doctor = await this.buildProviderDoctorView(providerDoctorPath.provider);
+
+      if (!doctor) {
+        return jsonResponse(404, {
+          error: {
+            message: `Unknown provider: ${providerDoctorPath.provider}`,
+            type: "not_found",
+          },
+        });
+      }
+
+      return jsonResponse(200, {
+        surface: SERVICE_SURFACE_METADATA,
+        routes: buildServiceRouteCatalog(),
+        doctor,
+      });
     }
 
     const providerPath = normalizeProviderPath(pathname);
@@ -844,9 +1640,7 @@ export class SwitchyardHttpSurface {
         });
       }
 
-      const debugSupport = this.debugSupportRunners[provider.provider]
-        ? await this.debugSupportRunners[provider.provider]!(provider)
-        : buildServiceProviderDebugSupportView(provider, this.ownerUserId);
+      const debugSupport = await this.loadProviderDebugSupport(provider);
 
       if (providerDebugPath.action === "current-page") {
         return jsonResponse(200, {
@@ -936,7 +1730,7 @@ export class SwitchyardHttpSurface {
       }
 
       try {
-        return renderInvokeResult(
+        return this.renderInvokeResultWithReceipt(
           await this.invokeRuntime({
             request: runtimeRequest,
             body: {
@@ -944,6 +1738,7 @@ export class SwitchyardHttpSurface {
               lane: "byok",
             },
           }),
+          runtimeRequest,
         );
       } catch (error) {
         if (
@@ -954,16 +1749,7 @@ export class SwitchyardHttpSurface {
             "string"
         ) {
           const contractError = error as SwitchyardContractError;
-
-          return jsonResponse(this.mapContractErrorStatus(contractError), {
-            surface: SERVICE_SURFACE_METADATA,
-            routes: buildServiceRouteCatalog(),
-            error: {
-              message: contractError.message,
-              type: contractError.diagnostic.code,
-              diagnostics: [contractError.diagnostic],
-            },
-          });
+          return this.renderContractErrorResponse(contractError, runtimeRequest, "byok");
         }
 
         throw error;
@@ -984,11 +1770,12 @@ export class SwitchyardHttpSurface {
 
       try {
         if (this.runtime && runtimeRequest && this.invokeRuntime) {
-          return renderInvokeResult(
+          return this.renderInvokeResultWithReceipt(
             await this.invokeRuntime({
               request: runtimeRequest,
               body,
             }),
+            runtimeRequest,
           );
         }
       } catch (error) {
@@ -1000,16 +1787,41 @@ export class SwitchyardHttpSurface {
             "string"
         ) {
           const contractError = error as SwitchyardContractError;
+          const webProviders = runtimeRequest?.providerId
+            ? await this.webLane.authStatus(this.context)
+            : [];
+          const webProvider =
+            runtimeRequest?.providerId
+              ? webProviders.find(
+                  (entry) => entry.provider === (runtimeRequest.providerId as WebProviderId),
+                )
+              : undefined;
 
-          return jsonResponse(this.mapContractErrorStatus(contractError), {
-            surface: SERVICE_SURFACE_METADATA,
-            routes: buildServiceRouteCatalog(),
-            error: {
-              message: contractError.message,
-              type: contractError.diagnostic.code,
-              diagnostics: [contractError.diagnostic],
-            },
-          });
+          if (webProvider && runtimeRequest?.credentialStates?.["web-login"] !== undefined) {
+            const auth = buildServiceAuthStatusView(
+              [webProvider],
+              this.ownerUserId,
+            ).providers[0];
+
+            return jsonResponse(this.mapContractErrorStatus(contractError), {
+              surface: SERVICE_SURFACE_METADATA,
+              authPortal: SERVICE_AUTH_PORTAL_METADATA,
+              routes: buildServiceRouteCatalog(),
+              error: {
+                message: contractError.message,
+                type: contractError.diagnostic.code,
+                suggestedAction: webProvider.recommendedAction,
+                diagnostics: webProvider.diagnostics,
+              },
+              auth,
+              remediation: buildServiceProviderRemediationView(
+                webProvider,
+                this.ownerUserId,
+              ),
+            });
+          }
+
+          return this.renderContractErrorResponse(contractError, runtimeRequest);
         }
 
         throw error;
