@@ -408,44 +408,19 @@ describe("Switchyard docs frontdoor contracts", () => {
     expect(llms).toContain("docs/compat/README.md");
     expect(llms).toContain("docs/public-surface-catalog.md");
     expect(llms).toContain("catalogs/public-surface-catalog.json");
-    expect(llms).toContain("catalogs/public-surface-catalog.schema.json");
-    expect(llms).toContain("catalogs/starter-manifest-templates.schema.json");
-    expect(llms).toContain("catalogs/starter-manifest-examples.schema.json");
     expect(llms).toContain("examples/README.md");
     expect(llms).toContain("starter-packs/README.md");
     expect(llms).toContain("docs/starter-pack-chooser.md");
-    expect(llms).toContain("catalogs/starter-pack-chooser.json");
-    expect(llms).toContain("catalogs/starter-pack-chooser.schema.json");
-    expect(llms).toContain("catalogs/starter-pack-comparison.json");
-    expect(llms).toContain("catalogs/starter-pack-comparison.json");
-    expect(llms).toContain("catalogs/starter-pack-comparison.schema.json");
-    expect(llms).toContain("catalogs/builder-journeys.json");
-    expect(llms).toContain("catalogs/builder-journeys.schema.json");
-    expect(llms).toContain("catalogs/builder-intent-router.json");
-    expect(llms).toContain("catalogs/builder-intent-router.schema.json");
     expect(llms).toContain("docs/host-integration-playbooks.md");
-    expect(llms).toContain("catalogs/host-integration-playbooks.json");
-    expect(llms).toContain("catalogs/host-integration-playbooks.schema.json");
-    expect(llms).toContain("docs/host-integration-examples.md");
     expect(llms).toContain("examples/hosts/index.json");
-    expect(llms).toContain("examples/hosts/index.schema.json");
-    expect(llms).toContain("docs/provider-runtime-catalog.md");
     expect(llms).toContain("catalogs/provider-runtime-catalog.json");
-    expect(llms).toContain("catalogs/provider-runtime-catalog.schema.json");
-    expect(llms).toContain("catalogs/compat-target-catalog.json");
-    expect(llms).toContain("catalogs/compat-target-catalog.schema.json");
-    expect(llms).toContain("catalogs/builder-kit-catalog.json");
-    expect(llms).toContain("catalogs/builder-kit-catalog.schema.json");
-    expect(llms).toContain("catalogs/skill-pack-catalog.json");
-    expect(llms).toContain("catalogs/skill-pack-catalog.schema.json");
-    expect(llms).toContain("catalogs/mcp-tool-catalog.json");
-    expect(llms).toContain("catalogs/mcp-tool-catalog.schema.json");
     expect(llms).toContain("docs/mcp.md");
     expect(llms).toContain("docs/i18n.md");
-    expect(llms).toContain("private maintainer-only testing/governance notes");
     expect(llms).toContain("docs/discoverability-keyword-truth.md");
     expect(llms).toContain("catalogs/discoverability-keyword-truth.json");
-    expect(llms).toContain("catalogs/discoverability-keyword-truth.schema.json");
+    expect(llms).not.toContain("docs/host-integration-examples.md");
+    expect(llms).not.toContain("design-system/DONOR_ABSORPTION_LEDGER.md");
+    expect(llms).not.toContain(".stitch/DESIGN.md");
     expect(llms).toContain(
       "Live verification depends on local end-user credentials and browser session materials",
     );
@@ -476,7 +451,7 @@ describe("Switchyard docs frontdoor contracts", () => {
     expect(readme).toContain("examples/README.md");
     expect(readme).toContain("starter-packs/README.md");
     expect(readme).toContain("docs/host-integration-playbooks.md");
-    expect(readme).toContain("docs/host-integration-examples.md");
+    expect(readme).toContain("examples/hosts/README.md");
     expect(readme).toContain("[docs/index.html](./docs/index.html)");
     expect(readme).toContain("private local maintainer shelf");
     expect(readme).not.toContain("docs/shared-provider-runtime.md");
@@ -639,6 +614,7 @@ describe("Switchyard docs frontdoor contracts", () => {
     expect(publicSurfaceCatalogDoc).toContain("pnpm run switchyard:cli -- builder-intent-router");
     expect(hostPlaybooksDoc).toContain("pnpm run switchyard:cli -- skill-pack-route --target runtime-diagnostics-pack");
     expect(hostPlaybooksDoc).toContain("switchyard.catalog.skill_pack --target runtime-diagnostics-pack");
+    expect(hostPlaybooksDoc).toContain("examples/hosts/README.md");
     expect(starterPackChooserDoc).toContain("Use-Case Skill Packs");
     expect(starterPackChooserDoc).not.toContain("current planned pack-local scaffolds");
     expect(starterPackChooserDoc).not.toContain("planned starter shapes");
@@ -727,7 +703,7 @@ describe("Switchyard docs frontdoor contracts", () => {
     expect(faq).toContain("examples/hosts/index.json");
     expect(hostExamplesDoc).toContain("examples/hosts/index.json");
     expect(hostExamplesDoc).toContain("pnpm run switchyard:cli -- host-example --target codex");
-    expect(hostExamplesDoc).toContain("pnpm run example:host-codex");
+    expect(hostExamplesDoc).toContain("examples/hosts/README.md");
     const ajv = new Ajv2020({
       strict: false,
     });

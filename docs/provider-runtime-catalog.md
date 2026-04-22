@@ -1,34 +1,19 @@
-# Switchyard Provider Runtime Catalog
+# Switchyard Provider Runtime Directory
 
-这页是给外部 builder 的 **静态 provider 目录**。
+This page is the thin public wrapper for the static provider directory.
 
-它不是 live service 响应，也不是今天机器上“谁已经登录了”的状态页。  
-它更像商场的楼层总表：
+In plain English:
 
-- 这栋楼里有哪些商户
-- 每家在几楼
-- 哪几家是重点柜台
+- this page explains what the provider directory is for
+- the actual machine-readable truth lives in the JSON catalog
+- this page does **not** report live auth state, browser state, or invoke health
 
-## Why This Exists
-
-现在我们已经有：
-
-- public surface catalog
-- plugin / skills starter kits
-- read-only MCP surface
-
-但外部 builder 还会碰到一个很实际的问题：
-
-> “我到底该用哪个 provider id？它属于 BYOK 还是 Web/Login？是不是 high-stability trio 里的？”  
-
-这页和配套 JSON，就是把这个静态目录单独拎出来。
-
-## Machine-readable Source
+## Machine-Readable Source
 
 - [catalogs/provider-runtime-catalog.json](../catalogs/provider-runtime-catalog.json)
 - [catalogs/provider-runtime-catalog.schema.json](../catalogs/provider-runtime-catalog.schema.json)
 
-## Read-only CLI Access
+## Read-Only Access
 
 ```bash
 pnpm run switchyard:cli -- provider-catalog
@@ -38,50 +23,43 @@ pnpm run switchyard:cli -- provider-entry --target openai:byok
 pnpm run switchyard:cli -- provider-entry --target gemini:web-login
 ```
 
-这些命令只读静态 catalog，不依赖当前机器上谁登录了。
-
-## Read-only MCP Access
-
 - `switchyard.catalog.provider_catalog`
 - `switchyard.catalog.provider_catalog_schema`
 - `switchyard.catalog.provider_entry`
 
-## What The Catalog Tells You
+## What The Directory Tells You
 
-每一项至少回答四件事：
+Each entry answers the same bounded questions:
 
 - `providerId`
 - `lane`
-- `providerId + lane` 的公开寻址方式
+- `providerId + lane` public addressing
 - `authMode`
 - `stabilityTarget`
 
-也就是说，外部 builder 至少能先分清：
+If the same `providerId` appears on multiple lanes, use `providerId:lane` to
+disambiguate. For example:
 
-- 这是 `BYOK` 还是 `Web/Login`
-- 这是 high-stability trio 还是 baseline lane
-- 这个 id 是不是当前 V1 正式目录里的一员
-
-如果同一个 `providerId` 同时出现在两条 lane 里，比如 `gemini` 或 `qwen`：
-
-- `provider-catalog` 会把两条都列出来
-- `provider-entry` 必须用 `providerId:lane` 这种复合目标来 disambiguate
-- 不能再悄悄返回第一条命中的记录
+- `openai:byok`
+- `gemini:web-login`
 
 ## What It Does Not Tell You
 
-这页不会替代：
+This directory does **not** replace:
 
 - live auth status
-- 当前机器浏览器登录态
-- provider probe / remediation
-- invoke 成功与否
+- browser session state
+- provider probe or remediation
+- invoke success on the current machine
 
-那些还是 runtime / service / MCP / CLI 的动态读接口负责。
-
-## Related Pages
+For those questions, go back to:
 
 - [docs/public-surface-catalog.md](./public-surface-catalog.md)
-- [catalogs/provider-runtime-catalog.json](../catalogs/provider-runtime-catalog.json)
-- [catalogs/provider-runtime-catalog.schema.json](../catalogs/provider-runtime-catalog.schema.json)
-- [docs/public-surface-support-matrix.md](./public-surface-support-matrix.md)
+- [docs/mcp.md](./mcp.md)
+- [docs/host-integration-playbooks.md](./host-integration-playbooks.md)
+
+## Decision Summary
+
+> The provider runtime directory is a static truth wrapper around the provider
+> catalog JSON. It exists to keep provider ids and lanes readable without
+> turning this page into a live status surface.

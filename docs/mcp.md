@@ -124,7 +124,7 @@ reading current truth, go here next:
 - [docs/host-integration-playbooks.md](./host-integration-playbooks.md)
 - `switchyard.catalog.host_playbooks`
 - `switchyard.catalog.host_playbook`
-- [docs/host-integration-examples.md](./host-integration-examples.md)
+- [examples/hosts/README.md](../examples/hosts/README.md)
 - `switchyard.catalog.host_examples`
 - `switchyard.catalog.host_example`
 

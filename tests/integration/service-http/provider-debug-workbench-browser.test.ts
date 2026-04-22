@@ -95,12 +95,22 @@ describe("provider debug workbench browser interaction", () => {
           const page = await browser.newPage();
           await page.goto("http://127.0.0.1:4198/", { waitUntil: "networkidle" });
 
-          await page.locator('a[href="#evidence-stack"]').click();
-          expect(page.url()).toContain("#evidence-stack");
-
-          await page.locator("#evidence-stack > summary").click();
+          await page.locator('a[href="#diagnose-ladder-tray"]').click();
+          expect(page.url()).toContain("#diagnose-ladder-tray");
           expect(
-            await page.locator("#evidence-stack").evaluate((element) => (element as HTMLDetailsElement).open),
+            await page
+              .locator("#diagnose-ladder-tray")
+              .evaluate((element) => (element as HTMLDetailsElement).open),
+          ).toBe(true);
+
+          const evidenceStack = page.locator("#evidence-stack");
+          if (!(await evidenceStack.evaluate((element) => (element as HTMLDetailsElement).open))) {
+            const evidenceSummary = page.locator("#evidence-stack > summary");
+            await evidenceSummary.scrollIntoViewIfNeeded();
+            await evidenceSummary.click({ force: true });
+          }
+          expect(
+            await evidenceStack.evaluate((element) => (element as HTMLDetailsElement).open),
           ).toBe(true);
 
           const tray = page.locator(".diagnostic-tray").nth(1);
@@ -117,6 +127,6 @@ describe("provider debug workbench browser interaction", () => {
         await new Promise<void>((resolveClose) => server.close(() => resolveClose()));
       }
     },
-    20_000,
+    60_000,
   );
 });

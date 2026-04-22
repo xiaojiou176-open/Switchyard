@@ -149,19 +149,19 @@ const publicSurfaceCases = [
     label: "host-playbooks",
     path: "/host-integration-playbooks.md",
     expectedContentType: "text/markdown",
-    expectedSnippet: "Switchyard Host Integration Playbooks",
+    expectedSnippet: "Switchyard Builder Integration Hub",
   },
   {
     label: "host-examples",
     path: "/host-integration-examples.md",
     expectedContentType: "text/markdown",
-    expectedSnippet: "Switchyard Host Integration Examples",
+    expectedSnippet: "Switchyard Host Example Foyer",
   },
   {
     label: "provider-runtime-catalog",
     path: "/provider-runtime-catalog.md",
     expectedContentType: "text/markdown",
-    expectedSnippet: "Switchyard Provider Runtime Catalog",
+    expectedSnippet: "Switchyard Provider Runtime Directory",
   },
   {
     label: "public-surface-catalog",

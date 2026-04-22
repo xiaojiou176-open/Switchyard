@@ -133,7 +133,6 @@ Open:
 Open:
 
 - [docs/host-integration-playbooks.md](./host-integration-playbooks.md)
-- [docs/host-integration-examples.md](./host-integration-examples.md)
 - [examples/hosts/README.md](../examples/hosts/README.md)
 
 ## What This Path Proves

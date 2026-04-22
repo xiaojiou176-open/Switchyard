@@ -62,11 +62,11 @@ If you only need the next truthful route, choose one:
   - [docs/public-distribution-ledger.md](./public-distribution-ledger.md)
 - I need the core API front door
   - [docs/api/service-http-reference.md](./api/service-http-reference.md)
-- I need the AI workflow / builder workflow / skills / MCP route
+- I need the builder route first
   - [starter pack chooser](./starter-pack-chooser.md)
+- I need the machine-readable support truth or read-only MCP route
   - [surface catalog](./public-surface-catalog.md)
   - [MCP front door](./mcp.md)
-  - [host integration playbooks](./host-integration-playbooks.md) once the pack is already chosen and you need the coordinated next move
 - I need promo or presentation assets
   - [docs/media/README.md](./media/README.md)
 - I need local bootstrap or workstation-bound reality

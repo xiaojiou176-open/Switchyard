@@ -1359,7 +1359,7 @@ describe("Switchyard HTTP surface", () => {
 
     expect(portalResponse.status).toBe(200);
     expect(portalResponse.headers.get("content-type")).toContain("text/html");
-    expect(portalHtml).toContain("Switchyard Auth Portal");
+    expect(portalHtml).toContain("Switchyard Web/Login Access");
     expect(portalHtml).toContain("Skip to main content");
     expect(portalHtml).toContain("Inspect current browser");
     expect(portalHtml).toContain("/v1/runtime/providers/{providerId}/acquisition/start");

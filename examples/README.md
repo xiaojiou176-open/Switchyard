@@ -89,4 +89,3 @@ pnpm run example:host-mcp
 
 - [docs/host-integration-playbooks.md](../docs/host-integration-playbooks.md)
 - [examples/hosts/README.md](./hosts/README.md)
-- [docs/host-integration-examples.md](../docs/host-integration-examples.md)
